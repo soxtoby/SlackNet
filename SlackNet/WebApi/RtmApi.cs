@@ -1,0 +1,56 @@
+﻿using System.Threading;
+using System.Threading.Tasks;
+using SlackNet.Events;
+using SlackNet.WebApi.Responses;
+using Args = System.Collections.Generic.Dictionary<string, object>;
+
+namespace SlackNet.WebApi
+{
+    public class RtmApi
+    {
+        private readonly WebApiClient _client;
+        public RtmApi(WebApiClient client) => _client = client;
+
+        /// <summary>
+        /// Begins a Real Time Messaging API session and reserves your application a specific URL with which to connect via websocket.
+        /// Unlike <see cref="Start"/>, this method is focused only on connecting to the RTM API.
+        /// </summary>
+        /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
+        /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
+        /// <param name="cancellationToken"></param>
+        public Task<ConnectResponse> Connect(bool manualPresenceSubscription = false, bool batchPresenceAware = false, CancellationToken? cancellationToken = null) =>
+            _client.Get<ConnectResponse>("rtm.connect", new Args { { "presence_sub", manualPresenceSubscription }, { "batch_presence_aware", batchPresenceAware } }, cancellationToken);
+
+        /// <summary>
+        /// Begins a Real Time Messaging API session and reserves your application a specific URL with which to connect via websocket.
+        /// This method also returns a smorgasbord of data about the team, its channels, and members. Some times more information than can be provided in a timely or helpful manner.
+        /// Please use <see cref="Connect"/> instead, especially when connecting on behalf of an Enterprise Grid customer.
+        /// </summary>
+        /// <param name="simpleLatest">Return timestamp only for latest message object of each channel (improves performance).</param>
+        /// <param name="noUnreads">Skip unread counts for each channel (improves performance).</param>
+        /// <param name="mpimAware">Returns MPIMs to the client in the API response.</param>
+        /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
+        /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
+        /// <param name="noLatest">Exclude latest timestamps for channels, groups, mpims, and ims. Automatically sets <see cref="noUnreads"/> to False.</param>
+        /// <param name="cancellationToken"></param>
+        public Task<StartResponse> Start(
+            bool simpleLatest = false,
+            bool noUnreads = false,
+            bool mpimAware = false,
+            bool manualPresenceSubscription = false,
+            bool batchPresenceAware = false,
+            bool noLatest = false,
+            CancellationToken? cancellationToken = null
+        ) =>
+            _client.Get<StartResponse>("rtm.start", new Args
+                    {
+                        { "simple_latest", simpleLatest },
+                        { "no_unreads", noUnreads },
+                        { "mpim_aware", mpimAware },
+                        { "presence_sub", manualPresenceSubscription },
+                        { "batch_presence_aware", batchPresenceAware },
+                        { "no_latest", noLatest }
+                    },
+                cancellationToken);
+    }
+}
