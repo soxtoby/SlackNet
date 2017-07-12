@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace SlackNet.Objects
+﻿namespace SlackNet.Objects
 {
-    public class Im
+    public class Im : Hub
     {
-        public string Id { get; set; }
-        public bool IsIm { get; set; }
+        public Im() => IsMember = true;
+
         public string User { get; set; }
-        public int Created { get; set; }
-        public DateTime CreatedDateTime => Created.ToDateTime().GetValueOrDefault();
         public bool IsUserDeleted { get; set; }
+
+        public override string ToString() => Link.User(User).ToString();
     }
 }

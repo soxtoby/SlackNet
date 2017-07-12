@@ -5,6 +5,6 @@ namespace SlackNet.WebApi.Responses
 {
     class GroupListResponse
     {
-        public List<Group> Groups { get; } = new List<Group>();
+        public List<Channel> Groups { get; } = new List<Channel>();
     }
 }

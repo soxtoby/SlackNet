@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Serialization;
-using SlackNet.Events;
 
 namespace SlackNet
 {
@@ -57,5 +57,17 @@ namespace SlackNet
             ?? SnakeCase(type.Name);
 
         private static string SnakeCase(string value) => new SnakeCaseNamingStrategy().GetPropertyName(value, false);
+
+        public static async Task<T> NullIfNotFound<T>(this Task<T> apiTask) where T : class
+        {
+            try
+            {
+                return await apiTask.ConfigureAwait(false);
+            }
+            catch (SlackException e) when (e.SlackError.EndsWith("_not_found", StringComparison.Ordinal))
+            {
+                return null;
+            }
+        }
     }
 }

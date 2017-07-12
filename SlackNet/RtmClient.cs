@@ -12,6 +12,7 @@ using SlackNet.Events;
 using SlackNet.Events.Messages;
 using SlackNet.Rtm;
 using SlackNet.WebApi;
+using SlackNet.WebApi.Responses;
 using SuperSocket.ClientEngine;
 using WebSocket4Net;
 using Reply = SlackNet.Rtm.Reply;
@@ -59,9 +60,9 @@ namespace SlackNet
         /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
         /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
         /// <param name="cancellationToken"></param>
-        public async Task Connect(bool batchPresenceAware = false, bool manualPresenceSubscription = false, CancellationToken? cancellationToken = null)
+        public async Task<ConnectResponse> Connect(bool batchPresenceAware = false, bool manualPresenceSubscription = false, CancellationToken? cancellationToken = null)
         {
-            if (_webSocket?.State == WebSocketState.Connecting || _webSocket?.State == WebSocketState.Open)
+            if (Connected)
                 throw new InvalidOperationException("Already connecting or connected");
 
             var connectResponse = await _client.Rtm.Connect(manualPresenceSubscription, batchPresenceAware, cancellationToken).ConfigureAwait(false);
@@ -90,7 +91,16 @@ namespace SlackNet
                 .ToTask(cancellationToken);
             _webSocket.Open();
             await openedTask.ConfigureAwait(false);
+
+            return connectResponse;
         }
+
+        /// <summary>
+        /// Is the client connecting or has it connected.
+        /// </summary>
+        public bool Connected => 
+               _webSocket?.State == WebSocketState.Connecting
+            || _webSocket?.State == WebSocketState.Open;
 
         /// <summary>
         /// Send a simple message. For more complicated messages, use <see cref="ChatApi.PostMessage"/> instead.

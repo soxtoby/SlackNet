@@ -6,9 +6,9 @@ using SlackNet.WebApi;
 
 namespace SlackNet.Example
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             if (args.Length == 0)
                 Console.WriteLine("Please provide a Slack token as a command line argument.");

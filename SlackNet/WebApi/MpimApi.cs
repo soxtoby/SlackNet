@@ -58,7 +58,7 @@ namespace SlackNet.WebApi
         /// Returns a list of all multiparty direct message channels that the user has.
         /// </summary>
         /// <param name="cancellationToken"></param>
-        public async Task<IReadOnlyList<Group>> List(CancellationToken? cancellationToken = null) =>
+        public async Task<IReadOnlyList<Channel>> List(CancellationToken? cancellationToken = null) =>
             (await _client.Get<GroupListResponse>("mpim.list", new Args(), cancellationToken).ConfigureAwait(false)).Groups;
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="userIds">List of users. The ordering of the users is preserved whenever a MPIM group is returned.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Group> Open(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) =>
+        public async Task<Channel> Open(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) =>
             (await _client.Get<GroupResponse>("mpim.open", new Args { { "users", userIds } }, cancellationToken).ConfigureAwait(false)).Group;
 
         /// <summary>

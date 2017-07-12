@@ -2,14 +2,18 @@
 {
     public class Channel : Hub
     {
-        public bool IsChannel { get; set; }
         /// <summary>
-        /// True if this channel is the "general" channel that includes all regular team members.
+        /// The name of the channel, without a leading hash sign.
         /// </summary>
-        public bool IsGeneral { get; set; }
+        public string Name { get; set; }
         /// <summary>
-        /// True if the calling member is part of the channel.
+        /// The user ID of the member that created this channel.
         /// </summary>
-        public bool IsMember { get; set; }
+        public string Creator { get; set; }
+        public bool IsArchived { get; set; }
+        public Topic Topic { get; set; }
+        public Topic Purpose { get; set; }
+
+        public override string ToString() => Link.Hub(Id).ToString();
     }
 }

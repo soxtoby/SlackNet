@@ -4,6 +4,6 @@ namespace SlackNet.WebApi.Responses
 {
     class GroupRenameResponse
     {
-        public Group Channel { get; set; }
+        public Channel Channel { get; set; }
     }
 }

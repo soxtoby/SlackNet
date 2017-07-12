@@ -80,13 +80,12 @@ namespace SlackNet.WebApi
         /// <param name="userId">User to open a direct message channel with.</param>
         /// <param name="returnIm">Indicates you want the full IM channel definition in the response.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Im> Open(string userId, bool returnIm = false, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<ImResponse>("im.open", new Args
+        public Task<ImResponse> Open(string userId, bool returnIm = false, CancellationToken? cancellationToken = null) =>
+            _client.Get<ImResponse>("im.open", new Args
                 {
                     { "user", userId },
                     { "return_im", returnIm }
-                }, cancellationToken).ConfigureAwait(false))
-            .Channel;
+                }, cancellationToken);
 
         /// <summary>
         /// Returns an entire thread (a message plus all the messages in reply to it).

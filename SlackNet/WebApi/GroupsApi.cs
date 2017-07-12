@@ -35,7 +35,7 @@ namespace SlackNet.WebApi
         /// <param name="name">Name of private channel to create.</param>
         /// <param name="validate">Whether to return errors on invalid channel name instead of modifying it to meet the specified criteria.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Group> Create(string name, bool validate = false, CancellationToken? cancellationToken = null) =>
+        public async Task<Channel> Create(string name, bool validate = false, CancellationToken? cancellationToken = null) =>
             (await _client.Get<GroupResponse>("groups.create", new Args
                 {
                     { "name", name },
@@ -49,7 +49,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="channelId">Private channel to clone and archive.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Group> CreateChild(string channelId, CancellationToken? cancellationToken = null) =>
+        public async Task<Channel> CreateChild(string channelId, CancellationToken? cancellationToken = null) =>
             (await _client.Get<GroupResponse>("groups.createChild", new Args { { "channel", channelId } }, cancellationToken).ConfigureAwait(false)).Group;
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="channelId">Private channel to get info on.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Group> Info(string channelId, CancellationToken? cancellationToken = null) =>
+        public async Task<Channel> Info(string channelId, CancellationToken? cancellationToken = null) =>
             (await _client.Get<GroupResponse>("groups.info", new Args { { "channel", channelId } }, cancellationToken).ConfigureAwait(false)).Group;
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Private channel to invite user to.</param>
         /// <param name="userId">User to invite.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Group> Invite(string channelId, string userId, CancellationToken? cancellationToken) =>
+        public async Task<Channel> Invite(string channelId, string userId, CancellationToken? cancellationToken) =>
             (await _client.Get<GroupResponse>("groups.invite", new Args
                 {
                     { "channel", channelId },
@@ -137,7 +137,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="excludeArchived">Don't return archived private channels.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<IReadOnlyList<Group>> List(bool excludeArchived = false, CancellationToken? cancellationToken = null) =>
+        public async Task<IReadOnlyList<Channel>> List(bool excludeArchived = false, CancellationToken? cancellationToken = null) =>
             (await _client.Get<GroupListResponse>("groups.list", new Args { { "exclude_archived", excludeArchived } }, cancellationToken).ConfigureAwait(false)).Groups;
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace SlackNet.WebApi
         /// <param name="name">New name for private channel.</param>
         /// <param name="validate">Whether to return errors on invalid channel name instead of modifying it to meet the specified criteria.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Group> Rename(string channelId, string name, bool validate = false, CancellationToken? cancellationToken = null) =>
+        public async Task<Channel> Rename(string channelId, string name, bool validate = false, CancellationToken? cancellationToken = null) =>
             (await _client.Get<GroupRenameResponse>("groups.rename", new Args
                 {
                     { "channel", channelId },

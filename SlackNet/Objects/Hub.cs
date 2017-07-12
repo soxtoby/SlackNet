@@ -6,20 +6,15 @@ namespace SlackNet.Objects
     public class Hub
     {
         public string Id { get; set; }
-        /// <summary>
-        /// The name of the channel, without a leading hash sign.
-        /// </summary>
-        public string Name { get; set; }
+        public bool IsIm { get; set; }
+        public bool IsChannel { get; set; }
+        public bool IsGroup { get; set; }
+        public bool IsMpim { get; set; }
+        public bool IsOrgShared { get; set; }
         public int Created { get; set; }
         public DateTime CreatedDateTime => Created.ToDateTime().GetValueOrDefault();
-        /// <summary>
-        /// The user ID of the member that created this channel.
-        /// </summary>
-        public string Creator { get; set; }
-        public bool IsArchived { get; set; }
         public string[] Members { get; set; }
-        public Topic Topic { get; set; }
-        public Topic Purpose { get; set; }
+
         /// <summary>
         /// Timestamp for the last message the calling user has read in this channel.
         /// </summary>
@@ -36,5 +31,13 @@ namespace SlackNet.Objects
         /// Count of messages that the calling user has yet to read that matter to them (this means it excludes things like join/leave messages).
         /// </summary>
         public int UnreadCountDisplay { get; set; }
+        /// <summary>
+        /// True if this channel is the "general" channel that includes all regular team members.
+        /// </summary>
+        public bool IsGeneral { get; set; }
+        /// <summary>
+        /// True if the calling member is part of the channel.
+        /// </summary>
+        public bool IsMember { get; set; }
     }
 }

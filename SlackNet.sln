@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet.Example", "SlackNe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackNet.Tests", "SlackNet.Tests\SlackNet.Tests.csproj", "{66CCE1D8-2845-4869-AACE-AD2398C8925F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackNet.Bot", "SlackNet.Bot\SlackNet.Bot.csproj", "{DAB4F57B-D1A5-47C2-8A10-6C75B7DF30A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{66CCE1D8-2845-4869-AACE-AD2398C8925F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66CCE1D8-2845-4869-AACE-AD2398C8925F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66CCE1D8-2845-4869-AACE-AD2398C8925F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAB4F57B-D1A5-47C2-8A10-6C75B7DF30A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAB4F57B-D1A5-47C2-8A10-6C75B7DF30A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAB4F57B-D1A5-47C2-8A10-6C75B7DF30A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAB4F57B-D1A5-47C2-8A10-6C75B7DF30A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
