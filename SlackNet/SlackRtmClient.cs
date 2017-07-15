@@ -19,10 +19,10 @@ using Reply = SlackNet.Rtm.Reply;
 
 namespace SlackNet
 {
-    public class RtmClient : IDisposable
+    public class SlackRtmClient : IDisposable
     {
         private readonly JsonSerializerSettings _serializerSettings;
-        private readonly WebApiClient _client;
+        private readonly SlackApiClient _client;
         private readonly Subject<Event> _eventSubject = new Subject<Event>();
         private readonly ISubject<Event> _rawEvents;
         private WebSocket _webSocket;
@@ -30,14 +30,14 @@ namespace SlackNet
         private IDisposable _eventSubscription;
         private uint _nextEventId;
 
-        public RtmClient(string token)
+        public SlackRtmClient(string token)
         {
             _rawEvents = Subject.Synchronize(_eventSubject);
             _serializerSettings = Default.SerializerSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
-            _client = new WebApiClient(Default.Http(_serializerSettings), Default.UrlBuilder(_serializerSettings), _serializerSettings, token);
+            _client = new SlackApiClient(Default.Http(_serializerSettings), Default.UrlBuilder(_serializerSettings), _serializerSettings, token);
         }
 
-        public RtmClient(WebApiClient client, JsonSerializerSettings serializerSettings)
+        public SlackRtmClient(SlackApiClient client, JsonSerializerSettings serializerSettings)
         {
             _serializerSettings = serializerSettings;
             _client = client;
@@ -46,7 +46,7 @@ namespace SlackNet
         /// <summary>
         /// Messages coming from Slack.
         /// </summary>
-        public IObservable<Message> Messages => Events.OfType<Message>();
+        public IObservable<MessageEvent> Messages => Events.OfType<MessageEvent>();
 
         /// <summary>
         /// All events (including messages) coming from Slack.

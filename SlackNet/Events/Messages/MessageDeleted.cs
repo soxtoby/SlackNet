@@ -5,7 +5,7 @@ namespace SlackNet.Events.Messages
     /// <summary>
     /// Sent when a message in a channel is deleted.
     /// </summary>
-    public class MessageDeleted : Message
+    public class MessageDeleted : MessageEvent
     {
         public override bool Hidden => true;
         /// <summary>

@@ -4,7 +4,8 @@ using SlackNet.Objects;
 
 namespace SlackNet.Events.Messages
 {
-    public class Message : Event
+    [SlackType("message")]
+    public class MessageEvent : Event
     {
         public string Subtype { get; set; }
         public string Channel { get; set; }

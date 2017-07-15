@@ -10,7 +10,7 @@ namespace SlackNet.Bot
         /// <summary>
         /// Slows message sending down to the specified frequency.
         /// </summary>
-        public static Func<IObservable<SlackMessage>, IObservable<SlackMessage>> LimitMessageFrequency(TimeSpan minFrequency, IScheduler scheduler) =>
-            messages => new AnonymousObservable<SlackMessage>(observer => new LosslessThrottlingSubscription<SlackMessage>(messages, observer, minFrequency, scheduler));
+        public static Func<IObservable<Message>, IObservable<Message>> LimitMessageFrequency(TimeSpan minFrequency, IScheduler scheduler) =>
+            messages => new AnonymousObservable<Message>(observer => new LosslessThrottlingSubscription<Message>(messages, observer, minFrequency, scheduler));
     }
 }

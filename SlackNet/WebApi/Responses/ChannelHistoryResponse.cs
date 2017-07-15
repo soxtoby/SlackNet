@@ -6,7 +6,7 @@ namespace SlackNet.WebApi.Responses
     public class ChannelHistoryResponse
     {
         public string Latest { get; set; }
-        public IList<Message> Messages { get; set; } = new List<Message>();
+        public IList<MessageEvent> Messages { get; set; } = new List<MessageEvent>();
         public bool HasMore { get; set; }
         public bool IsLimited { get; set; }
         public int UnreadCountDisplay { get; set; }

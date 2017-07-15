@@ -6,7 +6,7 @@ namespace SlackNet.Events.Messages
     /// Sent when a message is sent to a channel by an integration "bot".
     /// It is like a normal user message, except it has no associated user.
     /// </summary>
-    public class BotMessage : Message
+    public class BotMessage : MessageEvent
     {
         public string BotId { get; set; }
         public string Username { get; set; }

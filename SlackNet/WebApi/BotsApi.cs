@@ -9,8 +9,8 @@ namespace SlackNet.WebApi
 {
     public class BotsApi
     {
-        private readonly WebApiClient _client;
-        public BotsApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public BotsApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Returns information about a bot user.
@@ -18,7 +18,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="botId">Bot user to get info on.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Bot> Info(string botId, CancellationToken? cancellationToken = null) =>
+        public async Task<BotInfo> Info(string botId, CancellationToken? cancellationToken = null) =>
             (await _client.Get<BotsInfoResponse>("bots.info", new Args { { "bot", botId } }, cancellationToken).ConfigureAwait(false)).Bot;
     }
 }

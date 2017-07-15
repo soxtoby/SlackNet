@@ -10,8 +10,8 @@ namespace SlackNet.WebApi
 {
     public class ImApi
     {
-        private readonly WebApiClient _client;
-        public ImApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public ImApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Closes a direct message channel.
@@ -93,7 +93,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Direct message channel to fetch thread from.</param>
         /// <param name="threadTs">Unique identifier of a thread's parent message.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<IReadOnlyList<Message>> Replies(string channelId, string threadTs, CancellationToken? cancellationToken = null) =>
+        public async Task<IReadOnlyList<MessageEvent>> Replies(string channelId, string threadTs, CancellationToken? cancellationToken = null) =>
             (await _client.Get<RepliesResponse>("im.replies", new Args
                 {
                     { "channel", channelId },

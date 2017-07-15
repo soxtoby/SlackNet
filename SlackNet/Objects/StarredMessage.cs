@@ -5,6 +5,6 @@ namespace SlackNet.Objects
     [SlackType("message")]
     public class StarredMessage : StarredItem
     {
-        public Message Message { get; set; }
+        public MessageEvent Message { get; set; }
     }
 }

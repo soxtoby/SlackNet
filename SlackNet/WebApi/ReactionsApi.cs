@@ -10,8 +10,8 @@ namespace SlackNet.WebApi
 {
     public class ReactionsApi
     {
-        private readonly WebApiClient _client;
-        public ReactionsApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public ReactionsApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Adds a reaction (emoji) to a file.
@@ -89,7 +89,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the message to get reactions for.</param>
         /// <param name="full">If true always return the complete reaction list.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Message> GetForMessage(string channelId, string ts, bool full = false, CancellationToken? cancellationToken = null) =>
+        public async Task<MessageEvent> GetForMessage(string channelId, string ts, bool full = false, CancellationToken? cancellationToken = null) =>
             (await _client.Get<MessageReactionsResponse>("reactions.get", new Args
                 {
                     { "channel", channelId },

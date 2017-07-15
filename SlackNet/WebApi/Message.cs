@@ -4,7 +4,7 @@ using SlackNet.Objects;
 
 namespace SlackNet.WebApi
 {
-    public class SlackMessage
+    public class Message
     {
         /// <summary>
         /// Channel, private group, or IM channel to send message to. Can be an encoded ID, or a name.
@@ -25,7 +25,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Structured message attachments.
         /// </summary>
-        public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
+        public IList<Attachment> Attachments { get; } = new List<Attachment>();
         /// <summary>
         /// Pass True to enable unfurling of primarily text-based content.
         /// </summary>
@@ -51,7 +51,7 @@ namespace SlackNet.WebApi
         /// </summary>
         public string IconEmoji { get; set; }
         /// <summary>
-        /// Provide another message's <see cref="Message.Ts"/> value to make this message a reply. Avoid using a reply's ts value; use its parent instead.
+        /// Provide another message's <see cref="MessageEvent.Ts"/> value to make this message a reply. Avoid using a reply's ts value; use its parent instead.
         /// </summary>
         public string ThreadTs { get; set; }
         /// <summary>

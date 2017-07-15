@@ -10,6 +10,6 @@ namespace SlackNet.WebApi.Responses
         public IList<Channel> Groups { get; set; }
         public IList<Channel> Mpims { get; set; }
         public IList<Im> Ims { get; set; }
-        public IList<Bot> Bots { get; set; }
+        public IList<BotInfo> Bots { get; set; }
     }
 }

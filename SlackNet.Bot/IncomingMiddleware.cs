@@ -9,7 +9,7 @@ namespace SlackNet.Bot
         /// <summary>
         /// Ignores all message subtypes (e.g. channel joins, message edits etc.)
         /// </summary>
-        public static IObservable<IMessage> PlainMessagesOnly(IObservable<IMessage> messages) => messages.Where(m => m.RawMessage.GetType() == typeof(Message));
+        public static IObservable<IMessage> PlainMessagesOnly(IObservable<IMessage> messages) => messages.Where(m => m.RawMessage.GetType() == typeof(MessageEvent));
         /// <summary>
         /// Ignores edited messages.
         /// </summary>

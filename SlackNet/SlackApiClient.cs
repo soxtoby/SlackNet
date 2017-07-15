@@ -7,14 +7,14 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet
 {
-    public class WebApiClient
+    public class SlackApiClient
     {
         private readonly IHttp _http;
         private readonly ISlackUrlBuilder _urlBuilder;
         private readonly string _token;
         private readonly JsonSerializerSettings _serializerSettings;
 
-        public WebApiClient(string token)
+        public SlackApiClient(string token)
         {
             _serializerSettings = Default.SerializerSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
             _http = Default.Http(_serializerSettings);
@@ -22,7 +22,7 @@ namespace SlackNet
             _token = token;
         }
 
-        public WebApiClient(IHttp http, ISlackUrlBuilder urlBuilder, JsonSerializerSettings serializerSettings, string token)
+        public SlackApiClient(IHttp http, ISlackUrlBuilder urlBuilder, JsonSerializerSettings serializerSettings, string token)
         {
             _http = http;
             _urlBuilder = urlBuilder;

@@ -11,8 +11,8 @@ namespace SlackNet.WebApi
 {
     public class FilesApi
     {
-        private readonly WebApiClient _client;
-        public FilesApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public FilesApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Deletes a file from your team.

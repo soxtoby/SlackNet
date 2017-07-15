@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.Objects
 {
-    public class Bot
+    public class BotInfo
     {
         public string Id { get; set; }
         public string AppId { get; set; }

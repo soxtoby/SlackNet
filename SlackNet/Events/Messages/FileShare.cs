@@ -5,7 +5,7 @@ namespace SlackNet.Events.Messages
     /// <summary>
     /// Sent when a file is shared into a channel, group or direct message.
     /// </summary>
-    public class FileShare : Message
+    public class FileShare : MessageEvent
     {
         public File File { get; set; }
         /// <summary>

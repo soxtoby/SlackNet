@@ -10,8 +10,8 @@ namespace SlackNet.WebApi
 {
     public class GroupsApi
     {
-        private readonly WebApiClient _client;
-        public GroupsApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public GroupsApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Archives a private channel.
@@ -180,7 +180,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Private channel to fetch thread from.</param>
         /// <param name="threadTs">Unique identifier of a thread's parent message.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<IReadOnlyList<Message>> Replies(string channelId, string threadTs, CancellationToken? cancellationToken = null) =>
+        public async Task<IReadOnlyList<MessageEvent>> Replies(string channelId, string threadTs, CancellationToken? cancellationToken = null) =>
             (await _client.Get<RepliesResponse>("groups.replies", new Args
                 {
                     { "channel", channelId },

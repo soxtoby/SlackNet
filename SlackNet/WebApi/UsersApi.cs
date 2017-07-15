@@ -11,8 +11,8 @@ namespace SlackNet.WebApi
 {
     public class UsersApi
     {
-        private readonly WebApiClient _client;
-        public UsersApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public UsersApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Allows the user to delete their profile image. It will clear whatever image is currently set.

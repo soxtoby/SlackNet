@@ -3,5 +3,5 @@
     /// <summary>
     /// Sent when a channel is unarchived.
     /// </summary>
-    public class ChannelUnarchive : Message { }
+    public class ChannelUnarchive : MessageEvent { }
 }

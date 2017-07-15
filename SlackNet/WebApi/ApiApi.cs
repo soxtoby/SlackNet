@@ -8,8 +8,8 @@ namespace SlackNet.WebApi
 {
     public class ApiApi
     {
-        private readonly WebApiClient _client;
-        public ApiApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public ApiApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Helps you test your calling code.

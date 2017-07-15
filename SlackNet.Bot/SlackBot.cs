@@ -13,28 +13,28 @@ using SlackNet.WebApi.Responses;
 
 namespace SlackNet.Bot
 {
-    public class Bot : IObservable<IMessage>, IObserver<SlackMessage>, IDisposable
+    public class SlackBot : IObservable<IMessage>, IObserver<Message>, IDisposable
     {
-        private readonly RtmClient _rtm;
-        private readonly WebApiClient _api;
+        private readonly SlackRtmClient _rtm;
+        private readonly SlackApiClient _api;
         private readonly ConcurrentQueue<IMessageHandler> _handlers = new ConcurrentQueue<IMessageHandler>();
         private readonly ConcurrentDictionary<string, Task<Hub>> _hubs = new ConcurrentDictionary<string, Task<Hub>>();
         private readonly ConcurrentDictionary<string, Task<User>> _users = new ConcurrentDictionary<string, Task<User>>();
         private readonly ConcurrentValue<Task<IReadOnlyList<Im>>> _ims = new ConcurrentValue<Task<IReadOnlyList<Im>>>();
         private readonly SyncedSubject<IMessage> _incomingMessages = new SyncedSubject<IMessage>();
-        private readonly SyncedSubject<SlackMessage> _outgoingMessages = new SyncedSubject<SlackMessage>();
-        private readonly SyncedSubject<SlackMessage> _sentMessages = new SyncedSubject<SlackMessage>();
+        private readonly SyncedSubject<Message> _outgoingMessages = new SyncedSubject<Message>();
+        private readonly SyncedSubject<Message> _sentMessages = new SyncedSubject<Message>();
         private IObservable<IMessage> _incomingWithMiddlewareApplied;
-        private IObservable<SlackMessage> _outgoingWithMiddlewareApplied;
+        private IObservable<Message> _outgoingWithMiddlewareApplied;
         private IDisposable _outgoingSubscription;
         private IDisposable _incomingSubscription;
 
-        public Bot(string token) : this(new RtmClient(token), new WebApiClient(token)) { }
+        public SlackBot(string token) : this(new SlackRtmClient(token), new SlackApiClient(token)) { }
 
-        public Bot(RtmClient rtmClient, WebApiClient webApiClient)
+        public SlackBot(SlackRtmClient rtmClient, SlackApiClient apiClient)
         {
             _rtm = rtmClient;
-            _api = webApiClient;
+            _api = apiClient;
             _incomingWithMiddlewareApplied = _rtm.Messages.SelectMany(CreateBotMessage);
             _outgoingWithMiddlewareApplied = _outgoingMessages;
         }
@@ -67,7 +67,7 @@ namespace SlackNet.Bot
             _incomingWithMiddlewareApplied = middleware(_incomingWithMiddlewareApplied);
         }
 
-        public void AddOutgoingMiddleware(Func<IObservable<SlackMessage>, IObservable<SlackMessage>> middleware)
+        public void AddOutgoingMiddleware(Func<IObservable<Message>, IObservable<Message>> middleware)
         {
             if (_rtm.Connected)
                 throw new InvalidOperationException("Can't add more middleware after bot is connected.");
@@ -79,9 +79,9 @@ namespace SlackNet.Bot
         public event EventHandler<IMessage> OnMessage;
         public IObservable<IMessage> Messages => _incomingMessages.AsObservable();
 
-        private async Task<BotMessage> CreateBotMessage(Message message)
+        private async Task<SlackMessage> CreateBotMessage(MessageEvent message)
         {
-            return new BotMessage(message, this)
+            return new SlackMessage(message, this)
                 {
                     Ts = message.Ts,
                     Text = message.Text,
@@ -134,14 +134,14 @@ namespace SlackNet.Bot
 
         public Task<User> GetUser(string userId) => _users.GetOrAdd(userId, _ => _api.Users.Info(userId).NullIfNotFound());
 
-        public Task Send(SlackMessage message)
+        public Task Send(Message message)
         {
             var sent = _sentMessages.FirstOrDefaultAsync(m => m == message).ToTask();
             _outgoingMessages.OnNext(message);
             return sent;
         }
 
-        private Task<PostMessageResponse> PostMessage(SlackMessage message) => _api.Chat.PostMessage(message);
+        private Task<PostMessageResponse> PostMessage(Message message) => _api.Chat.PostMessage(message);
 
         public async Task WhileTyping(string channelId, Func<Task> action)
         {
@@ -153,7 +153,7 @@ namespace SlackNet.Bot
 
         public void OnCompleted() => _outgoingMessages.OnCompleted();
         public void OnError(Exception error) => _outgoingMessages.OnError(error);
-        public void OnNext(SlackMessage value) => _outgoingMessages.OnNext(value);
+        public void OnNext(Message value) => _outgoingMessages.OnNext(value);
 
         public void Dispose()
         {

@@ -6,6 +6,6 @@ namespace SlackNet.WebApi.Responses
     {
         public string Ts { get; set; }
         public string Channel { get; set; }
-        public Message Message { get; set; }
+        public MessageEvent Message { get; set; }
     }
 }

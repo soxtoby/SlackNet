@@ -8,8 +8,8 @@ namespace SlackNet.WebApi
 {
     public class RtmApi
     {
-        private readonly WebApiClient _client;
-        public RtmApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public RtmApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Begins a Real Time Messaging API session and reserves your application a specific URL with which to connect via websocket.

@@ -51,7 +51,7 @@ namespace SlackNet.Tests
         public void SlackTypesCanBeDeserialized()
         {
             var result = JsonConvert.DeserializeObject<Event>(@"{ ""type"": ""message"", ""text"": ""foo"" }", _sut);
-            result.ShouldBeA<Message>()
+            result.ShouldBeA<MessageEvent>()
                 .And.Text.ShouldBe("foo");
         }
 
@@ -67,7 +67,7 @@ namespace SlackNet.Tests
         public void SlackTypePropertyCanBeDeserialized()
         {
             var result = JsonConvert.DeserializeObject<HasSlackTypeProperty>(@"{ ""event"": { ""type"": ""message"", ""text"": ""foo"" } }", _sut);
-            result.Event.ShouldBeA<Message>()
+            result.Event.ShouldBeA<MessageEvent>()
                 .And.Text.ShouldBe("foo");
         }
 
@@ -75,7 +75,7 @@ namespace SlackNet.Tests
         public void SlackTypesInArrayCanBeDeserialized()
         {
             var result = JsonConvert.DeserializeObject<HasSlackTypeArray>(@"{ ""event_list"": [{ ""type"": ""message"", ""text"": ""foo"" }] }", _sut);
-            result.EventList.ShouldBeASingular<Message>()
+            result.EventList.ShouldBeASingular<MessageEvent>()
                 .And.Text.ShouldBe("foo");
         }
 

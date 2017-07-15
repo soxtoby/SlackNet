@@ -22,7 +22,7 @@ namespace SlackNet.Objects
         /// <summary>
         /// The latest message in the channel.
         /// </summary>
-        public Message Latest { get; set; }
+        public MessageEvent Latest { get; set; }
         /// <summary>
         /// Full count of visible messages that the calling user has yet to read.
         /// </summary>

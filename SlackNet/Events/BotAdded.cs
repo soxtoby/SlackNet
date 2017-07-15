@@ -7,6 +7,6 @@ namespace SlackNet.Events
     /// </summary>
     public class BotAdded : Event
     {
-        public Bot Bot { get; set; }
+        public BotInfo Bot { get; set; }
     }
 }

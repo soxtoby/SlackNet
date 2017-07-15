@@ -8,8 +8,8 @@ namespace SlackNet.WebApi
 {
     public class UserProfileApi
     {
-        private readonly WebApiClient _client;
-        public UserProfileApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public UserProfileApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Use this method to retrieve a user's profile information.

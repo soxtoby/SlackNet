@@ -7,17 +7,17 @@ using SlackNet.WebApi;
 
 namespace SlackNet.Bot
 {
-    public class BotMessage : IMessage
+    public class SlackMessage : IMessage
     {
-        private readonly Bot _bot;
+        private readonly SlackBot _bot;
 
-        public BotMessage(Message message, Bot bot)
+        public SlackMessage(MessageEvent message, SlackBot bot)
         {
             RawMessage = message;
             _bot = bot;
         }
 
-        public Message RawMessage { get; }
+        public MessageEvent RawMessage { get; }
         public Hub Hub { get; set; }
         public User User { get; set; }
         public string Text { get; set; }
@@ -31,19 +31,19 @@ namespace SlackNet.Bot
             || Text.IndexOf(_bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
             || Hub.IsIm;
 
-        public Task Reply(string text, bool createThread = false) => Reply(new SlackMessage { Text = text }, createThread);
+        public Task Reply(string text, bool createThread = false) => Reply(new Message { Text = text }, createThread);
 
-        public async Task Reply(Func<Task<SlackMessage>> createReply, bool createThread = false)
+        public async Task Reply(Func<Task<Message>> createReply, bool createThread = false)
         {
             await _bot.WhileTyping(Hub.Id, async () =>
                 {
-                    SlackMessage reply = await createReply().ConfigureAwait(false);
+                    Message reply = await createReply().ConfigureAwait(false);
                     if (reply != null)
                         await Reply(reply, createThread).ConfigureAwait(false);
                 }).ConfigureAwait(false);
         }
 
-        public async Task Reply(SlackMessage message, bool createThread = false)
+        public async Task Reply(Message message, bool createThread = false)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 

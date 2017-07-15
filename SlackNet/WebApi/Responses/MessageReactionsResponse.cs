@@ -4,6 +4,6 @@ namespace SlackNet.WebApi.Responses
 {
     class MessageReactionsResponse
     {
-        public Message Message { get; set; }
+        public MessageEvent Message { get; set; }
     }
 }

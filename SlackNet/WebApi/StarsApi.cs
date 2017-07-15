@@ -7,8 +7,8 @@ namespace SlackNet.WebApi
 {
     public class StarsApi
     {
-        private readonly WebApiClient _client;
-        public StarsApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public StarsApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Adds a star to a file.

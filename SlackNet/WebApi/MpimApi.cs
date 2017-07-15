@@ -10,8 +10,8 @@ namespace SlackNet.WebApi
 {
     public class MpimApi
     {
-        private readonly WebApiClient _client;
-        public MpimApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public MpimApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Closes a multiparty direct message channel.
@@ -88,7 +88,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Multiparty direct message channel to fetch thread from.</param>
         /// <param name="threadTs">Unique identifier of a thread's parent message.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<IReadOnlyList<Message>> Replies(string channelId, string threadTs, CancellationToken? cancellationToken = null) =>
+        public async Task<IReadOnlyList<MessageEvent>> Replies(string channelId, string threadTs, CancellationToken? cancellationToken = null) =>
             (await _client.Get<RepliesResponse>("mpim.replies", new Args
                 {
                     { "channel", channelId },

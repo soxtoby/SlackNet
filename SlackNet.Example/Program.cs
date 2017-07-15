@@ -19,8 +19,8 @@ namespace SlackNet.Example
         private static async Task Run(string token)
         {
             int count = 0;
-            var api = new WebApiClient(token);
-            using (var rtmClient = new RtmClient(token))
+            var api = new SlackApiClient(token);
+            using (var rtmClient = new SlackRtmClient(token))
             {
                 await rtmClient.Connect().ConfigureAwait(false);
                 Console.WriteLine("Connected");
@@ -32,7 +32,7 @@ namespace SlackNet.Example
                             User user = (await api.Users.Info(m.User).ConfigureAwait(false));
                             Console.WriteLine($"Received ping from @{user.Name}");
 
-                            await api.Chat.PostMessage(new SlackMessage
+                            await api.Chat.PostMessage(new Message
                                 {
                                     Channel = m.Channel,
                                     Text = "pong",

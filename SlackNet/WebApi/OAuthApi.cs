@@ -7,8 +7,8 @@ namespace SlackNet.WebApi
 {
     public class OAuthApi
     {
-        private readonly WebApiClient _client;
-        public OAuthApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public OAuthApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Allows you to exchange a temporary OAuth code for an API access token. This is used as part of the OAuth authentication flow.

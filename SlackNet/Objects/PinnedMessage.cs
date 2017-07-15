@@ -9,6 +9,6 @@ namespace SlackNet.Objects
         /// The channel ID for the message.
         /// </summary>
         public string Channel { get; set; }
-        public Message Message { get; set; }
+        public MessageEvent Message { get; set; }
     }
 }

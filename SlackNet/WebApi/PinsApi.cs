@@ -9,8 +9,8 @@ namespace SlackNet.WebApi
 {
     public class PinsApi
     {
-        private readonly WebApiClient _client;
-        public PinsApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public PinsApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Pins a file to a particular channel.

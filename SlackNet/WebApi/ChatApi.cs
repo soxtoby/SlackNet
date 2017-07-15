@@ -9,8 +9,8 @@ namespace SlackNet.WebApi
 {
     public class ChatApi
     {
-        private readonly WebApiClient _client;
-        public ChatApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public ChatApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Deletes a message from a channel.
@@ -45,7 +45,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="message">The message to post</param>
         /// <param name="cancellationToken"></param>
-        public Task<PostMessageResponse> PostMessage(SlackMessage message, CancellationToken? cancellationToken = null) =>
+        public Task<PostMessageResponse> PostMessage(Message message, CancellationToken? cancellationToken = null) =>
             _client.Get<PostMessageResponse>("chat.postMessage", new Args
                     {
                         { "channel", message.Channel },

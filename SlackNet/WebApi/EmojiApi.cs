@@ -8,8 +8,8 @@ namespace SlackNet.WebApi
 {
     public class EmojiApi
     {
-        private readonly WebApiClient _client;
-        public EmojiApi(WebApiClient client) => _client = client;
+        private readonly SlackApiClient _client;
+        public EmojiApi(SlackApiClient client) => _client = client;
 
         /// <summary>
         /// Lists the custom emoji for a team.
