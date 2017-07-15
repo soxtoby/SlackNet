@@ -1,4 +1,4 @@
-﻿namespace SlackNet.Objects
+﻿namespace SlackNet
 {
     [SlackType("message")]
     public class ReactionMessage : ReactionItem

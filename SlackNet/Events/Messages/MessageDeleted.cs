@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SlackNet.Events.Messages
+namespace SlackNet.Events
 {
     /// <summary>
     /// Sent when a message in a channel is deleted.

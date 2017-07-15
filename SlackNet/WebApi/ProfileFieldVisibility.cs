@@ -1,5 +1,3 @@
-using SlackNet.Objects;
-
 namespace SlackNet.WebApi
 {
     public enum ProfileFieldVisibility

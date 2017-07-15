@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi.Responses
+namespace SlackNet.WebApi
 {
     public class AccessLogsResponse
     {

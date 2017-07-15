@@ -1,4 +1,4 @@
-﻿namespace SlackNet.Objects
+﻿namespace SlackNet
 {
     public enum UserGroupAutoType
     {

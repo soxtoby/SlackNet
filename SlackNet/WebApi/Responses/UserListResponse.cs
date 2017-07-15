@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using SlackNet.Objects;
 
-namespace SlackNet.WebApi.Responses
+namespace SlackNet.WebApi
 {
     public class UserListResponse
     {

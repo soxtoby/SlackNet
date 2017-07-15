@@ -1,4 +1,4 @@
-﻿namespace SlackNet.Events.Messages
+﻿namespace SlackNet.Events
 {
     /// <summary>
     /// Sometimes sent to all connections for a user when that user leaves a channel. It is sometimes withheld.

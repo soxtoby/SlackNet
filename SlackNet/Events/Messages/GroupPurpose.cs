@@ -1,4 +1,4 @@
-﻿namespace SlackNet.Events.Messages
+﻿namespace SlackNet.Events
 {
     /// <summary>
     /// Sent when the purpose for a private group is changed.

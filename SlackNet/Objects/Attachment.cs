@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SlackNet.Objects
+namespace SlackNet
 {
     public class Attachment
     {

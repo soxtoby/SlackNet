@@ -1,6 +1,4 @@
-﻿using SlackNet.Objects;
-
-namespace SlackNet.WebApi.Responses
+﻿namespace SlackNet.WebApi
 {
     class ReminderResponse
     {

@@ -1,7 +1,7 @@
 ﻿using System;
-using SlackNet.Events.Messages;
+using SlackNet.Events;
 
-namespace SlackNet.Objects
+namespace SlackNet
 {
     public class Hub
     {

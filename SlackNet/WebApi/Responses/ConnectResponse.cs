@@ -1,7 +1,6 @@
-﻿using SlackNet.Objects;
-using SlackNet.Rtm;
+﻿using SlackNet.Rtm;
 
-namespace SlackNet.WebApi.Responses
+namespace SlackNet.WebApi
 {
     public class ConnectResponse
     {

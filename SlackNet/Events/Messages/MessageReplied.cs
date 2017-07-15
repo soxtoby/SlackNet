@@ -1,4 +1,4 @@
-﻿namespace SlackNet.Events.Messages
+﻿namespace SlackNet.Events
 {
     /// <summary>
     /// Sent when a channel's message is a reply to another message.

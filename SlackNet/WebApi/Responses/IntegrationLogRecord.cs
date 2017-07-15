@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SlackNet.WebApi.Responses
+namespace SlackNet.WebApi
 {
     public class IntegrationLogRecord
     {

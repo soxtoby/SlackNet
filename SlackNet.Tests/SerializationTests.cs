@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 using EasyAssertions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SlackNet.Events;
-using SlackNet.Events.Messages;
-using SlackNet.Objects;
 
 namespace SlackNet.Tests
 {

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SlackNet.Events.Messages;
-using SlackNet.Objects;
+using SlackNet.Events;
+using SlackNet;
 using SlackNet.WebApi;
 
 namespace SlackNet.Bot

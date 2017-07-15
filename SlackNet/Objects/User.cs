@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace SlackNet.Objects
+namespace SlackNet
 {
     public class User
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using SlackNet.Events.Messages;
+using SlackNet.Events;
 
-namespace SlackNet.WebApi.Responses
+namespace SlackNet.WebApi
 {
     class RepliesResponse
     {

@@ -1,4 +1,4 @@
-﻿namespace SlackNet.Objects
+﻿namespace SlackNet
 {
     [SlackType("group")]
     public class StarredGroup : StarredItem

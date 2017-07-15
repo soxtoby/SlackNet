@@ -1,4 +1,4 @@
-﻿namespace SlackNet.Objects
+﻿namespace SlackNet
 {
     [SlackType("im")]
     public class StarredIm : StarredItem

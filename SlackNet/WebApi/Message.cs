@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using SlackNet.Events.Messages;
-using SlackNet.Objects;
+using SlackNet.Events;
+using SlackNet;
 
 namespace SlackNet.WebApi
 {

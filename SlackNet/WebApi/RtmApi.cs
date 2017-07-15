@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using SlackNet.Events;
-using SlackNet.WebApi.Responses;
 using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi

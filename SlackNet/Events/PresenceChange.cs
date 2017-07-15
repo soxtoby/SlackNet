@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using SlackNet.Objects;
 
 namespace SlackNet.Events
 {

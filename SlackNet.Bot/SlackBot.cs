@@ -6,10 +6,9 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
-using SlackNet.Events.Messages;
-using SlackNet.Objects;
+using SlackNet.Events;
+using SlackNet;
 using SlackNet.WebApi;
-using SlackNet.WebApi.Responses;
 
 namespace SlackNet.Bot
 {

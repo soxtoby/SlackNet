@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using SlackNet.Objects;
 using SlackNet.WebApi;
 
 namespace SlackNet.Example

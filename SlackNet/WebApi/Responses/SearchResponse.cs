@@ -1,7 +1,6 @@
-﻿using SlackNet.Events.Messages;
-using SlackNet.Objects;
+﻿using SlackNet.Events;
 
-namespace SlackNet.WebApi.Responses
+namespace SlackNet.WebApi
 {
     public class SearchResponse
     {

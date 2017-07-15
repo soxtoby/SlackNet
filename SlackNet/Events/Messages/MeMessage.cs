@@ -1,4 +1,4 @@
-﻿namespace SlackNet.Events.Messages
+﻿namespace SlackNet.Events
 {
     /// <summary>
     /// Sent when a channel member performs an action using the /me command.

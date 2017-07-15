@@ -1,4 +1,4 @@
-﻿namespace SlackNet.Events.Messages
+﻿namespace SlackNet.Events
 {
     /// <summary>
     /// Sent when a team member joins a private group.

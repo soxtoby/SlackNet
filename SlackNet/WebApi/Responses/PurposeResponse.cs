@@ -1,4 +1,4 @@
-﻿namespace SlackNet.WebApi.Responses
+﻿namespace SlackNet.WebApi
 {
     class PurposeResponse
     {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using SlackNet.Objects;
 
-namespace SlackNet.Events.Messages
+namespace SlackNet.Events
 {
     [SlackType("message")]
     public class MessageEvent : Event

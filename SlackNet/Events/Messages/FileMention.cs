@@ -1,6 +1,4 @@
-﻿using SlackNet.Objects;
-
-namespace SlackNet.Events.Messages
+﻿namespace SlackNet.Events
 {
     /// <summary>
     /// Sent when a file is mentioned in a channel, group or direct message.

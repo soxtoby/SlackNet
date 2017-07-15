@@ -1,10 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using SlackNet.Events.Messages;
-using SlackNet.Objects;
-using SlackNet.WebApi.Responses;
+using SlackNet.Events;
 using Args = System.Collections.Generic.Dictionary<string, object>;
-using FileComment = SlackNet.Objects.FileComment;
 
 namespace SlackNet.WebApi
 {

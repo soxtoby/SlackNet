@@ -1,6 +1,4 @@
-﻿using SlackNet.Objects;
-
-namespace SlackNet.Events.Messages
+﻿namespace SlackNet.Events
 {
     /// <summary>
     /// Sent when an item is pinned to a channel.
@@ -8,6 +6,6 @@ namespace SlackNet.Events.Messages
     public class PinnedItem : MessageEvent
     {
         public PinnedItemType ItemType { get; set; }
-        public Objects.PinnedItem Item { get; set; }
+        public SlackNet.PinnedItem Item { get; set; }
     }
 }

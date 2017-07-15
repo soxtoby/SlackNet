@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace SlackNet.WebApi.Responses
+namespace SlackNet.WebApi
 {
     public enum DisabledReason
     {

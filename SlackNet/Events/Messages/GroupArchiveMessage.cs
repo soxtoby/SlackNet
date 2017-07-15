@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.Events.Messages
+namespace SlackNet.Events
 {
     /// <summary>
-    /// Sent when a channel is archived.
+    /// Sent when a private group is archived.
     /// </summary>
-    public class ChannelArchive : MessageEvent
+    [SlackType("group_archive")]
+    public class GroupArchiveMessage : MessageEvent
     {
         public IList<string> Members { get; set; } = new List<string>();
     }

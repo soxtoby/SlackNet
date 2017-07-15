@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace SlackNet.Objects
+namespace SlackNet
 {
     public enum PinnedItemType
     {

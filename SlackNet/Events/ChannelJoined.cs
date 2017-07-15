@@ -1,5 +1,3 @@
-using SlackNet.Objects;
-
 namespace SlackNet.Events
 {
     /// <summary>

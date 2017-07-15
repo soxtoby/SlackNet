@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.Events.Messages
+namespace SlackNet.Events
 {
     /// <summary>
     /// Sent when a message is sent to a channel by an integration "bot".

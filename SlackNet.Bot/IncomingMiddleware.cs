@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
-using SlackNet.Events.Messages;
+using SlackNet.Events;
 
 namespace SlackNet.Bot
 {

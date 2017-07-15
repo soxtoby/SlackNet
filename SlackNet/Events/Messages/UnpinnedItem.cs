@@ -1,6 +1,4 @@
-﻿using SlackNet.Objects;
-
-namespace SlackNet.Events.Messages
+﻿namespace SlackNet.Events
 {
     /// <summary>
     /// When an item is un-pinned from a channel, an <see cref="UnpinnedItem"/> message is sent via slackbot to the user that initially pinned the item.
@@ -9,6 +7,6 @@ namespace SlackNet.Events.Messages
     public class UnpinnedItem : MessageEvent
     {
         public PinnedItemType ItemType { get; set; }
-        public Objects.PinnedItem Item { get; set; }
+        public SlackNet.PinnedItem Item { get; set; }
     }
 }

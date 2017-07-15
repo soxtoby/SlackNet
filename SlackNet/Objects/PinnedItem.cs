@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SlackNet.Objects
+namespace SlackNet
 {
     public class PinnedItem
     {

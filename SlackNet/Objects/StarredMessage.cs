@@ -1,6 +1,6 @@
-﻿using SlackNet.Events.Messages;
+﻿using SlackNet.Events;
 
-namespace SlackNet.Objects
+namespace SlackNet
 {
     [SlackType("message")]
     public class StarredMessage : StarredItem
