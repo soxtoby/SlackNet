@@ -225,6 +225,17 @@ namespace SlackNet.Bot
                 await action().ConfigureAwait(false);
         }
 
+        public void ClearCache()
+        {
+            _hubs.Clear();
+            _channels.Clear();
+            _groups.Clear();
+            _mpims.Clear();
+            _users.Clear();
+            _allUsers.Clear();
+            _ims.Clear();
+        }
+
         public IDisposable Subscribe(IObserver<IMessage> observer) => _incomingMessages.Subscribe(observer);
 
         public void OnCompleted() => _outgoingMessages.OnCompleted();

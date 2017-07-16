@@ -16,8 +16,8 @@ namespace SlackNet.Bot
         IList<Attachment> Attachments { get; set; }
         bool IsInThread { get; }
         bool MentionsBot { get; }
-        Task Reply(string text, bool createThread = false);
-        Task Reply(BotMessage message, bool createThread = false);
-        Task Reply(Func<Task<BotMessage>> createReply, bool createThread = false);
+        Task ReplyWith(string text, bool createThread = false);
+        Task ReplyWith(BotMessage message, bool createThread = false);
+        Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false);
     }
 }

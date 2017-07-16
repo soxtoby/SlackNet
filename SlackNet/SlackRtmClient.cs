@@ -103,7 +103,7 @@ namespace SlackNet
         /// <summary>
         /// Send a simple message. For more complicated messages, use <see cref="ChatApi.PostMessage"/> instead.
         /// </summary>
-        public async Task<MessageReply> Send(string channelId, string text)
+        public async Task<MessageReply> SendMessage(string channelId, string text)
         {
             var reply = await SendWithReply(new RtmMessage { Channel = channelId, Text = text }).ConfigureAwait(false);
             return new MessageReply

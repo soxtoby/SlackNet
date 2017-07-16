@@ -29,19 +29,19 @@ namespace SlackNet.Bot
             || Text.IndexOf(_bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
             || Hub.IsIm;
 
-        public Task Reply(string text, bool createThread = false) => Reply(new BotMessage { Text = text }, createThread);
+        public Task ReplyWith(string text, bool createThread = false) => ReplyWith(new BotMessage { Text = text }, createThread);
 
-        public async Task Reply(Func<Task<BotMessage>> createReply, bool createThread = false)
+        public async Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false)
         {
             await _bot.WhileTyping(Hub.Id, async () =>
                 {
                     BotMessage reply = await createReply().ConfigureAwait(false);
                     if (reply != null)
-                        await Reply(reply, createThread).ConfigureAwait(false);
+                        await ReplyWith(reply, createThread).ConfigureAwait(false);
                 }).ConfigureAwait(false);
         }
 
-        public async Task Reply(BotMessage message, bool createThread = false)
+        public async Task ReplyWith(BotMessage message, bool createThread = false)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
