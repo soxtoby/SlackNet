@@ -5,7 +5,95 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
-    public class ReactionsApi
+    public interface IReactionsApi
+    {
+        /// <summary>
+        /// Adds a reaction (emoji) to a file.
+        /// </summary>
+        /// <param name="name">Reaction (emoji) name.</param>
+        /// <param name="fileId">File to add reaction to.</param>
+        /// <param name="cancellationToken"></param>
+        Task AddToFile(string name, string fileId, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Adds a reaction (emoji) to a file comment.
+        /// </summary>
+        /// <param name="name">Reaction (emoji) name.</param>
+        /// <param name="fileCommentId">File comment to add reaction to.</param>
+        /// <param name="cancellationToken"></param>
+        Task AddToFileComment(string name, string fileCommentId, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Adds a reaction (emoji) to a message.
+        /// </summary>
+        /// <param name="name">Reaction (emoji) name.</param>
+        /// <param name="channelId">Channel where the message to add reaction to was posted.</param>
+        /// <param name="ts">Timestamp of the message to add reaction to.</param>
+        /// <param name="cancellationToken"></param>
+        Task AddToMessage(string name, string channelId, string ts, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Returns a list of all reactions for a single file.
+        /// </summary>
+        /// <param name="fileId">File to get reactions for.</param>
+        /// <param name="full">If true always return the complete reaction list.</param>
+        /// <param name="cancellationToken"></param>
+        Task<File> GetForFile(string fileId, bool full = false, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Returns a list of all reactions for a single file comment.
+        /// </summary>
+        /// <param name="fileCommentId">File comment to get reactions for.</param>
+        /// <param name="full">If true always return the complete reaction list.</param>
+        /// <param name="cancellationToken"></param>
+        Task<FileComment> GetForFileComment(string fileCommentId, bool full = false, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Returns a list of all reactions for a single message.
+        /// </summary>
+        /// <param name="channelId">Channel where the message to get reactions for was posted.</param>
+        /// <param name="ts">Timestamp of the message to get reactions for.</param>
+        /// <param name="full">If true always return the complete reaction list.</param>
+        /// <param name="cancellationToken"></param>
+        Task<MessageEvent> GetForMessage(string channelId, string ts, bool full = false, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Returns a list of all items (file, file comment, channel message, group message, or direct message) reacted to by a user.
+        /// </summary>
+        /// <param name="userId">Show reactions made by this user. Defaults to the authed user.</param>
+        /// <param name="full">If true always return the complete reaction list.</param>
+        /// <param name="count">Number of items to return per page.</param>
+        /// <param name="page">Page number of results to return.</param>
+        /// <param name="cancellationToken"></param>
+        Task<ReactionItemListResponse> List(string userId = null, bool full = false, int count = 100, int page = 1, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Removes a reaction (emoji) from a file.
+        /// </summary>
+        /// <param name="name">Reaction (emoji) name.</param>
+        /// <param name="fileId">File to remove reaction from.</param>
+        /// <param name="cancellationToken"></param>
+        Task RemoveFromFile(string name, string fileId, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Removes a reaction (emoji) from a file comment.
+        /// </summary>
+        /// <param name="name">Reaction (emoji) name.</param>
+        /// <param name="fileCommentId">File comment to remove reaction from.</param>
+        /// <param name="cancellationToken"></param>
+        Task RemoveFromFileComment(string name, string fileCommentId, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Removes a reaction (emoji) from a message.
+        /// </summary>
+        /// <param name="name">Reaction (emoji) name.</param>
+        /// <param name="channelId">Channel where the message to remove reaction from was posted.</param>
+        /// <param name="ts">Timestamp of the message to remove reaction from.</param>
+        /// <param name="cancellationToken"></param>
+        Task RemoveFromMessage(string name, string channelId, string ts, CancellationToken? cancellationToken = null);
+    }
+
+    public class ReactionsApi : IReactionsApi
     {
         private readonly SlackApiClient _client;
         public ReactionsApi(SlackApiClient client) => _client = client;

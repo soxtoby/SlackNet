@@ -7,7 +7,74 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet
 {
-    public class SlackApiClient
+    public interface ISlackApiClient
+    {
+        IApiApi Api { get; }
+        IAuthApi Auth { get; }
+        IBotsApi Bots { get; }
+        IChannelsApi Channels { get; }
+        IChatApi Chat { get; }
+        IDndApi Dnd { get; }
+        IEmojiApi Emoji { get; }
+        IFileCommentsApi FileComments { get; }
+        IFilesApi Files { get; }
+        IGroupsApi Groups { get; }
+        IImApi Im { get; }
+        IMpimApi Mpim { get; }
+        IOAuthApi OAuth { get; }
+        IPinsApi Pins { get; }
+        IReactionsApi Reactions { get; }
+        IRemindersApi Reminder { get; }
+        IRtmApi Rtm { get; }
+        ISearchApi Search { get; }
+        IStarsApi Stars { get; }
+        ITeamApi Team { get; }
+        ITeamProfileApi TeamProfile { get; }
+        IUserGroupsApi UserGroups { get; }
+        IUserGroupUsersApi UserGroupUsers { get; }
+        IUsersApi Users { get; }
+        IUserProfileApi UserProfile { get; }
+
+        /// <summary>
+        /// Calls a Slack API method.
+        /// </summary>
+        /// <param name="apiMethod">Name of Slack method.</param>
+        /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
+        /// <param name="cancellationToken"></param>
+        Task Get(string apiMethod, Args args, CancellationToken? cancellationToken);
+
+        /// <summary>
+        /// Calls a Slack API method.
+        /// </summary>
+        /// <typeparam name="T">Type of response expected.</typeparam>
+        /// <param name="apiMethod">Name of Slack method.</param>
+        /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
+        /// <param name="cancellationToken"></param>
+        Task<T> Get<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class;
+
+        /// <summary>
+        /// Calls a Slack API that requires POST content.
+        /// </summary>
+        /// <param name="apiMethod">Name of Slack method.</param>
+        /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
+        /// <param name="bodyName">Parameter name for POST body content.</param>
+        /// <param name="bodyContent">POST body content.</param>
+        /// <param name="cancellationToken"></param>
+        Task Post(string apiMethod, Args args, string bodyName, HttpContent bodyContent, CancellationToken? cancellationToken);
+
+        /// <summary>
+        /// Calls a Slack API that requires POST content.
+        /// </summary>
+        /// <typeparam name="T">Type of response expected.</typeparam>
+        /// <param name="apiMethod">Name of Slack method.</param>
+        /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
+        /// <param name="bodyName">Parameter name for POST body content.</param>
+        /// <param name="bodyContent">POST body content.</param>
+        /// <param name="cancellationToken"></param>
+        Task<T> Post<T>(string apiMethod, Args args, string bodyName, HttpContent bodyContent, CancellationToken? cancellationToken) where T : class;
+    }
+
+    public class SlackApiClient : ISlackApiClient
     {
         private readonly IHttp _http;
         private readonly ISlackUrlBuilder _urlBuilder;
@@ -30,31 +97,31 @@ namespace SlackNet
             _token = token;
         }
 
-        public ApiApi Api => new ApiApi(this);
-        public AuthApi Auth => new AuthApi(this);
-        public BotsApi Bots => new BotsApi(this);
-        public ChannelsApi Channels => new ChannelsApi(this);
-        public ChatApi Chat => new ChatApi(this);
-        public DndApi Dnd => new DndApi(this);
-        public EmojiApi Emoji => new EmojiApi(this);
-        public FileCommentsApi FileComments => new FileCommentsApi(this);
-        public FilesApi Files => new FilesApi(this);
-        public GroupsApi Groups => new GroupsApi(this);
-        public ImApi Im => new ImApi(this);
-        public MpimApi Mpim => new MpimApi(this);
-        public OAuthApi OAuth => new OAuthApi(this);
-        public PinsApi Pins => new PinsApi(this);
-        public ReactionsApi Reactions => new ReactionsApi(this);
-        public RemindersApi Reminder => new RemindersApi(this);
-        public RtmApi Rtm => new RtmApi(this);
-        public SearchApi Search => new SearchApi(this);
-        public StarsApi Stars => new StarsApi(this);
-        public TeamApi Team => new TeamApi(this);
-        public TeamProfileApi TeamProfile => new TeamProfileApi(this);
-        public UserGroupsApi UserGroups => new UserGroupsApi(this);
-        public UserGroupUsersApi UserGroupUsers => new UserGroupUsersApi(this);
-        public UsersApi Users => new UsersApi(this);
-        public UserProfileApi UserProfile => new UserProfileApi(this);
+        public IApiApi Api => new ApiApi(this);
+        public IAuthApi Auth => new AuthApi(this);
+        public IBotsApi Bots => new BotsApi(this);
+        public IChannelsApi Channels => new ChannelsApi(this);
+        public IChatApi Chat => new ChatApi(this);
+        public IDndApi Dnd => new DndApi(this);
+        public IEmojiApi Emoji => new EmojiApi(this);
+        public IFileCommentsApi FileComments => new FileCommentsApi(this);
+        public IFilesApi Files => new FilesApi(this);
+        public IGroupsApi Groups => new GroupsApi(this);
+        public IImApi Im => new ImApi(this);
+        public IMpimApi Mpim => new MpimApi(this);
+        public IOAuthApi OAuth => new OAuthApi(this);
+        public IPinsApi Pins => new PinsApi(this);
+        public IReactionsApi Reactions => new ReactionsApi(this);
+        public IRemindersApi Reminder => new RemindersApi(this);
+        public IRtmApi Rtm => new RtmApi(this);
+        public ISearchApi Search => new SearchApi(this);
+        public IStarsApi Stars => new StarsApi(this);
+        public ITeamApi Team => new TeamApi(this);
+        public ITeamProfileApi TeamProfile => new TeamProfileApi(this);
+        public IUserGroupsApi UserGroups => new UserGroupsApi(this);
+        public IUserGroupUsersApi UserGroupUsers => new UserGroupUsersApi(this);
+        public IUsersApi Users => new UsersApi(this);
+        public IUserProfileApi UserProfile => new UserProfileApi(this);
 
         /// <summary>
         /// Calls a Slack API method.

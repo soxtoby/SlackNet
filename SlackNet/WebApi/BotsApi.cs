@@ -5,7 +5,18 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
-    public class BotsApi
+    public interface IBotsApi
+    {
+        /// <summary>
+        /// Returns information about a bot user.
+        /// <see cref="botId"/> is returned from <see cref="BotMessage"/> events and in the response of methods like <see cref="ChannelsApi.History"/>.
+        /// </summary>
+        /// <param name="botId">Bot user to get info on.</param>
+        /// <param name="cancellationToken"></param>
+        Task<BotInfo> Info(string botId, CancellationToken? cancellationToken = null);
+    }
+
+    public class BotsApi : IBotsApi
     {
         private readonly SlackApiClient _client;
         public BotsApi(SlackApiClient client) => _client = client;

@@ -4,7 +4,17 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
-    public class TeamProfileApi
+    public interface ITeamProfileApi
+    {
+        /// <summary>
+        /// Used to get the profile field definitions for this team.
+        /// </summary>
+        /// <param name="visibility">Filter by visibility.</param>
+        /// <param name="cancellationToken"></param>
+        Task<TeamProfile> Get(ProfileFieldVisibility visibility = ProfileFieldVisibility.All, CancellationToken? cancellationToken = null);
+    }
+
+    public class TeamProfileApi : ITeamProfileApi
     {
         private readonly SlackApiClient _client;
         public TeamProfileApi(SlackApiClient client) => _client = client;

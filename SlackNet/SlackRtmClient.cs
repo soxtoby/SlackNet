@@ -17,7 +17,55 @@ using Reply = SlackNet.Rtm.Reply;
 
 namespace SlackNet
 {
-    public class SlackRtmClient : IDisposable
+    public interface ISlackRtmClient
+    {
+        /// <summary>
+        /// Messages coming from Slack.
+        /// </summary>
+        IObservable<MessageEvent> Messages { get; }
+
+        /// <summary>
+        /// All events (including messages) coming from Slack.
+        /// </summary>
+        IObservable<Event> Events { get; }
+
+        /// <summary>
+        /// Is the client connecting or has it connected.
+        /// </summary>
+        bool Connected { get; }
+
+        /// <summary>
+        /// Begins a Real Time Messaging API session and connects via a websocket.
+        /// Will reconnect automatically.
+        /// </summary>
+        /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
+        /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
+        /// <param name="cancellationToken"></param>
+        Task<ConnectResponse> Connect(bool batchPresenceAware = false, bool manualPresenceSubscription = false, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Send a simple message. For more complicated messages, use <see cref="ChatApi.PostMessage"/> instead.
+        /// </summary>
+        Task<MessageReply> SendMessage(string channelId, string text);
+
+        /// <summary>
+        /// Indicate that the user is currently writing a message to send to a channel.
+        /// This can be sent on every key press in the chat input unless one has been sent in the last three seconds.
+        /// </summary>
+        void SendTyping(string channelId);
+
+        /// <summary>
+        /// Low-level method for sending an arbitrary message over the websocket where a reply is expected.
+        /// </summary>
+        Task<Reply> SendWithReply(OutgoingRtmEvent slackEvent);
+
+        /// <summary>
+        /// Low-level method for sending an arbitrary message over the websocket where no reply is expected.
+        /// </summary>
+        void Send(OutgoingRtmEvent slackEvent);
+    }
+
+    public class SlackRtmClient : IDisposable, ISlackRtmClient
     {
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly SlackApiClient _client;
@@ -96,7 +144,7 @@ namespace SlackNet
         /// <summary>
         /// Is the client connecting or has it connected.
         /// </summary>
-        public bool Connected => 
+        public bool Connected =>
                _webSocket?.State == WebSocketState.Connecting
             || _webSocket?.State == WebSocketState.Open;
 
@@ -107,10 +155,10 @@ namespace SlackNet
         {
             var reply = await SendWithReply(new RtmMessage { Channel = channelId, Text = text }).ConfigureAwait(false);
             return new MessageReply
-                {
-                    Text = reply.Text,
-                    Ts = reply.Ts
-                };
+            {
+                Text = reply.Text,
+                Ts = reply.Ts
+            };
         }
 
         /// <summary>

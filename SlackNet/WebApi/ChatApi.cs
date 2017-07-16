@@ -5,7 +5,57 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
-    public class ChatApi
+    public interface IChatApi
+    {
+        /// <summary>
+        /// Deletes a message from a channel.
+        /// </summary>
+        /// <param name="ts">Timestamp of the message to be deleted.</param>
+        /// <param name="channelId">Channel containing the message to be deleted.</param>
+        /// <param name="asUser">Pass True to delete the message as the authed user. Bot users in this context are considered authed users.</param>
+        /// <param name="cancellationToken"></param>
+        Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Sends a /me message to a channel from the calling user.
+        /// </summary>
+        /// <param name="channel">Channel to send message to. Can be a public channel, private group or IM channel. Can be an encoded ID, or a name.</param>
+        /// <param name="text">Text of the message to send.</param>
+        /// <param name="cancellationToken"></param>
+        Task<MessageTsResponse> MeMessage(string channel, string text, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Posts a message to a public channel, private channel, or direct message/IM channel.
+        /// </summary>
+        /// <param name="message">The message to post</param>
+        /// <param name="cancellationToken"></param>
+        Task<PostMessageResponse> PostMessage(Message message, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Attaches Slack app unfurl behavior to a specified and relevant message. 
+        /// A user token is required as this method does not support bot user tokens.
+        /// </summary>
+        /// <param name="channelId">Channel ID of the message.</param>
+        /// <param name="ts">Timestamp of the message to add unfurl behavior to.</param>
+        /// <param name="unfurls">Dictionary mapping a set of URLs from the message to their unfurl attachment.</param>
+        /// <param name="userAuthRequired">Set to True to indicate the user must install your Slack app to trigger unfurls for this domain.</param>
+        /// <param name="cancellationToken"></param>
+        /// <remarks>
+        /// The first time this method is executed with a particular <see cref="ts"/> and <see cref="channelId"/> combination, 
+        /// the valid <see cref="unfurls"/> attachments you provide will be attached to the message. 
+        /// Subsequent attempts with the same <see cref="ts"/> and <see cref="channelId"/> values will modify the same attachments, rather than adding more.
+        /// </remarks>
+        Task Unfurl(string channelId, string ts, IDictionary<string, Attachment> unfurls, bool userAuthRequired = false, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Updates a message in a channel.
+        /// </summary>
+        /// <param name="messageUpdate">Message to update.</param>
+        /// <param name="cancellationToken"></param>
+        Task<MessageUpdateResponse> Update(MessageUpdate messageUpdate, CancellationToken? cancellationToken = null);
+    }
+
+    public class ChatApi : IChatApi
     {
         private readonly SlackApiClient _client;
         public ChatApi(SlackApiClient client) => _client = client;

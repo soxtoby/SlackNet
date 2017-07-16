@@ -5,7 +5,21 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
-    public class EmojiApi
+    public interface IEmojiApi
+    {
+        /// <summary>
+        /// Lists the custom emoji for a team.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>
+        /// A map of name/url pairs, one for each custom emoji used by the team. 
+        /// The alias: pseudo-protocol will be used where the emoji is an alias,
+        /// the string following the colon is the name of the other emoji this emoji is an alias to.
+        /// </returns>
+        Task<IReadOnlyDictionary<string, string>> List(CancellationToken? cancellationToken = null);
+    }
+
+    public class EmojiApi : IEmojiApi
     {
         private readonly SlackApiClient _client;
         public EmojiApi(SlackApiClient client) => _client = client;

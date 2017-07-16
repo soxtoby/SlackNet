@@ -5,7 +5,28 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
-    public class UserGroupUsersApi
+    public interface IUserGroupUsersApi
+    {
+        /// <summary>
+        /// Returns a list of all users within a User Group.
+        /// </summary>
+        /// <param name="userGroupId">ID of the User Group to update.</param>
+        /// <param name="includeDisabled">Allow results that involve disabled User Groups.</param>
+        /// <param name="cancellationToken"></param>
+        Task<IReadOnlyList<string>> List(string userGroupId, bool includeDisabled = false, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Updates the list of users that belong to a User Group.
+        /// This method replaces all users in a User Group with the list of users provided in the <see cref="userIds"/> parameter.
+        /// </summary>
+        /// <param name="userGroupId">ID of the User Group to update.</param>
+        /// <param name="userIds">User IDs that represent the entire list of users for the User Group.</param>
+        /// <param name="includeCount">Include the number of users in the User Group.</param>
+        /// <param name="cancellationToken"></param>
+        Task<UserGroup> Update(string userGroupId, IEnumerable<string> userIds, bool includeCount = false, CancellationToken? cancellationToken = null);
+    }
+
+    public class UserGroupUsersApi : IUserGroupUsersApi
     {
         private readonly SlackApiClient _client;
         public UserGroupUsersApi(SlackApiClient client) => _client = client;
