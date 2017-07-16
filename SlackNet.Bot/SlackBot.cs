@@ -7,24 +7,27 @@ using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using SlackNet.Events;
-using SlackNet;
 using SlackNet.WebApi;
 
 namespace SlackNet.Bot
 {
-    public class SlackBot : IObservable<IMessage>, IObserver<Message>, IDisposable
+    public class SlackBot : IObservable<IMessage>, IObserver<BotMessage>, IDisposable
     {
         private readonly SlackRtmClient _rtm;
         private readonly SlackApiClient _api;
         private readonly ConcurrentQueue<IMessageHandler> _handlers = new ConcurrentQueue<IMessageHandler>();
         private readonly ConcurrentDictionary<string, Task<Hub>> _hubs = new ConcurrentDictionary<string, Task<Hub>>();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _channels = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _groups = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _mpims = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
         private readonly ConcurrentDictionary<string, Task<User>> _users = new ConcurrentDictionary<string, Task<User>>();
+        private readonly ConcurrentValue<Task<IReadOnlyList<User>>> _allUsers = new ConcurrentValue<Task<IReadOnlyList<User>>>();
         private readonly ConcurrentValue<Task<IReadOnlyList<Im>>> _ims = new ConcurrentValue<Task<IReadOnlyList<Im>>>();
         private readonly SyncedSubject<IMessage> _incomingMessages = new SyncedSubject<IMessage>();
-        private readonly SyncedSubject<Message> _outgoingMessages = new SyncedSubject<Message>();
-        private readonly SyncedSubject<Message> _sentMessages = new SyncedSubject<Message>();
+        private readonly SyncedSubject<BotMessage> _outgoingMessages = new SyncedSubject<BotMessage>();
+        private readonly SyncedSubject<BotMessage> _sentMessages = new SyncedSubject<BotMessage>();
         private IObservable<IMessage> _incomingWithMiddlewareApplied;
-        private IObservable<Message> _outgoingWithMiddlewareApplied;
+        private IObservable<BotMessage> _outgoingWithMiddlewareApplied;
         private IDisposable _outgoingSubscription;
         private IDisposable _incomingSubscription;
 
@@ -34,8 +37,11 @@ namespace SlackNet.Bot
         {
             _rtm = rtmClient;
             _api = apiClient;
-            _incomingWithMiddlewareApplied = _rtm.Messages.SelectMany(CreateBotMessage);
-            _outgoingWithMiddlewareApplied = _outgoingMessages;
+            _incomingWithMiddlewareApplied = _rtm.Messages
+                .Where(m => m.Subtype == null)
+                .SelectMany(CreateSlackMessage);
+            _outgoingWithMiddlewareApplied = _outgoingMessages
+                .LimitFrequency(TimeSpan.FromSeconds(1));
         }
 
         public string Id { get; private set; }
@@ -66,7 +72,7 @@ namespace SlackNet.Bot
             _incomingWithMiddlewareApplied = middleware(_incomingWithMiddlewareApplied);
         }
 
-        public void AddOutgoingMiddleware(Func<IObservable<Message>, IObservable<Message>> middleware)
+        public void AddOutgoingMiddleware(Func<IObservable<BotMessage>, IObservable<BotMessage>> middleware)
         {
             if (_rtm.Connected)
                 throw new InvalidOperationException("Can't add more middleware after bot is connected.");
@@ -78,17 +84,15 @@ namespace SlackNet.Bot
         public event EventHandler<IMessage> OnMessage;
         public IObservable<IMessage> Messages => _incomingMessages.AsObservable();
 
-        private async Task<SlackMessage> CreateBotMessage(MessageEvent message)
-        {
-            return new SlackMessage(message, this)
+        private async Task<SlackMessage> CreateSlackMessage(MessageEvent message) =>
+            new SlackMessage(message, this)
                 {
                     Ts = message.Ts,
                     Text = message.Text,
-                    Hub = await GetHub(message.Channel).ConfigureAwait(false),
-                    User = await GetUser(message.User).ConfigureAwait(false),
+                    Hub = await GetHubById(message.Channel).ConfigureAwait(false),
+                    User = await GetUserById(message.User).ConfigureAwait(false),
                     Attachments = message.Attachments
                 };
-        }
 
         private void HandleMessage(IMessage message)
         {
@@ -99,24 +103,13 @@ namespace SlackNet.Bot
             _incomingMessages.OnNext(message);
         }
 
-        private async Task<Hub> GetHub(string channelId)
-        {
-            return await _hubs.GetOrAdd(channelId, FetchHub).ConfigureAwait(false);
-        }
+        public async Task<Hub> GetHubById(string channelId) => await _hubs.GetOrAdd(channelId, FetchHub).ConfigureAwait(false);
 
-        private async Task<Hub> FetchHub(string channelId)
-        {
-            switch (channelId[0])
-            {
-                case 'C':
-                    return await _api.Channels.Info(channelId).NullIfNotFound().ConfigureAwait(false);
-                case 'G':
-                    return await _api.Groups.Info(channelId).NullIfNotFound().ConfigureAwait(false);
-                case 'D':
-                    return await FetchImChannel(channelId).ConfigureAwait(false);
-            }
-            return null;
-        }
+        private async Task<Hub> FetchHub(string channelId) => 
+              channelId[0] == 'C' ? await _api.Channels.Info(channelId).NullIfNotFound().ConfigureAwait(false) 
+            : channelId[0] == 'G' ? await _api.Groups.Info(channelId).NullIfNotFound().ConfigureAwait(false)
+            : channelId[0] == 'D' ? await FetchImChannel(channelId).ConfigureAwait(false) 
+            : null;
 
         private async Task<Hub> FetchImChannel(string channelId)
         {
@@ -129,18 +122,102 @@ namespace SlackNet.Bot
             return fullImResponse?.Channel;
         }
 
+        /// <summary>
+        /// Find hub with matching name.
+        /// </summary>
+        /// <param name="channel">Channel, group or IM name, with leading # or @ symbol as appropriate.</param>
+        public Task<Hub> GetHubByName(string channel) => 
+              channel.FirstOrDefault() == '#' ? GetChannelByName(channel.Substring(1))
+            : channel.FirstOrDefault() == '@' ? GetImByName(channel.Substring(1))
+            : GetGroupByName(channel);
+
+        public async Task<Hub> GetChannelByName(string name) =>
+            await FindCachedHub(h => h.IsChannel && h.Name == name).ConfigureAwait(false)
+            ?? (await GetChannels().ConfigureAwait(false))
+                .FirstOrDefault(c => c.Name == name);
+
+        public async Task<Hub> GetGroupByName(string name) =>
+            await FindCachedHub(h => h.IsGroup && h.Name == name).ConfigureAwait(false)
+            ?? (await GetGroups().ConfigureAwait(false))
+                .FirstOrDefault(g => g.Name == name);
+
+        private async Task<Channel> FindCachedHub(Func<Channel, bool> predicate) =>
+            await _hubs.Values.ToObservable()
+                .SelectMany(h => h)
+                .OfType<Channel>()
+                .FirstOrDefaultAsync(predicate)
+                .ToTask()
+                .ConfigureAwait(false);
+
+        public async Task<Hub> GetImByName(string username) =>
+            await (await GetOpenIms().ConfigureAwait(false))
+                .ToObservable()
+                .SelectMany(async im => new { im, user = await GetUserById(im.User).ConfigureAwait(false) })
+                .FirstOrDefaultAsync(im => im.user.Name == username)
+                .Select(im => im.im)
+                .ToTask()
+                .ConfigureAwait(false);
+
+        public Task<IReadOnlyList<Channel>> GetChannels() => _channels.GetOrCreateValue(FetchChannels);
+        private async Task<IReadOnlyList<Channel>> FetchChannels() => CacheHubs(await _api.Channels.List().ConfigureAwait(false));
+
+        public Task<IReadOnlyList<Channel>> GetGroups() => _groups.GetOrCreateValue(FetchGroups);
+        private async Task<IReadOnlyList<Channel>> FetchGroups() => CacheHubs(await _api.Groups.List().ConfigureAwait(false));
+
+        public Task<IReadOnlyList<Channel>> GetOpenMpIms() => _mpims.GetOrCreateValue(FetchMpims);
+        private async Task<IReadOnlyList<Channel>> FetchMpims() => CacheHubs(await _api.Mpim.List().ConfigureAwait(false));
+
+        private IReadOnlyList<Channel> CacheHubs(IReadOnlyList<Channel> channels)
+        {
+            foreach (var channel in channels)
+                _hubs[channel.Id] = Task.FromResult((Hub)channel);
+            return channels;
+        }
+
         public async Task<IReadOnlyList<Im>> GetOpenIms() => await _ims.GetOrCreateValue(() => _api.Im.List()).ConfigureAwait(false);
 
-        public Task<User> GetUser(string userId) => _users.GetOrAdd(userId, _ => _api.Users.Info(userId).NullIfNotFound());
+        public Task<User> GetUserById(string userId) => _users.GetOrAdd(userId, _ => _api.Users.Info(userId).NullIfNotFound());
 
-        public Task Send(Message message)
+        public async Task<User> GetUserByName(string username) => (await GetUsers().ConfigureAwait(false)).FirstOrDefault(u => u.Name == username);
+
+        public Task<IReadOnlyList<User>> GetUsers() => _allUsers.GetOrCreateValue(FetchUsers);
+
+        private async Task<IReadOnlyList<User>> FetchUsers()
+        {
+            List<User> users = new List<User>();
+            string cursor = null;
+            do
+            {
+                var response = await _api.Users.List(cursor).ConfigureAwait(false);
+                users.AddRange(response.Members);
+                cursor = response.ResponseMetadata.NextCursor;
+            } while (cursor != null);
+            return users;
+        }
+
+        public Task Send(BotMessage message)
         {
             var sent = _sentMessages.FirstOrDefaultAsync(m => m == message).ToTask();
             _outgoingMessages.OnNext(message);
             return sent;
         }
 
-        private Task<PostMessageResponse> PostMessage(Message message) => _api.Chat.PostMessage(message);
+        private Task<PostMessageResponse> PostMessage(BotMessage message) => 
+            _api.Chat.PostMessage(new Message
+                {
+                    Channel = message.Hub?.Id ?? message.ReplyTo?.Hub.Id,
+                    Text = message.Text,
+                    Attachments = message.Attachments,
+                    ThreadTs = message.Hub != null && message.Hub.Id != message.ReplyTo?.Hub.Id 
+                        ? null
+                        : message.ReplyTo?.ThreadTs ?? message.ReplyTo?.Ts,
+                    ReplyBroadcast = message.ReplyBroadcast,
+                    Parse = message.Parse,
+                    LinkNames = message.LinkNames,
+                    UnfurlLinks = message.UnfurlLinks,
+                    UnfurlMedia = message.UnfurlMedia,
+                    AsUser = true
+                });
 
         public async Task WhileTyping(string channelId, Func<Task> action)
         {
@@ -152,7 +229,7 @@ namespace SlackNet.Bot
 
         public void OnCompleted() => _outgoingMessages.OnCompleted();
         public void OnError(Exception error) => _outgoingMessages.OnError(error);
-        public void OnNext(Message value) => _outgoingMessages.OnNext(value);
+        public void OnNext(BotMessage value) => _outgoingMessages.OnNext(value);
 
         public void Dispose()
         {

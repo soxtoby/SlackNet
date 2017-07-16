@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SlackNet.Events;
-using SlackNet;
-using SlackNet.WebApi;
 
 namespace SlackNet.Bot
 {
@@ -19,8 +16,8 @@ namespace SlackNet.Bot
         IList<Attachment> Attachments { get; set; }
         bool IsInThread { get; }
         bool MentionsBot { get; }
-        MessageEvent RawMessage { get; }
         Task Reply(string text, bool createThread = false);
-        Task Reply(Message message, bool createThread = false);
+        Task Reply(BotMessage message, bool createThread = false);
+        Task Reply(Func<Task<BotMessage>> createReply, bool createThread = false);
     }
 }

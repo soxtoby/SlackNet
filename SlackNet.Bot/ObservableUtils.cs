@@ -1,9 +1,16 @@
-﻿using System;
+using System;
+using System.Reactive;
 using System.Reactive.Concurrency;
 
 namespace SlackNet.Bot
 {
-    class LosslessThrottlingSubscription<T>: IDisposable
+    static class ObservableUtils
+    {
+        public static IObservable<T> LimitFrequency<T>(this IObservable<T> source, TimeSpan minFrequency, IScheduler scheduler = null) =>
+            new AnonymousObservable<T>(observer => new LosslessThrottlingSubscription<T>(source, observer, minFrequency, scheduler));
+    }
+
+    class LosslessThrottlingSubscription<T> : IDisposable
     {
         private readonly IObserver<T> _observer;
         private readonly TimeSpan _minFrequency;

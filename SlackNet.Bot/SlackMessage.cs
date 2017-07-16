@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SlackNet.Events;
-using SlackNet;
-using SlackNet.WebApi;
 
 namespace SlackNet.Bot
 {
@@ -13,11 +11,11 @@ namespace SlackNet.Bot
 
         public SlackMessage(MessageEvent message, SlackBot bot)
         {
-            RawMessage = message;
+            MessageEvent = message;
             _bot = bot;
         }
 
-        public MessageEvent RawMessage { get; }
+        public MessageEvent MessageEvent { get; }
         public Hub Hub { get; set; }
         public User User { get; set; }
         public string Text { get; set; }
@@ -31,28 +29,24 @@ namespace SlackNet.Bot
             || Text.IndexOf(_bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
             || Hub.IsIm;
 
-        public Task Reply(string text, bool createThread = false) => Reply(new Message { Text = text }, createThread);
+        public Task Reply(string text, bool createThread = false) => Reply(new BotMessage { Text = text }, createThread);
 
-        public async Task Reply(Func<Task<Message>> createReply, bool createThread = false)
+        public async Task Reply(Func<Task<BotMessage>> createReply, bool createThread = false)
         {
             await _bot.WhileTyping(Hub.Id, async () =>
                 {
-                    Message reply = await createReply().ConfigureAwait(false);
+                    BotMessage reply = await createReply().ConfigureAwait(false);
                     if (reply != null)
                         await Reply(reply, createThread).ConfigureAwait(false);
                 }).ConfigureAwait(false);
         }
 
-        public async Task Reply(Message message, bool createThread = false)
+        public async Task Reply(BotMessage message, bool createThread = false)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
-            message.AsUser = true;
-            message.Channel = Hub.Id;
-            if (ThreadTs != null)
-                message.ThreadTs = ThreadTs;
-            else if (createThread)
-                message.ThreadTs = Ts;
+            message.ReplyTo = this;
+            message.CreateThread = createThread;
             await _bot.Send(message).ConfigureAwait(false);
         }
     }
