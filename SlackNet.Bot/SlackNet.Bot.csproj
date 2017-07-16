@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
+    <Authors>Simon Oxtoby</Authors>
+    <Company />
+    <Description>Easy-to-use API for writing Slack bots</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.4\SlackNet.Bot.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
