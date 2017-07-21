@@ -24,7 +24,7 @@ namespace SlackNet.Bot
         /// <summary>
         /// Structured message attachments.
         /// </summary>
-        public IList<Attachment> Attachments { get; } = new List<Attachment>();
+        public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
         /// <summary>
         /// Pass True to enable unfurling of primarily text-based content.
         /// </summary>
