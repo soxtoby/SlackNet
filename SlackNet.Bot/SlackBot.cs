@@ -202,13 +202,15 @@ namespace SlackNet.Bot
             return sent;
         }
 
-        private Task<PostMessageResponse> PostMessage(BotMessage message) => 
-            _api.Chat.PostMessage(new Message
+        private async Task<PostMessageResponse> PostMessage(BotMessage message) =>
+            await _api.Chat.PostMessage(new Message
                 {
-                    Channel = message.Hub?.Id ?? message.ReplyTo?.Hub.Id,
+                    Channel = message.Hub != null
+                        ? await message.Hub.HubId(this)
+                        : message.ReplyTo?.Hub.Id,
                     Text = message.Text,
                     Attachments = message.Attachments,
-                    ThreadTs = message.Hub != null && message.Hub.Id != message.ReplyTo?.Hub.Id 
+                    ThreadTs = message.Hub != null && await message.Hub.HubId(this) != message.ReplyTo?.Hub.Id
                         ? null
                         : message.ReplyTo?.ThreadTs ?? message.ReplyTo?.Ts,
                     ReplyBroadcast = message.ReplyBroadcast,

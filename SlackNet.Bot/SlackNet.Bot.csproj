@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.1.0</Version>
+    <Version>0.1.1-prerelease</Version>
     <Authors>Simon Oxtoby</Authors>
     <Company />
     <Description>Easy-to-use API for writing Slack bots</Description>
