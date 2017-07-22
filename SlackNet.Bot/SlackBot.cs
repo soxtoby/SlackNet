@@ -11,7 +11,128 @@ using SlackNet.WebApi;
 
 namespace SlackNet.Bot
 {
-    public class SlackBot : IObservable<IMessage>, IObserver<BotMessage>, IDisposable
+    public interface ISlackBot : IObservable<IMessage>, IObserver<BotMessage>
+    {
+        /// <summary>
+        /// Id of the bot user.
+        /// </summary>
+        string Id { get; }
+
+        /// <summary>
+        /// Name of the bot user.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Stream of new messages received from Slack.
+        /// </summary>
+        IObservable<IMessage> Messages { get; }
+
+        /// <summary>
+        /// Connect to Slack.
+        /// </summary>
+        Task Connect(CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Transform stream of incoming messages.
+        /// </summary>
+        void AddIncomingMiddleware(Func<IObservable<IMessage>, IObservable<IMessage>> middleware);
+
+        /// <summary>
+        /// Transform stream of outgoing messages.
+        /// </summary>
+        void AddOutgoingMiddleware(Func<IObservable<BotMessage>, IObservable<BotMessage>> middleware);
+
+        /// <summary>
+        /// Add a handler object for handling new messages received from Slack.
+        /// </summary>
+        void AddHandler(IMessageHandler handler);
+
+        /// <summary>
+        /// Fired when a new message is received from Slack.
+        /// </summary>
+        event EventHandler<IMessage> OnMessage;
+
+        /// <summary>
+        /// Get information on a public or private channel, IM, or multi-person IM.
+        /// </summary>
+        Task<Hub> GetHubById(string channelId);
+
+        /// <summary>
+        /// Find hub with matching name.
+        /// </summary>
+        /// <param name="channel">Channel, group or IM name, with leading # or @ symbol as appropriate.</param>
+        Task<Hub> GetHubByName(string channel);
+
+        /// <summary>
+        /// Find channel by name, with or without leading #.
+        /// </summary>
+        Task<Hub> GetChannelByName(string name);
+
+        /// <summary>
+        /// Find private group by name.
+        /// </summary>
+        Task<Hub> GetGroupByName(string name);
+
+        /// <summary>
+        /// Find user by name, with or without leading @.
+        /// </summary>
+        Task<Hub> GetImByName(string username);
+
+        /// <summary>
+        /// Get full list of public channels.
+        /// </summary>
+        /// <returns></returns>
+        Task<IReadOnlyList<Channel>> GetChannels();
+
+        /// <summary>
+        /// Get list of private groups that the bot is in.
+        /// </summary>
+        Task<IReadOnlyList<Channel>> GetGroups();
+
+        /// <summary>
+        /// Get list of multi-person IMs that the bot is in.
+        /// </summary>
+        /// <returns></returns>
+        Task<IReadOnlyList<Channel>> GetMpIms();
+
+        /// <summary>
+        /// Get list of IMs that have been opened with the bot.
+        /// </summary>
+        Task<IReadOnlyList<Im>> GetIms();
+
+        /// <summary>
+        /// Get user information.
+        /// </summary>
+        Task<User> GetUserById(string userId);
+
+        /// <summary>
+        /// Find user by username, with or without leading @.
+        /// </summary>
+        Task<User> GetUserByName(string username);
+
+        /// <summary>
+        /// Get full list of users.
+        /// </summary>
+        Task<IReadOnlyList<User>> GetUsers();
+
+        /// <summary>
+        /// Send a message to Slack as the bot.
+        /// </summary>
+        Task Send(BotMessage message);
+
+        /// <summary>
+        /// Show typing indicator in Slack while performing some action.
+        /// </summary>
+        Task WhileTyping(string channelId, Func<Task> action);
+
+        /// <summary>
+        /// Clear bot's cache of hubs, users etc.
+        /// </summary>
+        void ClearCache();
+    }
+
+    public class SlackBot : ISlackBot, IDisposable
     {
         private readonly SlackRtmClient _rtm;
         private readonly SlackApiClient _api;
@@ -44,9 +165,19 @@ namespace SlackNet.Bot
                 .LimitFrequency(TimeSpan.FromSeconds(1));
         }
 
+        /// <summary>
+        /// Id of the bot user.
+        /// </summary>
         public string Id { get; private set; }
+
+        /// <summary>
+        /// Name of the bot user.
+        /// </summary>
         public string Name { get; private set; }
 
+        /// <summary>
+        /// Connect to Slack.
+        /// </summary>
         public async Task Connect(CancellationToken? cancellationToken = null)
         {
             // If already connected, client will throw
@@ -64,6 +195,9 @@ namespace SlackNet.Bot
             Name = connectResponse.Self.Name;
         }
 
+        /// <summary>
+        /// Transform stream of incoming messages.
+        /// </summary>
         public void AddIncomingMiddleware(Func<IObservable<IMessage>, IObservable<IMessage>> middleware)
         {
             if (_rtm.Connected)
@@ -72,6 +206,9 @@ namespace SlackNet.Bot
             _incomingWithMiddlewareApplied = middleware(_incomingWithMiddlewareApplied);
         }
 
+        /// <summary>
+        /// Transform stream of outgoing messages.
+        /// </summary>
         public void AddOutgoingMiddleware(Func<IObservable<BotMessage>, IObservable<BotMessage>> middleware)
         {
             if (_rtm.Connected)
@@ -80,19 +217,28 @@ namespace SlackNet.Bot
             _outgoingWithMiddlewareApplied = middleware(_outgoingWithMiddlewareApplied);
         }
 
+        /// <summary>
+        /// Add a handler object for handling new messages received from Slack.
+        /// </summary>
         public void AddHandler(IMessageHandler handler) => _handlers.Enqueue(handler);
+        /// <summary>
+        /// Fired when a new message is received from Slack.
+        /// </summary>
         public event EventHandler<IMessage> OnMessage;
+        /// <summary>
+        /// Stream of new messages received from Slack.
+        /// </summary>
         public IObservable<IMessage> Messages => _incomingMessages.AsObservable();
 
         private async Task<SlackMessage> CreateSlackMessage(MessageEvent message) =>
             new SlackMessage(message, this)
-                {
-                    Ts = message.Ts,
-                    Text = message.Text,
-                    Hub = await GetHubById(message.Channel).ConfigureAwait(false),
-                    User = await GetUserById(message.User).ConfigureAwait(false),
-                    Attachments = message.Attachments
-                };
+            {
+                Ts = message.Ts,
+                Text = message.Text,
+                Hub = await GetHubById(message.Channel).ConfigureAwait(false),
+                User = await GetUserById(message.User).ConfigureAwait(false),
+                Attachments = message.Attachments
+            };
 
         private void HandleMessage(IMessage message)
         {
@@ -103,17 +249,20 @@ namespace SlackNet.Bot
             _incomingMessages.OnNext(message);
         }
 
+        /// <summary>
+        /// Get information on a public or private channel, IM, or multi-person IM.
+        /// </summary>
         public async Task<Hub> GetHubById(string channelId) => await _hubs.GetOrAdd(channelId, FetchHub).ConfigureAwait(false);
 
-        private async Task<Hub> FetchHub(string channelId) => 
-              channelId[0] == 'C' ? await _api.Channels.Info(channelId).NullIfNotFound().ConfigureAwait(false) 
+        private async Task<Hub> FetchHub(string channelId) =>
+              channelId[0] == 'C' ? await _api.Channels.Info(channelId).NullIfNotFound().ConfigureAwait(false)
             : channelId[0] == 'G' ? await _api.Groups.Info(channelId).NullIfNotFound().ConfigureAwait(false)
-            : channelId[0] == 'D' ? await FetchImChannel(channelId).ConfigureAwait(false) 
+            : channelId[0] == 'D' ? await FetchImChannel(channelId).ConfigureAwait(false)
             : null;
 
         private async Task<Hub> FetchImChannel(string channelId)
         {
-            IReadOnlyList<Im> ims = await GetOpenIms().ConfigureAwait(false);
+            IReadOnlyList<Im> ims = await GetIms().ConfigureAwait(false);
             Im matchingIm = ims.FirstOrDefault(im => im.Id == channelId);
             if (matchingIm == null)
                 return null;
@@ -126,16 +275,24 @@ namespace SlackNet.Bot
         /// Find hub with matching name.
         /// </summary>
         /// <param name="channel">Channel, group or IM name, with leading # or @ symbol as appropriate.</param>
-        public Task<Hub> GetHubByName(string channel) => 
-              channel.FirstOrDefault() == '#' ? GetChannelByName(channel.Substring(1))
-            : channel.FirstOrDefault() == '@' ? GetImByName(channel.Substring(1))
+        public Task<Hub> GetHubByName(string channel) =>
+              channel.FirstOrDefault() == '#' ? GetChannelByName(channel)
+            : channel.FirstOrDefault() == '@' ? GetImByName(channel)
             : GetGroupByName(channel);
 
+        /// <summary>
+        /// Find channel by name, with or without leading #.
+        /// </summary>
         public async Task<Hub> GetChannelByName(string name) =>
-            await FindCachedHub(h => h.IsChannel && h.Name == name).ConfigureAwait(false)
+            await FindCachedHub(h => h.IsChannel && h.Name == WithoutLeadingHash(name)).ConfigureAwait(false)
             ?? (await GetChannels().ConfigureAwait(false))
-                .FirstOrDefault(c => c.Name == name);
+                .FirstOrDefault(c => c.Name == WithoutLeadingHash(name));
 
+        private static string WithoutLeadingHash(string name) => name.TrimStart('#');
+
+        /// <summary>
+        /// Find private group by name.
+        /// </summary>
         public async Task<Hub> GetGroupByName(string name) =>
             await FindCachedHub(h => h.IsGroup && h.Name == name).ConfigureAwait(false)
             ?? (await GetGroups().ConfigureAwait(false))
@@ -149,22 +306,36 @@ namespace SlackNet.Bot
                 .ToTask()
                 .ConfigureAwait(false);
 
+        /// <summary>
+        /// Find user by name, with or without leading @.
+        /// </summary>
         public async Task<Hub> GetImByName(string username) =>
-            await (await GetOpenIms().ConfigureAwait(false))
+            await (await GetIms().ConfigureAwait(false))
                 .ToObservable()
                 .SelectMany(async im => new { im, user = await GetUserById(im.User).ConfigureAwait(false) })
-                .FirstOrDefaultAsync(im => im.user.Name == username)
+                .FirstOrDefaultAsync(im => im.user.Name == WithoutLeadingAt(username))
                 .Select(im => im.im)
                 .ToTask()
                 .ConfigureAwait(false);
 
+        /// <summary>
+        /// Get full list of public channels.
+        /// </summary>
+        /// <returns></returns>
         public Task<IReadOnlyList<Channel>> GetChannels() => _channels.GetOrCreateValue(FetchChannels);
         private async Task<IReadOnlyList<Channel>> FetchChannels() => CacheHubs(await _api.Channels.List().ConfigureAwait(false));
 
+        /// <summary>
+        /// Get list of private groups that the bot is in.
+        /// </summary>
         public Task<IReadOnlyList<Channel>> GetGroups() => _groups.GetOrCreateValue(FetchGroups);
         private async Task<IReadOnlyList<Channel>> FetchGroups() => CacheHubs(await _api.Groups.List().ConfigureAwait(false));
 
-        public Task<IReadOnlyList<Channel>> GetOpenMpIms() => _mpims.GetOrCreateValue(FetchMpims);
+        /// <summary>
+        /// Get list of multi-person IMs that the bot is in.
+        /// </summary>
+        /// <returns></returns>
+        public Task<IReadOnlyList<Channel>> GetMpIms() => _mpims.GetOrCreateValue(FetchMpims);
         private async Task<IReadOnlyList<Channel>> FetchMpims() => CacheHubs(await _api.Mpim.List().ConfigureAwait(false));
 
         private IReadOnlyList<Channel> CacheHubs(IReadOnlyList<Channel> channels)
@@ -174,12 +345,26 @@ namespace SlackNet.Bot
             return channels;
         }
 
-        public async Task<IReadOnlyList<Im>> GetOpenIms() => await _ims.GetOrCreateValue(() => _api.Im.List()).ConfigureAwait(false);
+        /// <summary>
+        /// Get list of IMs that have been opened with the bot.
+        /// </summary>
+        public async Task<IReadOnlyList<Im>> GetIms() => await _ims.GetOrCreateValue(() => _api.Im.List()).ConfigureAwait(false);
 
+        /// <summary>
+        /// Get user information.
+        /// </summary>
         public Task<User> GetUserById(string userId) => _users.GetOrAdd(userId, _ => _api.Users.Info(userId).NullIfNotFound());
 
-        public async Task<User> GetUserByName(string username) => (await GetUsers().ConfigureAwait(false)).FirstOrDefault(u => u.Name == username);
+        /// <summary>
+        /// Find user by username, with or without leading @.
+        /// </summary>
+        public async Task<User> GetUserByName(string username) => (await GetUsers().ConfigureAwait(false)).FirstOrDefault(u => u.Name == WithoutLeadingAt(username));
 
+        private static string WithoutLeadingAt(string name) => name.TrimStart('@');
+
+        /// <summary>
+        /// Get full list of users.
+        /// </summary>
         public Task<IReadOnlyList<User>> GetUsers() => _allUsers.GetOrCreateValue(FetchUsers);
 
         private async Task<IReadOnlyList<User>> FetchUsers()
@@ -195,6 +380,9 @@ namespace SlackNet.Bot
             return users;
         }
 
+        /// <summary>
+        /// Send a message to Slack as the bot.
+        /// </summary>
         public Task Send(BotMessage message)
         {
             var sent = _sentMessages.FirstOrDefaultAsync(m => m == message).ToTask();
@@ -204,29 +392,35 @@ namespace SlackNet.Bot
 
         private async Task<PostMessageResponse> PostMessage(BotMessage message) =>
             await _api.Chat.PostMessage(new Message
-                {
-                    Channel = message.Hub != null
-                        ? await message.Hub.HubId(this)
+            {
+                Channel = message.Hub != null
+                        ? await message.Hub.HubId(this).ConfigureAwait(false)
                         : message.ReplyTo?.Hub.Id,
-                    Text = message.Text,
-                    Attachments = message.Attachments,
-                    ThreadTs = message.Hub != null && await message.Hub.HubId(this) != message.ReplyTo?.Hub.Id
+                Text = message.Text,
+                Attachments = message.Attachments,
+                ThreadTs = message.Hub != null && await message.Hub.HubId(this).ConfigureAwait(false) != message.ReplyTo?.Hub.Id
                         ? null
                         : message.ReplyTo?.ThreadTs ?? message.ReplyTo?.Ts,
-                    ReplyBroadcast = message.ReplyBroadcast,
-                    Parse = message.Parse,
-                    LinkNames = message.LinkNames,
-                    UnfurlLinks = message.UnfurlLinks,
-                    UnfurlMedia = message.UnfurlMedia,
-                    AsUser = true
-                });
+                ReplyBroadcast = message.ReplyBroadcast,
+                Parse = message.Parse,
+                LinkNames = message.LinkNames,
+                UnfurlLinks = message.UnfurlLinks,
+                UnfurlMedia = message.UnfurlMedia,
+                AsUser = true
+            }).ConfigureAwait(false);
 
+        /// <summary>
+        /// Show typing indicator in Slack while performing some action.
+        /// </summary>
         public async Task WhileTyping(string channelId, Func<Task> action)
         {
             using (Observable.Interval(TimeSpan.FromSeconds(4)).Subscribe(_ => _rtm.SendTyping(channelId)))
                 await action().ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Clear bot's cache of hubs, users etc.
+        /// </summary>
         public void ClearCache()
         {
             _hubs.Clear();

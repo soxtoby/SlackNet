@@ -43,6 +43,6 @@ namespace SlackNet.Bot
         private readonly string _name;
         public ImByName(string name) => _name = name;
 
-        public override async Task<string> HubId(SlackBot bot) => (await bot.GetImByName(_name.Substring(1))).Id;
+        public override async Task<string> HubId(SlackBot bot) => (await bot.GetImByName(_name.Substring(1)).ConfigureAwait(false)).Id;
     }
 }
