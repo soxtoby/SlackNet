@@ -160,6 +160,7 @@ namespace SlackNet.Bot
             _api = apiClient;
             _incomingWithMiddlewareApplied = _rtm.Messages
                 .Where(m => m.Subtype == null)
+                .Where(m => m.User != Id)
                 .SelectMany(CreateSlackMessage);
             _outgoingWithMiddlewareApplied = _outgoingMessages
                 .LimitFrequency(TimeSpan.FromSeconds(1));
