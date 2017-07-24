@@ -134,8 +134,8 @@ namespace SlackNet.Bot
 
     public class SlackBot : ISlackBot, IDisposable
     {
-        private readonly SlackRtmClient _rtm;
-        private readonly SlackApiClient _api;
+        private readonly ISlackRtmClient _rtm;
+        private readonly ISlackApiClient _api;
         private readonly ConcurrentQueue<IMessageHandler> _handlers = new ConcurrentQueue<IMessageHandler>();
         private readonly ConcurrentDictionary<string, Task<Hub>> _hubs = new ConcurrentDictionary<string, Task<Hub>>();
         private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _channels = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
@@ -154,7 +154,7 @@ namespace SlackNet.Bot
 
         public SlackBot(string token) : this(new SlackRtmClient(token), new SlackApiClient(token)) { }
 
-        public SlackBot(SlackRtmClient rtmClient, SlackApiClient apiClient)
+        public SlackBot(ISlackRtmClient rtmClient, ISlackApiClient apiClient)
         {
             _rtm = rtmClient;
             _api = apiClient;
@@ -232,7 +232,7 @@ namespace SlackNet.Bot
         public IObservable<IMessage> Messages => _incomingMessages.AsObservable();
 
         private async Task<SlackMessage> CreateSlackMessage(MessageEvent message) =>
-            new SlackMessage(message, this)
+            new SlackMessage(this)
             {
                 Ts = message.Ts,
                 Text = message.Text,
@@ -393,22 +393,27 @@ namespace SlackNet.Bot
 
         private async Task<PostMessageResponse> PostMessage(BotMessage message) =>
             await _api.Chat.PostMessage(new Message
-            {
-                Channel = message.Hub != null
+                {
+                    Channel = message.Hub != null
                         ? await message.Hub.HubId(this).ConfigureAwait(false)
                         : message.ReplyTo?.Hub.Id,
-                Text = message.Text,
-                Attachments = message.Attachments,
-                ThreadTs = message.Hub != null && await message.Hub.HubId(this).ConfigureAwait(false) != message.ReplyTo?.Hub.Id
-                        ? null
-                        : message.ReplyTo?.ThreadTs ?? message.ReplyTo?.Ts,
-                ReplyBroadcast = message.ReplyBroadcast,
-                Parse = message.Parse,
-                LinkNames = message.LinkNames,
-                UnfurlLinks = message.UnfurlLinks,
-                UnfurlMedia = message.UnfurlMedia,
-                AsUser = true
-            }).ConfigureAwait(false);
+                    Text = message.Text,
+                    Attachments = message.Attachments,
+                    ThreadTs = await ReplyingInDifferentHub(message) ? null
+                        : message.ReplyTo?.ThreadTs
+                        ?? (message.CreateThread ? message.ReplyTo?.Ts : null),
+                    ReplyBroadcast = message.ReplyBroadcast,
+                    Parse = message.Parse,
+                    LinkNames = message.LinkNames,
+                    UnfurlLinks = message.UnfurlLinks,
+                    UnfurlMedia = message.UnfurlMedia,
+                    AsUser = true
+                }).ConfigureAwait(false);
+
+        private async Task<bool> ReplyingInDifferentHub(BotMessage message)
+        {
+            return message.Hub != null && await message.Hub.HubId(this).ConfigureAwait(false) != message.ReplyTo?.Hub.Id;
+        }
 
         /// <summary>
         /// Show typing indicator in Slack while performing some action.

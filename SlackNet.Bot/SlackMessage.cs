@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SlackNet.Events;
 
 namespace SlackNet.Bot
 {
     public class SlackMessage : IMessage
     {
-        private readonly SlackBot _bot;
+        private readonly ISlackBot _bot;
 
-        public SlackMessage(MessageEvent message, SlackBot bot)
+        public SlackMessage(ISlackBot bot)
         {
-            MessageEvent = message;
             _bot = bot;
         }
 
-        public MessageEvent MessageEvent { get; }
         public Hub Hub { get; set; }
         public User User { get; set; }
         public string Text { get; set; }

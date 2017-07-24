@@ -17,7 +17,7 @@ using Reply = SlackNet.Rtm.Reply;
 
 namespace SlackNet
 {
-    public interface ISlackRtmClient
+    public interface ISlackRtmClient : IDisposable
     {
         /// <summary>
         /// Messages coming from Slack.
@@ -65,7 +65,7 @@ namespace SlackNet
         void Send(OutgoingRtmEvent slackEvent);
     }
 
-    public class SlackRtmClient : IDisposable, ISlackRtmClient
+    public class SlackRtmClient : ISlackRtmClient
     {
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly SlackApiClient _client;
