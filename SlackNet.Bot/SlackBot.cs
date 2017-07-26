@@ -314,8 +314,9 @@ namespace SlackNet.Bot
             await (await GetIms().ConfigureAwait(false))
                 .ToObservable()
                 .SelectMany(async im => new { im, user = await GetUserById(im.User).ConfigureAwait(false) })
-                .FirstOrDefaultAsync(im => im.user.Name == WithoutLeadingAt(username))
+                .Where(im => im.user.Name == WithoutLeadingAt(username))
                 .Select(im => im.im)
+                .FirstOrDefaultAsync()
                 .ToTask()
                 .ConfigureAwait(false);
 
