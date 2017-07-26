@@ -376,8 +376,8 @@ namespace SlackNet.Bot
             {
                 var response = await _api.Users.List(cursor).ConfigureAwait(false);
                 users.AddRange(response.Members);
-                cursor = response.ResponseMetadata.NextCursor;
-            } while (cursor != null);
+                cursor = response.ResponseMetadata?.NextCursor;
+            } while (!string.IsNullOrEmpty(cursor));
             return users;
         }
 
