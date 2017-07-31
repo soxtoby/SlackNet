@@ -32,7 +32,7 @@ namespace SlackNet.Bot
         {
             await _bot.WhileTyping(Hub.Id, async () =>
                 {
-                    BotMessage reply = await createReply().ConfigureAwait(false);
+                    var reply = await createReply().ConfigureAwait(false);
                     if (reply != null)
                         await ReplyWith(reply, createThread).ConfigureAwait(false);
                 }).ConfigureAwait(false);

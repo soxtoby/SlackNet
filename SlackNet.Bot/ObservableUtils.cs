@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace SlackNet.Bot
 {
@@ -8,6 +12,16 @@ namespace SlackNet.Bot
     {
         public static IObservable<T> LimitFrequency<T>(this IObservable<T> source, TimeSpan minFrequency, IScheduler scheduler = null) =>
             new AnonymousObservable<T>(observer => new LosslessThrottlingSubscription<T>(source, observer, minFrequency, scheduler));
+
+        public static Task<T> FirstOrDefaultAsync<T>(this IEnumerable<Task<T>> tasks, Func<T, bool> predicate) where T : class =>
+            FirstOrDefaultAsync<T, T>(tasks, predicate);
+
+        public static Task<TDerived> FirstOrDefaultAsync<TBase, TDerived>(this IEnumerable<Task<TBase>> tasks, Func<TDerived, bool> predicate) where TDerived : TBase where TBase : class =>
+            tasks.ToObservable()
+                .SelectMany(i => i)
+                .OfType<TDerived>()
+                .FirstOrDefaultAsync(predicate)
+                .ToTask();
     }
 
     class LosslessThrottlingSubscription<T> : IDisposable
