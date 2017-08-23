@@ -122,10 +122,21 @@ namespace SlackNet
             {
                 return serializer.Deserialize(reader, objectType);
             }
+            catch
+            {
+                return DefaultValue(objectType);
+            }
             finally
             {
                 _isInsideRead = false;
             }
+        }
+
+        private static object DefaultValue(Type type)
+        {
+            return type.GetTypeInfo().IsValueType
+                ? Activator.CreateInstance(type)
+                : null;
         }
     }
 }

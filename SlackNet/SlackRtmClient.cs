@@ -172,7 +172,7 @@ namespace SlackNet
         /// </summary>
         public async Task<Reply> SendWithReply(OutgoingRtmEvent slackEvent)
         {
-            var json = Serialize(slackEvent, out uint id);
+            var json = Serialize(slackEvent, out var id);
             var reply = _rawEvents.OfType<Reply>()
                 .Where(r => r.ReplyTo == id)
                 .FirstOrDefaultAsync()

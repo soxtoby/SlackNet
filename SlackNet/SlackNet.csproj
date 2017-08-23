@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.1.7-prerelease</Version>
+    <Version>0.1.8-prerelease</Version>
     <Authors>Simon Oxtoby</Authors>
     <Company />
     <Description>A comprehensive Slack API client for .NET</Description>

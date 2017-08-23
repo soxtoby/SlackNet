@@ -21,11 +21,10 @@ namespace SlackNet
         {
             lock (_typeLookups)
             {
-                Dictionary<string, Type> lookup;
-                if (!_typeLookups.TryGetValue(baseType, out lookup))
+                if (!_typeLookups.TryGetValue(baseType, out var lookup))
                     lookup = _typeLookups[baseType] = CreateLookup(baseType);
 
-                return lookup.TryGetValue(slackType, out Type type)
+                return lookup.TryGetValue(slackType, out var type)
                     ? type
                     : baseType;
             }

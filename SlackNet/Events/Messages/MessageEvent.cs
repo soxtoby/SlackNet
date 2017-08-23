@@ -15,7 +15,7 @@ namespace SlackNet.Events
         public string ThreadTs { get; set; }
         public DateTime? ThreadTimestamp => ThreadTs.ToDateTime();
         public IList<Attachment> Attachments { get; } = new List<Attachment>();
-        public IList<Edit> Edited { get; set; } = new List<Edit>();
+        public Edit Edited { get; set; }
         /// <summary>
         /// Indicates message is part of the history of a channel but should not be displayed to users.
         /// </summary>
