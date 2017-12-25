@@ -28,8 +28,8 @@ namespace SlackNet.WebApi
 
     public class UserGroupUsersApi : IUserGroupUsersApi
     {
-        private readonly SlackApiClient _client;
-        public UserGroupUsersApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public UserGroupUsersApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Returns a list of all users within a User Group.

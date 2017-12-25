@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Globalization;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Serialization;
@@ -68,6 +70,28 @@ namespace SlackNet
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// On error, resubscribes to <paramref name="source"/> after a delay,
+        /// starting with <paramref name="initialDelay"/> and then increasing by
+        /// <paramref name="delayIncrease"/> each time, up to <paramref name="maxDelay"/>.
+        /// Resets back to <paramref name="initialDelay"/> on next value.
+        /// </summary>
+        public static IObservable<T> RetryWithDelay<T>(this IObservable<T> source, TimeSpan initialDelay, TimeSpan delayIncrease, TimeSpan maxDelay, IScheduler scheduler = null)
+        {
+            var currentDelay = initialDelay;
+            return source
+                .Catch((Exception e) =>
+                    {
+                        var delay = Observable.Timer(currentDelay, scheduler ?? Scheduler.Default).SelectMany(Observable.Throw<T>(e));
+                        currentDelay += delayIncrease;
+                        if (currentDelay > maxDelay)
+                            currentDelay = maxDelay;
+                        return delay;
+                    })
+                .Do(_ => currentDelay = initialDelay)
+                .Retry();
         }
     }
 }

@@ -51,8 +51,8 @@ namespace SlackNet.WebApi
 
     public class DndApi : IDndApi
     {
-        private readonly SlackApiClient _client;
-        public DndApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public DndApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Ends the user's currently scheduled Do Not Disturb session immediately.

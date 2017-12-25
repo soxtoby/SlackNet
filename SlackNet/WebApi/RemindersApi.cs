@@ -69,8 +69,8 @@ namespace SlackNet.WebApi
 
     public class RemindersApi : IRemindersApi
     {
-        private readonly SlackApiClient _client;
-        public RemindersApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public RemindersApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Creates a reminder.

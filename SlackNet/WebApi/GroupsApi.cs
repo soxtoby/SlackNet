@@ -163,8 +163,8 @@ namespace SlackNet.WebApi
 
     public class GroupsApi : IGroupsApi
     {
-        private readonly SlackApiClient _client;
-        public GroupsApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public GroupsApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Archives a private channel.

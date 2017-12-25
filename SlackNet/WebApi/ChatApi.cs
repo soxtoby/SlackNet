@@ -57,8 +57,8 @@ namespace SlackNet.WebApi
 
     public class ChatApi : IChatApi
     {
-        private readonly SlackApiClient _client;
-        public ChatApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public ChatApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Deletes a message from a channel.

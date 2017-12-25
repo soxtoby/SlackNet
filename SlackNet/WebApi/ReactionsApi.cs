@@ -95,8 +95,8 @@ namespace SlackNet.WebApi
 
     public class ReactionsApi : IReactionsApi
     {
-        private readonly SlackApiClient _client;
-        public ReactionsApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public ReactionsApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Adds a reaction (emoji) to a file.

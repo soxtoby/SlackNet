@@ -64,8 +64,8 @@ namespace SlackNet.WebApi
 
     public class TeamApi : ITeamApi
     {
-        private readonly SlackApiClient _client;
-        public TeamApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public TeamApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Used to get the access logs for users on a team.

@@ -73,8 +73,8 @@ namespace SlackNet.WebApi
 
     public class UserGroupsApi : IUserGroupsApi
     {
-        private readonly SlackApiClient _client;
-        public UserGroupsApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public UserGroupsApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Used to create a User Group.

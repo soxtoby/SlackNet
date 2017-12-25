@@ -16,8 +16,8 @@ namespace SlackNet.WebApi
 
     public class TeamProfileApi : ITeamProfileApi
     {
-        private readonly SlackApiClient _client;
-        public TeamProfileApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public TeamProfileApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Used to get the profile field definitions for this team.

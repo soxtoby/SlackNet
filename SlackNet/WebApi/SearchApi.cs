@@ -69,8 +69,8 @@ namespace SlackNet.WebApi
 
     public class SearchApi : ISearchApi
     {
-        private readonly SlackApiClient _client;
-        public SearchApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public SearchApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Allows users and applications to search both messages and files in a single call.

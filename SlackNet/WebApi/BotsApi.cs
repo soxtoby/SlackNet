@@ -18,8 +18,8 @@ namespace SlackNet.WebApi
 
     public class BotsApi : IBotsApi
     {
-        private readonly SlackApiClient _client;
-        public BotsApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public BotsApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Returns information about a bot user.

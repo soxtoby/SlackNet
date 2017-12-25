@@ -23,8 +23,8 @@ namespace SlackNet.WebApi
 
     public class AuthApi : IAuthApi
     {
-        private readonly SlackApiClient _client;
-        public AuthApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public AuthApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Revokes an access token. Use it when you no longer need a token.

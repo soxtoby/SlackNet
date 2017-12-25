@@ -152,8 +152,8 @@ namespace SlackNet.WebApi
 
     public class ChannelsApi : IChannelsApi
     {
-        private readonly SlackApiClient _client;
-        public ChannelsApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public ChannelsApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Archives a channel.

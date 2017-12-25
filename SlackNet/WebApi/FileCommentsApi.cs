@@ -37,8 +37,8 @@ namespace SlackNet.WebApi
 
     public class FileCommentsApi : IFileCommentsApi
     {
-        private readonly SlackApiClient _client;
-        public FileCommentsApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public FileCommentsApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Add a comment to an existing file.

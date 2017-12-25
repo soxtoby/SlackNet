@@ -70,8 +70,8 @@ namespace SlackNet.WebApi
 
     public class MpimApi : IMpimApi
     {
-        private readonly SlackApiClient _client;
-        public MpimApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public MpimApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Closes a multiparty direct message channel.

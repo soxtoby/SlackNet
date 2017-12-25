@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
@@ -11,7 +12,6 @@ using Newtonsoft.Json.Linq;
 using SlackNet.Events;
 using SlackNet.Rtm;
 using SlackNet.WebApi;
-using SuperSocket.ClientEngine;
 using WebSocket4Net;
 using Reply = SlackNet.Rtm.Reply;
 
@@ -68,10 +68,12 @@ namespace SlackNet
     public class SlackRtmClient : ISlackRtmClient
     {
         private readonly JsonSerializerSettings _serializerSettings;
-        private readonly SlackApiClient _client;
+        private readonly IScheduler _scheduler;
+        private readonly ISlackApiClient _client;
+        private readonly IWebSocketFactory _webSocketFactory;
         private readonly Subject<Event> _eventSubject = new Subject<Event>();
         private readonly ISubject<Event> _rawEvents;
-        private WebSocket _webSocket;
+        private IWebSocket _webSocket;
         private IDisposable _reconnection;
         private IDisposable _eventSubscription;
         private uint _nextEventId;
@@ -79,14 +81,19 @@ namespace SlackNet
         public SlackRtmClient(string token)
         {
             _rawEvents = Subject.Synchronize(_eventSubject);
+            _webSocketFactory = Default.WebSocketFactory;
             _serializerSettings = Default.SerializerSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
+            _scheduler = Scheduler.Default;
             _client = new SlackApiClient(Default.Http(_serializerSettings), Default.UrlBuilder(_serializerSettings), _serializerSettings, token);
         }
 
-        public SlackRtmClient(SlackApiClient client, JsonSerializerSettings serializerSettings)
+        public SlackRtmClient(ISlackApiClient client, IWebSocketFactory webSocketFactory, JsonSerializerSettings serializerSettings, IScheduler scheduler)
         {
-            _serializerSettings = serializerSettings;
+            _rawEvents = Subject.Synchronize(_eventSubject);
             _client = client;
+            _webSocketFactory = webSocketFactory;
+            _serializerSettings = serializerSettings;
+            _scheduler = scheduler;
         }
 
         /// <summary>
@@ -114,29 +121,25 @@ namespace SlackNet
             var connectResponse = await _client.Rtm.Connect(manualPresenceSubscription, batchPresenceAware, cancellationToken).ConfigureAwait(false);
 
             _webSocket?.Dispose();
-            _webSocket = new WebSocket(connectResponse.Url);
+            _webSocket = _webSocketFactory.Create(connectResponse.Url);
 
-            var errors = Observable.FromEventPattern<ErrorEventArgs>(h => _webSocket.Error += h, h => _webSocket.Error -= h)
-                .Select(e => e.EventArgs.Exception);
-            var closed = Observable.FromEventPattern(h => _webSocket.Closed += h, h => _webSocket.Closed -= h)
-                .Select(_ => Unit.Default);
-            var opened = Observable.FromEventPattern(h => _webSocket.Opened += h, h => _webSocket.Opened -= h)
-                .Select(_ => Unit.Default);
-            _eventSubscription = Observable.FromEventPattern<MessageReceivedEventArgs>(h => _webSocket.MessageReceived += h, h => _webSocket.MessageReceived -= h)
-                .Select(e => JsonConvert.DeserializeObject<Event>(e.EventArgs.Message, _serializerSettings))
-                .Merge(errors.SelectMany(Observable.Throw<Event>))
-                .TakeUntil(closed)
-                .Subscribe(_rawEvents);
-
-            _reconnection?.Dispose();
-            _reconnection = closed.Subscribe(_ => Connect(batchPresenceAware, manualPresenceSubscription, cancellationToken).ToObservable());
-
-            var openedTask = opened
-                .Merge(errors.SelectMany(Observable.Throw<Unit>))
+            var openedTask = _webSocket.Opened
+                .Merge(_webSocket.Errors.SelectMany(Observable.Throw<Unit>))
                 .FirstAsync()
                 .ToTask(cancellationToken);
             _webSocket.Open();
             await openedTask.ConfigureAwait(false);
+
+            _eventSubscription?.Dispose();
+            _eventSubscription = _webSocket.Messages
+                .Select(m => JsonConvert.DeserializeObject<Event>(m, _serializerSettings))
+                .Subscribe(_rawEvents);
+
+            _reconnection?.Dispose();
+            _reconnection = _webSocket.Closed
+                .SelectMany(_ => Observable.FromAsync(() => Connect(batchPresenceAware, manualPresenceSubscription, cancellationToken), _scheduler)
+                    .RetryWithDelay(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromMinutes(5), _scheduler))
+                .Subscribe();
 
             return connectResponse;
         }

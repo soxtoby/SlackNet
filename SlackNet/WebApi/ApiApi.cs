@@ -22,8 +22,8 @@ namespace SlackNet.WebApi
 
     public class ApiApi : IApiApi
     {
-        private readonly SlackApiClient _client;
-        public ApiApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public ApiApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Helps you test your calling code.

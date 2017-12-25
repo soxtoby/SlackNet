@@ -71,8 +71,8 @@ namespace SlackNet.WebApi
 
     public class ImApi : IImApi
     {
-        private readonly SlackApiClient _client;
-        public ImApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public ImApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Closes a direct message channel.

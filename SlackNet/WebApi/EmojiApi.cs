@@ -21,8 +21,8 @@ namespace SlackNet.WebApi
 
     public class EmojiApi : IEmojiApi
     {
-        private readonly SlackApiClient _client;
-        public EmojiApi(SlackApiClient client) => _client = client;
+        private readonly ISlackApiClient _client;
+        public EmojiApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Lists the custom emoji for a team.
