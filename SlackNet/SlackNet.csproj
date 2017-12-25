@@ -2,22 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.1.8-prerelease</Version>
     <Authors>Simon Oxtoby</Authors>
-    <Company />
     <Description>A comprehensive Slack API client for .NET</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <TreatSpecificWarningsAsErrors />
-    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-    <TreatSpecificWarningsAsErrors />
     <DocumentationFile>bin\Release\netstandard1.4\SlackNet.xml</DocumentationFile>
   </PropertyGroup>
 
