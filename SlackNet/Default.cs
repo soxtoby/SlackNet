@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -7,18 +8,21 @@ namespace SlackNet
 {
     public class Default
     {
-        public static IHttp Http(JsonSerializerSettings serializerSettings) => new Http(new HttpClient(), serializerSettings);
+        public static IHttp Http(SlackJsonSettings jsonSettings) => new Http(new HttpClient(), jsonSettings);
 
-        public static ISlackUrlBuilder UrlBuilder(JsonSerializerSettings serializerSettings) => new SlackUrlBuilder(serializerSettings);
+        public static ISlackUrlBuilder UrlBuilder(SlackJsonSettings jsonSettings) => new SlackUrlBuilder(jsonSettings);
 
-        public static JsonSerializerSettings SerializerSettings(ISlackTypeResolver slackTypeResolver)
+        public static SlackJsonSettings JsonSettings(ISlackTypeResolver slackTypeResolver) => new SlackJsonSettings(SerializerSettings(slackTypeResolver));
+
+        private static JsonSerializerSettings SerializerSettings(ISlackTypeResolver slackTypeResolver)
         {
             var namingStrategy = new SnakeCaseNamingStrategy();
             return new JsonSerializerSettings
                 {
+                    NullValueHandling = NullValueHandling.Ignore,
                     ContractResolver = new DefaultContractResolver
                         {
-                            NamingStrategy = namingStrategy
+                            NamingStrategy = namingStrategy,
                         },
                     Converters =
                         {
@@ -33,5 +37,23 @@ namespace SlackNet
         public static Assembly[] AssembliesContainingSlackTypes => new[] { typeof(Default).GetTypeInfo().Assembly };
 
         public static IWebSocketFactory WebSocketFactory => new WebSocketFactory();
+
+        public static ISlackEvents SlackEvents { get; } = new SlackEvents();
+
+        public static ISlackActions SlackActions { get; } = new SlackActions();
+
+        public static ISlackOptions SlackOptions { get; } = new SlackOptions();
+
+        public static void RegisterServices(Action<Type, Func<Func<Type, object>, object>> registerService)
+        {
+            registerService(typeof(IHttp), resolve => Http((SlackJsonSettings)resolve(typeof(SlackJsonSettings))));
+            registerService(typeof(ISlackUrlBuilder), resolve => UrlBuilder((SlackJsonSettings)resolve(typeof(SlackJsonSettings))));
+            registerService(typeof(SlackJsonSettings), resolve => JsonSettings((ISlackTypeResolver)resolve(typeof(ISlackTypeResolver))));
+            registerService(typeof(ISlackTypeResolver), resolve => SlackTypeResolver(AssembliesContainingSlackTypes));
+            registerService(typeof(IWebSocketFactory), resolve => WebSocketFactory);
+            registerService(typeof(ISlackEvents), resolve => SlackEvents);
+            registerService(typeof(ISlackActions), resolve => SlackActions);
+            registerService(typeof(ISlackOptions), resolve => SlackOptions);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace SlackNet.Bot
 {
@@ -17,8 +18,10 @@ namespace SlackNet.Bot
         public User User { get; set; }
         public string Text { get; set; }
         public string Ts { get; set; }
+        [JsonIgnore]
         public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
         public string ThreadTs { get; set; }
+        [JsonIgnore]
         public DateTime ThreadTimestamp => Ts.ToDateTime().GetValueOrDefault();
         public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
         public bool IsInThread => ThreadTs != null;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace SlackNet
 {
@@ -13,10 +14,13 @@ namespace SlackNet
         public string Handle { get; set; }
         public bool IsExternal { get; set; }
         public int DateCreate { get; set; }
+        [JsonIgnore]
         public DateTime Created => DateCreate.ToDateTime().GetValueOrDefault();
         public int DateUpdate { get; set; }
+        [JsonIgnore]
         public DateTime? Updated => DateUpdate.ToDateTime();
         public int DateDelete { get; set; }
+        [JsonIgnore]
         public DateTime? Deleted => DateDelete.ToDateTime();
         public UserGroupAutoType? AutoType { get; set; }
         public string CreatedBy { get; set; }

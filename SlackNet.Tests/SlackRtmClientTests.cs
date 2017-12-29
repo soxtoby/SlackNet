@@ -16,7 +16,7 @@ namespace SlackNet.Tests
     {
         private SlackRtmClient _sut;
         private ISlackApiClient _slackApiClient;
-        private JsonSerializerSettings _jsonSerializerSettings;
+        private SlackJsonSettings _jsonSettings;
         private TestScheduler _testScheduler;
         private IWebSocketFactory _webSocketFactory;
         private Subject<Unit> _opened;
@@ -30,9 +30,9 @@ namespace SlackNet.Tests
         {
             _slackApiClient = Substitute.For<ISlackApiClient>();
             _webSocketFactory = Substitute.For<IWebSocketFactory>();
-            _jsonSerializerSettings = Default.SerializerSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
+            _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
             _testScheduler = new TestScheduler();
-            _sut = new SlackRtmClient(_slackApiClient, _webSocketFactory, _jsonSerializerSettings, _testScheduler);
+            _sut = new SlackRtmClient(_slackApiClient, _webSocketFactory, _jsonSettings, _testScheduler);
 
             _opened = new Subject<Unit>();
             _closed = new Subject<Unit>();

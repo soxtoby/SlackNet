@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace SlackNet.WebApi
 {
@@ -12,6 +13,7 @@ namespace SlackNet.WebApi
         public string UserName { get; set; }
         public string Channel { get; set; }
         public string Date { get; set; }
+        [JsonIgnore]
         public DateTime DateTime => Date.ToDateTime().GetValueOrDefault();
         public ChangeType ChangeType { get; set; }
         public string Scope { get; set; }

@@ -16,6 +16,7 @@ namespace SlackNet
         public bool IsRestricted { get; set; }
         public bool IsUltraRestricted { get; set; }
         public int Updated { get; set; }
+        [JsonIgnore]
         public DateTime UpdateTime => Updated.ToDateTime().GetValueOrDefault();
         [JsonProperty("has_2fa")]
         public bool Has2FA { get; set; }

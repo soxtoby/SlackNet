@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using SlackNet.Events;
 
 namespace SlackNet
@@ -12,6 +13,7 @@ namespace SlackNet
         public bool IsMpim { get; set; }
         public bool IsOrgShared { get; set; }
         public int Created { get; set; }
+        [JsonIgnore]
         public DateTime CreatedDateTime => Created.ToDateTime().GetValueOrDefault();
         public string[] Members { get; set; }
 

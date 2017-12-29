@@ -13,8 +13,8 @@ namespace SlackNet
 
     class SlackUrlBuilder : ISlackUrlBuilder
     {
-        private readonly JsonSerializerSettings _serializerSettings;
-        public SlackUrlBuilder(JsonSerializerSettings serializerSettings) => _serializerSettings = serializerSettings;
+        private readonly SlackJsonSettings _jsonSettings;
+        public SlackUrlBuilder(SlackJsonSettings jsonSettings) => _jsonSettings = jsonSettings;
 
         public string Url(string apiMethod, Args args) =>
             $"https://slack.com/api/{apiMethod}{Query(args)}";
@@ -31,6 +31,6 @@ namespace SlackNet
         private string ArgValue(object value) =>
               value is string stringValue ? stringValue
             : value is IEnumerable<string> stringList ? string.Join(",", stringList)
-            : JsonConvert.SerializeObject(value, _serializerSettings);
+            : JsonConvert.SerializeObject(value, _jsonSettings.SerializerSettings);
     }
 }

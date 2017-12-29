@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace SlackNet.Events
 {
@@ -12,6 +13,7 @@ namespace SlackNet.Events
         /// The timestamp of the message that was deleted.
         /// </summary>
         public string DeletedTs { get; set; }
+        [JsonIgnore]
         public DateTime DeleteTimestamp => DeletedTs.ToDateTime().GetValueOrDefault();
     }
 }

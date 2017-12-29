@@ -67,7 +67,7 @@ namespace SlackNet
 
     public class SlackRtmClient : ISlackRtmClient
     {
-        private readonly JsonSerializerSettings _serializerSettings;
+        private readonly SlackJsonSettings _jsonSettings;
         private readonly IScheduler _scheduler;
         private readonly ISlackApiClient _client;
         private readonly IWebSocketFactory _webSocketFactory;
@@ -82,17 +82,17 @@ namespace SlackNet
         {
             _rawEvents = Subject.Synchronize(_eventSubject);
             _webSocketFactory = Default.WebSocketFactory;
-            _serializerSettings = Default.SerializerSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
+            _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
             _scheduler = Scheduler.Default;
-            _client = new SlackApiClient(Default.Http(_serializerSettings), Default.UrlBuilder(_serializerSettings), _serializerSettings, token);
+            _client = new SlackApiClient(Default.Http(_jsonSettings), Default.UrlBuilder(_jsonSettings), _jsonSettings, token);
         }
 
-        public SlackRtmClient(ISlackApiClient client, IWebSocketFactory webSocketFactory, JsonSerializerSettings serializerSettings, IScheduler scheduler)
+        public SlackRtmClient(ISlackApiClient client, IWebSocketFactory webSocketFactory, SlackJsonSettings jsonSettings, IScheduler scheduler)
         {
             _rawEvents = Subject.Synchronize(_eventSubject);
             _client = client;
             _webSocketFactory = webSocketFactory;
-            _serializerSettings = serializerSettings;
+            _jsonSettings = jsonSettings;
             _scheduler = scheduler;
         }
 
@@ -132,7 +132,7 @@ namespace SlackNet
 
             _eventSubscription?.Dispose();
             _eventSubscription = _webSocket.Messages
-                .Select(m => JsonConvert.DeserializeObject<Event>(m, _serializerSettings))
+                .Select(m => JsonConvert.DeserializeObject<Event>(m, _jsonSettings.SerializerSettings))
                 .Subscribe(_rawEvents);
 
             _reconnection?.Dispose();
@@ -191,13 +191,13 @@ namespace SlackNet
 
         private JObject Serialize(OutgoingRtmEvent slackEvent, out uint id)
         {
-            var json = JObject.FromObject(slackEvent, JsonSerializer.Create(_serializerSettings));
+            var json = JObject.FromObject(slackEvent, JsonSerializer.Create(_jsonSettings.SerializerSettings));
             id = _nextEventId++;
             json["id"] = id;
             return json;
         }
 
-        private void Send(JObject json) => _webSocket.Send(json.ToString(Formatting.None, _serializerSettings.Converters.ToArray()));
+        private void Send(JObject json) => _webSocket.Send(json.ToString(Formatting.None, _jsonSettings.SerializerSettings.Converters.ToArray()));
 
         public void Dispose()
         {

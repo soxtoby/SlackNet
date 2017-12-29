@@ -8,36 +8,36 @@ namespace SlackNet
 {
     public interface IHttp
     {
-        Task<T> Get<T>(string url, CancellationToken cancellationToken);
-        Task<T> Post<T>(string url, string bodyName, HttpContent bodyContent, CancellationToken cancellationToken);
+        Task<T> Get<T>(string url, CancellationToken? cancellationToken = null);
+        Task<T> Post<T>(string url, string bodyName, HttpContent bodyContent, CancellationToken? cancellationToken = null);
     }
 
     class Http : IHttp
     {
         private readonly HttpClient _client;
-        private readonly JsonSerializerSettings _serializerSettings;
+        private readonly SlackJsonSettings _jsonSettings;
 
-        public Http(HttpClient client, JsonSerializerSettings serializerSettings)
+        public Http(HttpClient client, SlackJsonSettings jsonSettings)
         {
             _client = client;
-            _serializerSettings = serializerSettings;
+            _jsonSettings = jsonSettings;
         }
 
-        public async Task<T> Get<T>(string url, CancellationToken cancellationToken)
+        public async Task<T> Get<T>(string url, CancellationToken? cancellationToken = null)
         {
-            var response = await _client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url), cancellationToken).ConfigureAwait(false);
+            var response = await _client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url), cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return await Deserialize<T>(response).ConfigureAwait(false);
         }
 
-        public async Task<T> Post<T>(string url, string bodyName, HttpContent bodyContent, CancellationToken cancellationToken)
+        public async Task<T> Post<T>(string url, string bodyName, HttpContent bodyContent, CancellationToken? cancellationToken = null)
         {
-            var response = await _client.PostAsync(url, new MultipartFormDataContent { { bodyContent, bodyName } }, cancellationToken).ConfigureAwait(false);
+            var response = await _client.PostAsync(url, new MultipartFormDataContent { { bodyContent, bodyName } }, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return await Deserialize<T>(response).ConfigureAwait(false);
         }
 
-        private async Task<T> Deserialize<T>(HttpResponseMessage response) => 
-            JsonSerializer.Create(_serializerSettings).Deserialize<T>(new JsonTextReader(new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(false))));
+        private async Task<T> Deserialize<T>(HttpResponseMessage response) =>
+            JsonSerializer.Create(_jsonSettings.SerializerSettings).Deserialize<T>(new JsonTextReader(new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(false))));
     }
 }

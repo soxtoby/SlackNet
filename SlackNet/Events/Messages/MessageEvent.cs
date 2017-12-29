@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace SlackNet.Events
 {
@@ -11,8 +12,10 @@ namespace SlackNet.Events
         public string User { get; set; }
         public string Text { get; set; }
         public string Ts { get; set; }
+        [JsonIgnore]
         public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
         public string ThreadTs { get; set; }
+        [JsonIgnore]
         public DateTime? ThreadTimestamp => ThreadTs.ToDateTime();
         public IList<Attachment> Attachments { get; } = new List<Attachment>();
         public Edit Edited { get; set; }
@@ -30,6 +33,7 @@ namespace SlackNet.Events
     {
         public string User { get; set; }
         public string Ts { get; set; }
+        [JsonIgnore]
         public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
     }
 
@@ -37,6 +41,7 @@ namespace SlackNet.Events
     {
         public string User { get; set; }
         public string Ts { get; set; }
+        [JsonIgnore]
         public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
     }
 }

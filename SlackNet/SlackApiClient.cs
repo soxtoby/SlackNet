@@ -79,21 +79,21 @@ namespace SlackNet
         private readonly IHttp _http;
         private readonly ISlackUrlBuilder _urlBuilder;
         private readonly string _token;
-        private readonly JsonSerializerSettings _serializerSettings;
+        private readonly SlackJsonSettings _jsonSettings;
 
         public SlackApiClient(string token)
         {
-            _serializerSettings = Default.SerializerSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
-            _http = Default.Http(_serializerSettings);
-            _urlBuilder = Default.UrlBuilder(_serializerSettings);
+            _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
+            _http = Default.Http(_jsonSettings);
+            _urlBuilder = Default.UrlBuilder(_jsonSettings);
             _token = token;
         }
 
-        public SlackApiClient(IHttp http, ISlackUrlBuilder urlBuilder, JsonSerializerSettings serializerSettings, string token)
+        public SlackApiClient(IHttp http, ISlackUrlBuilder urlBuilder, SlackJsonSettings jsonSettings, string token)
         {
             _http = http;
             _urlBuilder = urlBuilder;
-            _serializerSettings = serializerSettings;
+            _jsonSettings = jsonSettings;
             _token = token;
         }
 
@@ -174,7 +174,7 @@ namespace SlackNet
 
         private T Deserialize<T>(WebApiResponse response) where T : class =>
             response.Ok
-                ? response.Data?.ToObject<T>(JsonSerializer.Create(_serializerSettings))
+                ? response.Data?.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings))
                 : throw new SlackException(response.Error);
     }
 }
