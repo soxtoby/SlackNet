@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using SlackNet.Interaction;
 
 namespace SlackNet
 {
@@ -24,7 +25,7 @@ namespace SlackNet
         int Ts { get; }
         DateTime Timestamp { get; }
         string CallbackId { get; }
-        IList<Action> Actions { get; }
+        IList<ActionElement> Actions { get; }
     }
 
     public class Attachment : IReadOnlyAttachment
@@ -49,6 +50,6 @@ namespace SlackNet
         [JsonIgnore]
         public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
         public string CallbackId { get; set; }
-        public IList<Action> Actions { get; set; } = new List<Action>();
+        public IList<ActionElement> Actions { get; set; } = new List<ActionElement>();
     }
 }

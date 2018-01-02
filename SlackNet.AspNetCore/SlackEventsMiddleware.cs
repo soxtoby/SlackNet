@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -5,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using SlackNet.Events;
+using SlackNet.Interaction;
 
 namespace SlackNet.AspNetCore
 {
@@ -15,14 +17,16 @@ namespace SlackNet.AspNetCore
         private readonly ISlackEvents _slackEvents;
         private readonly ISlackActions _slackActions;
         private readonly ISlackOptions _slackOptions;
+        private readonly IDialogSubmissionHandler _dialogSubmissionHandler;
         private readonly SlackJsonSettings _jsonSettings;
 
         public SlackEventsMiddleware(
-            RequestDelegate next, 
-            SlackEndpointConfiguration configuration, 
-            ISlackEvents slackEvents, 
-            ISlackActions slackActions, 
+            RequestDelegate next,
+            SlackEndpointConfiguration configuration,
+            ISlackEvents slackEvents,
+            ISlackActions slackActions,
             ISlackOptions slackOptions,
+            IDialogSubmissionHandler dialogSubmissionHandler,
             SlackJsonSettings jsonSettings)
         {
             _next = next;
@@ -30,6 +34,7 @@ namespace SlackNet.AspNetCore
             _slackEvents = slackEvents;
             _slackActions = slackActions;
             _slackOptions = slackOptions;
+            _dialogSubmissionHandler = dialogSubmissionHandler;
             _jsonSettings = jsonSettings;
         }
 
@@ -60,8 +65,9 @@ namespace SlackNet.AspNetCore
 
             if (body is EventCallback eventCallback && IsValidToken(eventCallback.Token))
             {
+                var response = context.Respond(HttpStatusCode.OK).ConfigureAwait(false);
                 _slackEvents.Handle(eventCallback);
-                return await context.Respond(HttpStatusCode.OK).ConfigureAwait(false);
+                return await response;
             }
 
             return await context.Respond(HttpStatusCode.BadRequest, body: "Invalid token or unrecognized content").ConfigureAwait(false);
@@ -72,20 +78,41 @@ namespace SlackNet.AspNetCore
             if (context.Request.Method != "POST")
                 return await context.Respond(HttpStatusCode.MethodNotAllowed).ConfigureAwait(false);
 
-            var interactiveMessage = await DeserializePayload<InteractiveMessage>(context).ConfigureAwait(false);
+            var interactionRequest = await DeserializePayload<InteractionRequest>(context).ConfigureAwait(false);
 
-            if (interactiveMessage != null && IsValidToken(interactiveMessage.Token))
+            if (interactionRequest != null && IsValidToken(interactionRequest.Token))
             {
-                var response = await _slackActions.Handle(interactiveMessage).ConfigureAwait(false);
-
-                var responseJson = response == null ? null
-                    : interactiveMessage.IsAppUnfurl ? Serialize(new AttachmentUpdateResponse(response))
-                    : Serialize(new MessageUpdateResponse(response));
-
-                return await context.Respond(HttpStatusCode.OK, "application/json", responseJson).ConfigureAwait(false);
+                switch (interactionRequest)
+                {
+                    case InteractiveMessage interactiveMessage:
+                        return await HandleInteractiveMessage(context, interactiveMessage).ConfigureAwait(false);
+                    case DialogSubmission dialogSubmission:
+                        return await HandleDialogSubmission(context, dialogSubmission).ConfigureAwait(false);
+                }
             }
 
             return await context.Respond(HttpStatusCode.BadRequest, body: "Invalid token or unrecognized content").ConfigureAwait(false);
+        }
+
+        private async Task<HttpResponse> HandleInteractiveMessage(HttpContext context, InteractiveMessage interactiveMessage)
+        {
+            var response = await _slackActions.Handle(interactiveMessage).ConfigureAwait(false);
+
+            var responseJson = response == null ? null
+                : interactiveMessage.IsAppUnfurl ? Serialize(new AttachmentUpdateResponse(response))
+                : Serialize(new MessageUpdateResponse(response));
+
+            return await context.Respond(HttpStatusCode.OK, "application/json", responseJson).ConfigureAwait(false);
+        }
+
+        private async Task<HttpResponse> HandleDialogSubmission(HttpContext context, DialogSubmission dialog)
+        {
+            var errors = (await _dialogSubmissionHandler.Handle(dialog).ConfigureAwait(false))?.ToList()
+                ?? new List<DialogError>();
+
+            return errors.Any()
+                ? await context.Respond(HttpStatusCode.OK, "application/json", Serialize(new DialogErrorResponse { Errors = errors })).ConfigureAwait(false)
+                : await context.Respond(HttpStatusCode.OK).ConfigureAwait(false);
         }
 
         private async Task<HttpResponse> HandleSlackOptions(HttpContext context)

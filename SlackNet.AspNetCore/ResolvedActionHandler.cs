@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using SlackNet.Interaction;
 
 namespace SlackNet.AspNetCore
 {
@@ -24,10 +25,13 @@ namespace SlackNet.AspNetCore
             _serviceProvider = serviceProvider;
         }
 
-        public override Task<MessageResponse> Handle(InteractiveMessage message)
+        public override async Task<MessageResponse> Handle(InteractiveMessage message)
         {
-            var handler = _serviceProvider.GetRequiredService<T>();
-            return handler.Handle(message);
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var handler = scope.ServiceProvider.GetRequiredService<T>();
+                return await handler.Handle(message).ConfigureAwait(false);
+            }
         }
     }
 }

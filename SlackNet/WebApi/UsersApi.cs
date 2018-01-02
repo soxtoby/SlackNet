@@ -43,7 +43,7 @@ namespace SlackNet.WebApi
         /// This includes deleted/deactivated users.
         /// </summary>
         /// <param name="cursor">
-        /// Paginate through collections of data by setting the cursor parameter to a <see cref="UserListResponseMetadata.NextCursor"/> property
+        /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
         /// returned by a previous request's <see cref="UserListResponse.ResponseMetadata"/>.
         /// Default value fetches the first "page" of the collection.
         /// </param>
@@ -51,6 +51,13 @@ namespace SlackNet.WebApi
         /// <param name="presence">Whether to include presence data in the output. Setting this to False improves performance, especially with large teams.</param>
         /// <param name="cancellationToken"></param>
         Task<UserListResponse> List(string cursor = null, int limit = 0, bool presence = false, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Find a user with an email address.
+        /// </summary>
+        /// <param name="email">An email address belonging to a user in the workspace.</param>
+        /// <param name="cancellationToken"></param>
+        Task<User> LookupByEmail(string email, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Lets the Slack messaging server know that the authenticated user is currently active.
@@ -139,7 +146,7 @@ namespace SlackNet.WebApi
         /// This includes deleted/deactivated users.
         /// </summary>
         /// <param name="cursor">
-        /// Paginate through collections of data by setting the cursor parameter to a <see cref="UserListResponseMetadata.NextCursor"/> property
+        /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
         /// returned by a previous request's <see cref="UserListResponse.ResponseMetadata"/>.
         /// Default value fetches the first "page" of the collection.
         /// </param>
@@ -153,6 +160,14 @@ namespace SlackNet.WebApi
                     { "limit", limit },
                     { "presence", presence }
                 }, cancellationToken);
+
+        /// <summary>
+        /// Find a user with an email address.
+        /// </summary>
+        /// <param name="email">An email address belonging to a user in the workspace.</param>
+        /// <param name="cancellationToken"></param>
+        public async Task<User> LookupByEmail(string email, CancellationToken? cancellationToken = null) =>
+            (await _client.Get<UserResponse>("users.lookupByEmail", new Args { { "email", email } }, cancellationToken).ConfigureAwait(false)).User;
 
         /// <summary>
         /// Lets the Slack messaging server know that the authenticated user is currently active.

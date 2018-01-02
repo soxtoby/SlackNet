@@ -89,7 +89,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="numMinutes">Number of minutes, from now, to snooze until.</param>
         /// <param name="cancellationToken"></param>
-        public Task<SnoozeResponse> SetSnooze(int numMinutes, CancellationToken? cancellationToken) =>
+        public Task<SnoozeResponse> SetSnooze(int numMinutes, CancellationToken? cancellationToken = null) =>
             _client.Get<SnoozeResponse>("dnd.setSnooze", new Args { { "num_minutes", numMinutes } }, cancellationToken);
 
         /// <summary>

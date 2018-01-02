@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 using EasyAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -42,6 +43,20 @@ namespace SlackNet.Tests
         {
             var result = JsonConvert.SerializeObject(new EnumProperty { Property = TestEnum.TestValue }, _sut);
             result.ShouldBe(@"{""property"":""test_value""}");
+        }
+
+        [Test]
+        public void EnumValues_WithEnumMemberAttribute_DeserializedFromAttributeValue()
+        {
+            var result = JsonConvert.DeserializeObject<EnumProperty>(@"{ ""property"": ""other_value"" }", _sut);
+            result.Property.ShouldBe(TestEnum.RenamedValue);
+        }
+
+        [Test]
+        public void EnumValues_WithEnumMemberAttribute_SerializedToAttributeValue()
+        {
+            var result = JsonConvert.SerializeObject(new EnumProperty { Property = TestEnum.RenamedValue }, _sut);
+            result.ShouldBe(@"{""property"":""other_value""}");
         }
 
         [Test]
@@ -97,7 +112,9 @@ namespace SlackNet.Tests
         enum TestEnum
         {
             Default,
-            TestValue
+            TestValue,
+            [EnumMember(Value = "other_value")]
+            RenamedValue
         }
 
         class HasSlackTypeProperty

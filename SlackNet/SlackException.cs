@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using SlackNet.WebApi;
 
 namespace SlackNet
 {
     public class SlackException : Exception
     {
-        public string SlackError { get; }
+        public string ErrorCode { get; }
+        public IReadOnlyList<string> ErrorMessages { get; }
 
-        public SlackException(string slackError, string message = null) 
-            : base(message ?? $"Slack returned an error response: {slackError}.")
+        public SlackException(ErrorResponse errorResponse) 
+            : base($"Slack returned an error response: {errorResponse.Error}.")
         {
-            SlackError = slackError;
+            ErrorCode = errorResponse.Error;
+            ErrorMessages = errorResponse.ResponseMetadata.Messages.ToList();
         }
     }
 }

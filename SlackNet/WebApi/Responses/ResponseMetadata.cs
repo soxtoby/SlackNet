@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi
 {
-    public class UserListResponseMetadata
+    public class ResponseMetadata
     {
         public string NextCursor { get; set; }
     }

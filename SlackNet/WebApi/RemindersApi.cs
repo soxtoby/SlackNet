@@ -137,7 +137,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="reminderId">The ID of the reminder.</param>
         /// <param name="cancellationToken"></param>
-        public Task Delete(string reminderId, CancellationToken? cancellationToken) =>
+        public Task Delete(string reminderId, CancellationToken? cancellationToken = null) =>
             _client.Get("reminders.delete", new Args { { "reminder", reminderId } }, cancellationToken);
 
         /// <summary>

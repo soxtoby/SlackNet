@@ -66,7 +66,7 @@ namespace SlackNet
             {
                 return await apiTask.ConfigureAwait(false);
             }
-            catch (SlackException e) when (e.SlackError.EndsWith("_not_found", StringComparison.Ordinal))
+            catch (SlackException e) when (e.ErrorCode.EndsWith("_not_found", StringComparison.Ordinal))
             {
                 return null;
             }

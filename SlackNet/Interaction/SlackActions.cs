@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SlackNet
+namespace SlackNet.Interaction
 {
     public interface ISlackActions
     {

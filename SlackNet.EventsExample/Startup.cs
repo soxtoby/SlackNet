@@ -21,7 +21,10 @@ namespace SlackNet.EventsExample
                 .RegisterEventHandler<MessageEvent, MessageHandler>()
                 .RegisterActionHandler<Counter>(Counter.ActionName)
                 .RegisterActionHandler<ColorSelector>(ColorSelector.ActionName)
-                .RegisterOptionProvider<ColorSelector>(ColorSelector.ActionName));
+                .RegisterOptionProvider<ColorSelector>(ColorSelector.ActionName)
+                .RegisterActionHandler<DialogDemo>(DialogDemo.EchoDialog)
+                .RegisterActionHandler<DialogDemo>(DialogDemo.ErrorDialog)
+                .RegisterDialogSubmissionHandler<DialogDemo>());
             services.AddMvc();
         }
 

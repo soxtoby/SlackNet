@@ -254,7 +254,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Private channel to invite user to.</param>
         /// <param name="userId">User to invite.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Channel> Invite(string channelId, string userId, CancellationToken? cancellationToken) =>
+        public async Task<Channel> Invite(string channelId, string userId, CancellationToken? cancellationToken = null) =>
             (await _client.Get<GroupResponse>("groups.invite", new Args
                 {
                     { "channel", channelId },
@@ -269,7 +269,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">User to remove from private channel.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task Kick(string channelId, string userId, CancellationToken? cancellationToken) =>
+        public Task Kick(string channelId, string userId, CancellationToken? cancellationToken = null) =>
             _client.Get("groups.kick", new Args
                 {
                     { "channel", channelId },
@@ -349,7 +349,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns>The group's new purpose.</returns>
         public async Task<string> SetPurpose(string channelId, string purpose, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<PurposeResponse>("channels.setPurpose", new Args
+            (await _client.Get<PurposeResponse>("groups.setPurpose", new Args
                 {
                     { "channel", channelId },
                     { "purpose", purpose }
@@ -364,7 +364,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns>The private channel's new topic.</returns>
         public async Task<string> SetTopic(string channelId, string topic, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<TopicResponse>("channels.setTopic", new Args
+            (await _client.Get<TopicResponse>("groups.setTopic", new Args
                 {
                     { "channel", channelId },
                     { "topic", topic }
@@ -377,6 +377,6 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Private channel to unarchive.</param>
         /// <param name="cancellationToken"></param>
         public Task Unarchive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("channels.unarchive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Get("groups.unarchive", new Args { { "channel", channelId } }, cancellationToken);
     }
 }

@@ -72,7 +72,20 @@ namespace SlackNet.WebApi
                 {
                     { "ts", ts },
                     { "channel", channelId },
-                    { "asUser", asUser }
+                    { "as_user", asUser }
+                }, cancellationToken);
+
+        /// <summary>
+        /// Retrieve a permalink URL for a specific extant message.
+        /// </summary>
+        /// <param name="channelId">The ID of the conversation or channel containing the message.</param>
+        /// <param name="messageTs">A message's timestamp, uniquely identifying it within a channel.</param>
+        /// <param name="cancellationToken"></param>
+        public Task<PermalinkResponse> GetPermalink(string channelId, string messageTs, CancellationToken? cancellationToken = null) =>
+            _client.Get<PermalinkResponse>("chat.getPermalink", new Args
+                {
+                    { "channel", channelId },
+                    { "message_ts", messageTs }
                 }, cancellationToken);
 
         /// <summary>
@@ -91,7 +104,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Posts a message to a public channel, private channel, or direct message/IM channel.
         /// </summary>
-        /// <param name="message">The message to post</param>
+        /// <param name="message">The message to post.</param>
         /// <param name="cancellationToken"></param>
         public Task<PostMessageResponse> PostMessage(Message message, CancellationToken? cancellationToken = null) =>
             _client.Get<PostMessageResponse>("chat.postMessage", new Args
@@ -109,6 +122,25 @@ namespace SlackNet.WebApi
                         { "icon_emoji", message.IconEmoji },
                         { "thread_ts", message.ThreadTs },
                         { "reply_broadcast", message.ReplyBroadcast }
+                    },
+                cancellationToken);
+
+        /// <summary>
+        /// Sends an ephemeral message to a user in a channel.
+        /// </summary>
+        /// <param name="userId">ID of the user who will receive the ephemeral message. The user should be in the channel specified by the channel argument.</param>
+        /// <param name="message">The message to post. Not all message properties are supported by <c>PostEphemeral</c>.</param>
+        /// <param name="cancellationToken"></param>
+        public Task<PostMessageResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null) =>
+            _client.Get<PostMessageResponse>("chat.postEphemeral", new Args
+                    {
+                        { "channel", message.Channel },
+                        { "text", message.Text },
+                        { "user", userId },
+                        { "as_user", message.AsUser },
+                        { "attachments", message.Attachments },
+                        { "link_names", message.LinkNames },
+                        { "parse", message.Parse }
                     },
                 cancellationToken);
 

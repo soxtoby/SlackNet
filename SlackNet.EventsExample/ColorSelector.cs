@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using SlackNet.Interaction;
 
 namespace SlackNet.EventsExample
 {
@@ -11,12 +12,13 @@ namespace SlackNet.EventsExample
 
         public async Task<MessageResponse> Handle(InteractiveMessage message)
         {
-            message.OriginalAttachment.Color = message.Action.SelectedValue;
-            message.OriginalAttachment.Actions[0].SelectedOptions = new List<Option>
+            var menu = (Menu)message.Action;
+            message.OriginalAttachment.Color = menu.SelectedValue;
+            ((Menu)message.OriginalAttachment.Actions[0]).SelectedOptions = new List<Option>
                 {
                     GetOptions(string.Empty)
-                        .FirstOrDefault(o => o.Value == message.Action.SelectedValue)
-                    ?? new Option { Text = message.Action.SelectedValue, Value = message.Action.SelectedValue }
+                        .FirstOrDefault(o => o.Value == menu.SelectedValue)
+                    ?? new Option { Text = menu.SelectedValue, Value = menu.SelectedValue }
                 };
 
             return new MessageResponse
@@ -35,11 +37,10 @@ namespace SlackNet.EventsExample
                 .Select(c => new Option { Text = c.Name, Value = $"#{c.R:X2}{c.G:X2}{c.B:X2}" })
                 .ToList();
 
-        public static IList<Action> Actions => new List<Action>
+        public static IList<ActionElement> Actions => new List<ActionElement>
             {
-                new Action
+                new Menu
                     {
-                        Type = ActionType.Select,
                         Name = ActionName,
                         Text = "Select a color",
                         DataSource = DataSource.External

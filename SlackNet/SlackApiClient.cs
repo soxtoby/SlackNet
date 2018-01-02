@@ -14,17 +14,20 @@ namespace SlackNet
         IBotsApi Bots { get; }
         IChannelsApi Channels { get; }
         IChatApi Chat { get; }
+        IConversationsApi Conversations { get; }
+        IDialogApi Dialog { get; }
         IDndApi Dnd { get; }
         IEmojiApi Emoji { get; }
         IFileCommentsApi FileComments { get; }
         IFilesApi Files { get; }
         IGroupsApi Groups { get; }
         IImApi Im { get; }
+        IMigrationApi Migration { get; }
         IMpimApi Mpim { get; }
         IOAuthApi OAuth { get; }
         IPinsApi Pins { get; }
         IReactionsApi Reactions { get; }
-        IRemindersApi Reminder { get; }
+        IRemindersApi Reminders { get; }
         IRtmApi Rtm { get; }
         ISearchApi Search { get; }
         IStarsApi Stars { get; }
@@ -102,17 +105,20 @@ namespace SlackNet
         public IBotsApi Bots => new BotsApi(this);
         public IChannelsApi Channels => new ChannelsApi(this);
         public IChatApi Chat => new ChatApi(this);
+        public IConversationsApi Conversations => new ConversationsApi(this);
+        public IDialogApi Dialog => new DialogApi(this);
         public IDndApi Dnd => new DndApi(this);
         public IEmojiApi Emoji => new EmojiApi(this);
         public IFileCommentsApi FileComments => new FileCommentsApi(this);
         public IFilesApi Files => new FilesApi(this);
         public IGroupsApi Groups => new GroupsApi(this);
         public IImApi Im => new ImApi(this);
+        public IMigrationApi Migration => new MigrationApi(this);
         public IMpimApi Mpim => new MpimApi(this);
         public IOAuthApi OAuth => new OAuthApi(this);
         public IPinsApi Pins => new PinsApi(this);
         public IReactionsApi Reactions => new ReactionsApi(this);
-        public IRemindersApi Reminder => new RemindersApi(this);
+        public IRemindersApi Reminders => new RemindersApi(this);
         public IRtmApi Rtm => new RtmApi(this);
         public ISearchApi Search => new SearchApi(this);
         public IStarsApi Stars => new StarsApi(this);
@@ -175,6 +181,6 @@ namespace SlackNet
         private T Deserialize<T>(WebApiResponse response) where T : class =>
             response.Ok
                 ? response.Data?.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings))
-                : throw new SlackException(response.Error);
+                : throw new SlackException(response.Data?.ToObject<ErrorResponse>(JsonSerializer.Create(_jsonSettings.SerializerSettings)));
     }
 }

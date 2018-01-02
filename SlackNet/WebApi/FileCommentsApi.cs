@@ -47,7 +47,7 @@ namespace SlackNet.WebApi
         /// <param name="comment">Text of the comment to add.</param>
         /// <param name="cancellationToken"></param>
         public async Task<FileComment> Add(string fileId, string comment, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<FileCommentResponse>("file.comments.add", new Args
+            (await _client.Get<FileCommentResponse>("files.comments.add", new Args
                 {
                     { "file", fileId },
                     { "comment", comment }
@@ -62,7 +62,7 @@ namespace SlackNet.WebApi
         /// <param name="commentId">The comment to delete.</param>
         /// <param name="cancellationToken"></param>
         public Task Delete(string fileId, string commentId, CancellationToken? cancellationToken = null) =>
-            _client.Get("file.comments.delete", new Args
+            _client.Get("files.comments.delete", new Args
                 {
                     { "file", fileId },
                     { "id", commentId }

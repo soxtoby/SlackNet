@@ -1,4 +1,4 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.Interaction
 {
     public enum ResponseType
     {

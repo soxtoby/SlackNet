@@ -1,4 +1,4 @@
-namespace SlackNet
+namespace SlackNet.Interaction
 {
     public class OptionsRequest
     {

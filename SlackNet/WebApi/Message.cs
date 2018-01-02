@@ -95,14 +95,17 @@ namespace SlackNet.WebApi
         public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
         /// <summary>
         /// Pass True to enable unfurling of primarily text-based content.
+        /// Not supported when posting an ephemeral message.
         /// </summary>
         public bool UnfurlLinks { get; set; }
         /// <summary>
         /// Pass False to disable unfurling of media content.
+        /// Not supported when posting an ephemeral message.
         /// </summary>
         public bool UnfurlMedia { get; set; } = true;
         /// <summary>
         /// Set your bot's user name. Must be used in conjunction with <see cref="AsUser"/> set to False, otherwise ignored.
+        /// Not supported when posting an ephemeral message.
         /// </summary>
         public string Username { get; set; }
         /// <summary>
@@ -111,18 +114,22 @@ namespace SlackNet.WebApi
         public bool AsUser { get; set; }
         /// <summary>
         /// URL to an image to use as the icon for this message. Must be used in conjunction with <see cref="AsUser"/> set to False, otherwise ignored.
+        /// Not supported when posting an ephemeral message.
         /// </summary>
         public string IconUrl { get; set; }
         /// <summary>
         /// Emoji to use as the icon for this message. Overrides <see cref="IconUrl"/>. Must be used in conjunction with <see cref="AsUser"/> set to False, otherwise ignored.
+        /// Not supported when posting an ephemeral message.
         /// </summary>
         public string IconEmoji { get; set; }
         /// <summary>
-        /// Provide another message's <see cref="MessageEvent.Ts"/> value to make this message a reply. Avoid using a reply's ts value; use its parent instead.
+        /// Provide another message's <see cref="MessageEvent.Ts"/> value to make this message a reply. Avoid using a reply's <c>Ts</c> value; use its parent instead.
+        /// Not supported when posting an ephemeral message.
         /// </summary>
         public string ThreadTs { get; set; }
         /// <summary>
         /// Used in conjunction with <see cref="ThreadTs"/> and indicates whether reply should be made visible to everyone in the channel or conversation. 
+        /// Not supported when posting an ephemeral message.
         /// </summary>
         public bool ReplyBroadcast { get; set; }
     }

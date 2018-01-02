@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -15,18 +16,9 @@ namespace SlackNet
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (value == null)
-            {
                 writer.WriteNull();
-            }
             else
-            {
-                var enumValue = (Enum)value;
-                var enumText = enumValue.ToString("G");
-                if (char.IsNumber(enumText[0]) || enumText[0] == '-')
-                    throw new JsonSerializationException(string.Format("Integer value {0} is not allowed.", CultureInfo.InvariantCulture, enumText));
-
-                writer.WriteValue(_namingStrategy.GetPropertyName(enumText, false));
-            }
+                writer.WriteValue(SerializedName((Enum)value));
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -54,7 +46,22 @@ namespace SlackNet
         private object ParseEnumName(Type type, string name) => 
             Enum.GetValues(type)
                 .Cast<Enum>()
-                .FirstOrDefault(e => _namingStrategy.GetPropertyName(e.ToString("G"), false) == name);
+                .FirstOrDefault(e => SerializedName(e) == name);
+
+        private string SerializedName(Enum enumValue)
+        {
+            var enumText = enumValue.ToString("G");
+
+            if (char.IsNumber(enumText[0]) || enumText[0] == '-')
+                throw new JsonSerializationException(string.Format("Integer value {0} is not allowed.", CultureInfo.InvariantCulture, enumText));
+
+            var explicitName = enumValue.GetType()
+                .GetRuntimeField(enumText)?
+                .GetCustomAttribute<EnumMemberAttribute>()?
+                .Value;
+
+            return _namingStrategy.GetPropertyName(explicitName ?? enumText, explicitName != null);
+        }
 
         public override bool CanConvert(Type objectType) => typeof(Enum).GetTypeInfo().IsAssignableFrom(UnderlyingType(objectType).GetTypeInfo());
 

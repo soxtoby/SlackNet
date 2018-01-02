@@ -10,6 +10,6 @@ namespace SlackNet.WebApi
         public int CacheTs { get; set; }
         [JsonIgnore]
         public DateTime CacheTime => CacheTs.ToDateTime().GetValueOrDefault();
-        public UserListResponseMetadata ResponseMetadata { get; set; }
+        public ResponseMetadata ResponseMetadata { get; set; }
     }
 }

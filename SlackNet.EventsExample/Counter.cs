@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SlackNet.Interaction;
 
 namespace SlackNet.EventsExample
 {
@@ -28,21 +29,21 @@ namespace SlackNet.EventsExample
             return null;
         }
 
-        public static IList<Action> Actions => new List<Action>
+        public static IList<ActionElement> Actions => new List<ActionElement>
             {
-                new Action
+                new Button
                     {
                         Name = ActionName,
                         Value = "1",
                         Text = "Add 1"
                     },
-                new Action
+                new Button
                     {
                         Name = ActionName,
                         Value = "5",
                         Text = "Add 5"
                     },
-                new Action
+                new Button
                     {
                         Name = ActionName,
                         Value = "10",

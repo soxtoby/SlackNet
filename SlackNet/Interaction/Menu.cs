@@ -2,20 +2,17 @@
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace SlackNet
+namespace SlackNet.Interaction
 {
-    public class Action
+    [SlackType("select")]
+    public class Menu : ActionElement
     {
-        public string Name { get; set; }
-        public string Text { get; set; }
-        public Style Style { get; set; }
-        public ActionType Type { get; set; }
-        public string Value { get; set; }
-        public string Url { get; set; }
-        public Confirm Confirm { get; set; }
+        public Menu() : base("select") { }
+
         public IList<Option> Options { get; set; }
         public IList<OptionGroup> OptionGroups { get; set; }
         public DataSource DataSource { get; set; }
+        public int MinQueryLength { get; set; } = 1;
         public IList<Option> SelectedOptions { get; set; } = new List<Option>();
 
         [JsonIgnore]
@@ -25,7 +22,5 @@ namespace SlackNet
             set => SelectedOptions = Options?.Where(o => o.Value == value).ToList()
                 ?? new List<Option> { new Option { Value = value } };
         }
-
-        public int MinQueryLength { get; set; } = 1;
     }
 }

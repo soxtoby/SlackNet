@@ -1,6 +1,6 @@
 ﻿using SlackNet.WebApi;
 
-namespace SlackNet
+namespace SlackNet.Interaction
 {
     public class MessageResponse
     {

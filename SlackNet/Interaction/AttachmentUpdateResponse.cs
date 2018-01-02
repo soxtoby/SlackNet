@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SlackNet.WebApi;
 
-namespace SlackNet
+namespace SlackNet.Interaction
 {
     public class AttachmentUpdateResponse: IReadOnlyAttachment
     {
@@ -32,7 +31,7 @@ namespace SlackNet
         public int Ts => Attachment.Ts;
         public DateTime Timestamp => Attachment.Timestamp;
         public string CallbackId => Attachment.CallbackId;
-        public IList<Action> Actions => Attachment.Actions;
+        public IList<ActionElement> Actions => Attachment.Actions;
 
         private Attachment Attachment => _response.Message.Attachments.First();
     }

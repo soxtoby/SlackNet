@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SlackNet
+namespace SlackNet.Interaction
 {
     public interface ISlackOptions
     {
@@ -19,16 +19,5 @@ namespace SlackNet
                 : Task.FromResult(new OptionsResponse());
 
         public void SetProvider(string actionName, IOptionProvider provider) => _providers[actionName] = provider;
-    }
-
-    public interface IOptionProvider
-    {
-        Task<OptionsResponse> GetOptions(OptionsRequest request);
-    }
-
-    public class OptionsResponse
-    {
-        public IList<Option> Options { get; set; }
-        public IList<OptionGroup> OptionGroups { get; set; }
     }
 }

@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using SlackNet.WebApi;
 
-namespace SlackNet
+namespace SlackNet.Interaction
 {
     public class MessageUpdateResponse : IReadOnlyMessage
     {
         private readonly MessageResponse _response;
-
         public MessageUpdateResponse(MessageResponse response) => _response = response;
 
         public ResponseType ResponseType => _response.ResponseType;

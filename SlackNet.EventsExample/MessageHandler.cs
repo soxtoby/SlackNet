@@ -22,6 +22,7 @@ namespace SlackNet.EventsExample
                                 new Attachment
                                     {
                                         Text = "Counter: 0",
+                                        Fallback = "No counter for you",
                                         CallbackId = "counter",
                                         Actions = Counter.Actions
                                     },
@@ -31,6 +32,13 @@ namespace SlackNet.EventsExample
                                         Fallback = "No color for you",
                                         CallbackId = "color",
                                         Actions = ColorSelector.Actions
+                                    },
+                                new Attachment
+                                    {
+                                        Text = "Dialogs",
+                                        Fallback = "No dialogs for you",
+                                        CallbackId = "dialog",
+                                        Actions = DialogDemo.Actions
                                     }
                             }
                     }).ConfigureAwait(false);

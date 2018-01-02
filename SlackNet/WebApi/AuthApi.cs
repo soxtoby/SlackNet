@@ -33,7 +33,7 @@ namespace SlackNet.WebApi
         /// <param name="test">Setting this parameter to True triggers a testing mode where the specified token will not actually be revoked.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Whether or not the access token was revoked.</returns>
-        public async Task<bool> Revoke(bool test, CancellationToken? cancellationToken) =>
+        public async Task<bool> Revoke(bool test, CancellationToken? cancellationToken = null) =>
             (await _client.Get<RevokeResponse>("auth.revoke", new Args { { "test", test } }, cancellationToken).ConfigureAwait(false)).Revoked;
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SlackNet.Events;
+using SlackNet.Interaction;
 
 namespace SlackNet.AspNetCore
 {
@@ -40,6 +41,13 @@ namespace SlackNet.AspNetCore
         {
             _serviceCollection.AddTransient<TProvider>();
             _serviceCollection.AddSingleton<ResolvedOptionProvider>(c => new ResolvedOptionProvider<TProvider>(c, actionName));
+            return this;
+        }
+
+        public SlackServiceConfiguration RegisterDialogSubmissionHandler<THandler>()
+            where THandler : IDialogSubmissionHandler
+        {
+            _serviceCollection.AddSingleton<IDialogSubmissionHandler>(c => new ResolvedDialogSubmissionHandler<THandler>(c));
             return this;
         }
 

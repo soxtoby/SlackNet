@@ -473,8 +473,8 @@ namespace SlackNet.Tests
             var user1 = new User { Id = "U1" };
             var user2 = new User { Id = "U2" };
             var user3 = new User { Id = "U3" };
-            _api.Users.List().Returns(new UserListResponse { Members = { user1 }, ResponseMetadata = new UserListResponseMetadata { NextCursor = "foo" } });
-            _api.Users.List("foo").Returns(new UserListResponse { Members = { user2 }, ResponseMetadata = new UserListResponseMetadata { NextCursor = "bar" } });
+            _api.Users.List().Returns(new UserListResponse { Members = { user1 }, ResponseMetadata = new ResponseMetadata { NextCursor = "foo" } });
+            _api.Users.List("foo").Returns(new UserListResponse { Members = { user2 }, ResponseMetadata = new ResponseMetadata { NextCursor = "bar" } });
             _api.Users.List("bar").Returns(new UserListResponse { Members = { user3 } });
 
             _sut.GetUsers()
