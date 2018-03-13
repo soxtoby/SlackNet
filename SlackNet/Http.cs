@@ -9,7 +9,7 @@ namespace SlackNet
     public interface IHttp
     {
         Task<T> Get<T>(string url, CancellationToken? cancellationToken = null);
-        Task<T> Post<T>(string url, string bodyName, HttpContent bodyContent, CancellationToken? cancellationToken = null);
+        Task<T> Post<T>(string url, HttpContent content, CancellationToken? cancellationToken = null);
     }
 
     class Http : IHttp
@@ -30,9 +30,9 @@ namespace SlackNet
             return await Deserialize<T>(response).ConfigureAwait(false);
         }
 
-        public async Task<T> Post<T>(string url, string bodyName, HttpContent bodyContent, CancellationToken? cancellationToken = null)
+        public async Task<T> Post<T>(string url, HttpContent content, CancellationToken? cancellationToken = null)
         {
-            var response = await _client.PostAsync(url, new MultipartFormDataContent { { bodyContent, bodyName } }, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+            var response = await _client.PostAsync(url, content, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return await Deserialize<T>(response).ConfigureAwait(false);
         }

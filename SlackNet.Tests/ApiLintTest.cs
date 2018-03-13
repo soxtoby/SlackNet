@@ -70,7 +70,7 @@ namespace SlackNet.Tests
 
         private static object DummyValue(ParameterInfo param) =>
               param.ParameterType == typeof(string) && param.Name == "contentType" ? "text/png"
-            : param.ParameterType == typeof(string) ? string.Empty
+            : param.ParameterType == typeof(string) ? "foo"
             : param.ParameterType == typeof(int) ? 0
             : param.ParameterType == typeof(int?) ? null
             : param.ParameterType == typeof(bool) ? false
@@ -131,7 +131,7 @@ namespace SlackNet.Tests
                 return Task.FromResult(Activator.CreateInstance<T>());
             }
 
-            public Task Post(string apiMethod, Args args, string bodyName, HttpContent bodyContent, CancellationToken? cancellationToken)
+            public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken)
             {
                 HttpMethod = "POST";
                 SlackMethod = apiMethod;
@@ -140,7 +140,7 @@ namespace SlackNet.Tests
                 return Task.FromResult(0);
             }
 
-            public Task<T> Post<T>(string apiMethod, Args args, string bodyName, HttpContent bodyContent, CancellationToken? cancellationToken) where T : class
+            public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) where T : class
             {
                 HttpMethod = "POST";
                 SlackMethod = apiMethod;

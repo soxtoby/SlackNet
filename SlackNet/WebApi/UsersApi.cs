@@ -74,11 +74,12 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="imageContent">Image file contents.</param>
         /// <param name="contentType">MIME type of image file, such as image/gif, image/jpeg, image/png, etc.</param>
+        /// <param name="fileName">Image file name.</param>
         /// <param name="cropW">Width/height of crop box(always square).</param>
         /// <param name="cropX">X coordinate of top-left corner of crop box.</param>
         /// <param name="cropY">Y coordinate of top-left corner of crop box.</param>
         /// <param name="cancellationToken"></param>
-        Task SetPhoto(byte[] imageContent, string contentType, int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null);
+        Task SetPhoto(byte[] imageContent, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// This method allows the user to set their profile image.
@@ -89,11 +90,12 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="image">Image file.</param>
         /// <param name="contentType">MIME type of image file, such as image/gif, image/jpeg, image/png, etc.</param>
+        /// <param name="fileName">Image file name.</param>
         /// <param name="cropW">Width/height of crop box(always square).</param>
         /// <param name="cropX">X coordinate of top-left corner of crop box.</param>
         /// <param name="cropY">Y coordinate of top-left corner of crop box.</param>
         /// <param name="cancellationToken"></param>
-        Task SetPhoto(Stream image, string contentType, int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null);
+        Task SetPhoto(Stream image, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Lets you set the calling user's manual presence.
@@ -185,22 +187,26 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="imageContent">Image file contents.</param>
         /// <param name="contentType">MIME type of image file, such as image/gif, image/jpeg, image/png, etc.</param>
+        /// <param name="fileName">Image file name.</param>
         /// <param name="cropW">Width/height of crop box(always square).</param>
         /// <param name="cropX">X coordinate of top-left corner of crop box.</param>
         /// <param name="cropY">Y coordinate of top-left corner of crop box.</param>
         /// <param name="cancellationToken"></param>
-        public Task SetPhoto(byte[] imageContent, string contentType, int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null) =>
+        public Task SetPhoto(byte[] imageContent, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null) =>
             _client.Post("users.setPhoto", new Args
                     {
                         { "crop_w", cropW },
                         { "crop_x", cropX },
                         { "crop_y", cropY }
                     },
-                "image",
-                new ByteArrayContent(imageContent)
-                {
-                    Headers = { ContentType = MediaTypeHeaderValue.Parse(contentType) }
-                },
+                new MultipartFormDataContent
+                    {
+                        {
+                            new ByteArrayContent(imageContent) { Headers = { ContentType = MediaTypeHeaderValue.Parse(contentType) } },
+                            "image",
+                            fileName
+                        }
+                    },
                 cancellationToken);
 
         /// <summary>
@@ -212,22 +218,26 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="image">Image file.</param>
         /// <param name="contentType">MIME type of image file, such as image/gif, image/jpeg, image/png, etc.</param>
+        /// <param name="fileName">Image file name.</param>
         /// <param name="cropW">Width/height of crop box(always square).</param>
         /// <param name="cropX">X coordinate of top-left corner of crop box.</param>
         /// <param name="cropY">Y coordinate of top-left corner of crop box.</param>
         /// <param name="cancellationToken"></param>
-        public Task SetPhoto(Stream image, string contentType, int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null) =>
+        public Task SetPhoto(Stream image, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null) =>
             _client.Post("users.setPhoto", new Args
                     {
                         { "crop_w", cropW },
                         { "crop_x", cropX },
                         { "crop_y", cropY }
                     },
-                "image",
-                new StreamContent(image)
-                {
-                    Headers = { ContentType = MediaTypeHeaderValue.Parse(contentType) }
-                },
+                new MultipartFormDataContent
+                    {
+                        {
+                            new StreamContent(image) { Headers = { ContentType = MediaTypeHeaderValue.Parse(contentType) } },
+                            "image",
+                            fileName
+                        }
+                    },
                 cancellationToken);
 
         /// <summary>

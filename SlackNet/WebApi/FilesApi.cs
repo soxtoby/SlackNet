@@ -325,8 +325,7 @@ namespace SlackNet.WebApi
                         { "initial_comment", initialComment },
                         { "channels", channels }
                     },
-                bodyName,
-                fileContent,
+                new MultipartFormDataContent { { fileContent, bodyName, fileName ?? "file" } },
                 cancellationToken);
     }
 }

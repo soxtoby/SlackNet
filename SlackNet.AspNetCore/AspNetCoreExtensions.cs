@@ -22,10 +22,10 @@ namespace SlackNet.AspNetCore
             return serviceCollection;
         }
 
-        public static IApplicationBuilder UseSlackNet(this IApplicationBuilder app, Action<SlackEndpointConfiguration> configure)
+        public static IApplicationBuilder UseSlackNet(this IApplicationBuilder app, Action<SlackEndpointConfiguration> configure = null)
         {
             var config = new SlackEndpointConfiguration();
-            configure(config);
+            configure?.Invoke(config);
             return app.UseMiddleware<SlackEventsMiddleware>(config);
         }
     }

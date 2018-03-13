@@ -10,11 +10,13 @@ namespace SlackNet
         public string ErrorCode { get; }
         public IReadOnlyList<string> ErrorMessages { get; }
 
-        public SlackException(ErrorResponse errorResponse) 
-            : base($"Slack returned an error response: {errorResponse.Error}.")
+        public SlackException(ErrorResponse errorResponse)
+            : base(errorResponse == null
+                ? "Slack returned an unknown error response type"
+                : $"Slack returned an error response: {errorResponse.Error}.")
         {
-            ErrorCode = errorResponse.Error;
-            ErrorMessages = errorResponse.ResponseMetadata.Messages.ToList();
+            ErrorCode = errorResponse?.Error ?? "unknown";
+            ErrorMessages = errorResponse?.ResponseMetadata?.Messages.ToList() ?? new List<string>();
         }
     }
 }
