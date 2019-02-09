@@ -2,7 +2,28 @@
 An easy-to-use and flexible API for writing Slack bots in .NET, built on top of a comprehensive Slack API client.
 
 ## Getting Started
-Start by installing the [NuGet package](https://www.nuget.org/packages/SlackNet/).
+There are three NuGet packages available to install, depending on your use case.
+  - [SlackNet](https://www.nuget.org/packages/SlackNet/): A comprehensive Slack API client for .NET.
+  - [SlackNet.Bot](https://www.nuget.org/packages/SlackNet.Bot/): Easy-to-use API for writing Slack bots.
+  - [SlackNet.AspNetCore](https://www.nuget.org/packages/SlackNet.AspNetCore/): ASP.NET Core integration for receiving requests from Slack.
+
+### SlackNet
+To use the Web API:
+```c#
+var api = new SlackApiClient("<your API token here>");
+```
+then start calling methods:
+```c#
+var channels = await api.Channels.List();
+```
+
+To use the RTM API:
+```c#
+var rtm = new SlackRtmClient("<your API token here>");
+await rtm.Connect();
+rtm.Events.Subscribe(/* handle every event */);
+rtm.Messages.Subscribe(/* handle message events */);
+```
 
 ### SlackNet.Bot
 ```c#
@@ -46,20 +67,18 @@ var channels = await bot.GetChannels();
 ```
 Everything is cached, so go nuts getting the information you need. You can clear the cache with `bot.ClearCache()`.
 
-### SlackNet
-To use the Web API:
+### SlackNet.AspNetCore
+In your Startup class:
 ```c#
-var api = new SlackApiClient("<your API token here>");
-```
-then start calling methods:
-```c#
-var channels = await api.Channels.List();
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSlackNet(c => c.UseApiToken("<your API token here>"));
+}
+
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    app.UseSlackNet(c => c.VerifyWith("<your verification token here>"));
+}
 ```
 
-To use the RTM API:
-```c#
-var rtm = new SlackRtmClient("<your API token here>");
-await rtm.Connect();
-rtm.Events.Subscribe(/* handle every event */);
-rtm.Messages.Subscribe(/* handle message events */);
-```
+See the `SlackNet.EventsExample` project for more detail.
