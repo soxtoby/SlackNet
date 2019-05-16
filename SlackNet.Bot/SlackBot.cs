@@ -168,7 +168,7 @@ namespace SlackNet.Bot
             _api = apiClient;
             _scheduler = scheduler ?? Scheduler.Default;
             _incomingWithMiddlewareApplied = _rtm.Messages
-                .Where(m => m.GetType() == typeof(MessageEvent))
+                .Where(m => m.GetType() == typeof(MessageEvent) || m.GetType() == typeof(SlackNet.Events.BotMessage))
                 .Where(m => m.User != Id)
                 .SelectMany(CreateSlackMessage);
             _outgoingWithMiddlewareApplied = _outgoingMessages
@@ -264,7 +264,7 @@ namespace SlackNet.Bot
         /// Get information on a public or private channel, IM, or multi-person IM.
         /// </summary>
         public async Task<Hub> GetHubById(string hubId) =>
-            hubId == null
+            String.IsNullOrEmpty(hubId)
                 ? null
                 : await _hubs.GetOrAdd(hubId, FetchHub).ConfigureAwait(false);
 
@@ -375,7 +375,7 @@ namespace SlackNet.Bot
         /// Get user information.
         /// </summary>
         public async Task<User> GetUserById(string userId) =>
-            userId == null
+            String.IsNullOrEmpty(userId)
                 ? null
                 : await _users.GetOrAdd(userId, _ => _api.Users.Info(userId).NullIfNotFound()).ConfigureAwait(false);
 
