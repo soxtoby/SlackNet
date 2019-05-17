@@ -27,7 +27,7 @@ namespace SlackNet.Bot
         public bool IsInThread => ThreadTs != null;
         public bool MentionsBot => Text.IndexOf(_bot.Id, StringComparison.OrdinalIgnoreCase) >= 0
             || Text.IndexOf(_bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
-            || Hub.IsIm;
+            || Hub?.IsIm == true;
 
         public Task ReplyWith(string text, bool createThread = false) => ReplyWith(new BotMessage { Text = text }, createThread);
 
