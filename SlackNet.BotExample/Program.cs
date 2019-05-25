@@ -1,0 +1,38 @@
+﻿using SlackNet.Bot;
+using System;
+using System.Threading.Tasks;
+
+namespace SlackNet.BotExample
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            if (args.Length == 0)
+                Console.WriteLine("Please provide a Slack token as a command line argument.");
+            else
+                Run(args[0]).Wait();
+        }
+
+        private static async Task Run(string token)
+        {
+            using (var bot = new SlackBot(token))
+            {
+                bot.AddHandler(new PingHandler());
+
+                await bot.Connect();
+                Console.WriteLine("Connected");
+
+                await WaitForKeyPress();
+            }
+        }
+
+        private static async Task WaitForKeyPress()
+        {
+            Console.WriteLine("Press any key to disconnect...");
+            while (!Console.KeyAvailable)
+                await Task.Yield();
+            Console.ReadKey();
+        }
+    }
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SlackNet.Example": {
+      "commandName": "Project",
+      "commandLineArgs": "xoxb-10324893616-YBJgWjH0q3pZBEDUX2PtwRos"
+    }
+  }
+}
