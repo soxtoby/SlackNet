@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using SlackNet.Events;
@@ -281,7 +280,7 @@ namespace SlackNet.Bot
             if (matchingIm == null)
                 return null;
 
-            return await OpenIm(matchingIm.User).ConfigureAwait(false);
+            return await OpenIm(matchingIm.User).ConfigureAwait(false); // im.open returns more channel info than im.list
         }
 
         /// <summary>
@@ -312,12 +311,11 @@ namespace SlackNet.Bot
                 .FirstOrDefault(g => g.Name == name);
 
         /// <summary>
-        /// Find user by name, with or without leading @.
+        /// Get an open Im by user name, with or without leading @.
         /// </summary>
         public async Task<Im> GetImByName(string username) =>
             await GetImByUserId(
-                (await GetUsers().ConfigureAwait(false))
-                    .FirstOrDefault(u => u.Name == WithoutLeadingAt(username))?.Id).ConfigureAwait(false);
+                (await GetUserByName(username).ConfigureAwait(false))?.Id).ConfigureAwait(false);
 
         /// <summary>
         /// Get and open Im by user ID.
@@ -383,7 +381,7 @@ namespace SlackNet.Bot
         /// Find user by username, with or without leading @.
         /// </summary>
         public async Task<User> GetUserByName(string username) =>
-            await _users.Values.FirstOrDefaultAsync(u => u.Name == username).ConfigureAwait(false)
+            await _users.Values.FirstOrDefaultAsync(u => u.Name == WithoutLeadingAt(username)).ConfigureAwait(false)
             ?? (await GetUsers().ConfigureAwait(false)).FirstOrDefault(u => u.Name == WithoutLeadingAt(username));
 
         private static string WithoutLeadingAt(string name) => name.TrimStart('@');
