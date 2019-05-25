@@ -4,6 +4,6 @@ namespace SlackNet.WebApi
 {
     class MembershipResponse
     {
-        public List<string> Users { get; } = new List<string>();
+        public List<string> Users { get; set; } = new List<string>();
     }
 }

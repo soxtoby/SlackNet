@@ -4,6 +4,6 @@ namespace SlackNet.WebApi
 {
     class ChannelListResponse
     {
-        public List<Channel> Channels { get; } = new List<Channel>();
+        public List<Channel> Channels { get; set; } = new List<Channel>();
     }
 }

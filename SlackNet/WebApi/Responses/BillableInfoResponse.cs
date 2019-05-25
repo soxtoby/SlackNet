@@ -4,6 +4,6 @@ namespace SlackNet.WebApi
 {
     class BillableInfoResponse
     {
-        public IList<BillableInfo> BillableInfo { get; } = new List<BillableInfo>();
+        public IList<BillableInfo> BillableInfo { get; set; } = new List<BillableInfo>();
     }
 }
