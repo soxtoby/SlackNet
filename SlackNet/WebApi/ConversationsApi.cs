@@ -24,7 +24,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// Initiates a public or private channel-based conversation.
-        /// Use <see cref="ConversationsApi.Open"/> to initiate or resume a direct message or multi-person direct message.
+        /// Use <c>Open</c> to initiate or resume a direct message or multi-person direct message.
         /// </summary>
         /// <param name="name">Name of the public or private channel to create.</param>
         /// <param name="isPrivate">Create a private channel instead of a public one.</param>
@@ -114,13 +114,37 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// Opens or resumes a direct message or multi-person direct message.
-        /// Use <see cref="ConversationsApi.Create"/> for public or private channels.
+        /// Use <see cref="Create"/> for public or private channels.
         /// </summary>
-        /// <param name="channelId">Resume a conversation by supplying an im or mpim's ID. Or provide the <paramref name="userIds"/> argument instead.</param>
-        /// <param name="returnIm">Indicates you want the full IM channel definition in the response.</param>
-        /// <param name="userIds">Lists of users. If only one user is included, this creates a 1:1 DM. The ordering of the users is preserved whenever a multi-person direct message is returned. Supply a <paramref name="channelId"/> when not supplying users.</param>
+        /// <param name="channelId">Resume a conversation by supplying an im or mpim's ID.</param>
         /// <param name="cancellationToken"></param>
-        Task<ConversationOpenResponse> Open(string channelId = null, bool returnIm = false, IEnumerable<string> userIds = null, CancellationToken? cancellationToken = null);
+        /// <returns>The opened channel's ID</returns>
+        Task<string> Open(string channelId, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Opens or resumes a direct message or multi-person direct message.
+        /// Use <see cref="Create"/> for public or private channels.
+        /// </summary>
+        /// <param name="userIds">List of users. If only one user is included, this creates a 1:1 DM. The ordering of the users is preserved whenever a multi-person direct message is returned.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The opened channel's ID</returns>
+        Task<string> Open(IEnumerable<string> userIds, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Opens or resumes a direct message or multi-person direct message.
+        /// Use <see cref="Create"/> for public or private channels.
+        /// </summary>
+        /// <param name="channelId">Resume a conversation by supplying an im or mpim's ID.</param>
+        /// <param name="cancellationToken"></param>
+        Task<ImResponse> OpenAndReturnInfo(string channelId, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Opens or resumes a direct message or multi-person direct message.
+        /// Use <see cref="Create"/> for public or private channels.
+        /// </summary>
+        /// <param name="userIds">List of users. If only one user is included, this creates a 1:1 DM. The ordering of the users is preserved whenever a multi-person direct message is returned.</param>
+        /// <param name="cancellationToken"></param>
+        Task<ImResponse> OpenAndReturnInfo(IEnumerable<string> userIds, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Renames a conversation.
@@ -195,7 +219,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// Initiates a public or private channel-based conversation.
-        /// Use <see cref="Open"/> to initiate or resume a direct message or multi-person direct message.
+        /// Use <c>Open</c> to initiate or resume a direct message or multi-person direct message.
         /// </summary>
         /// <param name="name">Name of the public or private channel to create.</param>
         /// <param name="isPrivate">Create a private channel instead of a public one.</param>
@@ -332,14 +356,44 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// Opens or resumes a direct message or multi-person direct message.
+        /// Use <see cref="IConversationsApi.Create"/> for public or private channels.
+        /// </summary>
+        /// <param name="channelId">Resume a conversation by supplying an im or mpim's ID.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The opened channel's ID</returns>
+        public async Task<string> Open(string channelId, CancellationToken? cancellationToken = null) => 
+            (await Open<ConversationIdResponse>(false, channelId, null, cancellationToken).ConfigureAwait(false)).Channel.Id;
+
+        /// <summary>
+        /// Opens or resumes a direct message or multi-person direct message.
+        /// Use <see cref="IConversationsApi.Create"/> for public or private channels.
+        /// </summary>
+        /// <param name="userIds">List of users. If only one user is included, this creates a 1:1 DM. The ordering of the users is preserved whenever a multi-person direct message is returned.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The opened channel's ID</returns>
+        public async Task<string> Open(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) => 
+            (await Open<ConversationIdResponse>(false, null, userIds, cancellationToken).ConfigureAwait(false)).Channel.Id;
+
+        /// <summary>
+        /// Opens or resumes a direct message or multi-person direct message.
         /// Use <see cref="Create"/> for public or private channels.
         /// </summary>
-        /// <param name="channelId">Resume a conversation by supplying an im or mpim's ID. Or provide the <paramref name="userIds"/> argument instead.</param>
-        /// <param name="returnIm">Indicates you want the full IM channel definition in the response.</param>
-        /// <param name="userIds">Lists of users. If only one user is included, this creates a 1:1 DM. The ordering of the users is preserved whenever a multi-person direct message is returned. Supply a <paramref name="channelId"/> when not supplying users.</param>
+        /// <param name="channelId">Resume a conversation by supplying an im or mpim's ID.</param>
         /// <param name="cancellationToken"></param>
-        public Task<ConversationOpenResponse> Open(string channelId = null, bool returnIm = false, IEnumerable<string> userIds = null, CancellationToken? cancellationToken = null) =>
-            _client.Get<ConversationOpenResponse>("conversations.open", new Args
+        public Task<ImResponse> OpenAndReturnInfo(string channelId, CancellationToken? cancellationToken = null) => 
+            Open<ImResponse>(true, channelId, null, cancellationToken);
+
+        /// <summary>
+        /// Opens or resumes a direct message or multi-person direct message.
+        /// Use <see cref="Create"/> for public or private channels.
+        /// </summary>
+        /// <param name="userIds">List of users. If only one user is included, this creates a 1:1 DM. The ordering of the users is preserved whenever a multi-person direct message is returned.</param>
+        /// <param name="cancellationToken"></param>
+        public Task<ImResponse> OpenAndReturnInfo(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) => 
+            Open<ImResponse>(true, null, userIds, cancellationToken);
+
+        private Task<T> Open<T>(bool returnIm, string channelId = null, IEnumerable<string> userIds = null, CancellationToken? cancellationToken = null) where T : class =>
+            _client.Get<T>("conversations.open", new Args
                 {
                     { "channel", channelId },
                     { "return_im", returnIm },
