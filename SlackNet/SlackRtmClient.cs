@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
@@ -53,6 +54,18 @@ namespace SlackNet
         /// This can be sent on every key press in the chat input unless one has been sent in the last three seconds.
         /// </summary>
         void SendTyping(string channelId);
+
+        /// <summary>
+        /// Ask Slack's message server to subscribe you to presence events for the specified list of users.
+        /// Calling again with fewer users will unsubscribe from the users no longer specified.
+        /// </summary
+        void SetUserPresenceSubscription(IEnumerable<string> userIds);
+
+        /// <summary>
+        /// Ask the message server about the current presence status for the specified list of users.
+        /// <see cref="PresenceChange"/> events will be sent back in response.
+        /// </summary>
+        void RequestUserPresence(IEnumerable<string> userIds);
 
         /// <summary>
         /// Low-level method for sending an arbitrary message over the websocket where a reply is expected.
@@ -169,6 +182,20 @@ namespace SlackNet
         /// This can be sent on every key press in the chat input unless one has been sent in the last three seconds.
         /// </summary>
         public void SendTyping(string channelId) => Send(new Typing { Channel = channelId });
+
+        /// <summary>
+        /// Ask Slack's message server to subscribe you to presence events for the specified list of users.
+        /// Calling again with fewer users will unsubscribe from the users no longer specified.
+        /// </summary
+        public void SetUserPresenceSubscription(IEnumerable<string> userIds) =>
+            Send(new PresenceSub { Ids = userIds.ToList() });
+
+        /// <summary>
+        /// Ask the message server about the current presence status for the specified list of users.
+        /// <see cref="PresenceChange"/> events will be sent back in response.
+        /// </summary>
+        public void RequestUserPresence(IEnumerable<string> userIds) =>
+            Send(new PresenceQuery { Ids = userIds.ToList() });
 
         /// <summary>
         /// Low-level method for sending an arbitrary message over the websocket where a reply is expected.

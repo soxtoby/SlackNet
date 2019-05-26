@@ -48,9 +48,8 @@ namespace SlackNet.WebApi
         /// Default value fetches the first "page" of the collection.
         /// </param>
         /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
-        /// <param name="presence">Whether to include presence data in the output. Setting this to False improves performance, especially with large teams.</param>
         /// <param name="cancellationToken"></param>
-        Task<UserListResponse> List(string cursor = null, int limit = 0, bool presence = false, CancellationToken? cancellationToken = null);
+        Task<UserListResponse> List(string cursor = null, int limit = 0, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Find a user with an email address.
@@ -58,12 +57,6 @@ namespace SlackNet.WebApi
         /// <param name="email">An email address belonging to a user in the workspace.</param>
         /// <param name="cancellationToken"></param>
         Task<User> LookupByEmail(string email, CancellationToken? cancellationToken = null);
-
-        /// <summary>
-        /// Lets the Slack messaging server know that the authenticated user is currently active.
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        Task SetActive(CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// This method allows the user to set their profile image.
@@ -153,14 +146,12 @@ namespace SlackNet.WebApi
         /// Default value fetches the first "page" of the collection.
         /// </param>
         /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
-        /// <param name="presence">Whether to include presence data in the output. Setting this to False improves performance, especially with large teams.</param>
         /// <param name="cancellationToken"></param>
-        public Task<UserListResponse> List(string cursor = null, int limit = 0, bool presence = false, CancellationToken? cancellationToken = null) =>
+        public Task<UserListResponse> List(string cursor = null, int limit = 0, CancellationToken? cancellationToken = null) =>
             _client.Get<UserListResponse>("users.list", new Args
                 {
                     { "cursor", cursor },
-                    { "limit", limit },
-                    { "presence", presence }
+                    { "limit", limit }
                 }, cancellationToken);
 
         /// <summary>
@@ -170,13 +161,6 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         public async Task<User> LookupByEmail(string email, CancellationToken? cancellationToken = null) =>
             (await _client.Get<UserResponse>("users.lookupByEmail", new Args { { "email", email } }, cancellationToken).ConfigureAwait(false)).User;
-
-        /// <summary>
-        /// Lets the Slack messaging server know that the authenticated user is currently active.
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        public Task SetActive(CancellationToken? cancellationToken = null) =>
-            _client.Get("users.setActive", new Args(), cancellationToken);
 
         /// <summary>
         /// This method allows the user to set their profile image.
