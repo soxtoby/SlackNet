@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SlackNet.Events;
 
 namespace SlackNet
 {
@@ -48,7 +49,30 @@ namespace SlackNet
         public int NumStars { get; set; }
         public bool IsStarred { get; set; }
         public string[] PinnedTo { get; set; }
+        public FileShares Shares { get; set; }
         public IList<Reaction> Reactions { get; set; } = new List<Reaction>();
         public int CommentsCount { get; set; }
     }
+
+    public class FileShares
+    {
+        public IDictionary<string, FileShare> Public { get; set; }
+        public IDictionary<string, FileShare> Private { get; set; }
+    }
+
+    public class FileShare
+    {
+        public string[] ReplyUsers { get; set; }
+        public int ReplyUsersCount { get; set; }
+        public int ReplyCount { get; set; }
+        public string Ts { get; set; }
+        public string ThreadTs { get; set; }
+        /// <summary>
+        /// Id of latest message reply.
+        /// </summary>
+        public string LatestReply { get; set; }
+        public string ChannelName { get; set; }
+        public string TeamId { get; set; }
+    }
+
 }

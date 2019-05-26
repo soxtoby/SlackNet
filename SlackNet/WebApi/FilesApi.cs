@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using SlackNet.Events;
 using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
@@ -70,6 +71,7 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
         Task<FileResponse> Upload(
@@ -78,6 +80,7 @@ namespace SlackNet.WebApi
             string fileName = null,
             string title = null,
             string initialComment = null,
+            string threadTs = null,
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         );
@@ -90,14 +93,15 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
-        Task<FileResponse> Upload(
-            byte[] fileContents,
+        Task<FileResponse> Upload(byte[] fileContents,
             string fileType = null,
             string fileName = null,
             string title = null,
             string initialComment = null,
+            string threadTs = null,
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         );
@@ -110,6 +114,7 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
         Task<FileResponse> Upload(
@@ -118,6 +123,7 @@ namespace SlackNet.WebApi
             string fileName = null,
             string title = null,
             string initialComment = null,
+            string threadTs = null,
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         );
@@ -132,6 +138,7 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
         Task<FileResponse> UploadSnippet(
@@ -140,6 +147,7 @@ namespace SlackNet.WebApi
             string fileName = null,
             string title = null,
             string initialComment = null,
+            string threadTs = null,
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         );
@@ -229,6 +237,7 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
         public Task<FileResponse> Upload(
@@ -237,10 +246,11 @@ namespace SlackNet.WebApi
             string fileName = null,
             string title = null,
             string initialComment = null,
+            string threadTs = null,
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         ) =>
-            Upload("file", new StringContent(fileContents), fileType, fileName, title, initialComment, channels, cancellationToken);
+            Upload("file", new StringContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
 
         /// <summary>
         /// Allows you to create or upload an existing file.
@@ -250,18 +260,19 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
-        public Task<FileResponse> Upload(
-            byte[] fileContents,
+        public Task<FileResponse> Upload(byte[] fileContents,
             string fileType = null,
             string fileName = null,
             string title = null,
             string initialComment = null,
+            string threadTs = null,
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         ) =>
-            Upload("file", new ByteArrayContent(fileContents), fileType, fileName, title, initialComment, channels, cancellationToken);
+            Upload("file", new ByteArrayContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
 
         /// <summary>
         /// Allows you to create or upload an existing file.
@@ -271,6 +282,7 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
         public Task<FileResponse> Upload(
@@ -279,10 +291,11 @@ namespace SlackNet.WebApi
             string fileName = null,
             string title = null,
             string initialComment = null,
+            string threadTs = null,
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         ) =>
-            Upload("file", new StreamContent(fileContents), fileType, fileName, title, initialComment, channels, cancellationToken);
+            Upload("file", new StreamContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
 
         /// <summary>
         /// Allows you to create or upload an existing file as a snippet.
@@ -294,6 +307,7 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
         public Task<FileResponse> UploadSnippet(
@@ -302,10 +316,11 @@ namespace SlackNet.WebApi
             string fileName = null,
             string title = null,
             string initialComment = null,
+            string threadTs = null,
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         ) =>
-            Upload("content", new StringContent(snippet), fileType, fileName, title, initialComment, channels, cancellationToken);
+            Upload("content", new StringContent(snippet), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
 
         private Task<FileResponse> Upload(
             string bodyName,
@@ -314,6 +329,7 @@ namespace SlackNet.WebApi
             string fileName,
             string title,
             string initialComment,
+            string threadTs,
             IEnumerable<string> channels,
             CancellationToken? cancellationToken
         ) =>
@@ -323,7 +339,8 @@ namespace SlackNet.WebApi
                         { "filename", fileName },
                         { "title", title },
                         { "initial_comment", initialComment },
-                        { "channels", channels }
+                        { "channels", channels },
+                        { "thread_ts", threadTs }
                     },
                 new MultipartFormDataContent { { fileContent, bodyName, fileName ?? "file" } },
                 cancellationToken);

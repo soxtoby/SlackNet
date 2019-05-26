@@ -5,7 +5,8 @@ namespace SlackNet.Events
     /// </summary>
     public class FileCommentDeleted : Event
     {
-        public File File { get; set; }
+        public string FileId { get; set; }
+        public FileId File { get; set; }
         /// <summary>
         /// The ID of the deleted comment.
         /// </summary>

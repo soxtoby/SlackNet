@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Args = System.Collections.Generic.Dictionary<string, object>;
@@ -9,18 +10,22 @@ namespace SlackNet.WebApi
     {
         /// <summary>
         /// Pins a file to a particular channel.
+        /// Deprecated: will no longer accept files or file comments beginning August 22, 2019
         /// </summary>
         /// <param name="channelId">Channel to pin the file in.</param>
         /// <param name="fileId">File to pin.</param>
         /// <param name="cancellationToken"></param>
+        [Obsolete]
         Task AddFile(string channelId, string fileId, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Pins a file comment to a particular channel.
+        /// Deprecated: will no longer accept files or file comments beginning August 22, 2019
         /// </summary>
         /// <param name="channelId">Channel to pin the file comment in.</param>
         /// <param name="fileCommentId">File comment to pin.</param>
         /// <param name="cancellationToken"></param>
+        [Obsolete]
         Task AddFileComment(string channelId, string fileCommentId, CancellationToken? cancellationToken = null);
 
         /// <summary>

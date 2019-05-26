@@ -5,6 +5,7 @@ namespace SlackNet.Events
     /// </summary>
     public class FilePublic : Event
     {
-        public File File { get; set; }
+        public string FileId { get; set; }
+        public FileId File { get; set; }
     }
 }

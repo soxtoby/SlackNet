@@ -5,7 +5,8 @@ namespace SlackNet.Events
     /// </summary>
     public class FileCommentAdded : Event
     {
-        public File File { get; set; }
+        public string FileId { get; set; }
+        public FileId File { get; set; }
         public FileComment Comment { get; set; }
     }
 }
