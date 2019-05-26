@@ -8,5 +8,6 @@ namespace SlackNet.AspNetCore
     public class NullDialogSubmissionHandler : IDialogSubmissionHandler
     {
         public Task<IEnumerable<DialogError>> Handle(DialogSubmission dialog) => Task.FromResult(Enumerable.Empty<DialogError>());
+        public Task HandleCancel(DialogCancellation cancellation) => Task.CompletedTask;
     }
 }

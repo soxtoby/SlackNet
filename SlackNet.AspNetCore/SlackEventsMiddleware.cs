@@ -91,6 +91,8 @@ namespace SlackNet.AspNetCore
                         return await HandleInteractiveMessage(context, interactiveMessage).ConfigureAwait(false);
                     case DialogSubmission dialogSubmission:
                         return await HandleDialogSubmission(context, dialogSubmission).ConfigureAwait(false);
+                    case DialogCancellation dialogCancellation:
+                        return await HandleDialogCancellation(context, dialogCancellation).ConfigureAwait(false);
                     case MessageAction messageAction:
                         return await HandleMessageAction(context, messageAction).ConfigureAwait(false);
                 }
@@ -118,6 +120,12 @@ namespace SlackNet.AspNetCore
             return errors.Any()
                 ? await context.Respond(HttpStatusCode.OK, "application/json", Serialize(new DialogErrorResponse { Errors = errors })).ConfigureAwait(false)
                 : await context.Respond(HttpStatusCode.OK).ConfigureAwait(false);
+        }
+
+        private async Task<HttpResponse> HandleDialogCancellation(HttpContext context, DialogCancellation dialogCancellation)
+        {
+            await _dialogSubmissionHandler.HandleCancel(dialogCancellation).ConfigureAwait(false);
+            return await context.Respond(HttpStatusCode.OK).ConfigureAwait(false);
         }
 
         private async Task<HttpResponse> HandleMessageAction(HttpContext context, MessageAction messageAction)

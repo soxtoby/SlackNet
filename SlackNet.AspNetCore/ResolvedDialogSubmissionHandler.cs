@@ -20,5 +20,14 @@ namespace SlackNet.AspNetCore
                 return await handler.Handle(dialog).ConfigureAwait(false);
             }
         }
+
+        public async Task HandleCancel(DialogCancellation cancellation)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var handler = scope.ServiceProvider.GetRequiredService<T>();
+                await handler.HandleCancel(cancellation).ConfigureAwait(false);
+            }
+        }
     }
 }

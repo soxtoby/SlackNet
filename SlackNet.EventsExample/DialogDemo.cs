@@ -98,6 +98,11 @@ namespace SlackNet.EventsExample
             }
         }
 
+        public Task HandleCancel(DialogCancellation cancellation)
+        {
+            return Task.CompletedTask;
+        }
+
         public static IList<ActionElement> Actions => new List<ActionElement>
             {
                 new Button
