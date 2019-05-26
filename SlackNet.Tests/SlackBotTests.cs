@@ -223,15 +223,11 @@ namespace SlackNet.Tests
         }
 
         [Test]
-        public void GetHubById_ImId_FindsImViaApi_AndIsCached()
+        public void GetHubById_ImId_ReturnsImInfoFromApi_AndIsCached()
         {
             var imId = "D123";
-            var userId = "U123";
-            var matchingIm = new Im { Id = imId, User = userId };
-            var otherIm = new Im { Id = "D456" };
-            _api.Im.List().Returns(new[] { otherIm, matchingIm });
             var expectedIm = new Im();
-            _api.Im.Open(userId, true).Returns(new ImResponse { Channel = expectedIm });
+            _api.Conversations.OpenAndReturnInfo(imId).Returns(new ImResponse { Channel = expectedIm });
 
             _sut.GetHubById(imId)
                 .ShouldComplete()
@@ -239,8 +235,7 @@ namespace SlackNet.Tests
             _sut.GetHubById(imId)
                 .ShouldComplete()
                 .And.ShouldBe(expectedIm);
-            _api.Im.Received(1).List();
-            _api.Im.Received(1).Open(userId, true);
+            _api.Conversations.Received(1).OpenAndReturnInfo(imId);
         }
 
         [Test]

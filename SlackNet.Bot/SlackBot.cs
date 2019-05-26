@@ -270,18 +270,8 @@ namespace SlackNet.Bot
         private async Task<Hub> FetchHub(string hubId) =>
               hubId[0] == 'C' ? await _api.Channels.Info(hubId).NullIfNotFound().ConfigureAwait(false)
             : hubId[0] == 'G' ? await _api.Groups.Info(hubId).NullIfNotFound().ConfigureAwait(false)
-            : hubId[0] == 'D' ? await FetchImChannel(hubId).ConfigureAwait(false)
+            : hubId[0] == 'D' ? (Hub)(await _api.Conversations.OpenAndReturnInfo(hubId).NullIfNotFound().ConfigureAwait(false))?.Channel
             : null;
-
-        private async Task<Hub> FetchImChannel(string channelId)
-        {
-            var ims = await GetIms().ConfigureAwait(false);
-            var matchingIm = ims.FirstOrDefault(im => im.Id == channelId);
-            if (matchingIm == null)
-                return null;
-
-            return await OpenIm(matchingIm.User).ConfigureAwait(false); // im.open returns more channel info than im.list
-        }
 
         /// <summary>
         /// Find hub with matching name.
