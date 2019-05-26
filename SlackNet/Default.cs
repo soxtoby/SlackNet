@@ -41,7 +41,7 @@ namespace SlackNet
 
         public static ISlackEvents SlackEvents { get; } = new SlackEvents();
 
-        public static ISlackActions SlackActions { get; } = new SlackActions();
+        public static ISlackInteractiveMessages SlackInteractiveMessages { get; } = new SlackInteractiveMessages();
 
         public static ISlackOptions SlackOptions { get; } = new SlackOptions();
 
@@ -53,7 +53,7 @@ namespace SlackNet
             registerService(typeof(ISlackTypeResolver), resolve => SlackTypeResolver(AssembliesContainingSlackTypes));
             registerService(typeof(IWebSocketFactory), resolve => WebSocketFactory);
             registerService(typeof(ISlackEvents), resolve => SlackEvents);
-            registerService(typeof(ISlackActions), resolve => SlackActions);
+            registerService(typeof(ISlackInteractiveMessages), resolve => SlackInteractiveMessages);
             registerService(typeof(ISlackOptions), resolve => SlackOptions);
         }
     }

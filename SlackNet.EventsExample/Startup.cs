@@ -19,11 +19,11 @@ namespace SlackNet.EventsExample
             services.AddSlackNet(c => c
                 .UseApiToken(Configuration["Slack:ApiToken"])
                 .RegisterEventHandler<MessageEvent, MessageHandler>()
-                .RegisterActionHandler<Counter>(Counter.ActionName)
-                .RegisterActionHandler<ColorSelector>(ColorSelector.ActionName)
+                .RegisterInteractiveMessageHandler<Counter>(Counter.ActionName)
+                .RegisterInteractiveMessageHandler<ColorSelector>(ColorSelector.ActionName)
                 .RegisterOptionProvider<ColorSelector>(ColorSelector.ActionName)
-                .RegisterActionHandler<DialogDemo>(DialogDemo.EchoDialog)
-                .RegisterActionHandler<DialogDemo>(DialogDemo.ErrorDialog)
+                .RegisterInteractiveMessageHandler<DialogDemo>(DialogDemo.EchoDialog)
+                .RegisterInteractiveMessageHandler<DialogDemo>(DialogDemo.ErrorDialog)
                 .RegisterDialogSubmissionHandler<DialogDemo>());
             services.AddMvc();
         }

@@ -6,7 +6,7 @@ using SlackNet.WebApi;
 
 namespace SlackNet.EventsExample
 {
-    public class DialogDemo : IDialogSubmissionHandler, IActionHandler
+    public class DialogDemo : IDialogSubmissionHandler, IInteractiveMessageHandler
     {
         internal const string EchoDialog = "echo-dialog";
         internal const string ErrorDialog = "error-dialog";

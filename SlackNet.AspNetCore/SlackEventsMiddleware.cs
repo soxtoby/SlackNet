@@ -15,7 +15,7 @@ namespace SlackNet.AspNetCore
         private readonly RequestDelegate _next;
         private readonly SlackEndpointConfiguration _configuration;
         private readonly ISlackEvents _slackEvents;
-        private readonly ISlackActions _slackActions;
+        private readonly ISlackInteractiveMessages _slackInteractiveMessages;
         private readonly ISlackMessageActions _slackMessageActions;
         private readonly ISlackOptions _slackOptions;
         private readonly IDialogSubmissionHandler _dialogSubmissionHandler;
@@ -25,7 +25,7 @@ namespace SlackNet.AspNetCore
             RequestDelegate next,
             SlackEndpointConfiguration configuration,
             ISlackEvents slackEvents,
-            ISlackActions slackActions,
+            ISlackInteractiveMessages slackInteractiveMessages,
             ISlackMessageActions slackMessageActions,
             ISlackOptions slackOptions,
             IDialogSubmissionHandler dialogSubmissionHandler,
@@ -34,7 +34,7 @@ namespace SlackNet.AspNetCore
             _next = next;
             _configuration = configuration;
             _slackEvents = slackEvents;
-            _slackActions = slackActions;
+            _slackInteractiveMessages = slackInteractiveMessages;
             _slackMessageActions = slackMessageActions;
             _slackOptions = slackOptions;
             _dialogSubmissionHandler = dialogSubmissionHandler;
@@ -103,7 +103,7 @@ namespace SlackNet.AspNetCore
 
         private async Task<HttpResponse> HandleInteractiveMessage(HttpContext context, InteractiveMessage interactiveMessage)
         {
-            var response = await _slackActions.Handle(interactiveMessage).ConfigureAwait(false);
+            var response = await _slackInteractiveMessages.Handle(interactiveMessage).ConfigureAwait(false);
 
             var responseJson = response == null ? null
                 : interactiveMessage.IsAppUnfurl ? Serialize(new AttachmentUpdateResponse(response))

@@ -28,11 +28,11 @@ namespace SlackNet.AspNetCore
             return this;
         }
 
-        public SlackServiceConfiguration RegisterActionHandler<THandler>(string actionName)
-            where THandler : class, IActionHandler
+        public SlackServiceConfiguration RegisterInteractiveMessageHandler<THandler>(string actionName)
+            where THandler : class, IInteractiveMessageHandler
         {
             _serviceCollection.AddTransient<THandler>();
-            _serviceCollection.AddSingleton<ResolvedActionHandler>(c => new ResolvedActionHandler<THandler>(c, actionName));
+            _serviceCollection.AddSingleton<ResolvedInteractiveMessageHandler>(c => new ResolvedInteractiveMessageHandler<THandler>(c, actionName));
             return this;
         }
 

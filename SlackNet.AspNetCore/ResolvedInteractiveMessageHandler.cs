@@ -5,21 +5,21 @@ using SlackNet.Interaction;
 
 namespace SlackNet.AspNetCore
 {
-    abstract class ResolvedActionHandler : IActionHandler
+    abstract class ResolvedInteractiveMessageHandler : IInteractiveMessageHandler
     {
-        protected ResolvedActionHandler(string actionName) => ActionName = actionName;
+        protected ResolvedInteractiveMessageHandler(string actionName) => ActionName = actionName;
 
         public string ActionName { get; }
 
         public abstract Task<MessageResponse> Handle(InteractiveMessage message);
     }
 
-    class ResolvedActionHandler<T> : ResolvedActionHandler
-        where T : IActionHandler
+    class ResolvedInteractiveMessageHandler<T> : ResolvedInteractiveMessageHandler
+        where T : IInteractiveMessageHandler
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public ResolvedActionHandler(IServiceProvider serviceProvider, string actionName)
+        public ResolvedInteractiveMessageHandler(IServiceProvider serviceProvider, string actionName)
             : base(actionName)
         {
             _serviceProvider = serviceProvider;

@@ -6,7 +6,7 @@ using SlackNet.Interaction;
 
 namespace SlackNet.EventsExample
 {
-    public class ColorSelector : IActionHandler, IOptionProvider
+    public class ColorSelector : IInteractiveMessageHandler, IOptionProvider
     {
         public static readonly string ActionName = "color_select";
 

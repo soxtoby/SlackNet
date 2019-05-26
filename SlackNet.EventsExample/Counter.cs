@@ -5,7 +5,7 @@ using SlackNet.Interaction;
 
 namespace SlackNet.EventsExample
 {
-    public class Counter : IActionHandler
+    public class Counter : IInteractiveMessageHandler
     {
         public static readonly string ActionName = "add";
         private static readonly Regex _counterPattern = new Regex("Counter: (\\d+)");

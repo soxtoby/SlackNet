@@ -2,7 +2,7 @@
 
 namespace SlackNet.Interaction
 {
-    public interface IActionHandler
+    public interface IInteractiveMessageHandler
     {
         Task<MessageResponse> Handle(InteractiveMessage message);
     }
