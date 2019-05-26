@@ -36,6 +36,14 @@ namespace SlackNet.AspNetCore
             return this;
         }
 
+        public SlackServiceConfiguration RegisterMessageActionHandler<THandler>(string callbackId)
+            where THandler : class, IMessageActionHandler
+        {
+            _serviceCollection.AddTransient<THandler>();
+            _serviceCollection.AddSingleton<ResolvedMessageActionHandler>(c => new ResolvedMessageActionHandler<THandler>(c, callbackId));
+            return this;
+        }
+
         public SlackServiceConfiguration RegisterOptionProvider<TProvider>(string actionName)
             where TProvider : class, IOptionProvider
         {

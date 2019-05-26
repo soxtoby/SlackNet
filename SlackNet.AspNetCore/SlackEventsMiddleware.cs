@@ -16,6 +16,7 @@ namespace SlackNet.AspNetCore
         private readonly SlackEndpointConfiguration _configuration;
         private readonly ISlackEvents _slackEvents;
         private readonly ISlackActions _slackActions;
+        private readonly ISlackMessageActions _slackMessageActions;
         private readonly ISlackOptions _slackOptions;
         private readonly IDialogSubmissionHandler _dialogSubmissionHandler;
         private readonly SlackJsonSettings _jsonSettings;
@@ -25,6 +26,7 @@ namespace SlackNet.AspNetCore
             SlackEndpointConfiguration configuration,
             ISlackEvents slackEvents,
             ISlackActions slackActions,
+            ISlackMessageActions slackMessageActions,
             ISlackOptions slackOptions,
             IDialogSubmissionHandler dialogSubmissionHandler,
             SlackJsonSettings jsonSettings)
@@ -33,6 +35,7 @@ namespace SlackNet.AspNetCore
             _configuration = configuration;
             _slackEvents = slackEvents;
             _slackActions = slackActions;
+            _slackMessageActions = slackMessageActions;
             _slackOptions = slackOptions;
             _dialogSubmissionHandler = dialogSubmissionHandler;
             _jsonSettings = jsonSettings;
@@ -88,6 +91,8 @@ namespace SlackNet.AspNetCore
                         return await HandleInteractiveMessage(context, interactiveMessage).ConfigureAwait(false);
                     case DialogSubmission dialogSubmission:
                         return await HandleDialogSubmission(context, dialogSubmission).ConfigureAwait(false);
+                    case MessageAction messageAction:
+                        return await HandleMessageAction(context, messageAction).ConfigureAwait(false);
                 }
             }
 
@@ -113,6 +118,17 @@ namespace SlackNet.AspNetCore
             return errors.Any()
                 ? await context.Respond(HttpStatusCode.OK, "application/json", Serialize(new DialogErrorResponse { Errors = errors })).ConfigureAwait(false)
                 : await context.Respond(HttpStatusCode.OK).ConfigureAwait(false);
+        }
+
+        private async Task<HttpResponse> HandleMessageAction(HttpContext context, MessageAction messageAction)
+        {
+            var response = await _slackMessageActions.Handle(messageAction).ConfigureAwait(false);
+
+            var responseJson = response == null
+                ? null
+                : Serialize(response);
+
+            return await context.Respond(HttpStatusCode.OK, "application/json", responseJson).ConfigureAwait(false);
         }
 
         private async Task<HttpResponse> HandleSlackOptions(HttpContext context)

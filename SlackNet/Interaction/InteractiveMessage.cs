@@ -20,7 +20,6 @@ namespace SlackNet.Interaction
         public Attachment OriginalAttachment => OriginalMessage.Attachments.FirstOrDefault(a => a.Id == AttachmentId);
         public bool IsAppUnfurl { get; set; }
         public Message OriginalMessage { get; set; }
-        public string ResponseUrl { get; set; }
         public string TriggerId { get; set; }
     }
 }
