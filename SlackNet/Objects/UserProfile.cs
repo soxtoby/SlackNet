@@ -7,6 +7,7 @@ namespace SlackNet
         public string AvatarHash { get; set; }
         public string StatusEmoji { get; set; }
         public string StatusText { get; set; }
+        public long StatusExpiration { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string RealName { get; set; }

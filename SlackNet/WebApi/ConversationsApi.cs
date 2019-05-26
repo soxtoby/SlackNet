@@ -52,8 +52,9 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="channelId">Conversation ID to learn more about.</param>
         /// <param name="includeLocale">Set this to true to receive the locale for this conversation.</param>
+        /// <param name="includeNumMembers"></param>
         /// <param name="cancellationToken"></param>
-        Task<Conversation> Info(string channelId, bool includeLocale = false, CancellationToken? cancellationToken = null);
+        Task<Conversation> Info(string channelId, bool includeLocale = false, bool includeNumMembers = false, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Invites users to a channel.
@@ -262,12 +263,14 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="channelId">Conversation ID to learn more about.</param>
         /// <param name="includeLocale">Set this to true to receive the locale for this conversation.</param>
+        /// <param name="includeNumMembers">Set to true to include the member count for the specified conversation.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<Conversation> Info(string channelId, bool includeLocale = false, CancellationToken? cancellationToken = null) =>
+        public async Task<Conversation> Info(string channelId, bool includeLocale = false, bool includeNumMembers = false, CancellationToken? cancellationToken = null) =>
             (await _client.Get<ConversationResponse>("conversations.info", new Args
                 {
                     { "channel", channelId },
-                    { "include_locale", includeLocale }
+                    { "include_locale", includeLocale },
+                    { "include_num_members", includeNumMembers }
                 }, cancellationToken).ConfigureAwait(false))
             .Channel;
 

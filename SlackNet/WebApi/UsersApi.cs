@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -10,8 +11,23 @@ namespace SlackNet.WebApi
     public interface IUsersApi
     {
         /// <summary>
+        /// Returns a list of all channel-like conversations accessible to the authenticated user or app.
+        /// </summary>
+        /// <param name="excludeArchived">Set to True to exclude archived channels from the list.</param>
+        /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the list hasn't been reached. Must be an integer no larger than 1000.</param>
+        /// <param name="types">Types of conversations to include. Default is <see cref="ConversationType.PublicChannel"/>.</param>
+        /// <param name="userId">Browse conversations by a specific user ID's membership. Non-public channels are restricted to those where the calling user shares membership.</param>
+        /// <param name="cursor">
+        /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
+        /// returned by a previous request's <see cref="ConversationListResponse.ResponseMetadata"/>.
+        /// Default value fetches the first "page" of the collection.
+        /// </param>
+        /// <param name="cancellationToken"></param>
+        Task<ConversationListResponse> Conversations(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string userId = null, string cursor = null, CancellationToken? cancellationToken = null);
+
+        /// <summary>
         /// Allows the user to delete their profile image. It will clear whatever image is currently set.
-        /// To upload a new profile image, use the companion method <see cref="SetPhoto"/>.
+        /// To upload a new profile image, use the companion method <c>SetPhoto</c>.
         /// </summary>
         /// <param name="cancellationToken"></param>
         Task DeletePhoto(CancellationToken? cancellationToken = null);
@@ -104,8 +120,31 @@ namespace SlackNet.WebApi
         public UsersApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
+        /// Returns a list of all channel-like conversations accessible to the authenticated user or app.
+        /// </summary>
+        /// <param name="excludeArchived">Set to True to exclude archived channels from the list.</param>
+        /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the list hasn't been reached. Must be an integer no larger than 1000.</param>
+        /// <param name="types">Types of conversations to include. Default is <see cref="ConversationType.PublicChannel"/>.</param>
+        /// <param name="userId">Browse conversations by a specific user ID's membership. Non-public channels are restricted to those where the calling user shares membership.</param>
+        /// <param name="cursor">
+        /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
+        /// returned by a previous request's <see cref="ConversationListResponse.ResponseMetadata"/>.
+        /// Default value fetches the first "page" of the collection.
+        /// </param>
+        /// <param name="cancellationToken"></param>
+        public Task<ConversationListResponse> Conversations(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string userId = null, string cursor = null, CancellationToken? cancellationToken = null) =>
+            _client.Get<ConversationListResponse>("users.conversations", new Args
+                {
+                    { "cursor", cursor },
+                    { "exclude_archived", excludeArchived },
+                    { "limit", limit },
+                    { "types", types },
+                    { "user", userId }
+                }, cancellationToken);
+
+        /// <summary>
         /// Allows the user to delete their profile image. It will clear whatever image is currently set.
-        /// To upload a new profile image, use the companion method <see cref="SetPhoto"/>.
+        /// To upload a new profile image, use the companion method <c>SetPhoto</c>.
         /// </summary>
         /// <param name="cancellationToken"></param>
         public Task DeletePhoto(CancellationToken? cancellationToken = null) =>

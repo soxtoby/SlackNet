@@ -44,6 +44,11 @@ namespace SlackNet
         /// The user ID of the member that created this channel.
         /// </summary>
         public string Creator { get; set; }
+
+        /// <summary>
+        /// Indicates the "host" of a shared channel. The value may contain a workspace's ID (beginning with T) or an enterprise grid organization's ID (beginning with E).
+        /// </summary>
+        public string ConversationHostId { get; set; }
         
         /// <summary>
         /// Indicates a conversation is archived. Frozen in time.

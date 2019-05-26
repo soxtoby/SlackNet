@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Args = System.Collections.Generic.Dictionary<string, object>;
@@ -17,6 +18,27 @@ namespace SlackNet.WebApi
         Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken? cancellationToken = null);
 
         /// <summary>
+        /// Returns a list of pending scheduled messages.
+        /// </summary>
+        /// <param name="channelId">The channel of the scheduled messages.</param>
+        /// <param name="latest">The latest value in the time range.</param>
+        /// <param name="oldest">The oldest value in the time range.</param>
+        /// <param name="limit">Maximum number of original entries to return.</param>
+        /// <param name="cursor">
+        /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
+        /// returned by a previous request's <see cref="ScheduledMessageListResponse.ResponseMetadata"/>.
+        /// Default value fetches the first "page" of the collection.
+        /// </param>
+        /// <param name="cancellationToken"></param>
+        Task<ScheduledMessageListResponse> ListScheduledMessages(
+            string channelId = null,
+            DateTime? latest = null,
+            DateTime? oldest = null,
+            int limit = 100,
+            string cursor = null,
+            CancellationToken? cancellationToken = null);
+
+        /// <summary>
         /// Sends a /me message to a channel from the calling user.
         /// </summary>
         /// <param name="channel">Channel to send message to. Can be a public channel, private group or IM channel. Can be an encoded ID, or a name.</param>
@@ -30,6 +52,14 @@ namespace SlackNet.WebApi
         /// <param name="message">The message to post</param>
         /// <param name="cancellationToken"></param>
         Task<PostMessageResponse> PostMessage(Message message, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Schedules a message for delivery to a public channel, private channel, or direct message/IM channel at a specified time in the future.
+        /// </summary>
+        /// <param name="message">The message to post.</param>
+        /// <param name="postAt">Time in the future to send the message.</param>
+        /// <param name="cancellationToken"></param>
+        Task<ScheduleMessageResponse> ScheduleMessage(Message message, DateTime postAt, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Attaches Slack app unfurl behavior to a specified and relevant message. 
@@ -76,6 +106,36 @@ namespace SlackNet.WebApi
                 }, cancellationToken);
 
         /// <summary>
+        /// Returns a list of pending scheduled messages.
+        /// </summary>
+        /// <param name="channelId">The channel of the scheduled messages.</param>
+        /// <param name="latest">The latest value in the time range.</param>
+        /// <param name="oldest">The oldest value in the time range.</param>
+        /// <param name="limit">Maximum number of original entries to return.</param>
+        /// <param name="cursor">
+        /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
+        /// returned by a previous request's <see cref="ScheduledMessageListResponse.ResponseMetadata"/>.
+        /// Default value fetches the first "page" of the collection.
+        /// </param>
+        /// <param name="cancellationToken"></param>
+        public Task<ScheduledMessageListResponse> ListScheduledMessages(
+            string channelId = null,
+            DateTime? latest = null,
+            DateTime? oldest = null,
+            int limit = 100,
+            string cursor = null,
+            CancellationToken? cancellationToken = null
+        ) =>
+            _client.Get<ScheduledMessageListResponse>("chat.scheduledMessages.list", new Args
+                {
+                    { "channel", channelId },
+                    { "latest", latest?.ToTimestamp() },
+                    { "oldest", oldest?.ToTimestamp() },
+                    { "limit", limit },
+                    { "cursor", cursor }
+                }, cancellationToken);
+
+        /// <summary>
         /// Retrieve a permalink URL for a specific extant message.
         /// </summary>
         /// <param name="channelId">The ID of the conversation or channel containing the message.</param>
@@ -107,23 +167,39 @@ namespace SlackNet.WebApi
         /// <param name="message">The message to post.</param>
         /// <param name="cancellationToken"></param>
         public Task<PostMessageResponse> PostMessage(Message message, CancellationToken? cancellationToken = null) =>
-            _client.Get<PostMessageResponse>("chat.postMessage", new Args
-                    {
-                        { "channel", message.Channel },
-                        { "text", message.Text },
-                        { "parse", message.Parse },
-                        { "link_names", message.LinkNames },
-                        { "attachments", message.Attachments },
-                        { "unfurl_links", message.UnfurlLinks },
-                        { "unfurl_media", message.UnfurlMedia },
-                        { "username", message.Username },
-                        { "as_user", message.AsUser },
-                        { "icon_url", message.IconUrl },
-                        { "icon_emoji", message.IconEmoji },
-                        { "thread_ts", message.ThreadTs },
-                        { "reply_broadcast", message.ReplyBroadcast }
-                    },
+            _client.Get<PostMessageResponse>("chat.postMessage", PopulateMessageArgs(message, new Args()),
                 cancellationToken);
+
+        /// <summary>
+        /// Schedules a message for delivery to a public channel, private channel, or direct message/IM channel at a specified time in the future.
+        /// </summary>
+        /// <param name="message">The message to post.</param>
+        /// <param name="postAt">Time in the future to send the message.</param>
+        /// <param name="cancellationToken"></param>
+        public Task<ScheduleMessageResponse> ScheduleMessage(Message message, DateTime postAt, CancellationToken? cancellationToken = null) =>
+            _client.Get<ScheduleMessageResponse>("chat.scheduleMessage", PopulateMessageArgs(message, new Args
+                    {
+                        { "post_at", postAt.ToTimestamp() }
+                    }),
+                cancellationToken);
+
+        private static Args PopulateMessageArgs(Message message, Args args)
+        {
+            args["channel"] = message.Channel;
+            args["text"] = message.Text;
+            args["parse"] = message.Parse;
+            args["link_names"] = message.LinkNames;
+            args["attachments"] = message.Attachments;
+            args["unfurl_links"] = message.UnfurlLinks;
+            args["unfurl_media"] = message.UnfurlMedia;
+            args["username"] = message.Username;
+            args["as_user"] = message.AsUser;
+            args["icon_url"] = message.IconUrl;
+            args["icon_emoji"] = message.IconEmoji;
+            args["thread_ts"] = message.ThreadTs;
+            args["reply_broadcast"] = message.ReplyBroadcast;
+            return args;
+        }
 
         /// <summary>
         /// Sends an ephemeral message to a user in a channel.

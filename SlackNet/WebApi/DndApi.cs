@@ -46,7 +46,7 @@ namespace SlackNet.WebApi
         /// <param name="userIds">List of users to fetch Do Not Disturb status for (defaults to entire team).</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Mapping of user to DnD status.</returns>
-        Task<IReadOnlyDictionary<string, DndStatus>> TeamInfo(IEnumerable<string> userIds = null, CancellationToken? cancellationToken = null);
+        Task<IReadOnlyDictionary<string, DndStatus>> TeamInfo(IEnumerable<string> userIds, CancellationToken? cancellationToken = null);
     }
 
     public class DndApi : IDndApi
@@ -98,7 +98,7 @@ namespace SlackNet.WebApi
         /// <param name="userIds">List of users to fetch Do Not Disturb status for (defaults to entire team).</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Mapping of user to DnD status.</returns>
-        public async Task<IReadOnlyDictionary<string, DndStatus>> TeamInfo(IEnumerable<string> userIds = null, CancellationToken? cancellationToken = null) =>
+        public async Task<IReadOnlyDictionary<string, DndStatus>> TeamInfo(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) =>
             (await _client.Get<TeamDndResponse>("dnd.teamInfo", new Args { { "users", userIds } }, cancellationToken).ConfigureAwait(false)).Users;
     }
 }
