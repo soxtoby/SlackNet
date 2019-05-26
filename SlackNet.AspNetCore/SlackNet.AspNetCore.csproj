@@ -4,6 +4,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Simon Oxtoby</Authors>
     <Description>ASP.NET Core integration for receiving requests from Slack</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/soxtoby/SlackNet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/soxtoby/SlackNet.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Slack API RTM Events AspNetCore</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
