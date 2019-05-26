@@ -29,6 +29,7 @@ namespace SlackNet
         IReactionsApi Reactions { get; }
         IRemindersApi Reminders { get; }
         IRtmApi Rtm { get; }
+        IScheduledMessagesApi ScheduledMessages { get; }
         ISearchApi Search { get; }
         IStarsApi Stars { get; }
         ITeamApi Team { get; }
@@ -118,6 +119,7 @@ namespace SlackNet
         public IReactionsApi Reactions => new ReactionsApi(this);
         public IRemindersApi Reminders => new RemindersApi(this);
         public IRtmApi Rtm => new RtmApi(this);
+        public IScheduledMessagesApi ScheduledMessages => new ScheduledMessagesApi(this);
         public ISearchApi Search => new SearchApi(this);
         public IStarsApi Stars => new StarsApi(this);
         public ITeamApi Team => new TeamApi(this);

@@ -18,27 +18,6 @@ namespace SlackNet.WebApi
         Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken? cancellationToken = null);
 
         /// <summary>
-        /// Returns a list of pending scheduled messages.
-        /// </summary>
-        /// <param name="channelId">The channel of the scheduled messages.</param>
-        /// <param name="latest">The latest value in the time range.</param>
-        /// <param name="oldest">The oldest value in the time range.</param>
-        /// <param name="limit">Maximum number of original entries to return.</param>
-        /// <param name="cursor">
-        /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
-        /// returned by a previous request's <see cref="ScheduledMessageListResponse.ResponseMetadata"/>.
-        /// Default value fetches the first "page" of the collection.
-        /// </param>
-        /// <param name="cancellationToken"></param>
-        Task<ScheduledMessageListResponse> ListScheduledMessages(
-            string channelId = null,
-            DateTime? latest = null,
-            DateTime? oldest = null,
-            int limit = 100,
-            string cursor = null,
-            CancellationToken? cancellationToken = null);
-
-        /// <summary>
         /// Sends a /me message to a channel from the calling user.
         /// </summary>
         /// <param name="channel">Channel to send message to. Can be a public channel, private group or IM channel. Can be an encoded ID, or a name.</param>
@@ -103,36 +82,6 @@ namespace SlackNet.WebApi
                     { "ts", ts },
                     { "channel", channelId },
                     { "as_user", asUser }
-                }, cancellationToken);
-
-        /// <summary>
-        /// Returns a list of pending scheduled messages.
-        /// </summary>
-        /// <param name="channelId">The channel of the scheduled messages.</param>
-        /// <param name="latest">The latest value in the time range.</param>
-        /// <param name="oldest">The oldest value in the time range.</param>
-        /// <param name="limit">Maximum number of original entries to return.</param>
-        /// <param name="cursor">
-        /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
-        /// returned by a previous request's <see cref="ScheduledMessageListResponse.ResponseMetadata"/>.
-        /// Default value fetches the first "page" of the collection.
-        /// </param>
-        /// <param name="cancellationToken"></param>
-        public Task<ScheduledMessageListResponse> ListScheduledMessages(
-            string channelId = null,
-            DateTime? latest = null,
-            DateTime? oldest = null,
-            int limit = 100,
-            string cursor = null,
-            CancellationToken? cancellationToken = null
-        ) =>
-            _client.Get<ScheduledMessageListResponse>("chat.scheduledMessages.list", new Args
-                {
-                    { "channel", channelId },
-                    { "latest", latest?.ToTimestamp() },
-                    { "oldest", oldest?.ToTimestamp() },
-                    { "limit", limit },
-                    { "cursor", cursor }
                 }, cancellationToken);
 
         /// <summary>

@@ -169,6 +169,7 @@ namespace SlackNet.Tests
             public IReactionsApi Reactions { get; }
             public IRemindersApi Reminders { get; }
             public IRtmApi Rtm { get; }
+            public IScheduledMessagesApi ScheduledMessages { get; }
             public ISearchApi Search { get; }
             public IStarsApi Stars { get; }
             public ITeamApi Team { get; }
