@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SlackNet.Blocks;
 using SlackNet.Events;
 
 namespace SlackNet.WebApi
@@ -29,6 +30,11 @@ namespace SlackNet.WebApi
         /// Structured message attachments.
         /// </summary>
         IList<Attachment> Attachments { get; }
+
+        /// <summary>
+        /// Structured blocks.
+        /// </summary>
+        IList<Block> Blocks { get; }
 
         /// <summary>
         /// Pass True to enable unfurling of primarily text-based content.
@@ -93,6 +99,10 @@ namespace SlackNet.WebApi
         /// Structured message attachments.
         /// </summary>
         public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
+        /// <summary>
+        /// Structured blocks.
+        /// </summary>
+        public IList<Block> Blocks { get; set; } = new List<Block>();
         /// <summary>
         /// Pass True to enable unfurling of primarily text-based content.
         /// Not supported when posting an ephemeral message.

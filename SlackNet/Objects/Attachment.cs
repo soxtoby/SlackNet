@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using SlackNet.Interaction;
+using SlackNet.Blocks;
+using ActionElement = SlackNet.Interaction.ActionElement;
 
 namespace SlackNet
 {
     public interface IReadOnlyAttachment
     {
+        IList<Block> Blocks { get; }
+        string Color { get; }
         string Id { get; }
         string Fallback { get; }
-        string Color { get; }
         string Pretext { get; }
         string AuthorName { get; }
         string AuthorLink { get; }
@@ -22,17 +24,21 @@ namespace SlackNet
         string ThumbUrl { get; }
         string Footer { get; }
         string FooterIcon { get; }
-        int Ts { get; }
-        DateTime Timestamp { get; }
+        int? Ts { get; }
         string CallbackId { get; }
         IList<ActionElement> Actions { get; }
     }
 
     public class Attachment : IReadOnlyAttachment
     {
+        /// <summary>
+        /// Structured blocks. If any blocks are specified, then no other properties can be set, except <see cref="Color"/>.
+        /// </summary>
+        [IgnoreIfEmpty]
+        public IList<Block> Blocks { get; set; } = new List<Block>();
+        public string Color { get; set; }
         public string Id { get; set; }
         public string Fallback { get; set; }
-        public string Color { get; set; }
         public string Pretext { get; set; }
         public string AuthorName { get; set; }
         public string AuthorLink { get; set; }
@@ -41,15 +47,17 @@ namespace SlackNet
         public string Title { get; set; }
         public string TitleLink { get; set; }
         public string Text { get; set; }
+        [IgnoreIfEmpty]
         public IList<Field> Fields { get; set; } = new List<Field>();
         public string ImageUrl { get; set; }
         public string ThumbUrl { get; set; }
         public string Footer { get; set; }
         public string FooterIcon { get; set; }
-        public int Ts { get; set; }
+        public int? Ts { get; set; }
         [JsonIgnore]
-        public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
+        public DateTime? Timestamp => Ts?.ToDateTime().GetValueOrDefault();
         public string CallbackId { get; set; }
+        [IgnoreIfEmpty]
         public IList<ActionElement> Actions { get; set; } = new List<ActionElement>();
     }
 }

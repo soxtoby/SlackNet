@@ -139,6 +139,7 @@ namespace SlackNet.WebApi
             args["parse"] = message.Parse;
             args["link_names"] = message.LinkNames;
             args["attachments"] = message.Attachments;
+            args["blocks"] = message.Blocks;
             args["unfurl_links"] = message.UnfurlLinks;
             args["unfurl_media"] = message.UnfurlMedia;
             args["username"] = message.Username;
@@ -164,6 +165,7 @@ namespace SlackNet.WebApi
                         { "user", userId },
                         { "as_user", message.AsUser },
                         { "attachments", message.Attachments },
+                        { "blocks", message.Blocks },
                         { "link_names", message.LinkNames },
                         { "parse", message.Parse }
                     },
@@ -204,6 +206,7 @@ namespace SlackNet.WebApi
                         { "channel", messageUpdate.ChannelId },
                         { "text", messageUpdate.Text },
                         { "attachments", messageUpdate.Attachments },
+                        { "blocks", messageUpdate.Blocks },
                         { "parse", messageUpdate.Parse },
                         { "link_names", messageUpdate.LinkNames },
                         { "as_user", messageUpdate.AsUser }

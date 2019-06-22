@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SlackNet.Blocks;
 
 namespace SlackNet.Interaction
 {
@@ -13,9 +14,10 @@ namespace SlackNet.Interaction
         public ResponseType ResponseType => _response.ResponseType;
         public bool ReplaceOriginal => _response.ReplaceOriginal;
         public bool DeleteOriginal => _response.DeleteOriginal;
+        public IList<Block> Blocks => Attachment.Blocks;
+        public string Color => Attachment.Color;
         public string Id => Attachment.Id;
         public string Fallback => Attachment.Fallback;
-        public string Color => Attachment.Color;
         public string Pretext => Attachment.Pretext;
         public string AuthorName => Attachment.AuthorName;
         public string AuthorLink => Attachment.AuthorLink;
@@ -28,8 +30,7 @@ namespace SlackNet.Interaction
         public string ThumbUrl => Attachment.ThumbUrl;
         public string Footer => Attachment.Footer;
         public string FooterIcon => Attachment.FooterIcon;
-        public int Ts => Attachment.Ts;
-        public DateTime Timestamp => Attachment.Timestamp;
+        public int? Ts => Attachment.Ts;
         public string CallbackId => Attachment.CallbackId;
         public IList<ActionElement> Actions => Attachment.Actions;
 

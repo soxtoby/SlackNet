@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SlackNet.Blocks;
 
 namespace SlackNet.Bot
 {
@@ -14,6 +15,7 @@ namespace SlackNet.Bot
         string ThreadTs { get; set; }
         DateTime ThreadTimestamp { get; }
         IList<Attachment> Attachments { get; set; }
+        IList<Block> Blocks { get; set; }
         bool IsInThread { get; }
         bool MentionsBot { get; }
         Task ReplyWith(string text, bool createThread = false);

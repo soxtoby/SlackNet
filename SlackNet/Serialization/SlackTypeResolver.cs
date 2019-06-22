@@ -36,7 +36,7 @@ namespace SlackNet
             _assemblies
                 .SelectMany(a => a.ExportedTypes)
                 .Select(t => t.GetTypeInfo())
-                .Where(t => t.BaseType == baseType)
+                .Where(t => baseType.GetTypeInfo().IsAssignableFrom(t))
                 .Select(t => new { type = t.AsType(), slackType = t.SlackType() })
                 .ToList()
                 .ForEach(t => lookup[t.slackType] = t.type);

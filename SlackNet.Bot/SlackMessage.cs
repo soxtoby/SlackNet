@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SlackNet.Blocks;
 
 namespace SlackNet.Bot
 {
@@ -24,6 +25,7 @@ namespace SlackNet.Bot
         [JsonIgnore]
         public DateTime ThreadTimestamp => Ts.ToDateTime().GetValueOrDefault();
         public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
+        public IList<Block> Blocks { get; set; } = new List<Block>();
         public bool IsInThread => ThreadTs != null;
         public bool MentionsBot => Text.IndexOf(_bot.Id, StringComparison.OrdinalIgnoreCase) >= 0
             || Text.IndexOf(_bot.Name, StringComparison.OrdinalIgnoreCase) >= 0

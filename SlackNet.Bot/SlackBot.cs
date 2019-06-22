@@ -417,6 +417,7 @@ namespace SlackNet.Bot
                         : message.ReplyTo?.Hub?.Id,
                 Text = message.Text,
                 Attachments = message.Attachments,
+                Blocks = message.Blocks,
                 ThreadTs = await ReplyingInDifferentHub(message).ConfigureAwait(false)
                         ? null
                         : message.ReplyTo?.ThreadTs

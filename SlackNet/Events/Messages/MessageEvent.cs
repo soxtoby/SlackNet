@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using SlackNet.Blocks;
 using SlackNet.WebApi;
 
 namespace SlackNet.Events
@@ -19,6 +20,7 @@ namespace SlackNet.Events
         [JsonIgnore]
         public DateTime? ThreadTimestamp => ThreadTs.ToDateTime();
         public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
+        public IList<Block> Blocks { get; set; } = new List<Block>();
         public Edit Edited { get; set; }
         /// <summary>
         /// Indicates message is part of the history of a channel but should not be displayed to users.

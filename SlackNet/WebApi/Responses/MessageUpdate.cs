@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SlackNet.Blocks;
 
 namespace SlackNet.WebApi
 {
@@ -20,6 +21,10 @@ namespace SlackNet.WebApi
         /// Structured message attachments. Leave as null to leave existing attachments alone.
         /// </summary>
         public IList<Attachment> Attachments { get; set; }
+        /// <summary>
+        /// Structured blocks. Leave as null to leave existing blocks alone.
+        /// </summary>
+        public IList<Block> Blocks { get; set; }
         /// <summary>
         /// Change how messages are treated.
         /// </summary>

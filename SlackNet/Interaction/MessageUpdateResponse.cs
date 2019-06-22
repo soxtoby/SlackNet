@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SlackNet.Blocks;
 using SlackNet.WebApi;
 
 namespace SlackNet.Interaction
@@ -16,6 +17,7 @@ namespace SlackNet.Interaction
         public ParseMode Parse => _response.Message.Parse;
         public bool LinkNames => _response.Message.LinkNames;
         public IList<Attachment> Attachments => _response.Message.Attachments;
+        public IList<Block> Blocks => _response.Message.Blocks;
         public bool UnfurlLinks => _response.Message.UnfurlLinks;
         public bool UnfurlMedia => _response.Message.UnfurlMedia;
         public string Username => _response.Message.Username;
