@@ -2,9 +2,9 @@
 {
     public abstract class DialogElement
     {
-        protected DialogElement(DialogElementType type) => Type = type;
+        protected DialogElement(string type) => Type = type;
 
-        public DialogElementType Type { get; set; }
+        public string Type { get; set; }
         public string Label { get; set; }
         public string Name { get; set; }
         public bool Optional { get; set; }

@@ -8,13 +8,13 @@ namespace SlackNet.AspNetCore
     {
         private readonly ISlackMessageActions _actions = new SlackMessageActions();
 
-        public SlackMessageActionsService(IEnumerable<ResolvedMessageActionHandler> handlers)
+        public SlackMessageActionsService(IEnumerable<IMessageActionHandler> handlers)
         {
             foreach (var handler in handlers)
-                _actions.SetHandler(handler.CallbackId, handler);
+                AddHandler(handler);
         }
 
-        public Task<MessageActionResponse> Handle(MessageAction request) => _actions.Handle(request);
-        public void SetHandler(string callbackId, IMessageActionHandler handler) => _actions.SetHandler(callbackId, handler);
+        public Task Handle(MessageAction request) => _actions.Handle(request);
+        public void AddHandler(IMessageActionHandler handler) => _actions.AddHandler(handler);
     }
 }

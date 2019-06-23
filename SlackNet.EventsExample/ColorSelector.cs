@@ -3,10 +3,11 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using SlackNet.Interaction;
+using ActionElement = SlackNet.Interaction.ActionElement;
 
 namespace SlackNet.EventsExample
 {
-    public class ColorSelector : IInteractiveMessageHandler, IOptionProvider
+    public class LegacyColorSelector : IInteractiveMessageHandler, IOptionProvider
     {
         public static readonly string ActionName = "color_select";
 
@@ -31,11 +32,14 @@ namespace SlackNet.EventsExample
         public async Task<OptionsResponse> GetOptions(OptionsRequest request) => new OptionsResponse { Options = GetOptions(request.Value) };
 
         private static List<Option> GetOptions(string search) =>
-            new ColorConverter().GetStandardValues()
-                .Cast<Color>()
-                .Where(c => c.Name.ToUpperInvariant().Contains(search.ToUpperInvariant()))
+            FindColors(search)
                 .Select(c => new Option { Text = c.Name, Value = $"#{c.R:X2}{c.G:X2}{c.B:X2}" })
                 .ToList();
+
+        private static IEnumerable<Color> FindColors(string search) =>
+            new ColorConverter().GetStandardValues()
+                .Cast<Color>()
+                .Where(c => c.Name.ToUpperInvariant().Contains(search.ToUpperInvariant()));
 
         public static IList<ActionElement> Actions => new List<ActionElement>
             {

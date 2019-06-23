@@ -14,6 +14,8 @@ namespace SlackNet.AspNetCore
             configure(configuration);
             Default.RegisterServices((serviceType, createService) => serviceCollection.AddTransient(serviceType, c => createService(c.GetService)));
             serviceCollection.AddSingleton<ISlackEvents, SlackEventsService>();
+            serviceCollection.AddSingleton<ISlackBlockActions, SlackBlockActionsService>();
+            serviceCollection.AddSingleton<ISlackBlockOptions, SlackBlockOptionsService>();
             serviceCollection.AddSingleton<ISlackInteractiveMessages, SlackInteractiveMessagesService>();
             serviceCollection.AddSingleton<ISlackMessageActions, SlackMessageActionsService>();
             serviceCollection.AddSingleton<ISlackOptions, SlackOptionsService>();

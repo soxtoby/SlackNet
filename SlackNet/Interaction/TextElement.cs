@@ -2,6 +2,6 @@
 {
     public class TextElement : TextElementBase
     {
-        public TextElement() : base(DialogElementType.Text) { }
+        public TextElement() : base("text") { }
     }
 }

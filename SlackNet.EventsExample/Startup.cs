@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SlackNet.AspNetCore;
+using SlackNet.Blocks;
 using SlackNet.Events;
 
 namespace SlackNet.EventsExample
@@ -19,12 +20,22 @@ namespace SlackNet.EventsExample
             services.AddSlackNet(c => c
                 .UseApiToken(Configuration["Slack:ApiToken"])
                 .RegisterEventHandler<MessageEvent, MessageHandler>()
-                .RegisterInteractiveMessageHandler<Counter>(Counter.ActionName)
-                .RegisterInteractiveMessageHandler<ColorSelector>(ColorSelector.ActionName)
-                .RegisterOptionProvider<ColorSelector>(ColorSelector.ActionName)
-                .RegisterInteractiveMessageHandler<DialogDemo>(DialogDemo.EchoDialog)
-                .RegisterInteractiveMessageHandler<DialogDemo>(DialogDemo.ErrorDialog)
-                .RegisterDialogSubmissionHandler<DialogDemo>());
+
+                .RegisterBlockActionHandler<ButtonAction, BlockCounter>(BlockCounter.Add1)
+                .RegisterBlockActionHandler<ButtonAction, BlockCounter>(BlockCounter.Add5)
+                .RegisterBlockActionHandler<ButtonAction, BlockCounter>(BlockCounter.Add10)
+                .RegisterBlockActionHandler<ExternalSelectAction, BlockColorSelector>(BlockColorSelector.ActionId)
+                .RegisterBlockOptionProvider<BlockColorSelector>(BlockColorSelector.ActionId)
+                .RegisterBlockActionHandler<ButtonAction, BlockDialogDemo>(DialogDemoBase.EchoDialog)
+                .RegisterBlockActionHandler<ButtonAction, BlockDialogDemo>(DialogDemoBase.ErrorDialog)
+
+                .RegisterInteractiveMessageHandler<LegacyCounter>(LegacyCounter.ActionName)
+                .RegisterInteractiveMessageHandler<LegacyColorSelector>(LegacyColorSelector.ActionName)
+                .RegisterOptionProvider<LegacyColorSelector>(LegacyColorSelector.ActionName)
+                .RegisterInteractiveMessageHandler<LegacyDialogDemo>(DialogDemoBase.EchoDialog)
+                .RegisterInteractiveMessageHandler<LegacyDialogDemo>(DialogDemoBase.ErrorDialog)
+
+                .RegisterDialogSubmissionHandler<DialogDemoHandler>());
             services.AddMvc();
         }
 

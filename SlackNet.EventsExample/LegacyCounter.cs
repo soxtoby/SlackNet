@@ -2,12 +2,15 @@
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SlackNet.Interaction;
+using ActionElement = SlackNet.Interaction.ActionElement;
+using Button = SlackNet.Interaction.Button;
 
 namespace SlackNet.EventsExample
 {
-    public class Counter : IInteractiveMessageHandler
+    public class LegacyCounter : IInteractiveMessageHandler
     {
         public static readonly string ActionName = "add";
+
         private static readonly Regex _counterPattern = new Regex("Counter: (\\d+)");
 
         public async Task<MessageResponse> Handle(InteractiveMessage message)

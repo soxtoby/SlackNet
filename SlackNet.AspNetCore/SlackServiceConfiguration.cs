@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Interaction;
 
@@ -24,7 +26,48 @@ namespace SlackNet.AspNetCore
             where THandler : class, IEventHandler<TEvent>
         {
             _serviceCollection.AddTransient<THandler>();
-            _serviceCollection.AddSingleton<IEventHandler, ResolvedEventHandler<TEvent, THandler>>();
+            return RegisterEventHandler(c => new ResolvedEventHandler<TEvent, THandler>(c));
+        }
+
+        public SlackServiceConfiguration RegisterEventHandler<TEvent>(IEventHandler<TEvent> handler)
+            where TEvent : Event
+        {
+            return RegisterEventHandler(c => handler);
+        }
+
+        public SlackServiceConfiguration RegisterEventHandler<TEvent>(Func<IServiceProvider, IEventHandler<TEvent>> handlerFactory) 
+            where TEvent : Event
+        {
+            _serviceCollection.AddSingleton<IEventHandler>(handlerFactory);
+            return this;
+        }
+
+        public SlackServiceConfiguration RegisterBlockActionHandler<TAction, THandler>()
+            where TAction : BlockAction
+            where THandler : class, IBlockActionHandler<TAction>
+        {
+            _serviceCollection.AddTransient<THandler>();
+            return RegisterBlockActionHandler(c => new ResolvedBlockActionHandler<TAction, THandler>(c));
+        }
+
+        public SlackServiceConfiguration RegisterBlockActionHandler<TAction, THandler>(string actionId)
+            where TAction : BlockAction
+            where THandler : class, IBlockActionHandler<TAction>
+        {
+            _serviceCollection.AddTransient<THandler>();
+            return RegisterBlockActionHandler(c => new SpecificBlockActionHandler<TAction>(actionId, new ResolvedBlockActionHandler<TAction, THandler>(c)));
+        }
+
+        public SlackServiceConfiguration RegisterBlockActionHandler<TAction>(IBlockActionHandler<TAction> handler) 
+            where TAction : BlockAction
+        {
+            return RegisterBlockActionHandler(c => handler);
+        }
+
+        public SlackServiceConfiguration RegisterBlockActionHandler<TAction>(Func<IServiceProvider, IBlockActionHandler<TAction>> handlerFactory) 
+            where TAction : BlockAction
+        {
+            _serviceCollection.AddSingleton<IBlockActionHandler>(handlerFactory);
             return this;
         }
 
@@ -36,11 +79,28 @@ namespace SlackNet.AspNetCore
             return this;
         }
 
+        public SlackServiceConfiguration RegisterMessageActionHandler<THandler>()
+            where THandler : class, IMessageActionHandler
+        {
+            _serviceCollection.AddTransient<THandler>();
+            return RegisterMessageActionHandler(c => new ResolvedMessageActionHandler<THandler>(c));
+        }
+
         public SlackServiceConfiguration RegisterMessageActionHandler<THandler>(string callbackId)
             where THandler : class, IMessageActionHandler
         {
             _serviceCollection.AddTransient<THandler>();
-            _serviceCollection.AddSingleton<ResolvedMessageActionHandler>(c => new ResolvedMessageActionHandler<THandler>(c, callbackId));
+            return RegisterMessageActionHandler(c => new SpecificMessageActionHandler(callbackId, new ResolvedMessageActionHandler<THandler>(c)));
+        }
+
+        public SlackServiceConfiguration RegisterMessageActionHandler(IMessageActionHandler handler)
+        {
+            return RegisterMessageActionHandler(c => handler);
+        }
+
+        public SlackServiceConfiguration RegisterMessageActionHandler(Func<IServiceProvider, IMessageActionHandler> handlerFactory)
+        {
+            _serviceCollection.AddSingleton(handlerFactory);
             return this;
         }
 
@@ -52,9 +112,18 @@ namespace SlackNet.AspNetCore
             return this;
         }
 
-        public SlackServiceConfiguration RegisterDialogSubmissionHandler<THandler>()
-            where THandler : IDialogSubmissionHandler
+        public SlackServiceConfiguration RegisterBlockOptionProvider<TProvider>(string actionId)
+            where TProvider : class, IBlockOptionProvider
         {
+            _serviceCollection.AddTransient<TProvider>();
+            _serviceCollection.AddSingleton<ResolvedBlockOptionProvider>(c => new ResolvedBlockOptionProvider<TProvider>(c, actionId));
+            return this;
+        }
+
+        public SlackServiceConfiguration RegisterDialogSubmissionHandler<THandler>()
+            where THandler : class, IDialogSubmissionHandler
+        {
+            _serviceCollection.AddTransient<THandler>();
             _serviceCollection.AddSingleton<IDialogSubmissionHandler>(c => new ResolvedDialogSubmissionHandler<THandler>(c));
             return this;
         }

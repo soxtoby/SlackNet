@@ -15,6 +15,8 @@ namespace SlackNet.AspNetCore
         private readonly RequestDelegate _next;
         private readonly SlackEndpointConfiguration _configuration;
         private readonly ISlackEvents _slackEvents;
+        private readonly ISlackBlockActions _slackBlockActions;
+        private readonly ISlackBlockOptions _slackBlockOptions;
         private readonly ISlackInteractiveMessages _slackInteractiveMessages;
         private readonly ISlackMessageActions _slackMessageActions;
         private readonly ISlackOptions _slackOptions;
@@ -25,15 +27,19 @@ namespace SlackNet.AspNetCore
             RequestDelegate next,
             SlackEndpointConfiguration configuration,
             ISlackEvents slackEvents,
+            ISlackBlockActions slackBlockActions,
+            ISlackBlockOptions slackBlockOptions,
             ISlackInteractiveMessages slackInteractiveMessages,
             ISlackMessageActions slackMessageActions,
-            ISlackOptions slackOptions,
+            ISlackOptions slackOptions, 
             IDialogSubmissionHandler dialogSubmissionHandler,
             SlackJsonSettings jsonSettings)
         {
             _next = next;
             _configuration = configuration;
             _slackEvents = slackEvents;
+            _slackBlockActions = slackBlockActions;
+            _slackBlockOptions = slackBlockOptions;
             _slackInteractiveMessages = slackInteractiveMessages;
             _slackMessageActions = slackMessageActions;
             _slackOptions = slackOptions;
@@ -87,6 +93,8 @@ namespace SlackNet.AspNetCore
             {
                 switch (interactionRequest)
                 {
+                    case BlockActionRequest blockActions:
+                        return await HandleBlockActions(context, blockActions).ConfigureAwait(false);
                     case InteractiveMessage interactiveMessage:
                         return await HandleInteractiveMessage(context, interactiveMessage).ConfigureAwait(false);
                     case DialogSubmission dialogSubmission:
@@ -99,6 +107,12 @@ namespace SlackNet.AspNetCore
             }
 
             return await context.Respond(HttpStatusCode.BadRequest, body: "Invalid token or unrecognized content").ConfigureAwait(false);
+        }
+
+        private async Task<HttpResponse> HandleBlockActions(HttpContext context, BlockActionRequest blockActionRequest)
+        {
+            await _slackBlockActions.Handle(blockActionRequest).ConfigureAwait(false);
+            return await context.Respond(HttpStatusCode.OK).ConfigureAwait(false);
         }
 
         private async Task<HttpResponse> HandleInteractiveMessage(HttpContext context, InteractiveMessage interactiveMessage)
@@ -130,13 +144,8 @@ namespace SlackNet.AspNetCore
 
         private async Task<HttpResponse> HandleMessageAction(HttpContext context, MessageAction messageAction)
         {
-            var response = await _slackMessageActions.Handle(messageAction).ConfigureAwait(false);
-
-            var responseJson = response == null
-                ? null
-                : Serialize(response);
-
-            return await context.Respond(HttpStatusCode.OK, "application/json", responseJson).ConfigureAwait(false);
+            await _slackMessageActions.Handle(messageAction).ConfigureAwait(false);
+            return await context.Respond(HttpStatusCode.OK).ConfigureAwait(false);
         }
 
         private async Task<HttpResponse> HandleSlackOptions(HttpContext context)
@@ -144,15 +153,32 @@ namespace SlackNet.AspNetCore
             if (context.Request.Method != "POST")
                 return await context.Respond(HttpStatusCode.MethodNotAllowed).ConfigureAwait(false);
 
-            var optionsRequest = await DeserializePayload<OptionsRequest>(context).ConfigureAwait(false);
+            var optionsRequest = await DeserializePayload<OptionsRequestBase>(context).ConfigureAwait(false);
 
             if (optionsRequest != null && IsValidToken(optionsRequest.Token))
             {
-                var response = await _slackOptions.Handle(optionsRequest).ConfigureAwait(false);
-                return await context.Respond(HttpStatusCode.OK, "application/json", Serialize(response)).ConfigureAwait(false);
+                switch (optionsRequest)
+                {
+                    case OptionsRequest legacyOptionsRequest:
+                        return await HandleLegacyOptionsRequest(context, legacyOptionsRequest).ConfigureAwait(false);
+                    case BlockOptionsRequest blockOptionsRequest:
+                        return await HandleBlockOptionsRequest(context, blockOptionsRequest).ConfigureAwait(false);
+                }
             }
 
             return await context.Respond(HttpStatusCode.BadRequest, body: "Invalid token or unrecognized content").ConfigureAwait(false);
+        }
+
+        private async Task<HttpResponse> HandleLegacyOptionsRequest(HttpContext context, OptionsRequest optionsRequest)
+        {
+            var response = await _slackOptions.Handle(optionsRequest).ConfigureAwait(false);
+            return await context.Respond(HttpStatusCode.OK, "application/json", Serialize(response)).ConfigureAwait(false);
+        }
+
+        private async Task<HttpResponse> HandleBlockOptionsRequest(HttpContext context, BlockOptionsRequest blockOptionsRequest)
+        {
+            var response = await _slackBlockOptions.Handle(blockOptionsRequest).ConfigureAwait(false);
+            return await context.Respond(HttpStatusCode.OK, "application/json", Serialize(response)).ConfigureAwait(false);
         }
 
         private async Task<T> DeserializePayload<T>(HttpContext context)

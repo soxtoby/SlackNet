@@ -7,6 +7,7 @@ namespace SlackNet.Interaction
 {
     public class InteractiveMessage : InteractionRequest
     {
+        public string CallbackId { get; set; }
         public IList<ActionElement> Actions { get; set; } = new List<ActionElement>();
         [JsonIgnore]
         public ActionElement Action

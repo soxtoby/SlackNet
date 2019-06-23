@@ -1,23 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SlackNet.Interaction
 {
     public interface ISlackMessageActions
     {
-        Task<MessageActionResponse> Handle(MessageAction request);
-        void SetHandler(string callbackId, IMessageActionHandler handler);
+        Task Handle(MessageAction request);
+        void AddHandler(IMessageActionHandler handler);
     }
 
     public class SlackMessageActions : ISlackMessageActions
     {
-        private readonly Dictionary<string, IMessageActionHandler> _handlers = new Dictionary<string, IMessageActionHandler>();
+        private readonly List<IMessageActionHandler> _handlers = new List<IMessageActionHandler>();
 
-        public Task<MessageActionResponse> Handle(MessageAction request) =>
-            _handlers.TryGetValue(request.CallbackId, out var handler)
-                ? handler.Handle(request)
-                : Task.FromResult<MessageActionResponse>(null);
+        public Task Handle(MessageAction request) => Task.WhenAll(_handlers.Select(h => h.Handle(request)));
 
-        public void SetHandler(string callbackId, IMessageActionHandler handler) => _handlers[callbackId] = handler;
+        public void AddHandler(IMessageActionHandler handler) => _handlers.Add(handler);
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.WebApi;
 
@@ -15,8 +17,15 @@ namespace SlackNet.EventsExample
             if (message.Text.Contains("test interactivity"))
                 await _slack.Chat.PostMessage(new Message
                     {
-                        Text = "Here's some interactivity for you",
+                        Text = "No interactivity for you",
                         Channel = message.Channel,
+                        Blocks = new Block[] { new SectionBlock { Text = "Here's some interactivity for you" } }
+                            .Concat(BlockCounter.Blocks)
+                            .Concat(new[] { new DividerBlock() })
+                            .Concat(BlockColorSelector.Blocks)
+                            .Concat(new[] { new DividerBlock() })
+                            .Concat(BlockDialogDemo.Blocks)
+                            .ToList(),
                         Attachments =
                             {
                                 new Attachment
@@ -24,21 +33,21 @@ namespace SlackNet.EventsExample
                                         Text = "Counter: 0",
                                         Fallback = "No counter for you",
                                         CallbackId = "counter",
-                                        Actions = Counter.Actions
+                                        Actions = LegacyCounter.Actions
                                     },
                                 new Attachment
                                     {
                                         Text = "Choose a color",
                                         Fallback = "No color for you",
                                         CallbackId = "color",
-                                        Actions = ColorSelector.Actions
+                                        Actions = LegacyColorSelector.Actions
                                     },
                                 new Attachment
                                     {
                                         Text = "Dialogs",
                                         Fallback = "No dialogs for you",
                                         CallbackId = "dialog",
-                                        Actions = DialogDemo.Actions
+                                        Actions = LegacyDialogDemo.Actions
                                     }
                             }
                     }).ConfigureAwait(false);

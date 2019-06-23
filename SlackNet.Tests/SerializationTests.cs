@@ -99,6 +99,34 @@ namespace SlackNet.Tests
             result.Images["icon_64"].ShouldBe("bar");
         }
 
+        [Test]
+        public void IgnoreIfEmpty_IsEmpty_Ignored()
+        {
+            var result = JsonConvert.SerializeObject(new IgnoreIfEmptyProperty { List = new List<string>() }, _sut);
+            result.ShouldBe("{}");
+        }
+
+        [Test]
+        public void IgnoreIfEmpty_NotEmpty_Serialized()
+        {
+            var result = JsonConvert.SerializeObject(new IgnoreIfEmptyProperty { List = new List<string>{ "foo" } }, _sut);
+            result.ShouldBe(@"{""list"":[""foo""]}");
+        }
+
+        [Test]
+        public void IgnoreIfDefault_IsDefault_Ignored()
+        {
+            var result = JsonConvert.SerializeObject(new IgnoreIfDefaultProperty { Value = TestEnum.Default }, _sut);
+            result.ShouldBe("{}");
+        }
+
+        [Test]
+        public void IgnoreIfDefault_NotDefault_Serialized()
+        {
+            var result = JsonConvert.SerializeObject(new IgnoreIfDefaultProperty { Value = TestEnum.TestValue }, _sut);
+            result.ShouldBe(@"{""value"":""test_value""}");
+        }
+
         class SimpleType
         {
             public string SomeProperty { get; set; }
@@ -127,6 +155,18 @@ namespace SlackNet.Tests
         {
             public Event Event { get; set; }
             public IList<Event> EventList { get; set; }
+        }
+
+        class IgnoreIfEmptyProperty
+        {
+            [IgnoreIfEmpty]
+            public IList<string> List { get; set; }
+        }
+
+        class IgnoreIfDefaultProperty
+        {
+            [IgnoreIfDefault]
+            public TestEnum Value { get; set; }
         }
     }
 }

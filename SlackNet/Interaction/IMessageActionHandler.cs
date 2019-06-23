@@ -4,6 +4,6 @@ namespace SlackNet.Interaction
 {
     public interface IMessageActionHandler
     {
-        Task<MessageActionResponse> Handle(MessageAction request);
+        Task Handle(MessageAction request);
     }
 }

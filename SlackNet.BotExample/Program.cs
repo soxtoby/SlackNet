@@ -20,10 +20,10 @@ namespace SlackNet.BotExample
             {
                 bot.AddHandler(new PingHandler());
 
-                await bot.Connect();
+                await bot.Connect().ConfigureAwait(false);
                 Console.WriteLine("Connected");
 
-                await WaitForKeyPress();
+                await WaitForKeyPress().ConfigureAwait(false);
             }
         }
 

@@ -4,7 +4,7 @@ namespace SlackNet.Interaction
 {
     public class SelectElement : DialogElement
     {
-        public SelectElement() : base(DialogElementType.Select) { }
+        public SelectElement() : base("select") { }
 
         public IList<SelectOption> Options { get; set; } = new List<SelectOption>();
     }

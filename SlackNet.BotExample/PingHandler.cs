@@ -18,7 +18,7 @@ namespace SlackNet.BotExample
                     {
                         Text = "pong",
                         Attachments = { new Attachment { Text = $"Count: {++_count}" } }
-                    });
+                    }).ConfigureAwait(false);
             }
         }
     }
