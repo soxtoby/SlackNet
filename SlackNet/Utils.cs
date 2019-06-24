@@ -17,7 +17,9 @@ namespace SlackNet
         public static DateTime? ToDateTime(this string timestamp) =>
             string.IsNullOrEmpty(timestamp)
                 ? null
-                : Decimal.Parse(timestamp).ToDateTime();
+                : decimal.TryParse(timestamp, out var ts)
+                    ? ts.ToDateTime()
+                    : null;
 
         /// <summary>
         /// Converts a Slack timestamp number to a <see cref="DateTime"/>.
@@ -30,7 +32,7 @@ namespace SlackNet
         /// </summary>
         /// <returns>If timestamp is 0, returns null, otherwise a DateTime.</returns>
         public static DateTime? ToDateTime(this decimal timestamp) =>
-            timestamp == 0
+            timestamp != 0
                 ? DateTimeOffset.FromUnixTimeMilliseconds((long)(timestamp * 1000)).UtcDateTime
                 : (DateTime?)null;
 

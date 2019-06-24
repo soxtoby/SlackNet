@@ -18,6 +18,52 @@ namespace SlackNet.Tests
         }
 
         [Test]
+        public void ToDateTime_FromTimestampString_NullOrEmpty_ReturnsNull()
+        {
+            ((string)null).ToDateTime().ShouldBeNull();
+            string.Empty.ToDateTime().ShouldBeNull();
+        }
+
+        [Test]
+        public void ToDateTime_FromTimestampString_InvalidTimestamp_ReturnsNull()
+        {
+            "foo".ToDateTime().ShouldBeNull();
+        }
+
+        [Test]
+        public void ToDateTime_FromTimestampString_ValidTimestamp_ReturnsDateTime()
+        {
+            "42".ToDateTime().ShouldBe(new DateTime(1970, 1, 1, 0, 0, 42));
+            "-42".ToDateTime().ShouldBe(new DateTime(1969, 12, 31, 23, 59, 18));
+        }
+
+        [Test]
+        public void ToDateTime_FromInteger_Zero_ReturnsNull()
+        {
+            0.ToDateTime().ShouldBeNull();
+        }
+
+        [Test]
+        public void ToDateTime_FromInteger_NonZero_ReturnsDateTime()
+        {
+            42.ToDateTime().ShouldBe(new DateTime(1970, 1, 1, 0, 0, 42));
+            (-42).ToDateTime().ShouldBe(new DateTime(1969, 12, 31, 23, 59, 18));
+        }
+
+        [Test]
+        public void ToDateTime_FromDecimal_Zero_ReturnsNull()
+        {
+            0m.ToDateTime().ShouldBeNull();
+        }
+
+        [Test]
+        public void ToDateTime_FromDecimal_NonZero_ReturnsDateTime()
+        {
+            42m.ToDateTime().ShouldBe(new DateTime(1970, 1, 1, 0, 0, 42));
+            (-42m).ToDateTime().ShouldBe(new DateTime(1969, 12, 31, 23, 59, 18));
+        }
+
+        [Test]
         public void RetryWithDelay_NoError_PassesThrough()
         {
             var result = _scheduler.CreateObserver<int>();
