@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace SlackNet
 {
@@ -21,6 +22,7 @@ namespace SlackNet
         public string Image72 { get; set; }
         public string Image192 { get; set; }
         public string Image512 { get; set; }
+        [JsonConverter(typeof(IgnoreArrayConverter))] // Slack returns an empty array instead of an object if profile has been modified, but no custom fields have been set
         public IDictionary<string, UserProfileField> Fields { get; set; } = new Dictionary<string, UserProfileField>();
     }
 }

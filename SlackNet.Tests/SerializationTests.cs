@@ -127,6 +127,31 @@ namespace SlackNet.Tests
             result.ShouldBe(@"{""value"":""test_value""}");
         }
 
+        [Test]
+        public void UserProfileFields_Null_IsNull()
+        {
+            var result = JsonConvert.DeserializeObject<UserProfile>(@"{""fields"":null,""phone"":""123""}");
+            result.Fields.ShouldBeNull();
+            result.Phone.ShouldBe("123");
+        }
+
+        [Test]
+        public void UserProfileFields_EmptyArray_IsEmpty()
+        {
+            var result = JsonConvert.DeserializeObject<UserProfile>(@"{""fields"":[],""phone"":""123""}");
+            result.Fields.ShouldBeEmpty();
+            result.Phone.ShouldBe("123");
+        }
+
+        [Test]
+        public void UserProfileFields_PopulatedObject_IsPopulated()
+        {
+            var result = JsonConvert.DeserializeObject<UserProfile>(@"{""fields"":{""fieldId"":{""value"":""foo""}},""phone"":""123""}");
+            result.Fields.Keys.ShouldMatch(new[] { "fieldId" });
+            result.Fields["fieldId"].Value.ShouldBe("foo");
+            result.Phone.ShouldBe("123");
+        }
+
         class SimpleType
         {
             public string SomeProperty { get; set; }
