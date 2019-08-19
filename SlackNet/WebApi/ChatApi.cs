@@ -116,7 +116,7 @@ namespace SlackNet.WebApi
         /// <param name="message">The message to post.</param>
         /// <param name="cancellationToken"></param>
         public Task<PostMessageResponse> PostMessage(Message message, CancellationToken? cancellationToken = null) =>
-            _client.Get<PostMessageResponse>("chat.postMessage", PopulateMessageArgs(message, new Args()),
+            _client.Post<PostMessageResponse>("chat.postMessage", PopulateMessageArgs(message, new Args()),
                 cancellationToken);
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace SlackNet.WebApi
         /// <param name="message">The message to post. Not all message properties are supported by <c>PostEphemeral</c>.</param>
         /// <param name="cancellationToken"></param>
         public Task<PostMessageResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null) =>
-            _client.Get<PostMessageResponse>("chat.postEphemeral", new Args
+            _client.Post<PostMessageResponse>("chat.postEphemeral", new Args
                     {
                         { "channel", message.Channel },
                         { "text", message.Text },
