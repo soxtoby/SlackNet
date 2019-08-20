@@ -80,7 +80,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">The user who will receive the reminder. If no user is specified, the reminder will go to user who created it.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Reminder> Add(string text, DateTime time, string userId = null, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<ReminderResponse>("reminders.add", new Args
+            (await _client.Post<ReminderResponse>("reminders.add", new Args
                 {
                     { "text", text },
                     { "time", time.ToTimestamp() },
@@ -96,7 +96,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">The user who will receive the reminder. If no user is specified, the reminder will go to user who created it.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Reminder> Add(string text, TimeSpan time, string userId = null, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<ReminderResponse>("reminders.add", new Args
+            (await _client.Post<ReminderResponse>("reminders.add", new Args
                 {
                     { "text", text },
                     { "time", time.ToOffset(TimeSpan.FromHours(24)) },
@@ -116,7 +116,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">The user who will receive the reminder. If no user is specified, the reminder will go to user who created it.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Reminder> Add(string text, string time, string userId = null, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<ReminderResponse>("reminders.add", new Args
+            (await _client.Post<ReminderResponse>("reminders.add", new Args
                 {
                     { "text", text },
                     { "time", time },
@@ -130,7 +130,7 @@ namespace SlackNet.WebApi
         /// <param name="reminderId">The ID of the reminder to be marked as complete.</param>
         /// <param name="cancellationToken"></param>
         public Task Complete(string reminderId, CancellationToken? cancellationToken = null) =>
-            _client.Get("reminders.complete", new Args { { "reminder", reminderId } }, cancellationToken);
+            _client.Post<object>("reminders.complete", new Args { { "reminder", reminderId } }, cancellationToken);
 
         /// <summary>
         /// Deletes a reminder.
@@ -138,7 +138,7 @@ namespace SlackNet.WebApi
         /// <param name="reminderId">The ID of the reminder.</param>
         /// <param name="cancellationToken"></param>
         public Task Delete(string reminderId, CancellationToken? cancellationToken = null) =>
-            _client.Get("reminders.delete", new Args { { "reminder", reminderId } }, cancellationToken);
+            _client.Post<object>("reminders.delete", new Args { { "reminder", reminderId } }, cancellationToken);
 
         /// <summary>
         /// Returns information about a reminder.

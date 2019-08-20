@@ -28,7 +28,7 @@ namespace SlackNet.WebApi
         /// <param name="dialog">The dialog definition.</param>
         /// <param name="cancellationToken"></param>
         public Task Open(string triggerId, Dialog dialog, CancellationToken? cancellationToken = null) =>
-            _client.Get("dialog.open", new Args
+            _client.Post<object>("dialog.open", new Args
                 {
                     { "dialog", dialog },
                     { "trigger_id", triggerId }

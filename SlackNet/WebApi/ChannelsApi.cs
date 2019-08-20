@@ -162,7 +162,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task Archive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("channels.archive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post<object>("channels.archive", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Used to create a channel.
@@ -172,7 +172,7 @@ namespace SlackNet.WebApi
         /// <param name="validate">Whether to return errors on invalid channel name instead of modifying it to meet the specified criteria.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Channel> Create(string name, bool validate = false, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<ChannelResponse>("channels.create", new Args
+            (await _client.Post<ChannelResponse>("channels.create", new Args
                 {
                     { "name", name },
                     { "validate", validate }
@@ -220,7 +220,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">User to invite to channel.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Channel> Invite(string channelId, string userId, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<ChannelResponse>("channels.invite", new Args
+            (await _client.Post<ChannelResponse>("channels.invite", new Args
                 {
                     { "channel", channelId },
                     { "user", userId }
@@ -240,7 +240,7 @@ namespace SlackNet.WebApi
         /// This allows a client to see that the request to join GeNERaL is the same as the channel #general that the user is already in.
         /// </returns>
         public Task<ChannelJoinResponse> Join(string channelName, bool validate = false, CancellationToken? cancellationToken = null) =>
-            _client.Get<ChannelJoinResponse>("channels.join", new Args
+            _client.Post<ChannelJoinResponse>("channels.join", new Args
                 {
                     { "channel", channelName },
                     { "validate", validate }
@@ -253,7 +253,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">User to remove from channel.</param>
         /// <param name="cancellationToken"></param>
         public Task Kick(string channelId, string userId, CancellationToken? cancellationToken = null) =>
-            _client.Get("channels.kick", new Args
+            _client.Post<object>("channels.kick", new Args
                 {
                     { "channel", channelId },
                     { "user", userId }
@@ -266,7 +266,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task Leave(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("channels.leave", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post<object>("channels.leave", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Returns a list of all channels in the team. 
@@ -292,7 +292,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the most recently seen message.</param>
         /// <param name="cancellationToken"></param>
         public Task Mark(string channelId, string ts, CancellationToken? cancellationToken = null) =>
-            _client.Get("channels.mark", new Args
+            _client.Post<object>("channels.mark", new Args
                 {
                     { "channel", channelId },
                     { "ts", ts }
@@ -308,7 +308,7 @@ namespace SlackNet.WebApi
         /// <param name="validate">Whether to return errors on invalid channel name instead of modifying it to meet the specified criteria.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Channel> Rename(string channelId, string name, bool validate = false, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<ChannelResponse>("channels.rename", new Args
+            (await _client.Post<ChannelResponse>("channels.rename", new Args
                 {
                     { "channel", channelId },
                     { "name", name },
@@ -338,7 +338,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns>The channel's new purpose.</returns>
         public async Task<string> SetPurpose(string channelId, string purpose, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<PurposeResponse>("channels.setPurpose", new Args
+            (await _client.Post<PurposeResponse>("channels.setPurpose", new Args
                 {
                     { "channel", channelId },
                     { "purpose", purpose }
@@ -353,7 +353,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns>The channel's new topic.</returns>
         public async Task<string> SetTopic(string channelId, string topic, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<TopicResponse>("channels.setTopic", new Args
+            (await _client.Post<TopicResponse>("channels.setTopic", new Args
                 {
                     { "channel", channelId },
                     { "topic", topic }
@@ -366,6 +366,6 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Channel to unarchive.</param>
         /// <param name="cancellationToken"></param>
         public Task Unarchive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("channels.unarchive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post<object>("channels.unarchive", new Args { { "channel", channelId } }, cancellationToken);
     }
 }

@@ -38,7 +38,7 @@ namespace SlackNet.WebApi
         public async Task<IReadOnlyDictionary<string, string>> Test(string error, Args args, CancellationToken? cancellationToken = null)
         {
             var query = new Args(args) { ["error"] = error };
-            return (await _client.Get<TestResponse>("api.test", query, cancellationToken).ConfigureAwait(false)).Args;
+            return (await _client.Post<TestResponse>("api.test", query, cancellationToken).ConfigureAwait(false)).Args;
         }
     }
 }

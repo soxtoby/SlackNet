@@ -269,6 +269,6 @@ namespace SlackNet.WebApi
         /// <param name="presence">User's presence.</param>
         /// <param name="cancellationToken"></param>
         public Task SetPresence(Presence presence, CancellationToken? cancellationToken = null) =>
-            _client.Get("users.setPresence", new Args { { "presence", presence } }, cancellationToken);
+            _client.Post<object>("users.setPresence", new Args { { "presence", presence } }, cancellationToken);
     }
 }

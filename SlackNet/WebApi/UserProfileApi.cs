@@ -59,7 +59,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">ID of user to change (defaults to authed user). This argument may only be specified by team admins on paid teams.</param>
         /// <param name="cancellationToken"></param>
         public async Task<UserProfile> Set(string name, string value, string userId = null, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<UserProfileResponse>("users.profile.set", new Args
+            (await _client.Post<UserProfileResponse>("users.profile.set", new Args
                 {
                     { "name", name },
                     { "value", value },
@@ -74,7 +74,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">ID of user to change (defaults to authed user). This argument may only be specified by team admins on paid teams.</param>
         /// <param name="cancellationToken"></param>
         public async Task<UserProfile> Set(UserProfile profile, string userId = null, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<UserProfileResponse>("users.profile.set", new Args
+            (await _client.Post<UserProfileResponse>("users.profile.set", new Args
                 {
                     { "profile", profile },
                     { "user", userId }

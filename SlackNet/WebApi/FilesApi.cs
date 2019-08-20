@@ -164,7 +164,7 @@ namespace SlackNet.WebApi
         /// <param name="fileId">ID of file to delete.</param>
         /// <param name="cancellationToken"></param>
         public Task Delete(string fileId, CancellationToken? cancellationToken = null) =>
-            _client.Get("files.delete", new Args { { "file", fileId } }, cancellationToken);
+            _client.Post<object>("files.delete", new Args { { "file", fileId } }, cancellationToken);
 
         /// <summary>
         /// Returns information about a file in your team.
@@ -219,7 +219,7 @@ namespace SlackNet.WebApi
         /// <param name="fileId">File to revoke</param>
         /// <param name="cancellationToken"></param>
         public Task<FileResponse> RevokePublicUrl(string fileId, CancellationToken? cancellationToken = null) =>
-            _client.Get<FileResponse>("files.revokePublicURL", new Args { { "file", fileId } }, cancellationToken);
+            _client.Post<FileResponse>("files.revokePublicURL", new Args { { "file", fileId } }, cancellationToken);
 
         /// <summary>
         /// Enables public/external sharing for a file.
@@ -227,7 +227,7 @@ namespace SlackNet.WebApi
         /// <param name="fileId">File to share.</param>
         /// <param name="cancellationToken"></param>
         public Task<FileAndCommentsResponse> SharedPublicUrl(string fileId, CancellationToken? cancellationToken = null) =>
-            _client.Get<FileAndCommentsResponse>("files.sharedPublicURL", new Args { { "file", fileId } }, cancellationToken);
+            _client.Post<FileAndCommentsResponse>("files.sharedPublicURL", new Args { { "file", fileId } }, cancellationToken);
 
         /// <summary>
         /// Allows you to create or upload an existing file.
