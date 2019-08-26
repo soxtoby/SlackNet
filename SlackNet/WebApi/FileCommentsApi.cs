@@ -29,7 +29,7 @@ namespace SlackNet.WebApi
         /// <param name="commentId">The comment to delete.</param>
         /// <param name="cancellationToken"></param>
         public Task Delete(string fileId, string commentId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("files.comments.delete", new Args
+            _client.Post("files.comments.delete", new Args
                 {
                     { "file", fileId },
                     { "id", commentId }

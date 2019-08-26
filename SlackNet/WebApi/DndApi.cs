@@ -59,7 +59,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="cancellationToken"></param>
         public Task EndDnd(CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("dnd.endDnd", new Args(), cancellationToken);
+            _client.Post("dnd.endDnd", new Args(), cancellationToken);
 
         /// <summary>
         /// Ends the current user's snooze mode immediately.

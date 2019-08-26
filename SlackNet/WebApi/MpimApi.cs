@@ -79,7 +79,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">MPIM to close.</param>
         /// <param name="cancellationToken"></param>
         public Task Close(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("mpim.close", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("mpim.close", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Returns a portion of message events from the specified multiparty direct message channel.
@@ -128,7 +128,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the most recently seen message.</param>
         /// <param name="cancellationToken"></param>
         public Task Mark(string channelId, string ts, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("mpim.mark", new Args
+            _client.Post("mpim.mark", new Args
                 {
                     { "channel", channelId },
                     { "ts", ts }

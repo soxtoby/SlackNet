@@ -164,7 +164,7 @@ namespace SlackNet.WebApi
         /// <param name="fileId">ID of file to delete.</param>
         /// <param name="cancellationToken"></param>
         public Task Delete(string fileId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("files.delete", new Args { { "file", fileId } }, cancellationToken);
+            _client.Post("files.delete", new Args { { "file", fileId } }, cancellationToken);
 
         /// <summary>
         /// Returns information about a file in your team.

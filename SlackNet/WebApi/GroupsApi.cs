@@ -172,7 +172,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Private channel to archive.</param>
         /// <param name="cancellationToken"></param>
         public Task Archive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("groups.archive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("groups.archive", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Closes a private channel.
@@ -270,7 +270,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task Kick(string channelId, string userId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("groups.kick", new Args
+            _client.Post("groups.kick", new Args
                 {
                     { "channel", channelId },
                     { "user", userId }
@@ -282,7 +282,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Private channel to leave.</param>
         /// <param name="cancellationToken"></param>
         public Task Leave(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("groups.leave", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("groups.leave", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Returns a list of private channels in the team that the caller is in and archived groups that the caller was in. 
@@ -300,7 +300,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the most recently seen message.</param>
         /// <param name="cancellationToken"></param>
         public Task Mark(string channelId, string ts, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("groups.mark", new Args { { "channel", channelId }, { "ts", ts } }, cancellationToken);
+            _client.Post("groups.mark", new Args { { "channel", channelId }, { "ts", ts } }, cancellationToken);
 
         /// <summary>
         /// Opens a private channel.
@@ -309,7 +309,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task Open(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("groups.open", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("groups.open", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Renames a private channel.
@@ -377,6 +377,6 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Private channel to unarchive.</param>
         /// <param name="cancellationToken"></param>
         public Task Unarchive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("groups.unarchive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("groups.unarchive", new Args { { "channel", channelId } }, cancellationToken);
     }
 }

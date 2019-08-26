@@ -80,7 +80,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Direct message channel to close.</param>
         /// <param name="cancellationToken"></param>
         public Task Close(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("im.close", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("im.close", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Returns a portion of message events from the specified direct message channel.
@@ -129,7 +129,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the most recently seen message.</param>
         /// <param name="cancellationToken"></param>
         public Task Mark(string channelId, string ts, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("im.mark", new Args
+            _client.Post("im.mark", new Args
                 {
                     { "channel", channelId },
                     { "ts", ts }

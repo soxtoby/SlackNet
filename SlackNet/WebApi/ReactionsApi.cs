@@ -105,7 +105,7 @@ namespace SlackNet.WebApi
         /// <param name="fileId">File to add reaction to.</param>
         /// <param name="cancellationToken"></param>
         public Task AddToFile(string name, string fileId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("reactions.add", new Args
+            _client.Post("reactions.add", new Args
                 {
                     { "name", name },
                     { "file", fileId }
@@ -118,7 +118,7 @@ namespace SlackNet.WebApi
         /// <param name="fileCommentId">File comment to add reaction to.</param>
         /// <param name="cancellationToken"></param>
         public Task AddToFileComment(string name, string fileCommentId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("reactions.add", new Args
+            _client.Post("reactions.add", new Args
                 {
                     { "name", name },
                     { "file_comment", fileCommentId }
@@ -132,7 +132,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the message to add reaction to.</param>
         /// <param name="cancellationToken"></param>
         public Task AddToMessage(string name, string channelId, string ts, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("reactions.add", new Args
+            _client.Post("reactions.add", new Args
                 {
                     { "name", name },
                     { "channel", channelId },
@@ -207,7 +207,7 @@ namespace SlackNet.WebApi
         /// <param name="fileId">File to remove reaction from.</param>
         /// <param name="cancellationToken"></param>
         public Task RemoveFromFile(string name, string fileId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("reactions.remove", new Args
+            _client.Post("reactions.remove", new Args
                 {
                     { "name", name },
                     { "file", fileId }
@@ -220,7 +220,7 @@ namespace SlackNet.WebApi
         /// <param name="fileCommentId">File comment to remove reaction from.</param>
         /// <param name="cancellationToken"></param>
         public Task RemoveFromFileComment(string name, string fileCommentId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("reactions.remove", new Args
+            _client.Post("reactions.remove", new Args
                 {
                     { "name", name },
                     { "file_comment", fileCommentId }
@@ -234,7 +234,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the message to remove reaction from.</param>
         /// <param name="cancellationToken"></param>
         public Task RemoveFromMessage(string name, string channelId, string ts, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("reactions.remove", new Args
+            _client.Post("reactions.remove", new Args
                 {
                     { "name", name },
                     { "channel", channelId },

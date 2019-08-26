@@ -186,7 +186,7 @@ namespace SlackNet.WebApi
         /// Subsequent attempts with the same <see cref="ts"/> and <see cref="channelId"/> values will modify the same attachments, rather than adding more.
         /// </remarks>
         public Task Unfurl(string channelId, string ts, IDictionary<string, Attachment> unfurls, bool userAuthRequired = false, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("chat.unfurl", new Args
+            _client.Post("chat.unfurl", new Args
                 {
                     { "channel", channelId },
                     { "ts", ts },

@@ -207,7 +207,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">ID of conversation to archive.</param>
         /// <param name="cancellationToken"></param>
         public Task Archive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("conversations.archive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("conversations.archive", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Closes a direct message or multi-person direct message.
@@ -216,7 +216,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task Close(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("conversations.close", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("conversations.close", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Initiates a public or private channel-based conversation.
@@ -303,7 +303,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">User ID to be removed.</param>
         /// <param name="cancellationToken"></param>
         public Task Kick(string channelId, string userId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("conversations.kick", new Args
+            _client.Post("conversations.kick", new Args
                 {
                     { "channel", channelId },
                     { "user", userId }
@@ -315,7 +315,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Conversation to leave.</param>
         /// <param name="cancellationToken"></param>
         public Task Leave(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("conversations.leave", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("conversations.leave", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Lists all channels in a Slack team.
@@ -478,6 +478,6 @@ namespace SlackNet.WebApi
         /// <param name="channelId">ID of conversation to unarchive.</param>
         /// <param name="cancellationToken"></param>
         public Task Unarchive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("conversations.unarchive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("conversations.unarchive", new Args { { "channel", channelId } }, cancellationToken);
     }
 }

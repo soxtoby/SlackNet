@@ -162,7 +162,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task Archive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("channels.archive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("channels.archive", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Used to create a channel.
@@ -253,7 +253,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">User to remove from channel.</param>
         /// <param name="cancellationToken"></param>
         public Task Kick(string channelId, string userId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("channels.kick", new Args
+            _client.Post("channels.kick", new Args
                 {
                     { "channel", channelId },
                     { "user", userId }
@@ -266,7 +266,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task Leave(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("channels.leave", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("channels.leave", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Returns a list of all channels in the team. 
@@ -292,7 +292,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the most recently seen message.</param>
         /// <param name="cancellationToken"></param>
         public Task Mark(string channelId, string ts, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("channels.mark", new Args
+            _client.Post("channels.mark", new Args
                 {
                     { "channel", channelId },
                     { "ts", ts }
@@ -366,6 +366,6 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Channel to unarchive.</param>
         /// <param name="cancellationToken"></param>
         public Task Unarchive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("channels.unarchive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("channels.unarchive", new Args { { "channel", channelId } }, cancellationToken);
     }
 }

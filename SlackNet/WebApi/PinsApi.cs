@@ -80,7 +80,7 @@ namespace SlackNet.WebApi
         /// <param name="fileId">File to pin.</param>
         /// <param name="cancellationToken"></param>
         public Task AddFile(string channelId, string fileId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("pins.add", new Args
+            _client.Post("pins.add", new Args
                 {
                     { "channel", channelId },
                     { "file", fileId }
@@ -93,7 +93,7 @@ namespace SlackNet.WebApi
         /// <param name="fileCommentId">File comment to pin.</param>
         /// <param name="cancellationToken"></param>
         public Task AddFileComment(string channelId, string fileCommentId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("pins.add", new Args
+            _client.Post("pins.add", new Args
                 {
                     { "channel", channelId },
                     { "file_comment", fileCommentId },
@@ -106,7 +106,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the message to pin.</param>
         /// <param name="cancellationToken"></param>
         public Task AddMessage(string channelId, string ts = null, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("pins.add", new Args
+            _client.Post("pins.add", new Args
                 {
                     { "channel", channelId },
                     { "timestamp", ts }
@@ -127,7 +127,7 @@ namespace SlackNet.WebApi
         /// <param name="fileId">File to un-pin.</param>
         /// <param name="cancellationToken"></param>
         public Task RemoveFile(string channelId, string fileId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("pins.remove", new Args
+            _client.Post("pins.remove", new Args
                 {
                     { "channel", channelId },
                     { "file", fileId }
@@ -140,7 +140,7 @@ namespace SlackNet.WebApi
         /// <param name="fileCommentId">File comment to un-pin.</param>
         /// <param name="cancellationToken"></param>
         public Task RemoveFileComment(string channelId, string fileCommentId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("pins.remove", new Args
+            _client.Post("pins.remove", new Args
                 {
                     { "channel", channelId },
                     { "file_comment", fileCommentId }
@@ -153,7 +153,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the message to un-pin.</param>
         /// <param name="cancellationToken"></param>
         public Task RemoveMessage(string channelId, string ts, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("pins.remove", new Args
+            _client.Post("pins.remove", new Args
                 {
                     { "channel", channelId },
                     { "timestamp", ts }

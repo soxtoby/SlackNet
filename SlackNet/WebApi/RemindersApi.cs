@@ -130,7 +130,7 @@ namespace SlackNet.WebApi
         /// <param name="reminderId">The ID of the reminder to be marked as complete.</param>
         /// <param name="cancellationToken"></param>
         public Task Complete(string reminderId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("reminders.complete", new Args { { "reminder", reminderId } }, cancellationToken);
+            _client.Post("reminders.complete", new Args { { "reminder", reminderId } }, cancellationToken);
 
         /// <summary>
         /// Deletes a reminder.
@@ -138,7 +138,7 @@ namespace SlackNet.WebApi
         /// <param name="reminderId">The ID of the reminder.</param>
         /// <param name="cancellationToken"></param>
         public Task Delete(string reminderId, CancellationToken? cancellationToken = null) =>
-            _client.Post<object>("reminders.delete", new Args { { "reminder", reminderId } }, cancellationToken);
+            _client.Post("reminders.delete", new Args { { "reminder", reminderId } }, cancellationToken);
 
         /// <summary>
         /// Returns information about a reminder.

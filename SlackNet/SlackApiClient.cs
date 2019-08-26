@@ -62,19 +62,27 @@ namespace SlackNet
         /// Calls a Slack API that requires POST content.
         /// </summary>
         /// <param name="apiMethod">Name of Slack method.</param>
-        /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
-        /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
+        /// <param name="args">Arguments to send to Slack. Authorization headers will be added automatically.</param>
         /// <param name="cancellationToken"></param>
-        Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken);
-
+        Task Post(string apiMethod, Args args, CancellationToken? cancellationToken);
+        
         /// <summary>
         /// Calls a Slack API that requires POST content.
         /// </summary>
         /// <typeparam name="T">Type of response expected.</typeparam>
         /// <param name="apiMethod">Name of Slack method.</param>
-        /// <param name="args">Arguments to send to Slack. Authorization headers will be added automagically.</param>
+        /// <param name="args">Arguments to send to Slack. Authorization headers will be added automatically.</param>
         /// <param name="cancellationToken"></param>
         Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class;
+        
+        /// <summary>
+        /// Calls a Slack API that requires POST content.
+        /// </summary>
+        /// <param name="apiMethod">Name of Slack method.</param>
+        /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
+        /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
+        /// <param name="cancellationToken"></param>
+        Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken);
         
         /// <summary>
         /// Calls a Slack API that requires POST content.
@@ -161,17 +169,15 @@ namespace SlackNet
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, Url(apiMethod, args));
             return Deserialize<T>(await _http.Execute<WebApiResponse>(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false));
         }
-            
-
+        
         /// <summary>
         /// Calls a Slack API that requires POST content.
         /// </summary>
         /// <param name="apiMethod">Name of Slack method.</param>
         /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
-        /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
         /// <param name="cancellationToken"></param>
-        public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) =>
-            Post<object>(apiMethod, args, content, cancellationToken);
+        public Task Post(string apiMethod, Args args, CancellationToken? cancellationToken) =>
+            Post<object>(apiMethod, args, cancellationToken);
 
         /// <summary>
         /// Calls a Slack API that requires POST content.
@@ -189,6 +195,16 @@ namespace SlackNet
             var response = await _http.Execute<WebApiResponse>(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
             return Deserialize<T>(response);
         }
+
+        /// <summary>
+        /// Calls a Slack API that requires POST content.
+        /// </summary>
+        /// <param name="apiMethod">Name of Slack method.</param>
+        /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
+        /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
+        /// <param name="cancellationToken"></param>
+        public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) =>
+            Post<object>(apiMethod, args, content, cancellationToken);
 
         /// <summary>
         /// Calls a Slack API that requires POST content.
