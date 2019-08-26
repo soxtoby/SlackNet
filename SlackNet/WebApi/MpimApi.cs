@@ -79,7 +79,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">MPIM to close.</param>
         /// <param name="cancellationToken"></param>
         public Task Close(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("mpim.close", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("mpim.close", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Returns a portion of message events from the specified multiparty direct message channel.
@@ -128,7 +128,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the most recently seen message.</param>
         /// <param name="cancellationToken"></param>
         public Task Mark(string channelId, string ts, CancellationToken? cancellationToken = null) =>
-            _client.Get("mpim.mark", new Args
+            _client.Post("mpim.mark", new Args
                 {
                     { "channel", channelId },
                     { "ts", ts }
@@ -140,7 +140,7 @@ namespace SlackNet.WebApi
         /// <param name="userIds">List of users. The ordering of the users is preserved whenever a MPIM group is returned.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Channel> Open(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<GroupResponse>("mpim.open", new Args { { "users", userIds } }, cancellationToken).ConfigureAwait(false)).Group;
+            (await _client.Post<GroupResponse>("mpim.open", new Args { { "users", userIds } }, cancellationToken).ConfigureAwait(false)).Group;
 
         /// <summary>
         /// Returns an entire thread (a message plus all the messages in reply to it).

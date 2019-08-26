@@ -54,7 +54,7 @@ namespace SlackNet.WebApi
             string cursor = null,
             CancellationToken? cancellationToken = null
         ) =>
-            _client.Get<ScheduledMessageListResponse>("chat.scheduledMessages.list", new Args
+            _client.Post<ScheduledMessageListResponse>("chat.scheduledMessages.list", new Args
                 {
                     { "channel", channelId },
                     { "latest", latestTs },

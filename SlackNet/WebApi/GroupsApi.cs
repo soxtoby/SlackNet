@@ -172,7 +172,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Private channel to archive.</param>
         /// <param name="cancellationToken"></param>
         public Task Archive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("groups.archive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("groups.archive", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Closes a private channel.
@@ -189,7 +189,7 @@ namespace SlackNet.WebApi
         /// <param name="validate">Whether to return errors on invalid channel name instead of modifying it to meet the specified criteria.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Channel> Create(string name, bool validate = false, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<GroupResponse>("groups.create", new Args
+            (await _client.Post<GroupResponse>("groups.create", new Args
                 {
                     { "name", name },
                     { "validate", validate }
@@ -255,7 +255,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">User to invite.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Channel> Invite(string channelId, string userId, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<GroupResponse>("groups.invite", new Args
+            (await _client.Post<GroupResponse>("groups.invite", new Args
                 {
                     { "channel", channelId },
                     { "user", userId }
@@ -270,7 +270,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task Kick(string channelId, string userId, CancellationToken? cancellationToken = null) =>
-            _client.Get("groups.kick", new Args
+            _client.Post("groups.kick", new Args
                 {
                     { "channel", channelId },
                     { "user", userId }
@@ -282,7 +282,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Private channel to leave.</param>
         /// <param name="cancellationToken"></param>
         public Task Leave(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("groups.leave", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("groups.leave", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Returns a list of private channels in the team that the caller is in and archived groups that the caller was in. 
@@ -300,7 +300,7 @@ namespace SlackNet.WebApi
         /// <param name="ts">Timestamp of the most recently seen message.</param>
         /// <param name="cancellationToken"></param>
         public Task Mark(string channelId, string ts, CancellationToken? cancellationToken = null) =>
-            _client.Get("groups.mark", new Args { { "channel", channelId }, { "ts", ts } }, cancellationToken);
+            _client.Post("groups.mark", new Args { { "channel", channelId }, { "ts", ts } }, cancellationToken);
 
         /// <summary>
         /// Opens a private channel.
@@ -309,7 +309,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task Open(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("groups.open", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("groups.open", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Renames a private channel.
@@ -319,7 +319,7 @@ namespace SlackNet.WebApi
         /// <param name="validate">Whether to return errors on invalid channel name instead of modifying it to meet the specified criteria.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Channel> Rename(string channelId, string name, bool validate = false, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<GroupRenameResponse>("groups.rename", new Args
+            (await _client.Post<GroupRenameResponse>("groups.rename", new Args
                 {
                     { "channel", channelId },
                     { "name", name },
@@ -349,7 +349,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns>The group's new purpose.</returns>
         public async Task<string> SetPurpose(string channelId, string purpose, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<PurposeResponse>("groups.setPurpose", new Args
+            (await _client.Post<PurposeResponse>("groups.setPurpose", new Args
                 {
                     { "channel", channelId },
                     { "purpose", purpose }
@@ -364,7 +364,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns>The private channel's new topic.</returns>
         public async Task<string> SetTopic(string channelId, string topic, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<TopicResponse>("groups.setTopic", new Args
+            (await _client.Post<TopicResponse>("groups.setTopic", new Args
                 {
                     { "channel", channelId },
                     { "topic", topic }
@@ -377,6 +377,6 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Private channel to unarchive.</param>
         /// <param name="cancellationToken"></param>
         public Task Unarchive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("groups.unarchive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("groups.unarchive", new Args { { "channel", channelId } }, cancellationToken);
     }
 }

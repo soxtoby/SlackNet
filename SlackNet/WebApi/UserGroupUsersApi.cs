@@ -54,7 +54,7 @@ namespace SlackNet.WebApi
         /// <param name="includeCount">Include the number of users in the User Group.</param>
         /// <param name="cancellationToken"></param>
         public async Task<UserGroup> Update(string userGroupId, IEnumerable<string> userIds, bool includeCount = false, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<UserGroupResponse>("usergroups.users.update", new Args
+            (await _client.Post<UserGroupResponse>("usergroups.users.update", new Args
                 {
                     { "usergroup", userGroupId },
                     { "users", userIds },

@@ -207,7 +207,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">ID of conversation to archive.</param>
         /// <param name="cancellationToken"></param>
         public Task Archive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("conversations.archive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("conversations.archive", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Closes a direct message or multi-person direct message.
@@ -216,7 +216,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task Close(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("conversations.close", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("conversations.close", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Initiates a public or private channel-based conversation.
@@ -226,7 +226,7 @@ namespace SlackNet.WebApi
         /// <param name="isPrivate">Create a private channel instead of a public one.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Conversation> Create(string name, bool isPrivate, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<ConversationResponse>("conversations.create", new Args
+            (await _client.Post<ConversationResponse>("conversations.create", new Args
                 {
                     { "name", name },
                     { "is_private", isPrivate }
@@ -281,7 +281,7 @@ namespace SlackNet.WebApi
         /// <param name="userIds">A comma separated list of user IDs. Up to 30 users may be listed.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Conversation> Invite(string channelId, IEnumerable<string> userIds, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<ConversationResponse>("conversations.invite", new Args
+            (await _client.Post<ConversationResponse>("conversations.invite", new Args
                 {
                     { "channel", channelId },
                     { "users", userIds }
@@ -294,7 +294,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">ID of conversation to join.</param>
         /// <param name="cancellationToken"></param>
         public Task<ConversationJoinResponse> Join(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get<ConversationJoinResponse>("conversations.join", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post<ConversationJoinResponse>("conversations.join", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Removes a user from a conversation.
@@ -303,7 +303,7 @@ namespace SlackNet.WebApi
         /// <param name="userId">User ID to be removed.</param>
         /// <param name="cancellationToken"></param>
         public Task Kick(string channelId, string userId, CancellationToken? cancellationToken = null) =>
-            _client.Get("conversations.kick", new Args
+            _client.Post("conversations.kick", new Args
                 {
                     { "channel", channelId },
                     { "user", userId }
@@ -315,7 +315,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Conversation to leave.</param>
         /// <param name="cancellationToken"></param>
         public Task Leave(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("conversations.leave", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("conversations.leave", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
         /// Lists all channels in a Slack team.
@@ -396,7 +396,7 @@ namespace SlackNet.WebApi
             Open<ImResponse>(true, null, userIds, cancellationToken);
 
         private Task<T> Open<T>(bool returnIm, string channelId = null, IEnumerable<string> userIds = null, CancellationToken? cancellationToken = null) where T : class =>
-            _client.Get<T>("conversations.open", new Args
+            _client.Post<T>("conversations.open", new Args
                 {
                     { "channel", channelId },
                     { "return_im", returnIm },
@@ -410,7 +410,7 @@ namespace SlackNet.WebApi
         /// <param name="name">New name for conversation.</param>
         /// <param name="cancellationToken"></param>
         public async Task<Conversation> Rename(string channelId, string name, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<ConversationResponse>("conversations.rename", new Args
+            (await _client.Post<ConversationResponse>("conversations.rename", new Args
                 {
                     { "channel", channelId },
                     { "name", name }
@@ -451,7 +451,7 @@ namespace SlackNet.WebApi
         /// <param name="purpose">A new, specialer purpose.</param>
         /// <param name="cancellationToken"></param>
         public async Task<string> SetPurpose(string channelId, string purpose, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<PurposeResponse>("conversations.setPurpose", new Args
+            (await _client.Post<PurposeResponse>("conversations.setPurpose", new Args
                 {
                     { "channel", channelId },
                     { "purpose", purpose }
@@ -465,7 +465,7 @@ namespace SlackNet.WebApi
         /// <param name="topic">The new topic string. Does not support formatting or linkification.</param>
         /// <param name="cancellationToken"></param>
         public async Task<string> SetTopic(string channelId, string topic, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<TopicResponse>("conversations.setTopic", new Args
+            (await _client.Post<TopicResponse>("conversations.setTopic", new Args
                 {
                     { "channel", channelId },
                     { "topic", topic }
@@ -478,6 +478,6 @@ namespace SlackNet.WebApi
         /// <param name="channelId">ID of conversation to unarchive.</param>
         /// <param name="cancellationToken"></param>
         public Task Unarchive(string channelId, CancellationToken? cancellationToken = null) =>
-            _client.Get("conversations.unarchive", new Args { { "channel", channelId } }, cancellationToken);
+            _client.Post("conversations.unarchive", new Args { { "channel", channelId } }, cancellationToken);
     }
 }

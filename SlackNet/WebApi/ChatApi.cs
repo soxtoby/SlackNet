@@ -77,7 +77,7 @@ namespace SlackNet.WebApi
         /// <param name="asUser">Pass True to delete the message as the authed user. Bot users in this context are considered authed users.</param>
         /// <param name="cancellationToken"></param>
         public Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken? cancellationToken = null) =>
-            _client.Get<MessageTsResponse>("chat.delete", new Args
+            _client.Post<MessageTsResponse>("chat.delete", new Args
                 {
                     { "ts", ts },
                     { "channel", channelId },
@@ -104,7 +104,7 @@ namespace SlackNet.WebApi
         /// <param name="text">Text of the message to send.</param>
         /// <param name="cancellationToken"></param>
         public Task<MessageTsResponse> MeMessage(string channel, string text, CancellationToken? cancellationToken = null) =>
-            _client.Get<MessageTsResponse>("chat.meMessage", new Args
+            _client.Post<MessageTsResponse>("chat.meMessage", new Args
                 {
                     { "channel", channel },
                     { "text", text }
@@ -116,7 +116,7 @@ namespace SlackNet.WebApi
         /// <param name="message">The message to post.</param>
         /// <param name="cancellationToken"></param>
         public Task<PostMessageResponse> PostMessage(Message message, CancellationToken? cancellationToken = null) =>
-            _client.Get<PostMessageResponse>("chat.postMessage", PopulateMessageArgs(message, new Args()),
+            _client.Post<PostMessageResponse>("chat.postMessage", PopulateMessageArgs(message, new Args()),
                 cancellationToken);
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace SlackNet.WebApi
         /// <param name="postAt">Time in the future to send the message.</param>
         /// <param name="cancellationToken"></param>
         public Task<ScheduleMessageResponse> ScheduleMessage(Message message, DateTime postAt, CancellationToken? cancellationToken = null) =>
-            _client.Get<ScheduleMessageResponse>("chat.scheduleMessage", PopulateMessageArgs(message, new Args
+            _client.Post<ScheduleMessageResponse>("chat.scheduleMessage", PopulateMessageArgs(message, new Args
                     {
                         { "post_at", postAt.ToTimestamp() }
                     }),
@@ -158,7 +158,7 @@ namespace SlackNet.WebApi
         /// <param name="message">The message to post. Not all message properties are supported by <c>PostEphemeral</c>.</param>
         /// <param name="cancellationToken"></param>
         public Task<PostMessageResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null) =>
-            _client.Get<PostMessageResponse>("chat.postEphemeral", new Args
+            _client.Post<PostMessageResponse>("chat.postEphemeral", new Args
                     {
                         { "channel", message.Channel },
                         { "text", message.Text },
@@ -186,7 +186,7 @@ namespace SlackNet.WebApi
         /// Subsequent attempts with the same <see cref="ts"/> and <see cref="channelId"/> values will modify the same attachments, rather than adding more.
         /// </remarks>
         public Task Unfurl(string channelId, string ts, IDictionary<string, Attachment> unfurls, bool userAuthRequired = false, CancellationToken? cancellationToken = null) =>
-            _client.Get("chat.unfurl", new Args
+            _client.Post("chat.unfurl", new Args
                 {
                     { "channel", channelId },
                     { "ts", ts },
@@ -200,7 +200,7 @@ namespace SlackNet.WebApi
         /// <param name="messageUpdate">Message to update.</param>
         /// <param name="cancellationToken"></param>
         public Task<MessageUpdateResponse> Update(MessageUpdate messageUpdate, CancellationToken? cancellationToken = null) =>
-            _client.Get<MessageUpdateResponse>("chat.update", new Args
+            _client.Post<MessageUpdateResponse>("chat.update", new Args
                     {
                         { "ts", messageUpdate.Ts },
                         { "channel", messageUpdate.ChannelId },

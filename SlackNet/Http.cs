@@ -8,8 +8,7 @@ namespace SlackNet
 {
     public interface IHttp
     {
-        Task<T> Get<T>(string url, CancellationToken? cancellationToken = null);
-        Task<T> Post<T>(string url, HttpContent content, CancellationToken? cancellationToken = null);
+        Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null);
     }
 
     class Http : IHttp
@@ -23,16 +22,9 @@ namespace SlackNet
             _jsonSettings = jsonSettings;
         }
 
-        public async Task<T> Get<T>(string url, CancellationToken? cancellationToken = null)
+        public async Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null)
         {
-            var response = await _client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url), cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            return await Deserialize<T>(response).ConfigureAwait(false);
-        }
-
-        public async Task<T> Post<T>(string url, HttpContent content, CancellationToken? cancellationToken = null)
-        {
-            var response = await _client.PostAsync(url, content, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+            var response = await _client.SendAsync(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return await Deserialize<T>(response).ConfigureAwait(false);
         }

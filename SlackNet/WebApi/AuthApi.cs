@@ -40,6 +40,6 @@ namespace SlackNet.WebApi
         /// Checks authentication and tells you who you are.
         /// </summary>
         public Task<AuthTestResponse> Test(CancellationToken? cancellationToken = null) =>
-            _client.Get<AuthTestResponse>("auth.test", new Args(), cancellationToken);
+            _client.Post<AuthTestResponse>("auth.test", new Args(), cancellationToken);
     }
 }

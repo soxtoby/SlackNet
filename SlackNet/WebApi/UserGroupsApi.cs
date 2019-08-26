@@ -93,7 +93,7 @@ namespace SlackNet.WebApi
             bool includeCount = false,
             CancellationToken? cancellationToken = null
         ) =>
-            (await _client.Get<UserGroupResponse>("usergroups.create", new Args
+            (await _client.Post<UserGroupResponse>("usergroups.create", new Args
                 {
                     { "name", name },
                     { "channels", channelIds },
@@ -110,7 +110,7 @@ namespace SlackNet.WebApi
         /// <param name="includeCount">Include the number of users in the User Group.</param>
         /// <param name="cancellationToken"></param>
         public async Task<UserGroup> Disable(string userGroupId, bool includeCount = false, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<UserGroupResponse>("usergroups.disable", new Args
+            (await _client.Post<UserGroupResponse>("usergroups.disable", new Args
                 {
                     { "usergroup", userGroupId },
                     { "include_count", includeCount }
@@ -124,7 +124,7 @@ namespace SlackNet.WebApi
         /// <param name="includeCount">Include the number of users in the User Group.</param>
         /// <param name="cancellationToken"></param>
         public async Task<UserGroup> Enable(string userGroupId, bool includeCount = false, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<UserGroupResponse>("usergroups.enable", new Args
+            (await _client.Post<UserGroupResponse>("usergroups.enable", new Args
                 {
                     { "usergroup", userGroupId },
                     { "include_count", includeCount }
@@ -166,7 +166,7 @@ namespace SlackNet.WebApi
             string name = null,
             CancellationToken? cancellationToken = null
         ) =>
-            (await _client.Get<UserGroupResponse>("usergroups.create", new Args
+            (await _client.Post<UserGroupResponse>("usergroups.update", new Args
                 {
                     { "usergroup", userGroupId },
                     { "channels", channelIds },

@@ -140,6 +140,18 @@ namespace SlackNet.Tests
                 return Task.FromResult(0);
             }
 
+            public Task Post(string apiMethod, Args args, CancellationToken? cancellationToken) =>
+                Post<object>(apiMethod, args, cancellationToken);
+
+            public Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class
+            {
+                HttpMethod = "POST";
+                SlackMethod = apiMethod;
+                Args = args;
+                CancellationToken = cancellationToken;
+                return Task.FromResult(Activator.CreateInstance<T>());
+            }
+
             public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) where T : class
             {
                 HttpMethod = "POST";
