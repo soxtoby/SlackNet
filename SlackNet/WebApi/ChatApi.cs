@@ -41,6 +41,14 @@ namespace SlackNet.WebApi
         Task<ScheduleMessageResponse> ScheduleMessage(Message message, DateTime postAt, CancellationToken? cancellationToken = null);
 
         /// <summary>
+        /// Sends an ephemeral message to a user in a channel.
+        /// </summary>
+        /// <param name="userId">ID of the user who will receive the ephemeral message. The user should be in the channel specified by the channel argument.</param>
+        /// <param name="message">The message to post. Not all message properties are supported by <c>PostEphemeral</c>.</param>
+        /// <param name="cancellationToken"></param>
+        Task<PostMessageResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null);
+        
+        /// <summary>
         /// Attaches Slack app unfurl behavior to a specified and relevant message. 
         /// A user token is required as this method does not support bot user tokens.
         /// </summary>
