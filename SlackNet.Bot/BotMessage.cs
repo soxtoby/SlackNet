@@ -50,5 +50,10 @@ namespace SlackNet.Bot
         /// Set to True to reply in a new thread if not already in one.
         /// </summary>
         public bool CreateThread { get; set; }
+        /// <summary>
+        /// Set to True to make this an ephemeral message, which is visible only to the assigned user in a specific public channel, private channel, or private conversation.
+        /// Note that not all message properties are supported by ephemeral messages.
+        /// </summary>
+        public bool Ephemeral { get; set; }
     }
 }

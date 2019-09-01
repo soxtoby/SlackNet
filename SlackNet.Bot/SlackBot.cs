@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SlackNet.Events;
+using SlackNet.WebApi;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +9,6 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
-using SlackNet.Events;
-using SlackNet.WebApi;
 
 namespace SlackNet.Bot
 {
@@ -410,7 +410,10 @@ namespace SlackNet.Bot
 
         private async Task<PostMessageResponse> PostMessage(BotMessage message)
         {
-            var response = await _api.Chat.PostMessage(new Message
+            if (message.Ephemeral && message.ReplyTo?.User?.Id == null)
+                throw new ArgumentException("Can't send ephemeral message: missing reply-to user ID", nameof(message));
+
+            var slackMessage = new Message
             {
                 Channel = message.Hub != null
                         ? await message.Hub.HubId(this).ConfigureAwait(false)
@@ -428,8 +431,14 @@ namespace SlackNet.Bot
                 UnfurlLinks = message.UnfurlLinks,
                 UnfurlMedia = message.UnfurlMedia,
                 AsUser = true
-            }).ConfigureAwait(false);
+            };
+
+            var response = message.Ephemeral
+                ? await _api.Chat.PostEphemeral(message.ReplyTo.User.Id, slackMessage).ConfigureAwait(false)
+                : await _api.Chat.PostMessage(slackMessage).ConfigureAwait(false);
+
             _sentMessages.OnNext(message);
+
             return response;
         }
 
