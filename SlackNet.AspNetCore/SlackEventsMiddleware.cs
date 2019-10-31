@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -10,7 +13,7 @@ using SlackNet.Interaction;
 
 namespace SlackNet.AspNetCore
 {
-    class SlackEventsMiddleware
+    public class SlackEventsMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly SlackEndpointConfiguration _configuration;
@@ -67,29 +70,33 @@ namespace SlackNet.AspNetCore
             if (context.Request.ContentType != "application/json")
                 return await context.Respond(HttpStatusCode.UnsupportedMediaType).ConfigureAwait(false);
 
-            var body = DeserializeRequestBody(context);
+            var requestBody = await new StreamReader(context.Request.Body).ReadToEndAsync().ConfigureAwait(false);
+            var body = DeserializeRequestBody(requestBody);
 
-            if (body is UrlVerification urlVerification && IsValidToken(urlVerification.Token))
+            if (body is UrlVerification urlVerification &&  VerifyRequest(requestBody, context.Request.Headers, urlVerification.Token))
                 return await context.Respond(HttpStatusCode.OK, "application/x-www-form-urlencoded", urlVerification.Challenge).ConfigureAwait(false);
 
-            if (body is EventCallback eventCallback && IsValidToken(eventCallback.Token))
+            if (body is EventCallback eventCallback && VerifyRequest(requestBody, context.Request.Headers, eventCallback.Token))
             {
                 var response = context.Respond(HttpStatusCode.OK).ConfigureAwait(false);
                 _slackEvents.Handle(eventCallback);
                 return await response;
             }
 
-            return await context.Respond(HttpStatusCode.BadRequest, body: "Invalid token or unrecognized content").ConfigureAwait(false);
+            return await context.Respond(HttpStatusCode.BadRequest, body: "Invalid signature/token or unrecognized content").ConfigureAwait(false);
         }
 
         private async Task<HttpResponse> HandleSlackAction(HttpContext context)
         {
             if (context.Request.Method != "POST")
                 return await context.Respond(HttpStatusCode.MethodNotAllowed).ConfigureAwait(false);
+            
+            ReplaceRequestStreamWithMemoryStream(context);
 
             var interactionRequest = await DeserializePayload<InteractionRequest>(context).ConfigureAwait(false);
-
-            if (interactionRequest != null && IsValidToken(interactionRequest.Token))
+            context.Request.Body.Seek(0, SeekOrigin.Begin);
+            
+            if (interactionRequest != null && VerifyRequest(await new StreamReader(context.Request.Body).ReadLineAsync().ConfigureAwait(false), context.Request.Headers, interactionRequest.Token))
             {
                 switch (interactionRequest)
                 {
@@ -152,10 +159,13 @@ namespace SlackNet.AspNetCore
         {
             if (context.Request.Method != "POST")
                 return await context.Respond(HttpStatusCode.MethodNotAllowed).ConfigureAwait(false);
-
+            
+            ReplaceRequestStreamWithMemoryStream(context);
+            
             var optionsRequest = await DeserializePayload<OptionsRequestBase>(context).ConfigureAwait(false);
-
-            if (optionsRequest != null && IsValidToken(optionsRequest.Token))
+            context.Request.Body.Seek(0, SeekOrigin.Begin);
+            
+            if (optionsRequest != null && VerifyRequest(await new StreamReader(context.Request.Body).ReadToEndAsync().ConfigureAwait(false), context.Request.Headers, optionsRequest.Token))
             {
                 switch (optionsRequest)
                 {
@@ -167,6 +177,15 @@ namespace SlackNet.AspNetCore
             }
 
             return await context.Respond(HttpStatusCode.BadRequest, body: "Invalid token or unrecognized content").ConfigureAwait(false);
+        }
+
+        private async void ReplaceRequestStreamWithMemoryStream(HttpContext context)
+        {
+            var buffer = new MemoryStream();
+            await context.Request.Body.CopyToAsync(buffer);
+            buffer.Seek(0, SeekOrigin.Begin);
+
+            context.Request.Body = buffer;
         }
 
         private async Task<HttpResponse> HandleLegacyOptionsRequest(HttpContext context, OptionsRequest optionsRequest)
@@ -190,11 +209,26 @@ namespace SlackNet.AspNetCore
                 .FirstOrDefault();
         }
 
-        private bool IsValidToken(string token) => string.IsNullOrEmpty(_configuration.VerificationToken) || token == _configuration.VerificationToken;
+        private bool VerifyRequest(string requestBody, IHeaderDictionary headers, string token) =>
+            !string.IsNullOrEmpty(_configuration.SigningSecret) ? IsValidSignature(requestBody, headers) : IsValidToken(token);
+        
+        private bool IsValidSignature(string requestBody, IHeaderDictionary headers)
+        {
+            var encoding = new UTF8Encoding();
+            using (var hmac = new HMACSHA256(encoding.GetBytes(_configuration.SigningSecret)))
+            {
+                var hash = hmac.ComputeHash(encoding.GetBytes($"v0:{headers["X-Slack-Request-Timestamp"]}:{requestBody}"));
+                var hashString = $"v0={BitConverter.ToString(hash).Replace("-", "").ToLower()}";
+
+                return hashString.Equals(headers["X-Slack-Signature"]);
+            }
+        }
+        
+        private bool IsValidToken(string token) => !string.IsNullOrEmpty(_configuration.VerificationToken) || token == _configuration.VerificationToken;
 
         private string Serialize(object value) => JsonConvert.SerializeObject(value, _jsonSettings.SerializerSettings);
 
-        private Event DeserializeRequestBody(HttpContext context) =>
-            JsonSerializer.Create(_jsonSettings.SerializerSettings).Deserialize<Event>(new JsonTextReader(new StreamReader(context.Request.Body)));
+        private Event DeserializeRequestBody(string requestBody) =>
+            JsonSerializer.Create(_jsonSettings.SerializerSettings).Deserialize<Event>(new JsonTextReader(new StringReader(requestBody)));
     }
 }
