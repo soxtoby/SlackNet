@@ -7,12 +7,12 @@ namespace SlackNet.Example
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             if (args.Length == 0)
                 Console.WriteLine("Please provide a Slack token as a command line argument.");
             else
-                Run(args[0]).Wait();
+                await Run(args[0]).ConfigureAwait(false);
         }
 
         private static async Task Run(string token)
