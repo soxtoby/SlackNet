@@ -31,7 +31,7 @@ namespace SlackNet.BotExample
         {
             Console.WriteLine("Press any key to disconnect...");
             while (!Console.KeyAvailable)
-                await Task.Yield();
+                await Task.Delay(250).ConfigureAwait(false);
             Console.ReadKey();
         }
     }
