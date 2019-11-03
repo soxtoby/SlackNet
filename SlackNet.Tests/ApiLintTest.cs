@@ -22,10 +22,13 @@ namespace SlackNet.Tests
             var client = new FakeClient();
             var instance = Activator.CreateInstance(api, client);
 
-            ApiClientHasAPropertyForApi(api);
+            var apiInterface = GetApiInterface(api);
+
+            ApiClientHasAPropertyForApi(api, apiInterface);
 
             var apiMethods = api.GetMethods(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance);
-            apiMethods.ShouldNotBeEmpty();
+
+            AllPublicMethodsAreExposedOnInterface(api, apiInterface, apiMethods);
 
             string slackMethodGroup = null;
 
@@ -40,13 +43,37 @@ namespace SlackNet.Tests
             }
         }
 
-        private static void ApiClientHasAPropertyForApi(Type api)
+        private static Type GetApiInterface(Type api)
         {
             api.GetInterfaces().ShouldBeSingular($"{api.Name} doesn't implement an interface");
-            var apiInterface = api.GetInterfaces().Single();
+            return api.GetInterfaces().Single();
+        }
+
+        private static void ApiClientHasAPropertyForApi(Type api, Type apiInterface)
+        {
             typeof(ISlackApiClient).GetProperties()
                 .Any(p => p.PropertyType == apiInterface)
                 .ShouldBe(true, $"{api.Name} doesn't have a property on {nameof(ISlackApiClient)}");
+        }
+
+        private static void AllPublicMethodsAreExposedOnInterface(Type api, Type apiInterface, MethodInfo[] apiMethods)
+        {
+            apiMethods.ShouldNotBeEmpty();
+
+            var interfaceMethods = apiInterface.GetMethods();
+
+            apiMethods.ShouldOnlyContain(interfaceMethods, MethodsEqual);
+        }
+
+        private static bool MethodsEqual(MethodInfo a, MethodInfo b)
+        {
+            return a.Name == b.Name 
+                && ParameterTypes(a).SequenceEqual(ParameterTypes(b));
+        }
+
+        private static IEnumerable<Type> ParameterTypes(MethodInfo method)
+        {
+            return method.GetParameters().Select(p => p.ParameterType);
         }
 
         private static void LastParamShouldBeOptionalCancellationToken(MethodInfo method)

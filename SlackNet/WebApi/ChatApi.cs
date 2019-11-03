@@ -70,6 +70,14 @@ namespace SlackNet.WebApi
         /// <param name="messageUpdate">Message to update.</param>
         /// <param name="cancellationToken"></param>
         Task<MessageUpdateResponse> Update(MessageUpdate messageUpdate, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Retrieve a permalink URL for a specific extant message.
+        /// </summary>
+        /// <param name="channelId">The ID of the conversation or channel containing the message.</param>
+        /// <param name="messageTs">A message's timestamp, uniquely identifying it within a channel.</param>
+        /// <param name="cancellationToken"></param>
+        Task<PermalinkResponse> GetPermalink(string channelId, string messageTs, CancellationToken? cancellationToken = null);
     }
 
     public class ChatApi : IChatApi
