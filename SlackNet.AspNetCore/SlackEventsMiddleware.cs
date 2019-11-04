@@ -224,7 +224,7 @@ namespace SlackNet.AspNetCore
             }
         }
         
-        private bool IsValidToken(string token) => !string.IsNullOrEmpty(_configuration.VerificationToken) || token == _configuration.VerificationToken;
+        private bool IsValidToken(string token) => string.IsNullOrEmpty(_configuration.VerificationToken) || token == _configuration.VerificationToken;
 
         private string Serialize(object value) => JsonConvert.SerializeObject(value, _jsonSettings.SerializerSettings);
 
