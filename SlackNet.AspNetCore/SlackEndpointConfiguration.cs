@@ -14,6 +14,12 @@
             return this;
         }
 
+        public SlackEndpointConfiguration UseSigningSecret(string signingSecret)
+        {
+            SigningSecret = signingSecret;
+            return this;
+        }
+
         /// <summary>
         /// Path to receive Slack requests on. Defaults to "slack".
         /// Configures the following routes:
@@ -28,5 +34,11 @@
         /// You'll find this value in the "App Credentials" section of your app's application management interface.
         /// </summary>
         public string VerificationToken { get; private set; }
+        
+        /// <summary>
+        /// Use this signing secret to verify that requests are coming from Slack.
+        /// You'll find this value in the "App Credentials" section of your app's application management interface.
+        /// </summary>
+        public string SigningSecret { get; private set; }
     }
 }
