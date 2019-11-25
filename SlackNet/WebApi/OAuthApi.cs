@@ -38,7 +38,7 @@ namespace SlackNet.WebApi
                     { "client_id", clientId },
                     { "client_secret", clientSecret },
                     { "code", code },
-                    { "redirect_url", redirectUrl }
+                    { "redirect_uri", redirectUrl }
                 }, cancellationToken);
     }
 }
