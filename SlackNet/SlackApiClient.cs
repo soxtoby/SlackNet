@@ -132,6 +132,7 @@ namespace SlackNet
         public IGroupsApi Groups => new GroupsApi(this);
         public IImApi Im => new ImApi(this);
         public IMigrationApi Migration => new MigrationApi(this);
+        public IModalApi Modal => new ModalApi(this);
         public IMpimApi Mpim => new MpimApi(this);
         public IOAuthApi OAuth => new OAuthApi(this);
         public IPinsApi Pins => new PinsApi(this);
