@@ -20,9 +20,6 @@ namespace SlackNet.Interaction
         }
         public readonly string Type = "modal";
         public string CallbackId { get; set; }
-        public string SubmitLabel { get; set; }
-        public string CancelLabel { get; set; }
-        public string State { get; set; }
         public IList<Block> Blocks { get; set; } = new List<Block>();
         
         
