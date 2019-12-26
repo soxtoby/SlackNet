@@ -128,6 +128,11 @@ namespace SlackNet.Bot
         Task Send(BotMessage message);
 
         /// <summary>
+        /// Send a message to Slack as the bot.
+        /// </summary>
+        Task Send(BotMessage message, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Show typing indicator in Slack while performing some action.
         /// </summary>
         Task WhileTyping(string channelId, Func<Task> action);
@@ -401,11 +406,19 @@ namespace SlackNet.Bot
         /// <summary>
         /// Send a message to Slack as the bot.
         /// </summary>
-        public async Task Send(BotMessage message)
+        public async Task Send(BotMessage message, CancellationToken cancellationToken)
         {
-            var sent = _sentMessages.FirstOrDefaultAsync(m => m == message).ToTask();
+            var sent = _sentMessages.FirstOrDefaultAsync(m => m == message).ToTask(cancellationToken);
             _outgoingMessages.OnNext(message);
             await sent.ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Send a message to Slack as the bot.
+        /// </summary>
+        public async Task Send(BotMessage message)
+        {
+            await Send(message, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task<PostMessageResponse> PostMessage(BotMessage message)

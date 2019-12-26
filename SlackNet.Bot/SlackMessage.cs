@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SlackNet.Blocks;
@@ -33,23 +34,40 @@ namespace SlackNet.Bot
 
         public Task ReplyWith(string text, bool createThread = false) => ReplyWith(new BotMessage { Text = text }, createThread);
 
+        public Task ReplyWith(string text, CancellationToken cancellationToken, bool createThread = false) => ReplyWith(new BotMessage { Text = text }, cancellationToken, createThread);
+
         public async Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false)
         {
             await _bot.WhileTyping(Hub.Id, async () =>
-                {
-                    var reply = await createReply().ConfigureAwait(false);
-                    if (reply != null)
-                        await ReplyWith(reply, createThread).ConfigureAwait(false);
-                }).ConfigureAwait(false);
+            {
+                var reply = await createReply().ConfigureAwait(false);
+                if (reply != null)
+                    await ReplyWith(reply, createThread).ConfigureAwait(false);
+            }).ConfigureAwait(false);
+        }
+
+        public async Task ReplyWith(Func<Task<BotMessage>> createReply, CancellationToken cancellationToken, bool createThread = false)
+        {
+            await _bot.WhileTyping(Hub.Id, async () =>
+            {
+                var reply = await createReply().ConfigureAwait(false);
+                if (reply != null)
+                    await ReplyWith(reply, cancellationToken, createThread).ConfigureAwait(false);
+            }).ConfigureAwait(false);
         }
 
         public async Task ReplyWith(BotMessage message, bool createThread = false)
+        {
+            await ReplyWith(message, CancellationToken.None, createThread).ConfigureAwait(false);
+        }
+
+        public async Task ReplyWith(BotMessage message, CancellationToken cancellationToken, bool createThread = false)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
             message.ReplyTo = this;
             message.CreateThread = createThread;
-            await _bot.Send(message).ConfigureAwait(false);
+            await _bot.Send(message, cancellationToken).ConfigureAwait(false);
         }
     }
 }
