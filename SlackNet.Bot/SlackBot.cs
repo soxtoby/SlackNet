@@ -154,6 +154,7 @@ namespace SlackNet.Bot
         private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _groups = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
         private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _mpims = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
         private readonly ConcurrentDictionary<string, Task<User>> _users = new ConcurrentDictionary<string, Task<User>>();
+        private readonly ConcurrentDictionary<string, Task<BotInfo>> _bots = new ConcurrentDictionary<string, Task<BotInfo>>();
         private readonly ConcurrentValue<Task<IReadOnlyList<User>>> _allUsers = new ConcurrentValue<Task<IReadOnlyList<User>>>();
         private readonly ConcurrentValue<Task<IReadOnlyList<Im>>> _ims = new ConcurrentValue<Task<IReadOnlyList<Im>>>();
         private readonly SyncedSubject<IMessage> _incomingMessages = new SyncedSubject<IMessage>();
@@ -244,8 +245,17 @@ namespace SlackNet.Bot
         /// </summary>
         public IObservable<IMessage> Messages => _incomingMessages.AsObservable();
 
-        private async Task<SlackMessage> CreateSlackMessage(MessageEvent message) =>
-            new SlackMessage(this)
+        private async Task<SlackMessage> CreateSlackMessage(MessageEvent message)
+        {
+            SlackMessage result;
+
+            if (message.User == null && (message is SlackNet.Events.BotMessage b))
+            {
+                BotInfo botInfo = await GetBotUserIdById(b.BotId);
+                message.User = botInfo.UserId;
+            }
+
+            result = new SlackMessage(this)
             {
                 Ts = message.Ts,
                 ThreadTs = message.ThreadTs,
@@ -254,6 +264,9 @@ namespace SlackNet.Bot
                 User = await GetUserById(message.User).ConfigureAwait(false),
                 Attachments = message.Attachments
             };
+
+            return result;
+        }
 
         private void HandleMessage(IMessage message)
         {
@@ -371,6 +384,14 @@ namespace SlackNet.Bot
             String.IsNullOrEmpty(userId)
                 ? null
                 : await _users.GetOrAdd(userId, _ => _api.Users.Info(userId).NullIfNotFound()).ConfigureAwait(false);
+
+        /// <summary>
+        /// Get user information.
+        /// </summary>
+        public async Task<BotInfo> GetBotUserIdById(string botId) =>
+            String.IsNullOrEmpty(botId)
+                ? null
+                : await _bots.GetOrAdd(botId, _ => _api.Bots.Info(botId).NullIfNotFound()).ConfigureAwait(false);
 
         /// <summary>
         /// Find user by username, with or without leading @.
