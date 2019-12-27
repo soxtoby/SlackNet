@@ -34,7 +34,7 @@ namespace SlackNet.AspNetCore
             ISlackBlockOptions slackBlockOptions,
             ISlackInteractiveMessages slackInteractiveMessages,
             ISlackMessageActions slackMessageActions,
-            ISlackOptions slackOptions, 
+            ISlackOptions slackOptions,
             IDialogSubmissionHandler dialogSubmissionHandler,
             SlackJsonSettings jsonSettings)
         {
@@ -73,7 +73,7 @@ namespace SlackNet.AspNetCore
             var requestBody = await new StreamReader(context.Request.Body).ReadToEndAsync().ConfigureAwait(false);
             var body = DeserializeRequestBody(requestBody);
 
-            if (body is UrlVerification urlVerification &&  VerifyRequest(requestBody, context.Request.Headers, urlVerification.Token))
+            if (body is UrlVerification urlVerification && VerifyRequest(requestBody, context.Request.Headers, urlVerification.Token))
                 return await context.Respond(HttpStatusCode.OK, "application/x-www-form-urlencoded", urlVerification.Challenge).ConfigureAwait(false);
 
             if (body is EventCallback eventCallback && VerifyRequest(requestBody, context.Request.Headers, eventCallback.Token))
@@ -90,12 +90,12 @@ namespace SlackNet.AspNetCore
         {
             if (context.Request.Method != "POST")
                 return await context.Respond(HttpStatusCode.MethodNotAllowed).ConfigureAwait(false);
-            
+
             ReplaceRequestStreamWithMemoryStream(context);
 
             var interactionRequest = await DeserializePayload<InteractionRequest>(context).ConfigureAwait(false);
             context.Request.Body.Seek(0, SeekOrigin.Begin);
-            
+
             if (interactionRequest != null && VerifyRequest(await new StreamReader(context.Request.Body).ReadLineAsync().ConfigureAwait(false), context.Request.Headers, interactionRequest.Token))
             {
                 switch (interactionRequest)
@@ -159,12 +159,12 @@ namespace SlackNet.AspNetCore
         {
             if (context.Request.Method != "POST")
                 return await context.Respond(HttpStatusCode.MethodNotAllowed).ConfigureAwait(false);
-            
+
             ReplaceRequestStreamWithMemoryStream(context);
-            
+
             var optionsRequest = await DeserializePayload<OptionsRequestBase>(context).ConfigureAwait(false);
             context.Request.Body.Seek(0, SeekOrigin.Begin);
-            
+
             if (optionsRequest != null && VerifyRequest(await new StreamReader(context.Request.Body).ReadToEndAsync().ConfigureAwait(false), context.Request.Headers, optionsRequest.Token))
             {
                 switch (optionsRequest)
@@ -179,7 +179,7 @@ namespace SlackNet.AspNetCore
             return await context.Respond(HttpStatusCode.BadRequest, body: "Invalid token or unrecognized content").ConfigureAwait(false);
         }
 
-        private async void ReplaceRequestStreamWithMemoryStream(HttpContext context)
+        private static async void ReplaceRequestStreamWithMemoryStream(HttpContext context)
         {
             var buffer = new MemoryStream();
             await context.Request.Body.CopyToAsync(buffer);
@@ -211,7 +211,7 @@ namespace SlackNet.AspNetCore
 
         private bool VerifyRequest(string requestBody, IHeaderDictionary headers, string token) =>
             !string.IsNullOrEmpty(_configuration.SigningSecret) ? IsValidSignature(requestBody, headers) : IsValidToken(token);
-        
+
         private bool IsValidSignature(string requestBody, IHeaderDictionary headers)
         {
             var encoding = new UTF8Encoding();
@@ -223,7 +223,7 @@ namespace SlackNet.AspNetCore
                 return hashString.Equals(headers["X-Slack-Signature"]);
             }
         }
-        
+
         private bool IsValidToken(string token) => string.IsNullOrEmpty(_configuration.VerificationToken) || token == _configuration.VerificationToken;
 
         private string Serialize(object value) => JsonConvert.SerializeObject(value, _jsonSettings.SerializerSettings);

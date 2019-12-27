@@ -113,6 +113,11 @@ namespace SlackNet.Bot
         Task<User> GetUserById(string userId);
 
         /// <summary>
+        /// Get bot user information.
+        /// </summary>
+        Task<BotInfo> GetBotUserById(string botId);
+
+        /// <summary>
         /// Find user by username, with or without leading @.
         /// </summary>
         Task<User> GetUserByName(string username);
@@ -244,25 +249,21 @@ namespace SlackNet.Bot
 
         private async Task<SlackMessage> CreateSlackMessage(MessageEvent message)
         {
-            SlackMessage result;
-
-            if (message.User == null && (message is SlackNet.Events.BotMessage b))
+            if (message.User == null && message is Events.BotMessage b)
             {
-                BotInfo botInfo = await GetBotUserIdById(b.BotId);
+                var botInfo = await GetBotUserById(b.BotId);
                 message.User = botInfo.UserId;
             }
 
-            result = new SlackMessage(this)
-            {
-                Ts = message.Ts,
-                ThreadTs = message.ThreadTs,
-                Text = message.Text,
-                Hub = await GetHubById(message.Channel).ConfigureAwait(false),
-                User = await GetUserById(message.User).ConfigureAwait(false),
-                Attachments = message.Attachments
-            };
-
-            return result;
+            return new SlackMessage(this)
+                {
+                    Ts = message.Ts,
+                    ThreadTs = message.ThreadTs,
+                    Text = message.Text,
+                    Hub = await GetHubById(message.Channel).ConfigureAwait(false),
+                    User = await GetUserById(message.User).ConfigureAwait(false),
+                    Attachments = message.Attachments
+                };
         }
 
         private void HandleMessage(IMessage message)
@@ -278,7 +279,7 @@ namespace SlackNet.Bot
         /// Get information on a public or private channel, IM, or multi-person IM.
         /// </summary>
         public async Task<Hub> GetHubById(string hubId) =>
-            String.IsNullOrEmpty(hubId)
+            string.IsNullOrEmpty(hubId)
                 ? null
                 : await _hubs.GetOrAdd(hubId, FetchHub).ConfigureAwait(false);
 
@@ -378,15 +379,15 @@ namespace SlackNet.Bot
         /// Get user information.
         /// </summary>
         public async Task<User> GetUserById(string userId) =>
-            String.IsNullOrEmpty(userId)
+            string.IsNullOrEmpty(userId)
                 ? null
                 : await _users.GetOrAdd(userId, _ => _api.Users.Info(userId).NullIfNotFound()).ConfigureAwait(false);
 
         /// <summary>
-        /// Get user information.
+        /// Get bot user information.
         /// </summary>
-        public async Task<BotInfo> GetBotUserIdById(string botId) =>
-            String.IsNullOrEmpty(botId)
+        public async Task<BotInfo> GetBotUserById(string botId) =>
+            string.IsNullOrEmpty(botId)
                 ? null
                 : await _bots.GetOrAdd(botId, _ => _api.Bots.Info(botId).NullIfNotFound()).ConfigureAwait(false);
 

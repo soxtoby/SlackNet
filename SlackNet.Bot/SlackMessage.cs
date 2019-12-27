@@ -10,11 +10,7 @@ namespace SlackNet.Bot
     public class SlackMessage : IMessage
     {
         private readonly ISlackBot _bot;
-
-        public SlackMessage(ISlackBot bot)
-        {
-            _bot = bot;
-        }
+        public SlackMessage(ISlackBot bot) => _bot = bot;
 
         public Hub Hub { get; set; }
         public User User { get; set; }
@@ -28,7 +24,9 @@ namespace SlackNet.Bot
         public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
         public IList<Block> Blocks { get; set; } = new List<Block>();
         public bool IsInThread => ThreadTs != null;
-        public bool MentionsBot => Text.IndexOf(_bot.Id, StringComparison.OrdinalIgnoreCase) >= 0
+
+        public bool MentionsBot =>
+            Text.IndexOf(_bot.Id, StringComparison.OrdinalIgnoreCase) >= 0
             || Text.IndexOf(_bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
             || Hub?.IsIm == true;
 

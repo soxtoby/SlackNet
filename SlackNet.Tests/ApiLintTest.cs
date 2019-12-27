@@ -28,7 +28,7 @@ namespace SlackNet.Tests
 
             var apiMethods = api.GetMethods(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance);
 
-            AllPublicMethodsAreExposedOnInterface(api, apiInterface, apiMethods);
+            AllPublicMethodsAreExposedOnInterface(apiInterface, apiMethods);
 
             string slackMethodGroup = null;
 
@@ -56,7 +56,7 @@ namespace SlackNet.Tests
                 .ShouldBe(true, $"{api.Name} doesn't have a property on {nameof(ISlackApiClient)}");
         }
 
-        private static void AllPublicMethodsAreExposedOnInterface(Type api, Type apiInterface, MethodInfo[] apiMethods)
+        private static void AllPublicMethodsAreExposedOnInterface(Type apiInterface, MethodInfo[] apiMethods)
         {
             apiMethods.ShouldNotBeEmpty();
 
@@ -65,11 +65,9 @@ namespace SlackNet.Tests
             apiMethods.ShouldOnlyContain(interfaceMethods, MethodsEqual);
         }
 
-        private static bool MethodsEqual(MethodInfo a, MethodInfo b)
-        {
-            return a.Name == b.Name 
-                && ParameterTypes(a).SequenceEqual(ParameterTypes(b));
-        }
+        private static bool MethodsEqual(MethodInfo a, MethodInfo b) =>
+            a.Name == b.Name 
+            && ParameterTypes(a).SequenceEqual(ParameterTypes(b));
 
         private static IEnumerable<Type> ParameterTypes(MethodInfo method)
         {
@@ -122,48 +120,39 @@ namespace SlackNet.Tests
             : param.ParameterType == typeof(CancellationToken?) ? (object)null
             : throw new AssertionException($"Unexpected param type {param.ParameterType.Name} in {param.Member.DeclaringType.Name}.{param.Member.Name}");
 
-        static IEnumerable<Type> ApiClasses => typeof(ApiApi).Assembly
+        private static IEnumerable<Type> ApiClasses => typeof(ApiApi).Assembly
             .GetExportedTypes()
             .Where(t => t.IsClass && t.Name.EndsWith("Api"));
 
-        class FakeClient : ISlackApiClient
+        private class FakeClient : ISlackApiClient
         {
-            public string HttpMethod { get; set; }
-            public string SlackMethod { get; set; }
-            public Args Args { get; set; }
-            public CancellationToken? CancellationToken { get; set; }
+            public string SlackMethod { get; private set; }
+            public Args Args { get; private set; }
 
             public void Reset()
             {
-                HttpMethod = null;
                 SlackMethod = null;
                 Args = null;
             }
 
             public Task Get(string apiMethod, Args args, CancellationToken? cancellationToken)
             {
-                HttpMethod = "GET";
                 SlackMethod = apiMethod;
                 Args = args;
-                CancellationToken = cancellationToken;
                 return Task.FromResult(0);
             }
 
             public Task<T> Get<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class
             {
-                HttpMethod = "GET";
                 SlackMethod = apiMethod;
                 Args = args;
-                CancellationToken = cancellationToken;
                 return Task.FromResult(Activator.CreateInstance<T>());
             }
 
             public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken)
             {
-                HttpMethod = "POST";
                 SlackMethod = apiMethod;
                 Args = args;
-                CancellationToken = cancellationToken;
                 return Task.FromResult(0);
             }
 
@@ -172,19 +161,15 @@ namespace SlackNet.Tests
 
             public Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class
             {
-                HttpMethod = "POST";
                 SlackMethod = apiMethod;
                 Args = args;
-                CancellationToken = cancellationToken;
                 return Task.FromResult(Activator.CreateInstance<T>());
             }
 
             public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) where T : class
             {
-                HttpMethod = "POST";
                 SlackMethod = apiMethod;
                 Args = args;
-                CancellationToken = cancellationToken;
                 return Task.FromResult(Activator.CreateInstance<T>());
             }
 
