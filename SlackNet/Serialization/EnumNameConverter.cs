@@ -25,7 +25,7 @@ namespace SlackNet
         {
             if (reader.TokenType == JsonToken.Null)
                 return IsNullable(objectType)
-                    ? throw new JsonSerializationException(string.Format("Cannot convert null value to {0}.", CultureInfo.InvariantCulture, objectType))
+                    ? throw new JsonSerializationException(string.Format(CultureInfo.InvariantCulture, "Cannot convert null value to {0}.", objectType))
                     : (object)null;
 
             try
@@ -33,14 +33,14 @@ namespace SlackNet
                 if (reader.TokenType == JsonToken.String)
                     return ParseEnumName(UnderlyingType(objectType), reader.Value.ToString());
                 if (reader.TokenType == JsonToken.Integer)
-                    throw new JsonSerializationException(string.Format("Integer value {0} is not allowed.", CultureInfo.InvariantCulture, reader.Value));
+                    throw new JsonSerializationException(string.Format(CultureInfo.InvariantCulture, "Integer value {0} is not allowed.", reader.Value));
             }
             catch (Exception ex)
             {
-                throw new JsonSerializationException(string.Format("Error converting value {0} to type '{1}'.", CultureInfo.InvariantCulture, reader.Value, objectType), ex);
+                throw new JsonSerializationException(string.Format(CultureInfo.InvariantCulture, "Error converting value {0} to type '{1}'.", reader.Value, objectType), ex);
             }
 
-            throw new JsonSerializationException(string.Format("Unexpected token {0} when parsing enum.", CultureInfo.InvariantCulture, reader.TokenType));
+            throw new JsonSerializationException(string.Format(CultureInfo.InvariantCulture, "Unexpected token {0} when parsing enum.", reader.TokenType));
         }
 
         private object ParseEnumName(Type type, string name) => 
@@ -53,7 +53,7 @@ namespace SlackNet
             var enumText = enumValue.ToString("G");
 
             if (char.IsNumber(enumText[0]) || enumText[0] == '-')
-                throw new JsonSerializationException(string.Format("Integer value {0} is not allowed.", CultureInfo.InvariantCulture, enumText));
+                throw new JsonSerializationException(string.Format(CultureInfo.InvariantCulture, "Integer value {0} is not allowed.", enumText));
 
             var explicitName = enumValue.GetType()
                 .GetRuntimeField(enumText)?
