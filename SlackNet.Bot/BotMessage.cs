@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using SlackNet.Blocks;
 using SlackNet.WebApi;
 
@@ -50,5 +51,9 @@ namespace SlackNet.Bot
         /// Set to True to reply in a new thread if not already in one.
         /// </summary>
         public bool CreateThread { get; set; }
+        /// <summary>
+        /// Allows message sending to be cancelled, if it hasn't already been sent.
+        /// </summary>
+        public CancellationToken? CancellationToken { get; set; }
     }
 }

@@ -125,12 +125,7 @@ namespace SlackNet.Bot
         /// <summary>
         /// Send a message to Slack as the bot.
         /// </summary>
-        Task Send(BotMessage message);
-
-        /// <summary>
-        /// Send a message to Slack as the bot.
-        /// </summary>
-        Task Send(BotMessage message, CancellationToken cancellationToken);
+        Task Send(BotMessage message, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Show typing indicator in Slack while performing some action.
@@ -159,7 +154,7 @@ namespace SlackNet.Bot
         private readonly ConcurrentValue<Task<IReadOnlyList<Im>>> _ims = new ConcurrentValue<Task<IReadOnlyList<Im>>>();
         private readonly SyncedSubject<IMessage> _incomingMessages = new SyncedSubject<IMessage>();
         private readonly SyncedSubject<BotMessage> _outgoingMessages = new SyncedSubject<BotMessage>();
-        private readonly SyncedSubject<BotMessage> _sentMessages = new SyncedSubject<BotMessage>();
+        private IObservable<PostedMessage> _sentMessages;
         private IObservable<IMessage> _incomingWithMiddlewareApplied;
         private IObservable<BotMessage> _outgoingWithMiddlewareApplied;
         private IDisposable _outgoingSubscription;
@@ -173,11 +168,11 @@ namespace SlackNet.Bot
             _api = apiClient;
             _scheduler = scheduler ?? Scheduler.Default;
             _incomingWithMiddlewareApplied = _rtm.Messages
-                .Where(m => m.GetType() == typeof(MessageEvent) || m.GetType() == typeof(SlackNet.Events.BotMessage))
+                .Where(m => m.GetType() == typeof(MessageEvent) || m.GetType() == typeof(Events.BotMessage))
                 .Where(m => m.User != Id)
                 .SelectMany(CreateSlackMessage);
             _outgoingWithMiddlewareApplied = _outgoingMessages
-                .LimitFrequency(TimeSpan.FromSeconds(1), _scheduler);
+                .LimitFrequency(TimeSpan.FromSeconds(1), m => m.CancellationToken ?? CancellationToken.None, _scheduler);
         }
 
         /// <summary>
@@ -200,10 +195,12 @@ namespace SlackNet.Bot
 
             _incomingSubscription = _incomingWithMiddlewareApplied
                 .Subscribe(HandleMessage);
-            _outgoingSubscription = _outgoingWithMiddlewareApplied
-                .SelectMany(PostMessage)
+            _sentMessages = _outgoingWithMiddlewareApplied
+                .Select(m => new PostedMessage { Message = m, Post = PostMessage(m) })
                 .Retry()
-                .Subscribe();
+                .Publish()
+                .RefCount();
+            _outgoingSubscription = _sentMessages.Subscribe();
 
             var connectResponse = await connection.ConfigureAwait(false);
             Id = connectResponse.Self.Id;
@@ -427,45 +424,42 @@ namespace SlackNet.Bot
         /// <summary>
         /// Send a message to Slack as the bot.
         /// </summary>
-        public async Task Send(BotMessage message, CancellationToken cancellationToken)
+        public async Task Send(BotMessage message, CancellationToken? cancellationToken = null)
         {
-            var sent = _sentMessages.FirstOrDefaultAsync(m => m == message).ToTask(cancellationToken);
+            var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+                message.CancellationToken ?? CancellationToken.None, 
+                cancellationToken ?? CancellationToken.None);
+            message.CancellationToken = linkedTokenSource.Token;
+
+            var sent = _sentMessages.FirstOrDefaultAsync(m => m.Message == message)
+                .SelectMany(m => m.Post)
+                .ToTask(linkedTokenSource.Token);
+
             _outgoingMessages.OnNext(message);
+
             await sent.ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Send a message to Slack as the bot.
-        /// </summary>
-        public async Task Send(BotMessage message)
-        {
-            await Send(message, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task<PostMessageResponse> PostMessage(BotMessage message)
-        {
-            var response = await _api.Chat.PostMessage(new Message
-            {
-                Channel = message.Hub != null
+        private async Task<PostMessageResponse> PostMessage(BotMessage message) =>
+            await _api.Chat.PostMessage(new Message
+                {
+                    Channel = message.Hub != null
                         ? await message.Hub.HubId(this).ConfigureAwait(false)
                         : message.ReplyTo?.Hub?.Id,
-                Text = message.Text,
-                Attachments = message.Attachments,
-                Blocks = message.Blocks,
-                ThreadTs = await ReplyingInDifferentHub(message).ConfigureAwait(false)
+                    Text = message.Text,
+                    Attachments = message.Attachments,
+                    Blocks = message.Blocks,
+                    ThreadTs = await ReplyingInDifferentHub(message).ConfigureAwait(false)
                         ? null
                         : message.ReplyTo?.ThreadTs
                         ?? (message.CreateThread ? message.ReplyTo?.Ts : null),
-                ReplyBroadcast = message.ReplyBroadcast,
-                Parse = message.Parse,
-                LinkNames = message.LinkNames,
-                UnfurlLinks = message.UnfurlLinks,
-                UnfurlMedia = message.UnfurlMedia,
-                AsUser = true
-            }).ConfigureAwait(false);
-            _sentMessages.OnNext(message);
-            return response;
-        }
+                    ReplyBroadcast = message.ReplyBroadcast,
+                    Parse = message.Parse,
+                    LinkNames = message.LinkNames,
+                    UnfurlLinks = message.UnfurlLinks,
+                    UnfurlMedia = message.UnfurlMedia,
+                    AsUser = true
+                }, message.CancellationToken).ConfigureAwait(false);
 
         private async Task<bool> ReplyingInDifferentHub(BotMessage message)
         {
@@ -507,5 +501,11 @@ namespace SlackNet.Bot
             _incomingSubscription?.Dispose();
             _outgoingSubscription?.Dispose();
         }
+    }
+
+    class PostedMessage
+    {
+        public BotMessage Message { get; set; }
+        public Task<PostMessageResponse> Post { get; set; }
     }
 }

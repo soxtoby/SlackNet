@@ -32,36 +32,20 @@ namespace SlackNet.Bot
             || Text.IndexOf(_bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
             || Hub?.IsIm == true;
 
-        public Task ReplyWith(string text, bool createThread = false) => ReplyWith(new BotMessage { Text = text }, createThread);
+        public Task ReplyWith(string text, bool createThread = false, CancellationToken? cancellationToken = null) => 
+            ReplyWith(new BotMessage { Text = text }, createThread, cancellationToken);
 
-        public Task ReplyWith(string text, CancellationToken cancellationToken, bool createThread = false) => ReplyWith(new BotMessage { Text = text }, cancellationToken, createThread);
-
-        public async Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false)
+        public async Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false, CancellationToken? cancellationToken = null)
         {
             await _bot.WhileTyping(Hub.Id, async () =>
-            {
-                var reply = await createReply().ConfigureAwait(false);
-                if (reply != null)
-                    await ReplyWith(reply, createThread).ConfigureAwait(false);
-            }).ConfigureAwait(false);
+                {
+                    var reply = await createReply().ConfigureAwait(false);
+                    if (reply != null)
+                        await ReplyWith(reply, createThread, cancellationToken).ConfigureAwait(false);
+                }).ConfigureAwait(false);
         }
 
-        public async Task ReplyWith(Func<Task<BotMessage>> createReply, CancellationToken cancellationToken, bool createThread = false)
-        {
-            await _bot.WhileTyping(Hub.Id, async () =>
-            {
-                var reply = await createReply().ConfigureAwait(false);
-                if (reply != null)
-                    await ReplyWith(reply, cancellationToken, createThread).ConfigureAwait(false);
-            }).ConfigureAwait(false);
-        }
-
-        public async Task ReplyWith(BotMessage message, bool createThread = false)
-        {
-            await ReplyWith(message, CancellationToken.None, createThread).ConfigureAwait(false);
-        }
-
-        public async Task ReplyWith(BotMessage message, CancellationToken cancellationToken, bool createThread = false)
+        public async Task ReplyWith(BotMessage message, bool createThread = false, CancellationToken? cancellationToken = null)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
