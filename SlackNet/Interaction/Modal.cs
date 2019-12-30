@@ -5,28 +5,23 @@ namespace SlackNet.Interaction
 {
     public class Modal
     {
-        
-        private string _title;
-        public Dictionary<string, string> Title
-        {
-            get
-            {
-                return new Dictionary<string, string>
-                {
-                    {"type", "plain_text"},
-                    {"text", _title}
-                };
-            }
-        }
         public readonly string Type = "modal";
-        public string CallbackId { get; set; }
+
+        public string CallbackId { get; }
+
+        public PlainText Title { get; set; }
+
+        public PlainText Submit { get; set; }
+
+        public PlainText Close { get; set; }
+
         public IList<Block> Blocks { get; set; } = new List<Block>();
-        
-        
-        public Modal(string callbackId, string title)
+
+        public string State { get; set; }
+
+        public Modal(string callbackId)
         {
             CallbackId = callbackId;
-            _title = title;
         }
     }
 }
