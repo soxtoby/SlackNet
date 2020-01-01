@@ -8,22 +8,6 @@ namespace SlackNet.WebApi
     public interface IReactionsApi
     {
         /// <summary>
-        /// Adds a reaction (emoji) to a file.
-        /// </summary>
-        /// <param name="name">Reaction (emoji) name.</param>
-        /// <param name="fileId">File to add reaction to.</param>
-        /// <param name="cancellationToken"></param>
-        Task AddToFile(string name, string fileId, CancellationToken? cancellationToken = null);
-
-        /// <summary>
-        /// Adds a reaction (emoji) to a file comment.
-        /// </summary>
-        /// <param name="name">Reaction (emoji) name.</param>
-        /// <param name="fileCommentId">File comment to add reaction to.</param>
-        /// <param name="cancellationToken"></param>
-        Task AddToFileComment(string name, string fileCommentId, CancellationToken? cancellationToken = null);
-
-        /// <summary>
         /// Adds a reaction (emoji) to a message.
         /// </summary>
         /// <param name="name">Reaction (emoji) name.</param>
@@ -97,32 +81,6 @@ namespace SlackNet.WebApi
     {
         private readonly ISlackApiClient _client;
         public ReactionsApi(ISlackApiClient client) => _client = client;
-
-        /// <summary>
-        /// Adds a reaction (emoji) to a file.
-        /// </summary>
-        /// <param name="name">Reaction (emoji) name.</param>
-        /// <param name="fileId">File to add reaction to.</param>
-        /// <param name="cancellationToken"></param>
-        public Task AddToFile(string name, string fileId, CancellationToken? cancellationToken = null) =>
-            _client.Post("reactions.add", new Args
-                {
-                    { "name", name },
-                    { "file", fileId }
-                }, cancellationToken);
-
-        /// <summary>
-        /// Adds a reaction (emoji) to a file comment.
-        /// </summary>
-        /// <param name="name">Reaction (emoji) name.</param>
-        /// <param name="fileCommentId">File comment to add reaction to.</param>
-        /// <param name="cancellationToken"></param>
-        public Task AddToFileComment(string name, string fileCommentId, CancellationToken? cancellationToken = null) =>
-            _client.Post("reactions.add", new Args
-                {
-                    { "name", name },
-                    { "file_comment", fileCommentId }
-                }, cancellationToken);
 
         /// <summary>
         /// Adds a reaction (emoji) to a message.
