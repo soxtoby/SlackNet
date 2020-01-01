@@ -192,6 +192,7 @@ namespace SlackNet.Tests
             public IPinsApi Pins { get; }
             public IReactionsApi Reactions { get; }
             public IRemindersApi Reminders { get; }
+            public IRemoteFilesApi RemoteFiles { get; }
             public IRtmApi Rtm { get; }
             public IScheduledMessagesApi ScheduledMessages { get; }
             public ISearchApi Search { get; }

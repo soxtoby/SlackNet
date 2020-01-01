@@ -6,5 +6,6 @@ namespace SlackNet.WebApi
     {
         public IList<File> Files { get; set; } = new List<File>();
         public Paging Paging { get; set; }
+        public ResponseMetadata ResponseMetadata { get; set; }
     }
 }

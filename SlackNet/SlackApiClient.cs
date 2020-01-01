@@ -30,6 +30,7 @@ namespace SlackNet
         IPinsApi Pins { get; }
         IReactionsApi Reactions { get; }
         IRemindersApi Reminders { get; }
+        IRemoteFilesApi RemoteFiles { get; }
         IRtmApi Rtm { get; }
         IScheduledMessagesApi ScheduledMessages { get; }
         ISearchApi Search { get; }
@@ -137,6 +138,7 @@ namespace SlackNet
         public IPinsApi Pins => new PinsApi(this);
         public IReactionsApi Reactions => new ReactionsApi(this);
         public IRemindersApi Reminders => new RemindersApi(this);
+        public IRemoteFilesApi RemoteFiles => new RemoteFilesApi(this);
         public IRtmApi Rtm => new RtmApi(this);
         public IScheduledMessagesApi ScheduledMessages => new ScheduledMessagesApi(this);
         public ISearchApi Search => new SearchApi(this);

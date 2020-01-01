@@ -52,6 +52,9 @@ namespace SlackNet
         public FileShares Shares { get; set; }
         public IList<Reaction> Reactions { get; set; } = new List<Reaction>();
         public int CommentsCount { get; set; }
+        public string ExternalId { get; set; }
+        public string ExternalUrl { get; set; }
+        public bool HasRichPreview { get; set; }
     }
 
     public class FileShares
