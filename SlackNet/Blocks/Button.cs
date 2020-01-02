@@ -4,7 +4,7 @@
     /// An interactive element that inserts a button. The button can be a trigger for anything from opening a simple link to starting a complex workflow.
     /// </summary>
     [SlackType("button")]
-    public class Button : BlockElement, IActionElement
+    public class Button : ActionElement
     {
         public Button() : base("button") { }
 
@@ -30,17 +30,6 @@
         /// </summary>
         [IgnoreIfDefault]
         public ButtonStyle Style { get; set; }
-
-        /// <summary>
-        /// Defines an optional confirmation dialog after the button is clicked.
-        /// </summary>
-        public ConfirmationDialog Confirm { get; set; }
-
-        /// <summary>
-        /// An identifier for this action. You can use this when you receive an interaction payload to identify the source of the action.
-        /// Should be unique among all other <see cref="ActionId"/>s used elsewhere by your app. 
-        /// </summary>
-        public string ActionId { get; set; }
     }
 
     public enum ButtonStyle

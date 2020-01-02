@@ -7,7 +7,7 @@ namespace SlackNet.Blocks
     /// Date picker elements can be used inside of section and actions blocks.
     /// </summary>
     [SlackType("datepicker")]
-    public class DatePicker : BlockElement, IActionElement
+    public class DatePicker : ActionElement
     {
         public DatePicker() : base("datepicker") { }
 
@@ -20,16 +20,5 @@ namespace SlackNet.Blocks
         /// The initial date that is selected when the element is loaded.
         /// </summary>
         public DateTime? InitialDate { get; set; }
-
-        /// <summary>
-        /// Defines an optional confirmation dialog that appears after a menu item is selected.
-        /// </summary>
-        public ConfirmationDialog Confirm { get; set; }
-
-        /// <summary>
-        /// An identifier for this action. You can use this when you receive an interaction payload to identify the source of the action.
-        /// Should be unique among all other <see cref="ActionId"/>s used elsewhere by your app. 
-        /// </summary>
-        public string ActionId { get; set; }
     }
 }
