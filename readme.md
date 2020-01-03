@@ -77,7 +77,7 @@ public void ConfigureServices(IServiceCollection services)
 
 public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 {
-    app.UseSlackNet(c => c.VerifyWith("<your verification token here>"));
+    app.UseSlackNet(c => c.UseSigningSecret("<your signing secret here>"));
 }
 ```
 

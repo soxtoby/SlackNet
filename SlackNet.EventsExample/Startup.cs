@@ -45,7 +45,7 @@ namespace SlackNet.EventsExample
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
-            app.UseSlackNet(c => c.VerifyWith(Configuration["Slack:VerificationToken"]));
+            app.UseSlackNet(c => c.UseSigningSecret(Configuration["Slack:SigningSecret"]));
 
             app.UseMvc();
         }
