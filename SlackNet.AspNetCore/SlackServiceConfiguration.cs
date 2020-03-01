@@ -128,6 +128,14 @@ namespace SlackNet.AspNetCore
             return this;
         }
 
+        public SlackServiceConfiguration RegisterViewSubmissionHandler<THandler>(string callbackId)
+            where THandler : class, IViewSubmissionHandler
+        {
+            _serviceCollection.AddTransient<THandler>();
+            _serviceCollection.AddSingleton<ResolvedViewSubmissionHandler>(c => new ResolvedViewSubmissionHandler<THandler>(c, callbackId));
+            return this;
+        }
+
         public string ApiToken { get; private set; }
     }
 }

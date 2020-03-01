@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.Blocks
 {
-    public abstract class SelectMenuBase : ActionElement
+    public abstract class SelectMenuBase : ActionElement, IInputBlockElement
     {
         protected SelectMenuBase(string type) : base(type) { }
 

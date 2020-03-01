@@ -1,8 +1,7 @@
 ﻿namespace SlackNet.Blocks
 {
-    public interface IActionElement
+    public interface IActionElement : IBlockElement
     {
-        string Type { get; }
         string ActionId { get; set; }
     }
 

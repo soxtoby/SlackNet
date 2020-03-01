@@ -7,7 +7,7 @@ namespace SlackNet.Blocks
     /// Date picker elements can be used inside of section and actions blocks.
     /// </summary>
     [SlackType("datepicker")]
-    public class DatePicker : ActionElement
+    public class DatePicker : ActionElement, IInputBlockElement
     {
         public DatePicker() : base("datepicker") { }
 

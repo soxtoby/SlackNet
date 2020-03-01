@@ -41,6 +41,7 @@ namespace SlackNet
         IUserGroupUsersApi UserGroupUsers { get; }
         IUsersApi Users { get; }
         IUserProfileApi UserProfile { get; }
+        IViewsApi Views { get; }
 
         /// <summary>
         /// Calls a Slack API method.
@@ -149,6 +150,7 @@ namespace SlackNet
         public IUserGroupUsersApi UserGroupUsers => new UserGroupUsersApi(this);
         public IUsersApi Users => new UsersApi(this);
         public IUserProfileApi UserProfile => new UserProfileApi(this);
+        public IViewsApi Views => new ViewsApi(this);
 
         /// <summary>
         /// Calls a Slack API method.

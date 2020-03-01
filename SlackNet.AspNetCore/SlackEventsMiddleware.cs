@@ -24,6 +24,7 @@ namespace SlackNet.AspNetCore
         private readonly ISlackMessageActions _slackMessageActions;
         private readonly ISlackOptions _slackOptions;
         private readonly IDialogSubmissionHandler _dialogSubmissionHandler;
+        private readonly ISlackViews _slackViews;
         private readonly SlackJsonSettings _jsonSettings;
 
         public SlackEventsMiddleware(
@@ -36,6 +37,7 @@ namespace SlackNet.AspNetCore
             ISlackMessageActions slackMessageActions,
             ISlackOptions slackOptions,
             IDialogSubmissionHandler dialogSubmissionHandler,
+            ISlackViews slackViews,
             SlackJsonSettings jsonSettings)
         {
             _next = next;
@@ -47,6 +49,7 @@ namespace SlackNet.AspNetCore
             _slackMessageActions = slackMessageActions;
             _slackOptions = slackOptions;
             _dialogSubmissionHandler = dialogSubmissionHandler;
+            _slackViews = slackViews;
             _jsonSettings = jsonSettings;
         }
 
@@ -110,6 +113,10 @@ namespace SlackNet.AspNetCore
                         return await HandleDialogCancellation(context, dialogCancellation).ConfigureAwait(false);
                     case MessageAction messageAction:
                         return await HandleMessageAction(context, messageAction).ConfigureAwait(false);
+                    case ViewSubmission viewSubmission:
+                        return await HandleViewSubmission(context, viewSubmission).ConfigureAwait(false);
+                    case ViewClosed viewClosed:
+                        return await HandleViewClosed(context, viewClosed).ConfigureAwait(false);
                 }
             }
 
@@ -153,6 +160,21 @@ namespace SlackNet.AspNetCore
         {
             await _slackMessageActions.Handle(messageAction).ConfigureAwait(false);
             return await context.Respond(HttpStatusCode.OK).ConfigureAwait(false);
+        }
+
+        private async Task<HttpResponse> HandleViewSubmission(HttpContext context, ViewSubmission viewSubmission)
+        {
+            var response = await _slackViews.HandleSubmission(viewSubmission);
+
+            return response?.ResponseAction == null
+                ? await context.Respond(HttpStatusCode.OK).ConfigureAwait(false)
+                : await context.Respond(HttpStatusCode.OK, "application/json", Serialize(response)).ConfigureAwait(false);
+        }
+
+        private async Task<HttpResponse> HandleViewClosed(HttpContext context, ViewClosed viewClosed)
+        {
+            await _slackViews.HandleClose(viewClosed);
+            return await context.Respond(HttpStatusCode.OK);
         }
 
         private async Task<HttpResponse> HandleSlackOptions(HttpContext context)
