@@ -11,7 +11,7 @@ namespace SlackNet.EventsExample
     {
         public static readonly string ActionName = "color_select";
 
-        public async Task<MessageResponse> Handle(InteractiveMessage message)
+        public Task<MessageResponse> Handle(InteractiveMessage message)
         {
             var menu = (Menu)message.Action;
             message.OriginalAttachment.Color = menu.SelectedValue;
@@ -22,14 +22,15 @@ namespace SlackNet.EventsExample
                     ?? new Option { Text = menu.SelectedValue, Value = menu.SelectedValue }
                 };
 
-            return new MessageResponse
+            return Task.FromResult(new MessageResponse
                 {
                     ReplaceOriginal = true,
                     Message = message.OriginalMessage
-                };
+                });
         }
 
-        public async Task<OptionsResponse> GetOptions(OptionsRequest request) => new OptionsResponse { Options = GetOptions(request.Value) };
+        public Task<OptionsResponse> GetOptions(OptionsRequest request) => 
+            Task.FromResult(new OptionsResponse { Options = GetOptions(request.Value) });
 
         private static List<Option> GetOptions(string search) =>
             FindColors(search)

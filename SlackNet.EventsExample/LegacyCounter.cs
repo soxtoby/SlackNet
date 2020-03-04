@@ -13,7 +13,7 @@ namespace SlackNet.EventsExample
 
         private static readonly Regex _counterPattern = new Regex("Counter: (\\d+)");
 
-        public async Task<MessageResponse> Handle(InteractiveMessage message)
+        public Task<MessageResponse> Handle(InteractiveMessage message)
         {
             var counterText = _counterPattern.Match(message.OriginalAttachment.Text);
             if (counterText.Success)
@@ -22,14 +22,14 @@ namespace SlackNet.EventsExample
                 var increment = int.Parse(message.Action.Value);
                 message.OriginalAttachment.Text = $"Counter: {count + increment}";
                 message.OriginalAttachment.Actions = Actions;
-                return new MessageResponse
+                return Task.FromResult(new MessageResponse
                     {
                         ReplaceOriginal = true,
                         Message = message.OriginalMessage
-                    };
+                    });
             }
 
-            return null;
+            return Task.FromResult<MessageResponse>(null);
         }
 
         public static IList<ActionElement> Actions => new List<ActionElement>
