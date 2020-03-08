@@ -13,6 +13,7 @@ namespace SlackNet.AspNetCore
             var configuration = new SlackServiceConfiguration(serviceCollection);
             configure(configuration);
             Default.RegisterServices((serviceType, createService) => serviceCollection.AddTransient(serviceType, c => createService(c.GetService)));
+            serviceCollection.AddSingleton<ISlackRequestHandler, SlackRequestHandler>();
             serviceCollection.AddSingleton<ISlackEvents, SlackEventsService>();
             serviceCollection.AddSingleton<ISlackBlockActions, SlackBlockActionsService>();
             serviceCollection.AddSingleton<ISlackBlockOptions, SlackBlockOptionsService>();
@@ -30,7 +31,7 @@ namespace SlackNet.AspNetCore
         {
             var config = new SlackEndpointConfiguration();
             configure?.Invoke(config);
-            return app.UseMiddleware<SlackEventsMiddleware>(config);
+            return app.UseMiddleware<SlackRequestMiddleware>(config);
         }
     }
 }
