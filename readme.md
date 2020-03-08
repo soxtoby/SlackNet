@@ -10,7 +10,7 @@ There are three NuGet packages available to install, depending on your use case.
 ### SlackNet
 To use the Web API:
 ```c#
-var api = new SlackApiClient("<your API token here>");
+var api = new SlackApiClient("<your OAuth access token here>");
 ```
 then start calling methods:
 ```c#
@@ -19,7 +19,7 @@ var channels = await api.Channels.List();
 
 To use the RTM API:
 ```c#
-var rtm = new SlackRtmClient("<your API token here>");
+var rtm = new SlackRtmClient("<your OAuth access token here>");
 await rtm.Connect();
 rtm.Events.Subscribe(/* handle every event */);
 rtm.Messages.Subscribe(/* handle message events */);
@@ -72,7 +72,7 @@ In your Startup class:
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddSlackNet(c => c.UseApiToken("<your API token here>"));
+    services.AddSlackNet(c => c.UseApiToken("<your OAuth access token here>"));
 }
 
 public void Configure(IApplicationBuilder app, IHostingEnvironment env)
