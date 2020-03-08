@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using SlackNet.Blocks;
-using SlackNet.WebApi;
 
 namespace SlackNet.Events
 {
@@ -27,11 +26,6 @@ namespace SlackNet.Events
         /// </summary>
         public virtual bool Hidden => false;
         public int ReplyCount { get; set; }
-        /// <summary>
-        /// Deprecated, to be removed on October 18, 2019. Use <see cref="IConversationsApi.Replies"/> to get replies instead.
-        /// </summary>
-        [Obsolete]
-        public IList<Reply> Replies { get; set; } = new List<Reply>();
         public IList<string> ReplyUsers { get; set; } = new List<string>();
         public int ReplyUsersCount { get; set; }
         public string LatestReply { get; set; }
