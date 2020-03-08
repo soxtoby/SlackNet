@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.4\SlackNet.Bot.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\$(TargetFramework)\SlackNet.Bot.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

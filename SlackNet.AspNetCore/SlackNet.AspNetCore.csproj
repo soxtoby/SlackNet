@@ -18,7 +18,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Release\netstandard1.4\SlackNet.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\$(TargetFramework)\SlackNet.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
