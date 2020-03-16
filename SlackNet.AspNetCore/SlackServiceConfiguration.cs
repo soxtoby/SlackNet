@@ -136,6 +136,16 @@ namespace SlackNet.AspNetCore
             return this;
         }
 
+        public SlackServiceConfiguration RegisterSlashCommandHandler<THandler>(string command)
+            where THandler : class, ISlashCommandHandler
+        {
+            if (!command.StartsWith("/"))
+                throw new ArgumentException("Command must start with '/'", nameof(command));
+            _serviceCollection.AddTransient<THandler>();
+            _serviceCollection.AddSingleton<ResolvedSlashCommandHandler>(c => new ResolvedSlashCommandHandler<THandler>(c, command));
+            return this;
+        }
+
         public string ApiToken { get; private set; }
     }
 }

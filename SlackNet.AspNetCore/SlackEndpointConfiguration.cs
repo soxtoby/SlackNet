@@ -6,8 +6,9 @@
         /// Sets the path to receive Slack requests on. Defaults to "slack".
         /// Configures the following routes:
         /// <br /><c>/{RoutePrefix}/event</c> - Event subscriptions
-        /// <br /><c>/{RoutePrefix}/action</c> - Interactive components requests
+        /// <br /><c>/{RoutePrefix}/action</c> - Interactive component requests
         /// <br /><c>/{RoutePrefix}/options</c> - Options loading (for message menus)
+        /// <br /><c>/{RoutePrefix}/command</c> - Slash command requests
         /// </summary>
         public SlackEndpointConfiguration MapToPrefix(string routePrefix)
         {

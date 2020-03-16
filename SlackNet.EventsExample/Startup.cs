@@ -40,6 +40,8 @@ namespace SlackNet.EventsExample
                 .RegisterEventHandler<AppHomeOpened, AppHome>()
                 .RegisterBlockActionHandler<ButtonAction, AppHome>()
                 .RegisterViewSubmissionHandler<AppHome>(AppHome.ModalCallbackId)
+            
+                .RegisterSlashCommandHandler<EchoCommand>("/echo")
             );
             services.AddMvc();
         }

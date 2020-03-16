@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SlackNet.Events;
 using SlackNet.Interaction;
 
@@ -18,6 +19,7 @@ namespace SlackNet.AspNetCore
         Task<SlackResponse> HandleEventRequest(HttpRequest request, SlackEndpointConfiguration config);
         Task<SlackResponse> HandleActionRequest(HttpRequest request, SlackEndpointConfiguration config);
         Task<SlackResponse> HandleOptionsRequest(HttpRequest request, SlackEndpointConfiguration config);
+        Task<SlackResponse> HandleSlashCommandRequest(HttpRequest request, SlackEndpointConfiguration config);
     }
 
     class SlackRequestHandler : ISlackRequestHandler
@@ -30,6 +32,7 @@ namespace SlackNet.AspNetCore
         private readonly ISlackOptions _slackOptions;
         private readonly IDialogSubmissionHandler _dialogSubmissionHandler;
         private readonly ISlackViews _slackViews;
+        private readonly ISlackSlashCommands _slackSlashCommands;
         private readonly SlackJsonSettings _jsonSettings;
 
         public SlackRequestHandler(
@@ -41,6 +44,7 @@ namespace SlackNet.AspNetCore
             ISlackOptions slackOptions,
             IDialogSubmissionHandler dialogSubmissionHandler,
             ISlackViews slackViews,
+            ISlackSlashCommands slackSlashCommands,
             SlackJsonSettings jsonSettings)
         {
             _slackEvents = slackEvents;
@@ -51,6 +55,7 @@ namespace SlackNet.AspNetCore
             _slackOptions = slackOptions;
             _dialogSubmissionHandler = dialogSubmissionHandler;
             _slackViews = slackViews;
+            _slackSlashCommands = slackSlashCommands;
             _jsonSettings = jsonSettings;
         }
 
@@ -193,6 +198,25 @@ namespace SlackNet.AspNetCore
             return new StringResponse(HttpStatusCode.BadRequest, "Invalid token or unrecognized content");
         }
 
+        public async Task<SlackResponse> HandleSlashCommandRequest(HttpRequest request, SlackEndpointConfiguration config)
+        {
+            if (request.Method != "POST")
+                return new EmptyResponse(HttpStatusCode.MethodNotAllowed);
+
+            ReplaceRequestStreamWithMemoryStream(request);
+
+            var command = await DeserializeForm<SlashCommand>(request).ConfigureAwait(false);
+
+            if (!VerifyRequest(await ReadString(request).ConfigureAwait(false), request.Headers, command.Token, config))
+                return new StringResponse(HttpStatusCode.BadRequest, "Invalid signature/token");
+            
+            var response = await _slackSlashCommands.Handle(command).ConfigureAwait(false);
+
+            return response == null 
+                ? (SlackResponse)new EmptyResponse(HttpStatusCode.OK) 
+                : new JsonResponse(HttpStatusCode.OK, new SlashCommandMessageResponse(response));
+        }
+
         private static async void ReplaceRequestStreamWithMemoryStream(HttpRequest request)
         {
             var buffer = new MemoryStream();
@@ -216,12 +240,29 @@ namespace SlackNet.AspNetCore
 
         private async Task<T> DeserializePayload<T>(HttpRequest request)
         {
-            var form = await request.ReadFormAsync().ConfigureAwait(false);
-            request.Body.Seek(0, SeekOrigin.Begin);
+            var form = await ReadForm(request).ConfigureAwait(false);
 
             return form["payload"]
                 .Select(p => JsonConvert.DeserializeObject<T>(p, _jsonSettings.SerializerSettings))
                 .FirstOrDefault();
+        }
+
+        private async Task<T> DeserializeForm<T>(HttpRequest request)
+        {
+            var form = await ReadForm(request).ConfigureAwait(false);
+
+            var json = new JObject();
+            foreach (var key in form.Keys)
+                json[key] = form[key].FirstOrDefault();
+
+            return json.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings));
+        }
+
+        private static async Task<IFormCollection> ReadForm(HttpRequest request)
+        {
+            var form = await request.ReadFormAsync().ConfigureAwait(false);
+            request.Body.Seek(0, SeekOrigin.Begin);
+            return form;
         }
 
         private static Task<string> ReadString(HttpRequest request) =>

@@ -21,6 +21,7 @@ namespace SlackNet.AspNetCore
             serviceCollection.AddSingleton<ISlackMessageActions, SlackMessageActionsService>();
             serviceCollection.AddSingleton<ISlackOptions, SlackOptionsService>();
             serviceCollection.AddSingleton<ISlackViews, SlackViewsService>();
+            serviceCollection.AddSingleton<ISlackSlashCommands, SlackSlashCommandsService>();
             serviceCollection.TryAddSingleton<IDialogSubmissionHandler, NullDialogSubmissionHandler>();
             serviceCollection.AddTransient<ISlackApiClient>(c => new SlackApiClient(c.GetService<IHttp>(), c.GetService<ISlackUrlBuilder>(), c.GetService<SlackJsonSettings>(), configuration.ApiToken));
             

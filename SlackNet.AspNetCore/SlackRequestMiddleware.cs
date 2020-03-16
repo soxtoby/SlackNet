@@ -30,6 +30,8 @@ namespace SlackNet.AspNetCore
                 await Respond(context.Response, await _requestHandler.HandleActionRequest(context.Request, _configuration).ConfigureAwait(false)).ConfigureAwait(false);
             else if (context.Request.Path == $"/{_configuration.RoutePrefix}/options") 
                 await Respond(context.Response, await _requestHandler.HandleOptionsRequest(context.Request, _configuration).ConfigureAwait(false)).ConfigureAwait(false);
+            else if (context.Request.Path == $"/{_configuration.RoutePrefix}/command")
+                await Respond(context.Response, await _requestHandler.HandleSlashCommandRequest(context.Request, _configuration).ConfigureAwait(false)).ConfigureAwait(false);
             else
                 await _next(context).ConfigureAwait(false);
         }

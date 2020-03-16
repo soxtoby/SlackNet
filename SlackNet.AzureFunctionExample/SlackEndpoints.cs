@@ -38,6 +38,12 @@ namespace SlackNet.AzureFunctionExample
             return SlackResponse(await _requestHandler.HandleOptionsRequest(request, _endpointConfig).ConfigureAwait(false));
         }
 
+        [FunctionName("options")]
+        public async Task<IActionResult> Command([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request)
+        {
+            return SlackResponse(await _requestHandler.HandleSlashCommandRequest(request, _endpointConfig).ConfigureAwait(false));
+        }
+
         private ContentResult SlackResponse(SlackResponse response)
         {
             return new ContentResult

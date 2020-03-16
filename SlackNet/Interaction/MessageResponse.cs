@@ -2,7 +2,12 @@
 
 namespace SlackNet.Interaction
 {
-    public class MessageResponse
+    public interface IMessageResponse
+    {
+        Message Message { get; set; }
+    }
+
+    public class MessageResponse : IMessageResponse
     {
         public ResponseType ResponseType { get; set; }
         public bool ReplaceOriginal { get; set; }
