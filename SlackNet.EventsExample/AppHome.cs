@@ -37,7 +37,7 @@ namespace SlackNet.EventsExample
                                             }
                                     }
                             }
-                    }, slackEvent.View?.Hash);
+                    }, slackEvent.View?.Hash).ConfigureAwait(false);
         }
 
         public async Task Handle(ButtonAction action, BlockActionRequest request)
@@ -62,16 +62,16 @@ namespace SlackNet.EventsExample
                             },
                         Submit = "Submit",
                         NotifyOnClose = true
-                    });
+                    }).ConfigureAwait(false);
         }
 
         public async Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission)
         {
             await _slack.Chat.PostMessage(new Message
                 {
-                    Channel = await UserIm(viewSubmission.User),
+                    Channel = await UserIm(viewSubmission.User).ConfigureAwait(false),
                     Text = $"You entered: {viewSubmission.View.State.Values[InputBlockId][InputActionId].Value}"
-                });
+                }).ConfigureAwait(false);
 
             return ViewSubmissionResponse.Null;
         }
@@ -80,9 +80,9 @@ namespace SlackNet.EventsExample
         {
             await _slack.Chat.PostMessage(new Message
                 {
-                    Channel = await UserIm(viewClosed.User),
+                    Channel = await UserIm(viewClosed.User).ConfigureAwait(false),
                     Text = "You cancelled the modal"
-                });
+                }).ConfigureAwait(false);
         }
 
         private Task<string> UserIm(User user)

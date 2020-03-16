@@ -25,11 +25,11 @@ namespace SlackNet.AspNetCore
         public async Task Invoke(HttpContext context)
         {
             if (context.Request.Path == $"/{_configuration.RoutePrefix}/event")
-                await Respond(context.Response, await _requestHandler.HandleEventRequest(context.Request, _configuration).ConfigureAwait(false));
+                await Respond(context.Response, await _requestHandler.HandleEventRequest(context.Request, _configuration).ConfigureAwait(false)).ConfigureAwait(false);
             else if (context.Request.Path == $"/{_configuration.RoutePrefix}/action")
-                await Respond(context.Response, await _requestHandler.HandleActionRequest(context.Request, _configuration));
+                await Respond(context.Response, await _requestHandler.HandleActionRequest(context.Request, _configuration).ConfigureAwait(false)).ConfigureAwait(false);
             else if (context.Request.Path == $"/{_configuration.RoutePrefix}/options") 
-                await Respond(context.Response, await _requestHandler.HandleOptionsRequest(context.Request, _configuration));
+                await Respond(context.Response, await _requestHandler.HandleOptionsRequest(context.Request, _configuration).ConfigureAwait(false)).ConfigureAwait(false);
             else
                 await _next(context).ConfigureAwait(false);
         }

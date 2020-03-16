@@ -19,7 +19,7 @@ namespace SlackNet.AzureFunctionExample
                         Text = "pong",
                         Attachments = { new Attachment { Text = $"Count: {++_count}" } },
                         Channel = slackEvent.Channel
-                    });
+                    }).ConfigureAwait(false);
         }
     }
 }

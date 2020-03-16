@@ -46,7 +46,7 @@ namespace SlackNet.Tests
         {
             _rtm.Connect().Returns(new ConnectResponse { Self = new Self { Id = "foo", Name = "bar" } });
 
-            await _sut.Connect();
+            await _sut.Connect().ConfigureAwait(false);
 
             _sut.Id.ShouldBe("foo");
             _sut.Name.ShouldBe("bar");
@@ -60,7 +60,7 @@ namespace SlackNet.Tests
                     m.Text += "++";
                     return m;
                 }));
-            await Connect();
+            await Connect().ConfigureAwait(false);
             var observer = ObserveIncomingMessages();
 
             _incomingMessages.OnNext(new MessageEvent { Text = "foo" });
@@ -77,30 +77,30 @@ namespace SlackNet.Tests
                     m.Text += "++";
                     return m;
                 }));
-            await Connect();
+            await Connect().ConfigureAwait(false);
 
             _sut.OnNext(new BotMessage { Text = "foo" });
 
-            await _api.Chat.Received().PostMessage(Arg.Is<Message>(m => m.Text == "foo++"), Arg.Any<CancellationToken?>());
+            await _api.Chat.Received().PostMessage(Arg.Is<Message>(m => m.Text == "foo++"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
         }
 
         [Test]
         public async Task AddHandler_HandlesMessages()
         {
             var handler = Substitute.For<IMessageHandler>();
-            await Connect();
+            await Connect().ConfigureAwait(false);
 
             _sut.AddHandler(handler);
             _incomingMessages.OnNext(new MessageEvent { Text = "foo" });
 
-            await handler.Received().HandleMessage(Arg.Is<IMessage>(m => m.Text == "foo"));
+            await handler.Received().HandleMessage(Arg.Is<IMessage>(m => m.Text == "foo")).ConfigureAwait(false);
         }
 
         [Test]
         public async Task OnMessageEvent_HandlesMessages()
         {
             var eventHandler = Substitute.For<EventHandler<IMessage>>();
-            await Connect();
+            await Connect().ConfigureAwait(false);
 
             _sut.OnMessage += eventHandler;
             _incomingMessages.OnNext(new MessageEvent { Text = "foo" });
@@ -112,7 +112,7 @@ namespace SlackNet.Tests
         public async Task Messages_ReceivesMessages()
         {
             var observer = _scheduler.CreateObserver<IMessage>();
-            await Connect();
+            await Connect().ConfigureAwait(false);
 
             _sut.Messages.Subscribe(observer);
             _incomingMessages.OnNext(new MessageEvent { Text = "foo" });
@@ -124,7 +124,7 @@ namespace SlackNet.Tests
         [Test]
         public async Task IncomingMessage_MapsProperties()
         {
-            await Connect();
+            await Connect().ConfigureAwait(false);
             var incoming = new MessageEvent
             {
                 Ts = "1",
@@ -155,20 +155,20 @@ namespace SlackNet.Tests
         [Test]
         public async Task IncomingMessage_CanReply()
         {
-            await Connect();
+            await Connect().ConfigureAwait(false);
             var observer = _scheduler.CreateObserver<IMessage>();
             _sut.Messages.Subscribe(observer);
 
             _incomingMessages.OnNext(new MessageEvent());
-            await observer.Messages[0].Value.Value.ReplyWith("foo");
+            await observer.Messages[0].Value.Value.ReplyWith("foo").ConfigureAwait(false);
 
-            await _api.Chat.Received().PostMessage(Arg.Is<Message>(m => m.Text == "foo"), Arg.Any<CancellationToken?>());
+            await _api.Chat.Received().PostMessage(Arg.Is<Message>(m => m.Text == "foo"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
         }
 
         [Test]
         public async Task IncomingMessages_OnlyPlainMessagesHandled()
         {
-            await Connect();
+            await Connect().ConfigureAwait(false);
             var observer = _scheduler.CreateObserver<IMessage>();
             _sut.Messages.Subscribe(observer);
 
@@ -490,11 +490,11 @@ namespace SlackNet.Tests
                 Hub = new Channel { Id = "channel" },
                 Ts = "123"
             };
-            await Connect();
+            await Connect().ConfigureAwait(false);
 
-            await _sut.Send(new BotMessage { ReplyTo = slackMessage, CreateThread = false });
+            await _sut.Send(new BotMessage { ReplyTo = slackMessage, CreateThread = false }).ConfigureAwait(false);
 
-            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == null), Arg.Any<CancellationToken?>());
+            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == null), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
         }
 
         [Test]
@@ -506,11 +506,11 @@ namespace SlackNet.Tests
                 Ts = "123",
                 ThreadTs = "456"
             };
-            await Connect();
+            await Connect().ConfigureAwait(false);
 
-            await _sut.Send(new BotMessage { ReplyTo = slackMessage, CreateThread = false });
+            await _sut.Send(new BotMessage { ReplyTo = slackMessage, CreateThread = false }).ConfigureAwait(false);
 
-            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == slackMessage.ThreadTs), Arg.Any<CancellationToken?>());
+            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == slackMessage.ThreadTs), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
         }
 
         [Test]
@@ -521,11 +521,11 @@ namespace SlackNet.Tests
                 Hub = new Channel { Id = "channel" },
                 Ts = "123"
             };
-            await Connect();
+            await Connect().ConfigureAwait(false);
 
-            await _sut.Send(new BotMessage { ReplyTo = slackMessage, CreateThread = true });
+            await _sut.Send(new BotMessage { ReplyTo = slackMessage, CreateThread = true }).ConfigureAwait(false);
 
-            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == slackMessage.Ts), Arg.Any<CancellationToken?>());
+            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == slackMessage.Ts), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
         }
 
         [Test]
@@ -537,27 +537,27 @@ namespace SlackNet.Tests
                 Ts = "123",
                 ThreadTs = "456"
             };
-            await Connect();
+            await Connect().ConfigureAwait(false);
 
-            await _sut.Send(new BotMessage { ReplyTo = slackMessage, Hub = new HubByRef(new Channel { Id = "other_channel" }) });
+            await _sut.Send(new BotMessage { ReplyTo = slackMessage, Hub = new HubByRef(new Channel { Id = "other_channel" }) }).ConfigureAwait(false);
 
-            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == null && message.Channel == "other_channel"), Arg.Any<CancellationToken?>());
+            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == null && message.Channel == "other_channel"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
         }
 
         [Test]
         public async Task Send_MessagesLimitedTo1PerSecond()
         {
-            await Connect();
+            await Connect().ConfigureAwait(false);
 
             var sent1 = _sut.Send(new BotMessage { Text = "foo" });
             var sent2 = _sut.Send(new BotMessage { Text = "bar" });
 
-            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.Text == "foo"), Arg.Any<CancellationToken?>());
-            await _api.Chat.DidNotReceive().PostMessage(Arg.Is<Message>(message => message.Text == "bar"), Arg.Any<CancellationToken?>());
+            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.Text == "foo"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
+            await _api.Chat.DidNotReceive().PostMessage(Arg.Is<Message>(message => message.Text == "bar"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
 
             _scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
 
-            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.Text == "bar"), Arg.Any<CancellationToken?>());
+            await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.Text == "bar"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
         }
 
         [Test]
@@ -565,7 +565,7 @@ namespace SlackNet.Tests
         {
             var expectedException = new SlackException(new ErrorResponse());
             _api.Chat.PostMessage(Arg.Any<Message>(), Arg.Any<CancellationToken?>()).Throws(expectedException);
-            await Connect();
+            await Connect().ConfigureAwait(false);
 
             _sut.Send(new BotMessage())
                 .ShouldFail().And.ShouldBe(expectedException);
@@ -597,7 +597,7 @@ namespace SlackNet.Tests
         private async Task Connect()
         {
             _rtm.Connect().Returns(new ConnectResponse { Self = new Self { Id = "test_bot", Name = "TestBot" } });
-            await _sut.Connect();
+            await _sut.Connect().ConfigureAwait(false);
         }
 
         private ITestableObserver<IMessage> ObserveIncomingMessages()

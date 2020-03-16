@@ -157,7 +157,7 @@ namespace SlackNet.AspNetCore
 
         private async Task<SlackResponse> HandleViewSubmission(ViewSubmission viewSubmission)
         {
-            var response = await _slackViews.HandleSubmission(viewSubmission);
+            var response = await _slackViews.HandleSubmission(viewSubmission).ConfigureAwait(false);
 
             return response?.ResponseAction == null
                 ? (SlackResponse)new EmptyResponse(HttpStatusCode.OK)
@@ -166,7 +166,7 @@ namespace SlackNet.AspNetCore
 
         private async Task<SlackResponse> HandleViewClosed(ViewClosed viewClosed)
         {
-            await _slackViews.HandleClose(viewClosed);
+            await _slackViews.HandleClose(viewClosed).ConfigureAwait(false);
             return new EmptyResponse(HttpStatusCode.OK);
         }
 
@@ -196,7 +196,7 @@ namespace SlackNet.AspNetCore
         private static async void ReplaceRequestStreamWithMemoryStream(HttpRequest request)
         {
             var buffer = new MemoryStream();
-            await request.Body.CopyToAsync(buffer);
+            await request.Body.CopyToAsync(buffer).ConfigureAwait(false);
             buffer.Seek(0, SeekOrigin.Begin);
 
             request.Body = buffer;

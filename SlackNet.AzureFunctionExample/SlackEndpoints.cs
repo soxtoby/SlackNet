@@ -23,19 +23,19 @@ namespace SlackNet.AzureFunctionExample
         [FunctionName("event")]
         public async Task<IActionResult> Event([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request)
         {
-            return SlackResponse(await _requestHandler.HandleEventRequest(request, _endpointConfig));
+            return SlackResponse(await _requestHandler.HandleEventRequest(request, _endpointConfig).ConfigureAwait(false));
         }
 
         [FunctionName("action")]
         public async Task<IActionResult> Action([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request)
         {
-            return SlackResponse(await _requestHandler.HandleActionRequest(request, _endpointConfig));
+            return SlackResponse(await _requestHandler.HandleActionRequest(request, _endpointConfig).ConfigureAwait(false));
         }
 
         [FunctionName("options")]
         public async Task<IActionResult> Options([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request)
         {
-            return SlackResponse(await _requestHandler.HandleOptionsRequest(request, _endpointConfig));
+            return SlackResponse(await _requestHandler.HandleOptionsRequest(request, _endpointConfig).ConfigureAwait(false));
         }
 
         private ContentResult SlackResponse(SlackResponse response)
