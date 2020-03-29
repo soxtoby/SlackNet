@@ -22,4 +22,16 @@ namespace SlackNet.Blocks
         [IgnoreIfEmpty]
         public IList<Option> InitialOptions { get; set; } = new List<Option>();
     }
+
+    [SlackType("checkboxes")]
+    public class CheckboxGroupAction : BlockAction
+    {
+        public IList<Option> SelectedOptions { get; set; } = new List<Option>();
+    }
+
+    [SlackType("checkboxes")]
+    public class CheckboxGroupValue : ElementValue
+    {
+        public IList<Option> SelectedOptions { get; set; } = new List<Option>();
+    }
 }

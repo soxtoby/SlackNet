@@ -13,4 +13,16 @@
         /// </summary>
         public string InitialUser { get; set; }
     }
+
+    [SlackType("users_select")]
+    public class UserSelectAction : BlockAction
+    {
+        public string SelectedUser { get; set; }
+    }
+
+    [SlackType("users_select")]
+    public class UserSelectValue : ElementValue
+    {
+        public string SelectedUser { get; set; }
+    }
 }

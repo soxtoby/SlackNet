@@ -21,4 +21,16 @@ namespace SlackNet.Blocks
         /// </summary>
         public DateTime? InitialDate { get; set; }
     }
+
+    [SlackType("datepicker")]
+    public class DatePickerAction : BlockAction
+    {
+        public DateTime SelectedDate { get; set; }
+    }
+
+    [SlackType("datepicker")]
+    public class DatePickerValue : ElementValue
+    {
+        public DateTime SelectedDate { get; set; }
+    }
 }

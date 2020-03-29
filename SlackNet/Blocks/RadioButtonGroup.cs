@@ -21,4 +21,16 @@ namespace SlackNet.Blocks
         /// </summary>
         public Option InitialOption { get; set; }
     }
+
+    [SlackType("radio_buttons")]
+    public class RadioButtonGroupAction : BlockAction
+    {
+        public Option SelectedOption { get; set; }
+    }
+
+    [SlackType("radio_buttons")]
+    public class RadioButtonGroupValue : ElementValue
+    {
+        public Option SelectedOption { get; set; }
+    }
 }

@@ -13,4 +13,16 @@
         /// </summary>
         public string InitialConversation { get; set; }
     }
+
+    [SlackType("conversations_select")]
+    public class ConversationSelectAction : BlockAction
+    {
+        public string SelectedConversation { get; set; }
+    }
+
+    [SlackType("conversations_select")]
+    public class ConversationSelectValue : ElementValue
+    {
+        public string SelectedConversation { get; set; }
+    }
 }

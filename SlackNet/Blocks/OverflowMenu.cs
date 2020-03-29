@@ -21,4 +21,16 @@ namespace SlackNet.Blocks
         /// </summary>
         public IList<OverflowOption> Options { get; set; } = new List<OverflowOption>();
     }
+
+    [SlackType("overflow")]
+    public class OverflowAction : BlockAction
+    {
+        public Option SelectedOption { get; set; }
+    }
+
+    [SlackType("overflow")]
+    public class OverflowValue : ElementValue
+    {
+        public Option SelectedOption { get; set; }
+    }
 }

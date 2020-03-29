@@ -38,4 +38,10 @@ namespace SlackNet.Blocks
         /// </summary>
         public int? MaxLength { get; set; }
     }
+
+    [SlackType("plain_text_input")]
+    public class PlainTextInputValue : ElementValue
+    {
+        public string Value { get; set; }
+    }
 }

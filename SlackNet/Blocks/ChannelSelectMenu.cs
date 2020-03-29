@@ -13,4 +13,16 @@
         /// </summary>
         public string InitialChannel { get; set; }
     }
+
+    [SlackType("channels_select")]
+    public class ChannelSelectAction : BlockAction
+    {
+        public string SelectedChannel { get; set; }
+    }
+
+    [SlackType("channels_select")]
+    public class ChannelSelectValue : ElementValue
+    {
+        public string SelectedChannel { get; set; }
+    }
 }

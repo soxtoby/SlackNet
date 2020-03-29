@@ -17,4 +17,16 @@ namespace SlackNet.Blocks
         /// </summary>
         public Option InitialOption { get; set; }
     }
+
+    [SlackType("external_select")]
+    public class ExternalSelectAction : BlockAction
+    {
+        public Option SelectedOption { get; set; }
+    }
+
+    [SlackType("external_select")]
+    public class ExternalSelectValue : ElementValue
+    {
+        public Option SelectedOption { get; set; }
+    }
 }

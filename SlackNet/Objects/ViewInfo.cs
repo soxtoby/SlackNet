@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using SlackNet.Blocks;
 
 namespace SlackNet
@@ -29,11 +30,30 @@ namespace SlackNet
         /// This final child object will contain the type and submitted value of the input block element.
         /// </summary>
         public Dictionary<string, Dictionary<string, ElementValue>> Values { get; set; } = new Dictionary<string, Dictionary<string, ElementValue>>();
-    }
 
-    public class ElementValue
-    {
-        public string Type { get; set; }
-        public string Value { get; set; }
+        /// <summary>
+        /// Get an element value by the <see cref="Block.BlockId"/> of the block it is in, and its <see cref="IInputBlockElement.ActionId"/>.
+        /// </summary>
+        /// <returns>Element value if it can be found and is the specified type, otherwise null.</returns>
+        public TValue GetValue<TValue>(string blockId, string actionId) where TValue : ElementValue
+        {
+            return Values.TryGetValue(blockId, out var blockValues)
+                   && blockValues.TryGetValue(actionId, out var elementValue)
+                ? elementValue as TValue
+                : null;
+        }
+
+        /// <summary>
+        /// Get an element value by its <see cref="IInputBlockElement.ActionId"/>. Assumes action ID is unique in the view.
+        /// </summary>
+        /// <returns>Element value if it can be found and is the specified type, otherwise null.</returns>
+        public TValue GetValue<TValue>(string actionId) where TValue : ElementValue
+        {
+            return Values.Values
+                .SelectMany(b => b)
+                .Where(v => v.Key == actionId)
+                .Select(v => v.Value)
+                .FirstOrDefault() as TValue;
+        }
     }
 }

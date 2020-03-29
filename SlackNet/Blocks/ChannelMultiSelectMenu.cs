@@ -20,4 +20,16 @@ namespace SlackNet.Blocks
         /// </summary>
         public int? MaxSelectedItems { get; set; }
     }
+
+    [SlackType("multi_channels_select")]
+    public class ChannelMultiSelectAction : BlockAction
+    {
+        public IList<string> SelectedChannels { get; set; } = new List<string>();
+    }
+
+    [SlackType("multi_channels_select")]
+    public class ChannelMultiSelectValue : ElementValue
+    {
+        public IList<string> SelectedChannels { get; set; } = new List<string>();
+    }
 }

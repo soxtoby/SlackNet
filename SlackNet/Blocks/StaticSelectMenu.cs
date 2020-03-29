@@ -14,4 +14,16 @@
         /// </summary>
         public Option InitialOption { get; set; }
     }
+
+    [SlackType("static_select")]
+    public class StaticSelectAction : BlockAction
+    {
+        public Option SelectedOption { get; set; }
+    }
+
+    [SlackType("static_select")]
+    public class StaticSelectValue : ElementValue
+    {
+        public Option SelectedOption { get; set; }
+    }
 }

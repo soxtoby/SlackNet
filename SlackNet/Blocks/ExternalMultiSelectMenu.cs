@@ -23,4 +23,16 @@ namespace SlackNet.Blocks
         /// </summary>
         public int? MaxSelectedItems { get; set; }
     }
+
+    [SlackType("multi_external_select")]
+    public class ExternalMultiSelectAction
+    {
+        public IList<Option> SelectedOptions { get; set; } = new List<Option>();
+    }
+
+    [SlackType("multi_external_select")]
+    public class ExternalMultiSelectValue
+    {
+        public IList<Option> SelectedOptions { get; set; } = new List<Option>();
+    }
 }
