@@ -76,7 +76,7 @@ namespace SlackNet.AspNetCore
             switch (eventRequest)
             {
                 case UrlVerification urlVerification:
-                    return new FormUrlEncodedResponse(HttpStatusCode.OK, urlVerification.Challenge);
+                    return new StringResponse(HttpStatusCode.OK, urlVerification.Challenge);
 
                 case EventCallback eventCallback:
                     _slackEvents.Handle(eventCallback);

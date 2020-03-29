@@ -36,13 +36,4 @@ namespace SlackNet.AspNetCore
         public override string ContentType => "application/json";
         public override string Body(SlackJsonSettings jsonSettings) => JsonConvert.SerializeObject(_data, jsonSettings.SerializerSettings);
     }
-
-    class FormUrlEncodedResponse : SlackResponse
-    {
-        private readonly string _body;
-        public FormUrlEncodedResponse(HttpStatusCode status, string body) : base(status) => _body = body;
-
-        public override string ContentType => "application/x-www-form-urlencoded";
-        public override string Body(SlackJsonSettings jsonSettings) => _body;
-    }
 }
