@@ -31,6 +31,11 @@ namespace SlackNet.Events
         public string LatestReply { get; set; }
         public bool IsStarred { get; set; }
         public IList<Reaction> Reactions { get; set; } = new List<Reaction>();
+        public IList<File> Files { get; set; } = new List<File>();
+        /// <summary>
+        /// Indicates whether a file share happened at upload time, or some time later.
+        /// </summary>
+        public bool Upload { get; set; }
     }
 
     public class Edit
