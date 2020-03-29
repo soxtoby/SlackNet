@@ -60,6 +60,13 @@ namespace SlackNet
             type.GetCustomAttribute<SlackTypeAttribute>()?.TypeIdentifier
             ?? SnakeCase(type.Name);
 
+        /// <summary>
+        /// Format a <see cref="DateTime"/> in users' own locales.
+        /// See https://api.slack.com/reference/surfaces/formatting#date-formatting for more information.
+        /// </summary>
+        public static string FormatForMessage(this DateTime dateTime, string formatTokenString, string fallbackText = null, string linkUrl = null)
+            => $"<!date^{dateTime.ToTimestamp()}^{formatTokenString}{(linkUrl != null ? "^" + linkUrl : string.Empty)}|{fallbackText ?? dateTime.ToString("R")}>";
+
         private static string SnakeCase(string value) => new SnakeCaseNamingStrategy().GetPropertyName(value, false);
 
         public static async Task<T> NullIfNotFound<T>(this Task<T> apiTask) where T : class
