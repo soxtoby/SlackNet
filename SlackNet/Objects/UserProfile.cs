@@ -16,11 +16,17 @@ namespace SlackNet
         public string Skype { get; set; }
         public string Phone { get; set; }
         public bool AlwaysActive { get; set; }
+        [JsonProperty("image_24")]
         public string Image24 { get; set; }
+        [JsonProperty("image_32")]
         public string Image32 { get; set; }
+        [JsonProperty("image_48")]
         public string Image48 { get; set; }
+        [JsonProperty("image_72")]
         public string Image72 { get; set; }
+        [JsonProperty("image_192")]
         public string Image192 { get; set; }
+        [JsonProperty("image_512")]
         public string Image512 { get; set; }
         [JsonConverter(typeof(IgnoreArrayConverter))] // Slack returns an empty array instead of an object if profile has been modified, but no custom fields have been set
         public IDictionary<string, UserProfileField> Fields { get; set; } = new Dictionary<string, UserProfileField>();
