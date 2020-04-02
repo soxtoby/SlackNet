@@ -25,6 +25,7 @@ namespace SlackNet
         IGroupsApi Groups { get; }
         IImApi Im { get; }
         IMigrationApi Migration { get; }
+        IModalApi Modal { get; }
         IMpimApi Mpim { get; }
         IOAuthApi OAuth { get; }
         IPinsApi Pins { get; }
@@ -67,7 +68,7 @@ namespace SlackNet
         /// <param name="args">Arguments to send to Slack. Authorization headers will be added automatically.</param>
         /// <param name="cancellationToken"></param>
         Task Post(string apiMethod, Args args, CancellationToken? cancellationToken);
-        
+
         /// <summary>
         /// Calls a Slack API that requires POST content.
         /// </summary>
@@ -76,7 +77,7 @@ namespace SlackNet
         /// <param name="args">Arguments to send to Slack. Authorization headers will be added automatically.</param>
         /// <param name="cancellationToken"></param>
         Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class;
-        
+
         /// <summary>
         /// Calls a Slack API that requires POST content.
         /// </summary>
@@ -85,7 +86,7 @@ namespace SlackNet
         /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
         /// <param name="cancellationToken"></param>
         Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken);
-        
+
         /// <summary>
         /// Calls a Slack API that requires POST content.
         /// </summary>
@@ -134,6 +135,7 @@ namespace SlackNet
         public IGroupsApi Groups => new GroupsApi(this);
         public IImApi Im => new ImApi(this);
         public IMigrationApi Migration => new MigrationApi(this);
+        public IModalApi Modal => new ModalApi(this);
         public IMpimApi Mpim => new MpimApi(this);
         public IOAuthApi OAuth => new OAuthApi(this);
         public IPinsApi Pins => new PinsApi(this);
@@ -173,7 +175,7 @@ namespace SlackNet
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, Url(apiMethod, args));
             return Deserialize<T>(await _http.Execute<WebApiResponse>(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false));
         }
-        
+
         /// <summary>
         /// Calls a Slack API that requires POST content.
         /// </summary>
@@ -223,10 +225,10 @@ namespace SlackNet
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, Url(apiMethod, args)) { Content = content };
             return Deserialize<T>(await _http.Execute<WebApiResponse>(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false));
         }
-            
+
         private string Url(string apiMethod) =>
             _urlBuilder.Url(apiMethod, new Args());
-        
+
         private string Url(string apiMethod, Args args)
         {
             if (!args.ContainsKey("token"))
