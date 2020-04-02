@@ -22,9 +22,9 @@ namespace SlackNet
         public bool IsBot { get; set; }
         public bool IsStranger { get; set; }
         public int Updated { get; set; }
-        [JsonIgnore]
         public bool IsAppUser { get; set; }
         public bool IsInvitedUser { get; set; }
+        [JsonIgnore]
         public DateTime UpdateTime => Updated.ToDateTime().GetValueOrDefault();
         [JsonProperty("has_2fa")]
         public bool Has2FA { get; set; }
