@@ -189,6 +189,7 @@ namespace SlackNet.Tests
             public IGroupsApi Groups { get; }
             public IImApi Im { get; }
             public IMigrationApi Migration { get; }
+            public IModalApi Modal { get; }
             public IMpimApi Mpim { get; }
             public IOAuthApi OAuth { get; }
             public IPinsApi Pins { get; }
