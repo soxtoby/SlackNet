@@ -25,12 +25,12 @@ namespace SlackNet.Blocks
     [SlackType("datepicker")]
     public class DatePickerAction : BlockAction
     {
-        public DateTime SelectedDate { get; set; }
+        public DateTime? SelectedDate { get; set; }
     }
 
     [SlackType("datepicker")]
     public class DatePickerValue : ElementValue
     {
-        public DateTime SelectedDate { get; set; }
+        public DateTime? SelectedDate { get; set; }
     }
 }
