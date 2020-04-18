@@ -250,7 +250,7 @@ namespace SlackNet.WebApi
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         ) =>
-            Upload("file", new StringContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
+            Upload(new StringContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
 
         /// <summary>
         /// Allows you to create or upload an existing file.
@@ -263,7 +263,8 @@ namespace SlackNet.WebApi
         /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
-        public Task<FileResponse> Upload(byte[] fileContents,
+        public Task<FileResponse> Upload(
+            byte[] fileContents,
             string fileType = null,
             string fileName = null,
             string title = null,
@@ -272,7 +273,7 @@ namespace SlackNet.WebApi
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         ) =>
-            Upload("file", new ByteArrayContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
+            Upload(new ByteArrayContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
 
         /// <summary>
         /// Allows you to create or upload an existing file.
@@ -295,7 +296,29 @@ namespace SlackNet.WebApi
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         ) =>
-            Upload("file", new StreamContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
+            Upload(new StreamContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
+
+        private Task<FileResponse> Upload(
+            HttpContent fileContent,
+            string fileType,
+            string fileName,
+            string title,
+            string initialComment,
+            string threadTs,
+            IEnumerable<string> channels,
+            CancellationToken? cancellationToken
+        ) =>
+            _client.Post<FileResponse>("files.upload", new Args
+                    {
+                        { "filetype", fileType },
+                        { "filename", fileName },
+                        { "title", title },
+                        { "initial_comment", initialComment },
+                        { "channels", channels },
+                        { "thread_ts", threadTs }
+                    },
+                new MultipartFormDataContent { { fileContent, "file", fileName ?? "file" } },
+                cancellationToken);
 
         /// <summary>
         /// Allows you to create or upload an existing file as a snippet.
@@ -320,29 +343,17 @@ namespace SlackNet.WebApi
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         ) =>
-            Upload("content", new StringContent(snippet), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
-
-        private Task<FileResponse> Upload(
-            string bodyName,
-            HttpContent fileContent,
-            string fileType,
-            string fileName,
-            string title,
-            string initialComment,
-            string threadTs,
-            IEnumerable<string> channels,
-            CancellationToken? cancellationToken
-        ) =>
-            _client.Post<FileResponse>("files.upload", new Args
+            _client.Post<FileResponse>("files.upload", new Args(),
+                new FormUrlEncodedContent(new Dictionary<string, string>
                     {
                         { "filetype", fileType },
                         { "filename", fileName },
                         { "title", title },
                         { "initial_comment", initialComment },
-                        { "channels", channels },
-                        { "thread_ts", threadTs }
-                    },
-                new MultipartFormDataContent { { fileContent, bodyName, fileName ?? "file" } },
+                        { "channels", string.Join(",", channels) },
+                        { "thread_ts", threadTs },
+                        { "content", snippet }
+                    }),
                 cancellationToken);
     }
 }
