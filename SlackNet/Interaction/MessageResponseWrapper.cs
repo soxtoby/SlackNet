@@ -18,7 +18,7 @@ namespace SlackNet.Interaction
         public bool UnfurlLinks => _response.Message.UnfurlLinks;
         public bool UnfurlMedia => _response.Message.UnfurlMedia;
         public string Username => _response.Message.Username;
-        public bool AsUser => _response.Message.AsUser;
+        public bool? AsUser => _response.Message.AsUser;
         public string IconUrl => _response.Message.IconUrl;
         public string IconEmoji => _response.Message.IconEmoji;
         public string ThreadTs => _response.Message.ThreadTs;

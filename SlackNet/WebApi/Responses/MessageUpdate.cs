@@ -37,6 +37,6 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Set to True to update the message as the authed user. Bot users in this context are considered authed users.
         /// </summary>
-        public bool AsUser { get; set; }
+        public bool? AsUser { get; set; }
     }
 }
