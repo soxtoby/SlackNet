@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SlackNet.Events;
 
 namespace SlackNet
 {
@@ -59,8 +58,8 @@ namespace SlackNet
 
     public class FileShares
     {
-        public IDictionary<string, FileShare> Public { get; set; }
-        public IDictionary<string, FileShare> Private { get; set; }
+        public IDictionary<string, IEnumerable<FileShare>> Public { get; set; }
+        public IDictionary<string, IEnumerable<FileShare>> Private { get; set; }
     }
 
     public class FileShare
@@ -77,5 +76,4 @@ namespace SlackNet
         public string ChannelName { get; set; }
         public string TeamId { get; set; }
     }
-
 }
