@@ -175,6 +175,11 @@ namespace SlackNet.Tests
                 return Task.FromResult(Activator.CreateInstance<T>());
             }
 
+            public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken)
+            {
+                throw new NotImplementedException();
+            }
+
             public IApiApi Api { get; }
             public IAuthApi Auth { get; }
             public IBotsApi Bots { get; }
