@@ -19,6 +19,11 @@ namespace SlackNet.Blocks
         /// Specifies the maximum number of items that can be selected in the menu. Minimum number is 1.
         /// </summary>
         public int? MaxSelectedItems { get; set; }
+
+        /// <summary>
+        /// A <see cref="ConversationFilter"/> object that reduces the list of available conversations using the specified criteria.
+        /// </summary>
+        public ConversationFilter Filter { get; set; }
     }
 
     [SlackType("multi_conversations_select")]
