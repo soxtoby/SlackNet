@@ -159,7 +159,7 @@ namespace SlackNet.WebApi
             args["unfurl_links"] = message.UnfurlLinks;
             args["unfurl_media"] = message.UnfurlMedia;
             args["username"] = message.Username;
-            args["as_user"] = message.AsUser;
+            //args["as_user"] = message.AsUser;
             args["icon_url"] = message.IconUrl;
             args["icon_emoji"] = message.IconEmoji;
             args["thread_ts"] = message.ThreadTs;
@@ -179,7 +179,7 @@ namespace SlackNet.WebApi
                         { "channel", message.Channel },
                         { "text", message.Text },
                         { "user", userId },
-                        { "as_user", message.AsUser },
+                        //{ "as_user", message.AsUser },
                         { "attachments", message.Attachments },
                         { "blocks", message.Blocks },
                         { "link_names", message.LinkNames },

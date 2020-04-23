@@ -103,7 +103,7 @@ namespace SlackNet
         /// <param name="responseUrl">A temporary webhook that can be used to send messages in response to interactions.</param>
         /// <param name="message">The message to respond with.</param>
         /// <param name="cancellationToken"></param>
-        Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken);
+        Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken = null);
     }
 
     public class SlackApiClient : ISlackApiClient
@@ -232,7 +232,7 @@ namespace SlackNet
         /// <param name="responseUrl">A temporary webhook that can be used to send messages in response to interactions.</param>
         /// <param name="message">The message to respond with.</param>
         /// <param name="cancellationToken"></param>
-        public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken) =>
+        public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken = null) =>
             Post<object>(responseUrl, message, cancellationToken);
 
         private async Task<T> Post<T>(string requestUri, object body, CancellationToken? cancellationToken) where T : class

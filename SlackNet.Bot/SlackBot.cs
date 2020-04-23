@@ -459,7 +459,7 @@ namespace SlackNet.Bot
                     LinkNames = message.LinkNames,
                     UnfurlLinks = message.UnfurlLinks,
                     UnfurlMedia = message.UnfurlMedia,
-                    AsUser = true
+                    //AsUser = true
                 }, message.CancellationToken).ConfigureAwait(false);
 
         private async Task<bool> ReplyingInDifferentHub(BotMessage message)

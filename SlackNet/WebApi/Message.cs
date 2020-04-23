@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SlackNet.Blocks;
 using SlackNet.Events;
 
@@ -54,6 +55,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Pass True to post the message as the authed user, instead of as a bot.
         /// </summary>
+        [Obsolete("as_user: This argument may not be used with newer bot tokens.")]
         bool? AsUser { get; }
 
         /// <summary>
@@ -121,6 +123,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Pass True to post the message as the authed user, instead of as a bot.
         /// </summary>
+        [Obsolete("as_user: This argument may not be used with newer bot tokens.")]
         public bool? AsUser { get; set; }
         /// <summary>
         /// URL to an image to use as the icon for this message. Must be used in conjunction with <see cref="AsUser"/> set to False, otherwise ignored.

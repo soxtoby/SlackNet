@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SlackNet.Blocks;
 using SlackNet.WebApi;
@@ -18,6 +19,7 @@ namespace SlackNet.Interaction
         public bool UnfurlLinks => _response.Message?.UnfurlLinks ?? default;
         public bool UnfurlMedia => _response.Message?.UnfurlMedia ?? default;
         public string Username => _response.Message?.Username;
+        [Obsolete("as_user: This argument may not be used with newer bot tokens.")]
         public bool? AsUser => _response.Message?.AsUser;
         public string IconUrl => _response.Message?.IconUrl;
         public string IconEmoji => _response.Message?.IconEmoji;
