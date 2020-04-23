@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +30,18 @@ namespace SlackNet
             return await Deserialize<T>(response).ConfigureAwait(false);
         }
 
-        private async Task<T> Deserialize<T>(HttpResponseMessage response) =>
-            JsonSerializer.Create(_jsonSettings.SerializerSettings).Deserialize<T>(new JsonTextReader(new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(false))));
+        private async Task<T> Deserialize<T>(HttpResponseMessage response)
+        {
+            var reader = new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(false));
+            try { return JsonSerializer.Create(_jsonSettings.SerializerSettings).Deserialize<T>(new JsonTextReader(reader)); }
+            catch (JsonReaderException)
+            {
+                reader.BaseStream.Position = 0;
+                var body = reader.ReadToEnd();
+                if (body == "ok")
+                    return default;
+                throw;
+            }
+        }
     }
 }

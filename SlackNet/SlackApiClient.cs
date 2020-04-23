@@ -242,7 +242,7 @@ namespace SlackNet
             requestMessage.Content = new StringContent(JsonConvert.SerializeObject(body, _jsonSettings.SerializerSettings), Encoding.UTF8, "application/json");
 
             var response = await _http.Execute<WebApiResponse>(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
-            return Deserialize<T>(response);
+            return response != null ? Deserialize<T>(response) : null;
         }
 
         private string Url(string apiMethod) =>
