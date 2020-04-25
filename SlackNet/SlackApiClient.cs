@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
@@ -200,7 +201,7 @@ namespace SlackNet
         /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
         /// <param name="cancellationToken"></param>
         public Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class => 
-            Post<T>(Url(apiMethod), (object)args, cancellationToken);
+            Post<T>(Url(apiMethod), (object)StripNullArgs(args), cancellationToken);
 
         /// <summary>
         /// Calls a Slack API that requires POST content.
@@ -259,5 +260,9 @@ namespace SlackNet
             response.Ok
                 ? response.Data?.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings))
                 : throw new SlackException(response.Data?.ToObject<ErrorResponse>(JsonSerializer.Create(_jsonSettings.SerializerSettings)));
+
+        private static Args StripNullArgs(Args args) => 
+            args.Where(kv => kv.Value != null)
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
     }
 }
