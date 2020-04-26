@@ -26,7 +26,9 @@ namespace SlackNet
         {
             var response = await _client.SendAsync(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            return await Deserialize<T>(response).ConfigureAwait(false);
+            return response.Content.Headers.ContentType.MediaType == "application/json"
+                ? await Deserialize<T>(response).ConfigureAwait(false)
+                : default;
         }
 
         private async Task<T> Deserialize<T>(HttpResponseMessage response) =>

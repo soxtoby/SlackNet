@@ -242,7 +242,8 @@ namespace SlackNet
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
             requestMessage.Content = new StringContent(JsonConvert.SerializeObject(body, _jsonSettings.SerializerSettings), Encoding.UTF8, "application/json");
 
-            var response = await _http.Execute<WebApiResponse>(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+            var response = await _http.Execute<WebApiResponse>(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false)
+                ?? new WebApiResponse { Ok = true };
             return Deserialize<T>(response);
         }
 
