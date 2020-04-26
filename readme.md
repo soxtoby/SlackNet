@@ -81,8 +81,25 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 }
 ```
 
-See the `SlackNet.EventsExample` project for more detail.
+Add event handler registrations inside the AddSlackNet callback. See the `SlackNet.EventsExample` project for more detail.
 
+#### Azure Functions
+SlackNet.AspNetCore can be used in Azure Functions as well, although it's a little more manual at the moment.
+
+You'll need to [enable dependency injection](https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection) in your project, then include in your Startup class:
+```c#
+public override void Configure(IFunctionsHostBuilder builder)
+{
+    builder.Services.AddSlackNet(c => c.UseApiToken("<your OAuth access token here>"));
+    builder.Services.AddSingleton(new SlackEndpointConfiguration()
+        .UseSigningSecret("<your signing secret here>"));
+}
+```
+
+Copy [SlackEndpoint.cs](https://github.com/soxtoby/SlackNet/blob/master/SlackNet.AzureFunctionExample/SlackEndpoints.cs) into your project.
+This provides the functions for Slack to call, and delegates request handling the same way the regular ASP.NET integration does, with the same methods for registering event handlers as above.
+
+See the `SlackNet.AzureFunctionExample` and `SlackNet.EventsExample` projects for more detail.
 
 ## Contributing
 Contributions are welcome. Currently, changes must be made on a feature branch, otherwise the CI build will fail.
