@@ -25,13 +25,13 @@ namespace SlackNet.Blocks
     }
 
     [SlackType("multi_external_select")]
-    public class ExternalMultiSelectAction
+    public class ExternalMultiSelectAction : BlockAction
     {
         public IList<Option> SelectedOptions { get; set; } = new List<Option>();
     }
 
     [SlackType("multi_external_select")]
-    public class ExternalMultiSelectValue
+    public class ExternalMultiSelectValue : ElementValue
     {
         public IList<Option> SelectedOptions { get; set; } = new List<Option>();
     }
