@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet", "SlackNet\SlackNet.csproj", "{2E9A9F53-6AA7-464F-B757-EBAC3E837D8B}"
 EndProject
@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet.EventsExample", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet.AspNetCore", "SlackNet.AspNetCore\SlackNet.AspNetCore.csproj", "{0AD73D44-61B4-47EC-BFB8-243851CE5E1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackNet.BotExample", "SlackNet.BotExample\SlackNet.BotExample.csproj", "{047F361A-4C26-4FD6-B322-46FE8DECD1EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet.BotExample", "SlackNet.BotExample\SlackNet.BotExample.csproj", "{047F361A-4C26-4FD6-B322-46FE8DECD1EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackNet.AzureFunctionExample", "SlackNet.AzureFunctionExample\SlackNet.AzureFunctionExample.csproj", "{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{047F361A-4C26-4FD6-B322-46FE8DECD1EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{047F361A-4C26-4FD6-B322-46FE8DECD1EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{047F361A-4C26-4FD6-B322-46FE8DECD1EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

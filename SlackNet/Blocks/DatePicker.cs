@@ -7,7 +7,7 @@ namespace SlackNet.Blocks
     /// Date picker elements can be used inside of section and actions blocks.
     /// </summary>
     [SlackType("datepicker")]
-    public class DatePicker : ActionElement
+    public class DatePicker : ActionElement, IInputBlockElement
     {
         public DatePicker() : base("datepicker") { }
 
@@ -20,5 +20,17 @@ namespace SlackNet.Blocks
         /// The initial date that is selected when the element is loaded.
         /// </summary>
         public DateTime? InitialDate { get; set; }
+    }
+
+    [SlackType("datepicker")]
+    public class DatePickerAction : BlockAction
+    {
+        public DateTime SelectedDate { get; set; }
+    }
+
+    [SlackType("datepicker")]
+    public class DatePickerValue : ElementValue
+    {
+        public DateTime SelectedDate { get; set; }
     }
 }

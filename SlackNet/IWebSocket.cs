@@ -17,7 +17,7 @@ namespace SlackNet
         IObservable<string> Messages { get; }
     }
 
-    class WebSocketWrapper : IWebSocket
+    public class WebSocketWrapper : IWebSocket
     {
         private readonly WebSocket _webSocket;
 

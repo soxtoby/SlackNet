@@ -13,12 +13,15 @@ namespace SlackNet.AspNetCore
             var configuration = new SlackServiceConfiguration(serviceCollection);
             configure(configuration);
             Default.RegisterServices((serviceType, createService) => serviceCollection.AddTransient(serviceType, c => createService(c.GetService)));
+            serviceCollection.AddSingleton<ISlackRequestHandler, SlackRequestHandler>();
             serviceCollection.AddSingleton<ISlackEvents, SlackEventsService>();
             serviceCollection.AddSingleton<ISlackBlockActions, SlackBlockActionsService>();
             serviceCollection.AddSingleton<ISlackBlockOptions, SlackBlockOptionsService>();
             serviceCollection.AddSingleton<ISlackInteractiveMessages, SlackInteractiveMessagesService>();
             serviceCollection.AddSingleton<ISlackMessageActions, SlackMessageActionsService>();
             serviceCollection.AddSingleton<ISlackOptions, SlackOptionsService>();
+            serviceCollection.AddSingleton<ISlackViews, SlackViewsService>();
+            serviceCollection.AddSingleton<ISlackSlashCommands, SlackSlashCommandsService>();
             serviceCollection.TryAddSingleton<IDialogSubmissionHandler, NullDialogSubmissionHandler>();
             serviceCollection.AddTransient<ISlackApiClient>(c => new SlackApiClient(c.GetService<IHttp>(), c.GetService<ISlackUrlBuilder>(), c.GetService<SlackJsonSettings>(), configuration.ApiToken));
             
@@ -29,7 +32,7 @@ namespace SlackNet.AspNetCore
         {
             var config = new SlackEndpointConfiguration();
             configure?.Invoke(config);
-            return app.UseMiddleware<SlackEventsMiddleware>(config);
+            return app.UseMiddleware<SlackRequestMiddleware>(config);
         }
     }
 }

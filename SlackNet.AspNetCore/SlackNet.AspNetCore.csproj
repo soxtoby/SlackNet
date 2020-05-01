@@ -9,6 +9,7 @@
     <RepositoryUrl>https://github.com/soxtoby/SlackNet.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Slack API RTM Events AspNetCore</PackageTags>
+    <UserSecretsId>841b14b1-9d6a-4ab7-9e1f-c1b2c227bb5f</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -17,7 +18,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Release\netstandard1.4\SlackNet.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\$(TargetFramework)\SlackNet.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

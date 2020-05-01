@@ -35,7 +35,14 @@ namespace SlackNet.EventsExample
                 .RegisterInteractiveMessageHandler<LegacyDialogDemo>(DialogDemoBase.EchoDialog)
                 .RegisterInteractiveMessageHandler<LegacyDialogDemo>(DialogDemoBase.ErrorDialog)
 
-                .RegisterDialogSubmissionHandler<DialogDemoHandler>());
+                .RegisterDialogSubmissionHandler<DialogDemoHandler>()
+
+                .RegisterEventHandler<AppHomeOpened, AppHome>()
+                .RegisterBlockActionHandler<ButtonAction, AppHome>()
+                .RegisterViewSubmissionHandler<AppHome>(AppHome.ModalCallbackId)
+            
+                .RegisterSlashCommandHandler<EchoCommand>("/echo")
+            );
             services.AddMvc();
         }
 
@@ -46,7 +53,7 @@ namespace SlackNet.EventsExample
                 app.UseDeveloperExceptionPage();
 
             app.UseSlackNet(c => c.UseSigningSecret(Configuration["Slack:SigningSecret"]));
-
+            
             app.UseMvc();
         }
     }

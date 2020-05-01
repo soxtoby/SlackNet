@@ -113,6 +113,8 @@ namespace SlackNet.Tests
             : param.ParameterType == typeof(IEnumerable<ConversationType>) ? Enumerable.Empty<ConversationType>()
             : param.ParameterType == typeof(IEnumerable<FileType>) ? Enumerable.Empty<FileType>()
             : param.ParameterType == typeof(UserProfile) ? new UserProfile()
+            : param.ParameterType == typeof(ViewDefinition) ? new ModalViewDefinition()
+            : param.ParameterType == typeof(HomeViewDefinition) ? new HomeViewDefinition()
             : param.ParameterType == typeof(byte[]) ? new byte[0]
             : param.ParameterType == typeof(Stream) ? Stream.Null
             : param.ParameterType == typeof(Args) ? new Args()
@@ -173,6 +175,11 @@ namespace SlackNet.Tests
                 return Task.FromResult(Activator.CreateInstance<T>());
             }
 
+            public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken)
+            {
+                throw new NotImplementedException();
+            }
+
             public IApiApi Api { get; }
             public IAuthApi Auth { get; }
             public IBotsApi Bots { get; }
@@ -203,6 +210,7 @@ namespace SlackNet.Tests
             public IUserGroupUsersApi UserGroupUsers { get; }
             public IUsersApi Users { get; }
             public IUserProfileApi UserProfile { get; }
+            public IViewsApi Views { get; }
         }
     }
 }

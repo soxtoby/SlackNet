@@ -7,6 +7,13 @@
     {
         public string User { get; set; }
         public string Channel { get; set; }
-        public string EventTs { get; set; }
+        public AppHomeTab Tab { get; set; }
+        public ViewInfo View { get; set; }
+    }
+
+    public enum AppHomeTab
+    {
+        Home,
+        Messages
     }
 }

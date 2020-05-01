@@ -49,4 +49,11 @@
         /// </summary>
         Danger
     }
+
+    [SlackType("button")]
+    public class ButtonAction : BlockAction
+    {
+        public TextObject Text { get; set; }
+        public string Value { get; set; }
+    }
 }

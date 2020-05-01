@@ -20,4 +20,16 @@ namespace SlackNet.Blocks
         /// </summary>
         public int? MaxSelectedItems { get; set; }
     }
+
+    [SlackType("multi_users_select")]
+    public class UserMultiSelectAction : BlockAction
+    {
+        public IList<string> SelectedUsers { get; set; } = new List<string>();
+    }
+
+    [SlackType("multi_users_select")]
+    public class UserMultiSelectValue : ElementValue
+    {
+        public IList<string> SelectedUsers { get; set; } = new List<string>();
+    }
 }

@@ -8,7 +8,7 @@
         /// <summary>
         /// A plain text object that defines the text shown in the option on the menu.
         /// </summary>
-        public PlainText Text { get; set; }
+        public TextObject Text { get; set; }
 
         /// <summary>
         /// The string value that will be passed to your app when this option is chosen.

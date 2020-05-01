@@ -10,7 +10,7 @@ There are three NuGet packages available to install, depending on your use case.
 ### SlackNet
 To use the Web API:
 ```c#
-var api = new SlackApiClient("<your API token here>");
+var api = new SlackApiClient("<your OAuth access token here>");
 ```
 then start calling methods:
 ```c#
@@ -19,7 +19,7 @@ var channels = await api.Channels.List();
 
 To use the RTM API:
 ```c#
-var rtm = new SlackRtmClient("<your API token here>");
+var rtm = new SlackRtmClient("<your OAuth access token here>");
 await rtm.Connect();
 rtm.Events.Subscribe(/* handle every event */);
 rtm.Messages.Subscribe(/* handle message events */);
@@ -72,7 +72,7 @@ In your Startup class:
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddSlackNet(c => c.UseApiToken("<your API token here>"));
+    services.AddSlackNet(c => c.UseApiToken("<your OAuth access token here>"));
 }
 
 public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -81,4 +81,28 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 }
 ```
 
-See the `SlackNet.EventsExample` project for more detail.
+Add event handler registrations inside the AddSlackNet callback. See the `SlackNet.EventsExample` project for more detail.
+
+#### Azure Functions
+SlackNet.AspNetCore can be used in Azure Functions as well, although it's a little more manual at the moment.
+
+You'll need to [enable dependency injection](https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection) in your project, then include in your Startup class:
+```c#
+public override void Configure(IFunctionsHostBuilder builder)
+{
+    builder.Services.AddSlackNet(c => c.UseApiToken("<your OAuth access token here>"));
+    builder.Services.AddSingleton(new SlackEndpointConfiguration()
+        .UseSigningSecret("<your signing secret here>"));
+}
+```
+
+Copy [SlackEndpoint.cs](https://github.com/soxtoby/SlackNet/blob/master/SlackNet.AzureFunctionExample/SlackEndpoints.cs) into your project.
+This provides the functions for Slack to call, and delegates request handling the same way the regular ASP.NET integration does, with the same methods for registering event handlers as above.
+
+See the `SlackNet.AzureFunctionExample` and `SlackNet.EventsExample` projects for more detail.
+
+## Contributing
+Contributions are welcome. Currently, changes must be made on a feature branch, otherwise the CI build will fail.
+
+Slack's API is large and changes often, and while their documentation is very good, it's not always 100% complete or accurate, which can easily lead to bugs or missing features in SlackNet.
+Raising issues or submitting pull requests for these sorts of discrepencies is highly appreciated, as realistically I have to rely on the documentation unless I happen to be using a particular API myself.

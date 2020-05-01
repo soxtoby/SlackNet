@@ -25,5 +25,12 @@
         /// A plain text object to define the text of the button that cancels the action.
         /// </summary>
         public PlainText Deny { get; set; }
+
+        /// <summary>
+        /// Defines the color scheme applied to the confirm button. A value of <c>danger</c> will display the button with a red background on desktop, or red text on mobile.
+        /// A value of <c>primary</c> will display the button with a green background on desktop, or blue text on mobile.
+        /// If this field is not provided, the default value will be <c>primary</c>.
+        /// </summary>
+        public string Style { get; set; }
     }
 }

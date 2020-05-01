@@ -251,7 +251,7 @@ namespace SlackNet.Bot
         {
             if (message.User == null && message is Events.BotMessage b)
             {
-                var botInfo = await GetBotUserById(b.BotId);
+                var botInfo = await GetBotUserById(b.BotId).ConfigureAwait(false);
                 message.User = botInfo.UserId;
             }
 
