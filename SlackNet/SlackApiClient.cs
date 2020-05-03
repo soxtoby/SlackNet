@@ -105,6 +105,13 @@ namespace SlackNet
         /// <param name="message">The message to respond with.</param>
         /// <param name="cancellationToken"></param>
         Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken);
+
+        /// <summary>
+        /// Returns a copy of the client using a different access token.
+        /// Useful when you need to run a command as a specific user.
+        /// </summary>
+        /// <param name="accessToken">New access token.</param>
+        ISlackApiClient WithAccessToken(string accessToken);
     }
 
     public class SlackApiClient : ISlackApiClient
@@ -129,6 +136,13 @@ namespace SlackNet
             _jsonSettings = jsonSettings;
             _token = token;
         }
+
+        /// <summary>
+        /// Returns a copy of the client using a different access token.
+        /// Useful when you need to run a command as a specific user.
+        /// </summary>
+        /// <param name="accessToken">New access token.</param>
+        public ISlackApiClient WithAccessToken(string accessToken) => new SlackApiClient(_http, _urlBuilder, _jsonSettings, accessToken);
 
         public IApiApi Api => new ApiApi(this);
         public IAuthApi Auth => new AuthApi(this);
