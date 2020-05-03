@@ -24,6 +24,12 @@ namespace SlackNet.Blocks
         /// A <see cref="ConversationFilter"/> object that reduces the list of available conversations using the specified criteria.
         /// </summary>
         public ConversationFilter Filter { get; set; }
+
+        /// <summary>
+        /// Pre-populates the select menu with the conversation that the user was viewing when they opened the modal, if available.
+        /// If <see cref="InitialConversations"/> is also supplied, it will be ignored.
+        /// </summary>
+        public bool DefaultToCurrentConversation { get; set; }
     }
 
     [SlackType("multi_conversations_select")]
