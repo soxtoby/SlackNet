@@ -6,17 +6,17 @@ using SlackNet.Interaction;
 
 namespace SlackNet.AspNetCore
 {
-    class ResolvedMessageActionHandler<T> : IMessageActionHandler
-        where T : IMessageActionHandler
+    class ResolvedMessageShortcutHandler<T> : IMessageShortcutHandler
+        where T : IMessageShortcutHandler
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public ResolvedMessageActionHandler(IServiceProvider serviceProvider)
+        public ResolvedMessageShortcutHandler(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
 
-        public async Task Handle(MessageAction request)
+        public async Task Handle(MessageShortcut request)
         {
             using (var scope = _serviceProvider.CreateScope())
             {

@@ -18,7 +18,7 @@ namespace SlackNet.AspNetCore
             serviceCollection.AddSingleton<ISlackBlockActions, SlackBlockActionsService>();
             serviceCollection.AddSingleton<ISlackBlockOptions, SlackBlockOptionsService>();
             serviceCollection.AddSingleton<ISlackInteractiveMessages, SlackInteractiveMessagesService>();
-            serviceCollection.AddSingleton<ISlackMessageActions, SlackMessageActionsService>();
+            serviceCollection.AddSingleton<ISlackMessageShortcuts, SlackMessageShortcutsService>();
             serviceCollection.AddSingleton<ISlackOptions, SlackOptionsService>();
             serviceCollection.AddSingleton<ISlackViews, SlackViewsService>();
             serviceCollection.AddSingleton<ISlackSlashCommands, SlackSlashCommandsService>();

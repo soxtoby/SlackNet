@@ -28,7 +28,7 @@ namespace SlackNet.AspNetCore
         private readonly ISlackBlockActions _slackBlockActions;
         private readonly ISlackBlockOptions _slackBlockOptions;
         private readonly ISlackInteractiveMessages _slackInteractiveMessages;
-        private readonly ISlackMessageActions _slackMessageActions;
+        private readonly ISlackMessageShortcuts _slackMessageShortcuts;
         private readonly ISlackOptions _slackOptions;
         private readonly IDialogSubmissionHandler _dialogSubmissionHandler;
         private readonly ISlackViews _slackViews;
@@ -40,7 +40,7 @@ namespace SlackNet.AspNetCore
             ISlackBlockActions slackBlockActions,
             ISlackBlockOptions slackBlockOptions,
             ISlackInteractiveMessages slackInteractiveMessages,
-            ISlackMessageActions slackMessageActions,
+            ISlackMessageShortcuts slackMessageShortcuts,
             ISlackOptions slackOptions,
             IDialogSubmissionHandler dialogSubmissionHandler,
             ISlackViews slackViews,
@@ -51,7 +51,7 @@ namespace SlackNet.AspNetCore
             _slackBlockActions = slackBlockActions;
             _slackBlockOptions = slackBlockOptions;
             _slackInteractiveMessages = slackInteractiveMessages;
-            _slackMessageActions = slackMessageActions;
+            _slackMessageShortcuts = slackMessageShortcuts;
             _slackOptions = slackOptions;
             _dialogSubmissionHandler = dialogSubmissionHandler;
             _slackViews = slackViews;
@@ -108,8 +108,8 @@ namespace SlackNet.AspNetCore
                         return await HandleDialogSubmission(dialogSubmission).ConfigureAwait(false);
                     case DialogCancellation dialogCancellation:
                         return await HandleDialogCancellation(dialogCancellation).ConfigureAwait(false);
-                    case MessageAction messageAction:
-                        return await HandleMessageAction(messageAction).ConfigureAwait(false);
+                    case MessageShortcut messageShortcut:
+                        return await HandleMessageShortcut(messageShortcut).ConfigureAwait(false);
                     case ViewSubmission viewSubmission:
                         return await HandleViewSubmission(viewSubmission).ConfigureAwait(false);
                     case ViewClosed viewClosed:
@@ -154,9 +154,9 @@ namespace SlackNet.AspNetCore
             return new EmptyResponse(HttpStatusCode.OK);
         }
 
-        private async Task<SlackResponse> HandleMessageAction(MessageAction messageAction)
+        private async Task<SlackResponse> HandleMessageShortcut(MessageShortcut messageShortcut)
         {
-            await _slackMessageActions.Handle(messageAction).ConfigureAwait(false);
+            await _slackMessageShortcuts.Handle(messageShortcut).ConfigureAwait(false);
             return new EmptyResponse(HttpStatusCode.OK);
         }
 

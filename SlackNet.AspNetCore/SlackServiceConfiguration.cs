@@ -79,26 +79,26 @@ namespace SlackNet.AspNetCore
             return this;
         }
 
-        public SlackServiceConfiguration RegisterMessageActionHandler<THandler>()
-            where THandler : class, IMessageActionHandler
+        public SlackServiceConfiguration RegisterMessageShortcutHandler<THandler>()
+            where THandler : class, IMessageShortcutHandler
         {
             _serviceCollection.AddTransient<THandler>();
-            return RegisterMessageActionHandler(c => new ResolvedMessageActionHandler<THandler>(c));
+            return RegisterMessageShortcutHandler(c => new ResolvedMessageShortcutHandler<THandler>(c));
         }
 
-        public SlackServiceConfiguration RegisterMessageActionHandler<THandler>(string callbackId)
-            where THandler : class, IMessageActionHandler
+        public SlackServiceConfiguration RegisterMessageShortcutHandler<THandler>(string callbackId)
+            where THandler : class, IMessageShortcutHandler
         {
             _serviceCollection.AddTransient<THandler>();
-            return RegisterMessageActionHandler(c => new SpecificMessageActionHandler(callbackId, new ResolvedMessageActionHandler<THandler>(c)));
+            return RegisterMessageShortcutHandler(c => new SpecificMessageShortcutHandler(callbackId, new ResolvedMessageShortcutHandler<THandler>(c)));
         }
 
-        public SlackServiceConfiguration RegisterMessageActionHandler(IMessageActionHandler handler)
+        public SlackServiceConfiguration RegisterMessageShortcutHandler(IMessageShortcutHandler handler)
         {
-            return RegisterMessageActionHandler(c => handler);
+            return RegisterMessageShortcutHandler(c => handler);
         }
 
-        public SlackServiceConfiguration RegisterMessageActionHandler(Func<IServiceProvider, IMessageActionHandler> handlerFactory)
+        public SlackServiceConfiguration RegisterMessageShortcutHandler(Func<IServiceProvider, IMessageShortcutHandler> handlerFactory)
         {
             _serviceCollection.AddSingleton(handlerFactory);
             return this;
