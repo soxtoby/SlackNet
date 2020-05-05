@@ -14,6 +14,7 @@ namespace SlackNet
         public string LastName { get; set; }
         public string RealName { get; set; }
         public string RealNameNormalized { get; set; }
+        public string DisplayName { get; set; }
         public string Email { get; set; }
         public string Skype { get; set; }
         public string Phone { get; set; }
