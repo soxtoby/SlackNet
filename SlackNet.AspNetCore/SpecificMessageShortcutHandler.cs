@@ -3,7 +3,7 @@ using SlackNet.Interaction;
 
 namespace SlackNet.AspNetCore
 {
-    public class SpecificMessageShortcutHandler : IMessageShortcutHandler
+    class SpecificMessageShortcutHandler : IMessageShortcutHandler
     {
         private readonly string _callbackId;
         private readonly IMessageShortcutHandler _handler;

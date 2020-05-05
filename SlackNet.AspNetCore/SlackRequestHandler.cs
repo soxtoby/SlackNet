@@ -24,38 +24,38 @@ namespace SlackNet.AspNetCore
 
     class SlackRequestHandler : ISlackRequestHandler
     {
-        private readonly ISlackEvents _slackEvents;
-        private readonly ISlackBlockActions _slackBlockActions;
-        private readonly ISlackBlockOptions _slackBlockOptions;
-        private readonly ISlackInteractiveMessages _slackInteractiveMessages;
-        private readonly ISlackMessageShortcuts _slackMessageShortcuts;
-        private readonly ISlackOptions _slackOptions;
+        private readonly IEventHandler _eventHandler;
+        private readonly IBlockActionHandler _blockActionHandler;
+        private readonly IBlockOptionProvider _blockOptionProvider;
+        private readonly IInteractiveMessageHandler _interactiveMessageHandler;
+        private readonly IMessageShortcutHandler _messageShortcutHandler;
+        private readonly IOptionProvider _optionProvider;
         private readonly IDialogSubmissionHandler _dialogSubmissionHandler;
-        private readonly ISlackViews _slackViews;
-        private readonly ISlackSlashCommands _slackSlashCommands;
+        private readonly IViewSubmissionHandler _viewSubmissionHandler;
+        private readonly ISlashCommandHandler _slashCommandHandler;
         private readonly SlackJsonSettings _jsonSettings;
 
         public SlackRequestHandler(
-            ISlackEvents slackEvents,
-            ISlackBlockActions slackBlockActions,
-            ISlackBlockOptions slackBlockOptions,
-            ISlackInteractiveMessages slackInteractiveMessages,
-            ISlackMessageShortcuts slackMessageShortcuts,
-            ISlackOptions slackOptions,
+            IEventHandler eventHandler,
+            IBlockActionHandler blockActionHandler,
+            IBlockOptionProvider blockOptionProvider,
+            IInteractiveMessageHandler interactiveMessageHandler,
+            IMessageShortcutHandler messageShortcutHandler,
+            IOptionProvider optionProvider,
             IDialogSubmissionHandler dialogSubmissionHandler,
-            ISlackViews slackViews,
-            ISlackSlashCommands slackSlashCommands,
+            IViewSubmissionHandler viewSubmissionHandler,
+            ISlashCommandHandler slashCommandHandler,
             SlackJsonSettings jsonSettings)
         {
-            _slackEvents = slackEvents;
-            _slackBlockActions = slackBlockActions;
-            _slackBlockOptions = slackBlockOptions;
-            _slackInteractiveMessages = slackInteractiveMessages;
-            _slackMessageShortcuts = slackMessageShortcuts;
-            _slackOptions = slackOptions;
+            _eventHandler = eventHandler;
+            _blockActionHandler = blockActionHandler;
+            _blockOptionProvider = blockOptionProvider;
+            _interactiveMessageHandler = interactiveMessageHandler;
+            _messageShortcutHandler = messageShortcutHandler;
+            _optionProvider = optionProvider;
             _dialogSubmissionHandler = dialogSubmissionHandler;
-            _slackViews = slackViews;
-            _slackSlashCommands = slackSlashCommands;
+            _viewSubmissionHandler = viewSubmissionHandler;
+            _slashCommandHandler = slashCommandHandler;
             _jsonSettings = jsonSettings;
         }
 
@@ -79,7 +79,7 @@ namespace SlackNet.AspNetCore
                     return new StringResponse(HttpStatusCode.OK, urlVerification.Challenge);
 
                 case EventCallback eventCallback:
-                    _slackEvents.Handle(eventCallback);
+                    await _eventHandler.Handle(eventCallback);
                     return new EmptyResponse(HttpStatusCode.OK);
 
                 default:
@@ -122,13 +122,13 @@ namespace SlackNet.AspNetCore
 
         private async Task<SlackResponse> HandleBlockActions(BlockActionRequest blockActionRequest)
         {
-            await _slackBlockActions.Handle(blockActionRequest).ConfigureAwait(false);
+            await _blockActionHandler.Handle(blockActionRequest).ConfigureAwait(false);
             return new EmptyResponse(HttpStatusCode.OK);
         }
 
         private async Task<SlackResponse> HandleInteractiveMessage(InteractiveMessage interactiveMessage)
         {
-            var response = await _slackInteractiveMessages.Handle(interactiveMessage).ConfigureAwait(false);
+            var response = await _interactiveMessageHandler.Handle(interactiveMessage).ConfigureAwait(false);
 
             var responseObject = response == null ? null
                 : interactiveMessage.IsAppUnfurl ? (object)new AttachmentUpdateResponse(response)
@@ -156,13 +156,13 @@ namespace SlackNet.AspNetCore
 
         private async Task<SlackResponse> HandleMessageShortcut(MessageShortcut messageShortcut)
         {
-            await _slackMessageShortcuts.Handle(messageShortcut).ConfigureAwait(false);
+            await _messageShortcutHandler.Handle(messageShortcut).ConfigureAwait(false);
             return new EmptyResponse(HttpStatusCode.OK);
         }
 
         private async Task<SlackResponse> HandleViewSubmission(ViewSubmission viewSubmission)
         {
-            var response = await _slackViews.HandleSubmission(viewSubmission).ConfigureAwait(false);
+            var response = await _viewSubmissionHandler.Handle(viewSubmission).ConfigureAwait(false);
 
             return response?.ResponseAction == null
                 ? (SlackResponse)new EmptyResponse(HttpStatusCode.OK)
@@ -171,7 +171,7 @@ namespace SlackNet.AspNetCore
 
         private async Task<SlackResponse> HandleViewClosed(ViewClosed viewClosed)
         {
-            await _slackViews.HandleClose(viewClosed).ConfigureAwait(false);
+            await _viewSubmissionHandler.HandleClose(viewClosed).ConfigureAwait(false);
             return new EmptyResponse(HttpStatusCode.OK);
         }
 
@@ -210,7 +210,7 @@ namespace SlackNet.AspNetCore
             if (!VerifyRequest(await ReadString(request).ConfigureAwait(false), request.Headers, command.Token, config))
                 return new StringResponse(HttpStatusCode.BadRequest, "Invalid signature/token");
             
-            var response = await _slackSlashCommands.Handle(command).ConfigureAwait(false);
+            var response = await _slashCommandHandler.Handle(command).ConfigureAwait(false);
 
             return response == null 
                 ? (SlackResponse)new EmptyResponse(HttpStatusCode.OK) 
@@ -228,13 +228,13 @@ namespace SlackNet.AspNetCore
 
         private async Task<SlackResponse> HandleLegacyOptionsRequest(OptionsRequest optionsRequest)
         {
-            var response = await _slackOptions.Handle(optionsRequest).ConfigureAwait(false);
+            var response = await _optionProvider.GetOptions(optionsRequest).ConfigureAwait(false);
             return new JsonResponse(HttpStatusCode.OK, response);
         }
 
         private async Task<SlackResponse> HandleBlockOptionsRequest(BlockOptionsRequest blockOptionsRequest)
         {
-            var response = await _slackBlockOptions.Handle(blockOptionsRequest).ConfigureAwait(false);
+            var response = await _blockOptionProvider.GetOptions(blockOptionsRequest).ConfigureAwait(false);
             return new JsonResponse(HttpStatusCode.OK, response);
         }
 

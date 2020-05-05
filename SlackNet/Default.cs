@@ -4,7 +4,6 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using SlackNet.Interaction;
 
 namespace SlackNet
 {
@@ -41,12 +40,6 @@ namespace SlackNet
 
         public static IWebSocketFactory WebSocketFactory => new WebSocketFactory();
 
-        public static ISlackEvents SlackEvents { get; } = new SlackEvents();
-
-        public static ISlackInteractiveMessages SlackInteractiveMessages { get; } = new SlackInteractiveMessages();
-
-        public static ISlackOptions SlackOptions { get; } = new SlackOptions();
-
         public static void RegisterServices(Action<Type, Func<Func<Type, object>, object>> registerService)
         {
             registerService(typeof(IHttp), resolve => Http((SlackJsonSettings)resolve(typeof(SlackJsonSettings))));
@@ -54,9 +47,6 @@ namespace SlackNet
             registerService(typeof(SlackJsonSettings), resolve => JsonSettings((ISlackTypeResolver)resolve(typeof(ISlackTypeResolver))));
             registerService(typeof(ISlackTypeResolver), resolve => SlackTypeResolver(AssembliesContainingSlackTypes));
             registerService(typeof(IWebSocketFactory), resolve => WebSocketFactory);
-            registerService(typeof(ISlackEvents), resolve => SlackEvents);
-            registerService(typeof(ISlackInteractiveMessages), resolve => SlackInteractiveMessages);
-            registerService(typeof(ISlackOptions), resolve => SlackOptions);
         }
     }
 }

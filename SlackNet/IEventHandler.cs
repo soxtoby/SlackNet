@@ -3,9 +3,12 @@ using SlackNet.Events;
 
 namespace SlackNet
 {
-    public interface IEventHandler { }
+    public interface IEventHandler
+    {
+        Task Handle(EventCallback eventCallback);
+    }
 
-    public interface IEventHandler<T> : IEventHandler where T: Event
+    public interface IEventHandler<in T> where T: Event
     {
         Task Handle(T slackEvent);
     }

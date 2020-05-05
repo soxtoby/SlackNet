@@ -35,7 +35,8 @@ namespace SlackNet.EventsExample
                 .RegisterInteractiveMessageHandler<LegacyDialogDemo>(DialogDemoBase.EchoDialog)
                 .RegisterInteractiveMessageHandler<LegacyDialogDemo>(DialogDemoBase.ErrorDialog)
 
-                .RegisterDialogSubmissionHandler<DialogDemoHandler>()
+                .RegisterDialogSubmissionHandler<EchoDialogHandler>(DialogDemoBase.EchoDialog)
+                .RegisterDialogSubmissionHandler<ErrorDialogHandler>(DialogDemoBase.ErrorDialog)
 
                 .RegisterEventHandler<AppHomeOpened, AppHome>()
                 .RegisterBlockActionHandler<ButtonAction, AppHome>()

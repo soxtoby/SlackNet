@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using SlackNet.Blocks;
 using SlackNet.Interaction;
 
 namespace SlackNet.AspNetCore
 {
-    class ResolvedBlockActionHandler<TAction, THandler> : IBlockActionHandler<TAction>
-        where TAction : BlockAction 
-        where THandler : IBlockActionHandler<TAction>
+    class ResolvedBlockActionHandler : ResolvedHandler<IBlockActionHandler>, IBlockActionHandler
     {
-        private readonly IServiceProvider _serviceProvider;
-        public ResolvedBlockActionHandler(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
+        public ResolvedBlockActionHandler(IServiceProvider serviceProvider, Func<IServiceProvider, IBlockActionHandler> getHandler) 
+            : base(serviceProvider, getHandler) { }
 
-        public async Task Handle(TAction action, BlockActionRequest request)
-        {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var handler = scope.ServiceProvider.GetRequiredService<THandler>();
-                await handler.Handle(action, request).ConfigureAwait(false);
-            }
-        }
+        public Task Handle(BlockActionRequest request) => ResolvedHandle(h => h.Handle(request));
+    }
+
+    class ResolvedBlockActionHandler<TAction> : ResolvedHandler<IBlockActionHandler<TAction>>, IBlockActionHandler
+        where TAction : BlockAction
+    {
+        public ResolvedBlockActionHandler(IServiceProvider serviceProvider, Func<IServiceProvider, IBlockActionHandler<TAction>> getHandler) 
+            : base(serviceProvider, getHandler) { }
+
+        public Task Handle(BlockActionRequest request) =>
+            request.Action is TAction action
+                ? ResolvedHandle(h => h.Handle(action, request))
+                : Task.CompletedTask;
     }
 }

@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SlackNet.AspNetCore\SlackNet.AspNetCore.csproj" />
     <ProjectReference Include="..\SlackNet.Bot\SlackNet.Bot.csproj" />
     <ProjectReference Include="..\SlackNet\SlackNet.csproj" />
   </ItemGroup>

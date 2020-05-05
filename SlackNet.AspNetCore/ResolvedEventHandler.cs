@@ -1,28 +1,26 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using SlackNet.Events;
 
 namespace SlackNet.AspNetCore
 {
-    class ResolvedEventHandler<TEvent, THandler> : IEventHandler<TEvent>
-        where TEvent : Event
-        where THandler : IEventHandler<TEvent>
+    class ResolvedEventHandler : ResolvedHandler<IEventHandler>, IEventHandler
     {
-        private readonly IServiceProvider _serviceProvider;
+        public ResolvedEventHandler(IServiceProvider serviceProvider, Func<IServiceProvider, IEventHandler> getHandler) 
+            : base(serviceProvider, getHandler) { }
 
-        public ResolvedEventHandler(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
+        public Task Handle(EventCallback eventCallback) => ResolvedHandle(h => h.Handle(eventCallback));
+    }
 
-        public async Task Handle(TEvent slackEvent)
-        {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var handler = scope.ServiceProvider.GetRequiredService<THandler>();
-                await handler.Handle(slackEvent).ConfigureAwait(false);
-            }
-        }
+    class ResolvedEventHandler<TEvent> : ResolvedHandler<IEventHandler<TEvent>>, IEventHandler
+        where TEvent : Event
+    {
+        public ResolvedEventHandler(IServiceProvider serviceProvider, Func<IServiceProvider, IEventHandler<TEvent>> getHandler)
+            : base(serviceProvider, getHandler) { }
+
+        public Task Handle(EventCallback eventCallback) =>
+            eventCallback.Event is TEvent slackEvent
+                ? ResolvedHandle(h => h.Handle(slackEvent))
+                : Task.CompletedTask;
     }
 }

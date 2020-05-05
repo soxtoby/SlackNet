@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive.Subjects;
 
-namespace SlackNet
+namespace SlackNet.AspNetCore
 {
     class SyncedSubject<T> : ISubject<T>, IDisposable
     {
