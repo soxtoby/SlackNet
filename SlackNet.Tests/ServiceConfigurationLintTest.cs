@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using EasyAssertions;
 using NSubstitute.Core;
 using NUnit.Framework;
-using SlackNet.AspNetCore;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Interaction;
+using SSC = SlackNet.AspNetCore.SlackServiceConfiguration;
 
 namespace SlackNet.Tests
 {
@@ -18,66 +17,80 @@ namespace SlackNet.Tests
         [Test]
         public void StandardRegistrationMethods()
         {
-            var publicMethods = typeof(SlackServiceConfiguration)
+            var publicMethods = typeof(SSC)
                 .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                 .Where(m => !m.IsSpecialName)
                 .ToList();
 
             // Non-registrations
-            ExpectMethod(publicMethods, nameof(SlackServiceConfiguration.UseApiToken), new Type[0], new[] { typeof(string) });
+            ExpectMethod(publicMethods, nameof(SSC.UseApiToken), new Type[0], new[] { typeof(string) });
 
             // Standard registrations
-            ExpectRegistrationTriplet(publicMethods, nameof(SlackServiceConfiguration.RegisterEventHandler), typeof(IEventHandler), new Type[0], new Type[0]);
-            ExpectRegistrationTriplet(publicMethods, nameof(SlackServiceConfiguration.RegisterEventHandler), typeof(IEventHandler<Event>), new[] { typeof(Event) }, new Type[0]);
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceEventHandling), typeof(IEventHandler));
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterEventHandler), typeof(IEventHandler), new Type[0], new Type[0]);
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterEventHandler), typeof(IEventHandler<Event>), new[] { typeof(Event) }, new Type[0]);
 
-            ExpectRegistrationTriplet(publicMethods, nameof(SlackServiceConfiguration.RegisterBlockActionHandler), typeof(IBlockActionHandler), new Type[0], new Type[0]);
-            ExpectRegistrationTriplet(publicMethods, nameof(SlackServiceConfiguration.RegisterBlockActionHandler), typeof(IBlockActionHandler<BlockAction>), new[] { typeof(BlockAction) }, new Type[0]);
-            ExpectRegistrationTriplet(publicMethods, nameof(SlackServiceConfiguration.RegisterBlockActionHandler), typeof(IBlockActionHandler<BlockAction>), new[] { typeof(BlockAction) }, new[] { typeof(string)});
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceBlockActionHandling), typeof(IBlockActionHandler));
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterBlockActionHandler), typeof(IBlockActionHandler), new Type[0], new Type[0]);
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterBlockActionHandler), typeof(IBlockActionHandler<BlockAction>), new[] { typeof(BlockAction) }, new Type[0]);
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterBlockActionHandler), typeof(IBlockActionHandler<BlockAction>), new[] { typeof(BlockAction) }, new[] { typeof(string)});
 
-            ExpectRegistrationTriplet(publicMethods, nameof(SlackServiceConfiguration.RegisterMessageShortcutHandler), typeof(IMessageShortcutHandler), new Type[0], new Type[0]);
-            ExpectRegistrationTriplet(publicMethods, nameof(SlackServiceConfiguration.RegisterMessageShortcutHandler), typeof(IMessageShortcutHandler), new Type[0], new[] { typeof(string) });
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceMessageShortcutHandling), typeof(IMessageShortcutHandler));
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterMessageShortcutHandler), typeof(IMessageShortcutHandler), new Type[0], new Type[0]);
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterMessageShortcutHandler), typeof(IMessageShortcutHandler), new Type[0], new[] { typeof(string) });
 
-            ExpectKeyedRegistrationTriplet(publicMethods, nameof(SlackServiceConfiguration.RegisterBlockOptionProvider), typeof(IBlockOptionProvider));
-            ExpectKeyedRegistrationTriplet(publicMethods, nameof(SlackServiceConfiguration.RegisterViewSubmissionHandler), typeof(IViewSubmissionHandler));
-            ExpectKeyedRegistrationTriplet(publicMethods, nameof(SlackServiceConfiguration.RegisterSlashCommandHandler), typeof(ISlashCommandHandler));
+            ExpectReplaceAndKeyedRegistrationTriplet(publicMethods, nameof(SSC.ReplaceBlockOptionProviding), nameof(SSC.RegisterBlockOptionProvider), typeof(IBlockOptionProvider));
+            ExpectReplaceAndKeyedRegistrationTriplet(publicMethods, nameof(SSC.ReplaceViewSubmissionHandling), nameof(SSC.RegisterViewSubmissionHandler), typeof(IViewSubmissionHandler));
+            ExpectReplaceAndKeyedRegistrationTriplet(publicMethods, nameof(SSC.ReplaceSlashCommandHandling), nameof(SSC.RegisterSlashCommandHandler), typeof(ISlashCommandHandler));
 
             // Legacy interaction
-            ExpectMethod(publicMethods, nameof(SlackServiceConfiguration.RegisterInteractiveMessageHandler), new[] { typeof(IInteractiveMessageHandler) }, new[] { typeof(string) });
-            ExpectMethod(publicMethods, nameof(SlackServiceConfiguration.RegisterOptionProvider), new[] { typeof(IOptionProvider) }, new[] { typeof(string) });
-            ExpectMethod(publicMethods, nameof(SlackServiceConfiguration.RegisterDialogSubmissionHandler), new[] { typeof(IDialogSubmissionHandler) }, new[] { typeof(string) });
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceLegacyInteractiveMessageHandling), typeof(IInteractiveMessageHandler));
+            ExpectMethod(publicMethods, nameof(SSC.RegisterInteractiveMessageHandler), new[] { typeof(IInteractiveMessageHandler) }, new[] { typeof(string) });
+
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceLegacyOptionProviding), typeof(IOptionProvider));
+            ExpectMethod(publicMethods, nameof(SSC.RegisterOptionProvider), new[] { typeof(IOptionProvider) }, new[] { typeof(string) });
+
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceLegacyDialogSubmissionHandling), typeof(IDialogSubmissionHandler));
+            ExpectMethod(publicMethods, nameof(SSC.RegisterDialogSubmissionHandler), new[] { typeof(IDialogSubmissionHandler) }, new[] { typeof(string) });
 
             RemainingMethods(publicMethods)
                 .ShouldBeEmpty("Unexpected public method(s)");
         }
 
-        private static void ExpectKeyedRegistrationTriplet(List<MethodInfo> publicMethods, string name, Type handlerType)
+        private static void ExpectReplaceAndKeyedRegistrationTriplet(List<MethodInfo> publicMethods, string replaceMethodName, string registerMethodName, Type handlerType)
         {
-            ExpectRegistrationTriplet(publicMethods, name, handlerType, new Type[0], new[] { typeof(string) });
+            ExpectReplaceMethod(publicMethods, replaceMethodName, handlerType);
+            ExpectRegistrationTriplet(publicMethods, registerMethodName, handlerType, new Type[0], new[] { typeof(string) });
         }
 
         private static void ExpectRegistrationTriplet(List<MethodInfo> publicMethods, string name, Type handlerType, Type[] genericArgs, Type[] parameters)
         {
+            name.ShouldStartWith("Register");
             ExpectMethod(publicMethods, name, genericArgs.Concat(new[] { handlerType }), parameters);
             ExpectMethod(publicMethods, name, genericArgs, parameters.Concat(new[] { handlerType }));
-            ExpectMethod(publicMethods, name, genericArgs, parameters.Concat(new[] { typeof(Func<,>).MakeGenericType(typeof(IServiceProvider), handlerType) }));
+            ExpectMethod(publicMethods, name, genericArgs, parameters.Concat(new[] { FactoryFunc(handlerType) }));
         }
 
-        private static void ExpectMethod(List<MethodInfo> methods, string name, IEnumerable<Type> genericParameters, IEnumerable<Type> methodParameters)
+        private static void ExpectReplaceMethod(List<MethodInfo> publicMethods, string name, Type handlerType)
         {
-            FindMethod(methods, name, genericParameters, methodParameters)
-                .ShouldBe(1, $"Missing {MethodSignature(name, genericParameters, methodParameters, typeof(SlackServiceConfiguration))}");
+            name.ShouldStartWith("Replace");
+            ExpectMethod(publicMethods, name, new Type[0], new[] { FactoryFunc(handlerType) });
         }
+
+        private static Type FactoryFunc(Type implementationTypeConstraint) => 
+            typeof(Func<,>).MakeGenericType(typeof(IServiceProvider), implementationTypeConstraint);
+
+        private static void ExpectMethod(List<MethodInfo> methods, string name, IEnumerable<Type> genericParameters, IEnumerable<Type> methodParameters) =>
+            FindMethod(methods, name, genericParameters, methodParameters)
+                .ShouldBe(1, $"Missing {MethodSignature(name, genericParameters, methodParameters, typeof(SSC))}");
 
         private static int FindMethod(List<MethodInfo> methods, string name, IEnumerable<Type> genericParameters, IEnumerable<Type> methodParameters) =>
             methods.RemoveAll(m => m.Name == name
                 && m.GetGenericArguments().SequenceEqual(genericParameters, GenericTypeComparer.Instance)
                 && m.GetParameters().Select(p => p.ParameterType).SequenceEqual(methodParameters, GenericTypeComparer.Instance));
 
-        private static IEnumerable<string> RemainingMethods(IEnumerable<MethodInfo> publicMethods)
-        {
-            return publicMethods
-                .Select(m => MethodSignature(m.Name, m.GetGenericArguments(), m.GetParameters().Select(p => p.ParameterType), m.ReturnType));
-        }
+        private static IEnumerable<string> RemainingMethods(IEnumerable<MethodInfo> publicMethods) =>
+            publicMethods.Select(m => MethodSignature(m.Name, m.GetGenericArguments(), m.GetParameters().Select(p => p.ParameterType), m.ReturnType));
 
         private static string MethodSignature(string name, IEnumerable<Type> genericParameters, IEnumerable<Type> methodParameters, Type returnType) =>
             $"{name}{GenericSignature(genericParameters)}({methodParameters.Select(p => p.Name).Join(", ")}) => {returnType.Name} ";
