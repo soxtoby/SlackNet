@@ -151,6 +151,43 @@ namespace SlackNet.AspNetCore
 
         #endregion Message shortcuts
 
+        #region Global shortcuts
+
+        /// <summary>
+        /// Take over all global shortcut handling with your own handler.
+        /// Handlers registered with <c>RegisterGlobalShortcutHandler</c> will be ignored.
+        /// </summary>
+        public SlackServiceConfiguration ReplaceGlobalShortcutHandling(Func<IServiceProvider, IGlobalShortcutHandler> handlerFactory) =>
+            RegisterReplacementHandler<IGlobalShortcutHandler>(handlerFactory);
+
+        public SlackServiceConfiguration RegisterGlobalShortcutHandler<THandler>()
+            where THandler : class, IGlobalShortcutHandler
+        {
+            _serviceCollection.TryAddScoped<THandler>();
+            return RegisterCompositeItem<IGlobalShortcutHandler>(p => new ResolvedGlobalShortcutHandler(p, s => s.GetRequiredService<THandler>()));
+        }
+
+        public SlackServiceConfiguration RegisterGlobalShortcutHandler(IGlobalShortcutHandler handler) =>
+            RegisterCompositeItem<IGlobalShortcutHandler>(c => handler);
+
+        public SlackServiceConfiguration RegisterGlobalShortcutHandler(Func<IServiceProvider, IGlobalShortcutHandler> handlerFactory) =>
+            RegisterCompositeItem<IGlobalShortcutHandler>(p => new ResolvedGlobalShortcutHandler(p, handlerFactory));
+
+        public SlackServiceConfiguration RegisterGlobalShortcutHandler<THandler>(string callbackId)
+            where THandler : class, IGlobalShortcutHandler
+        {
+            _serviceCollection.TryAddScoped<THandler>();
+            return RegisterCompositeItem<IGlobalShortcutHandler>(p => new SpecificGlobalShortcutHandler(callbackId, new ResolvedGlobalShortcutHandler(p, s => s.GetRequiredService<THandler>())));
+        }
+
+        public SlackServiceConfiguration RegisterGlobalShortcutHandler(string callbackId, IGlobalShortcutHandler handler) =>
+            RegisterCompositeItem<IGlobalShortcutHandler>(p => new SpecificGlobalShortcutHandler(callbackId, handler));
+
+        public SlackServiceConfiguration RegisterGlobalShortcutHandler(string callbackId, Func<IServiceProvider, IGlobalShortcutHandler> handlerFactory) =>
+            RegisterCompositeItem<IGlobalShortcutHandler>(p => new SpecificGlobalShortcutHandler(callbackId, new ResolvedGlobalShortcutHandler(p, handlerFactory)));
+
+        #endregion Global shortcuts
+
         #region Block option providers
 
         /// <summary>

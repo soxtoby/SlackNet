@@ -29,6 +29,7 @@ namespace SlackNet.AspNetCore
         private readonly IBlockOptionProvider _blockOptionProvider;
         private readonly IInteractiveMessageHandler _interactiveMessageHandler;
         private readonly IMessageShortcutHandler _messageShortcutHandler;
+        private readonly IGlobalShortcutHandler _globalShortcutHandler;
         private readonly IOptionProvider _optionProvider;
         private readonly IDialogSubmissionHandler _dialogSubmissionHandler;
         private readonly IViewSubmissionHandler _viewSubmissionHandler;
@@ -41,6 +42,7 @@ namespace SlackNet.AspNetCore
             IBlockOptionProvider blockOptionProvider,
             IInteractiveMessageHandler interactiveMessageHandler,
             IMessageShortcutHandler messageShortcutHandler,
+            IGlobalShortcutHandler globalShortcutHandler,
             IOptionProvider optionProvider,
             IDialogSubmissionHandler dialogSubmissionHandler,
             IViewSubmissionHandler viewSubmissionHandler,
@@ -52,6 +54,7 @@ namespace SlackNet.AspNetCore
             _blockOptionProvider = blockOptionProvider;
             _interactiveMessageHandler = interactiveMessageHandler;
             _messageShortcutHandler = messageShortcutHandler;
+            _globalShortcutHandler = globalShortcutHandler;
             _optionProvider = optionProvider;
             _dialogSubmissionHandler = dialogSubmissionHandler;
             _viewSubmissionHandler = viewSubmissionHandler;
@@ -110,6 +113,8 @@ namespace SlackNet.AspNetCore
                         return await HandleDialogCancellation(dialogCancellation).ConfigureAwait(false);
                     case MessageShortcut messageShortcut:
                         return await HandleMessageShortcut(messageShortcut).ConfigureAwait(false);
+                    case GlobalShortcut globalShortcut:
+                        return await HandleGlobalShortcut(globalShortcut).ConfigureAwait(false);
                     case ViewSubmission viewSubmission:
                         return await HandleViewSubmission(viewSubmission).ConfigureAwait(false);
                     case ViewClosed viewClosed:
@@ -157,6 +162,12 @@ namespace SlackNet.AspNetCore
         private async Task<SlackResponse> HandleMessageShortcut(MessageShortcut messageShortcut)
         {
             await _messageShortcutHandler.Handle(messageShortcut).ConfigureAwait(false);
+            return new EmptyResponse(HttpStatusCode.OK);
+        }
+
+        private async Task<SlackResponse> HandleGlobalShortcut(GlobalShortcut globalShortcut)
+        {
+            await _globalShortcutHandler.Handle(globalShortcut).ConfigureAwait(false);
             return new EmptyResponse(HttpStatusCode.OK);
         }
 

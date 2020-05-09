@@ -23,6 +23,7 @@ namespace SlackNet.AspNetCore
             serviceCollection.TryAddSingleton<IBlockOptionProvider, SwitchingBlockOptionProvider>();
             serviceCollection.TryAddSingleton<IInteractiveMessageHandler, SwitchingInteractiveMessageHandler>();
             serviceCollection.TryAddSingleton<IMessageShortcutHandler, CompositeMessageShortcutHandler>();
+            serviceCollection.TryAddSingleton<IGlobalShortcutHandler, CompositeGlobalShortcutHandler>();
             serviceCollection.TryAddSingleton<IOptionProvider, SwitchingOptionProvider>();
             serviceCollection.TryAddSingleton<IViewSubmissionHandler, SwitchingViewSubmissionHandler>();
             serviceCollection.TryAddSingleton<ISlashCommandHandler, SwitchingSlashCommandHandler>();
