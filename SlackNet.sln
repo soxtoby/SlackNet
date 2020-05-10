@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet.Bot", "SlackNet.Bo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E5F77D07-2F2B-4C7B-9457-8D679E8E3877}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		cake.config = cake.config
 		readme.md = readme.md
 	EndProjectSection
@@ -23,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet.AspNetCore", "Slac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet.BotExample", "SlackNet.BotExample\SlackNet.BotExample.csproj", "{047F361A-4C26-4FD6-B322-46FE8DECD1EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackNet.AzureFunctionExample", "SlackNet.AzureFunctionExample\SlackNet.AzureFunctionExample.csproj", "{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet.AzureFunctionExample", "SlackNet.AzureFunctionExample\SlackNet.AzureFunctionExample.csproj", "{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

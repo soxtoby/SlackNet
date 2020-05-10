@@ -7,7 +7,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace SlackNet
 {
-    public class Default
+    public static class Default
     {
         public static IHttp Http(SlackJsonSettings jsonSettings) => new Http(new HttpClient(), jsonSettings);
 

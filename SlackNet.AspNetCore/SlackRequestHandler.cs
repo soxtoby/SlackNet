@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -82,7 +83,7 @@ namespace SlackNet.AspNetCore
                     return new StringResponse(HttpStatusCode.OK, urlVerification.Challenge);
 
                 case EventCallback eventCallback:
-                    await _eventHandler.Handle(eventCallback);
+                    await _eventHandler.Handle(eventCallback).ConfigureAwait(false);
                     return new EmptyResponse(HttpStatusCode.OK);
 
                 default:
@@ -283,7 +284,7 @@ namespace SlackNet.AspNetCore
             using (var hmac = new HMACSHA256(encoding.GetBytes(signingSecret)))
             {
                 var hash = hmac.ComputeHash(encoding.GetBytes($"v0:{headers["X-Slack-Request-Timestamp"]}:{requestBody}"));
-                var hashString = $"v0={BitConverter.ToString(hash).Replace("-", "").ToLower()}";
+                var hashString = $"v0={BitConverter.ToString(hash).Replace("-", "").ToLower(CultureInfo.InvariantCulture)}";
 
                 return hashString.Equals(headers["X-Slack-Signature"]);
             }

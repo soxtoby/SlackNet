@@ -228,6 +228,7 @@ namespace SlackNet
 
         public void Dispose()
         {
+            _eventSubject.Dispose();
             _eventSubscription.Dispose();
             _webSocket?.Dispose();
             _reconnection?.Dispose();

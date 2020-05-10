@@ -11,7 +11,7 @@ namespace SlackNet.AspNetCore
         IObservable<TEvent> Events<TEvent>();
     }
 
-    class EventsObservables : IEventsObservables
+    class EventsObservables : IEventsObservables, IDisposable
     {
         private readonly SyncedSubject<EventCallback> _incomingEvents = new SyncedSubject<EventCallback>();
 
@@ -26,5 +26,7 @@ namespace SlackNet.AspNetCore
         public IObservable<TEvent> Events<TEvent>() => _incomingEvents
             .Select(e => e.Event)
             .OfType<TEvent>();
+
+        public void Dispose() => _incomingEvents.Dispose();
     }
 }
