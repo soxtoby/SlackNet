@@ -92,7 +92,7 @@ namespace SlackNet.AspNetCore
             if (request.Method != "POST")
                 return new EmptyResponse(HttpStatusCode.MethodNotAllowed);
 
-            ReplaceRequestStreamWithMemoryStream(request);
+            await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
 
             var interactionRequest = await DeserializePayload<InteractionRequest>(request).ConfigureAwait(false);
 
@@ -180,7 +180,7 @@ namespace SlackNet.AspNetCore
             if (request.Method != "POST")
                 return new EmptyResponse(HttpStatusCode.MethodNotAllowed);
 
-            ReplaceRequestStreamWithMemoryStream(request);
+            await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
 
             var optionsRequest = await DeserializePayload<OptionsRequestBase>(request).ConfigureAwait(false);
 
@@ -203,7 +203,7 @@ namespace SlackNet.AspNetCore
             if (request.Method != "POST")
                 return new EmptyResponse(HttpStatusCode.MethodNotAllowed);
 
-            ReplaceRequestStreamWithMemoryStream(request);
+            await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
 
             var command = await DeserializeForm<SlashCommand>(request).ConfigureAwait(false);
 
@@ -217,7 +217,7 @@ namespace SlackNet.AspNetCore
                 : new JsonResponse(HttpStatusCode.OK, new SlashCommandMessageResponse(response));
         }
 
-        private static async void ReplaceRequestStreamWithMemoryStream(HttpRequest request)
+        private static async Task ReplaceRequestStreamWithMemoryStream(HttpRequest request)
         {
             var buffer = new MemoryStream();
             await request.Body.CopyToAsync(buffer).ConfigureAwait(false);
@@ -240,7 +240,7 @@ namespace SlackNet.AspNetCore
 
         private async Task<T> DeserializePayload<T>(HttpRequest request)
         {
-            var form = await ReadForm(request).ConfigureAwait(false);
+            var form = await request.ReadFormAsync().ConfigureAwait(false);
 
             return form["payload"]
                 .Select(p => JsonConvert.DeserializeObject<T>(p, _jsonSettings.SerializerSettings))
@@ -249,20 +249,13 @@ namespace SlackNet.AspNetCore
 
         private async Task<T> DeserializeForm<T>(HttpRequest request)
         {
-            var form = await ReadForm(request).ConfigureAwait(false);
+            var form = await request.ReadFormAsync().ConfigureAwait(false);
 
             var json = new JObject();
             foreach (var key in form.Keys)
                 json[key] = form[key].FirstOrDefault();
 
             return json.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings));
-        }
-
-        private static async Task<IFormCollection> ReadForm(HttpRequest request)
-        {
-            var form = await request.ReadFormAsync().ConfigureAwait(false);
-            request.Body.Seek(0, SeekOrigin.Begin);
-            return form;
         }
 
         private static Task<string> ReadString(HttpRequest request) =>
