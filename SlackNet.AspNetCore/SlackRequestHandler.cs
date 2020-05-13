@@ -17,10 +17,10 @@ namespace SlackNet.AspNetCore
 {
     public interface ISlackRequestHandler
     {
-        Task<SlackResponse> HandleEventRequest(HttpRequest request, SlackEndpointConfiguration config);
-        Task<SlackResponse> HandleActionRequest(HttpRequest request, SlackEndpointConfiguration config);
-        Task<SlackResponse> HandleOptionsRequest(HttpRequest request, SlackEndpointConfiguration config);
-        Task<SlackResponse> HandleSlashCommandRequest(HttpRequest request, SlackEndpointConfiguration config);
+        Task<SlackResult> HandleEventRequest(HttpRequest request, SlackEndpointConfiguration config);
+        Task<SlackResult> HandleActionRequest(HttpRequest request, SlackEndpointConfiguration config);
+        Task<SlackResult> HandleOptionsRequest(HttpRequest request, SlackEndpointConfiguration config);
+        Task<SlackResult> HandleSlashCommandRequest(HttpRequest request, SlackEndpointConfiguration config);
     }
 
     class SlackRequestHandler : ISlackRequestHandler
@@ -63,38 +63,38 @@ namespace SlackNet.AspNetCore
             _jsonSettings = jsonSettings;
         }
 
-        public async Task<SlackResponse> HandleEventRequest(HttpRequest request, SlackEndpointConfiguration config)
+        public async Task<SlackResult> HandleEventRequest(HttpRequest request, SlackEndpointConfiguration config)
         {
             if (request.Method != "POST")
-                return new EmptyResponse(HttpStatusCode.MethodNotAllowed);
+                return new EmptyResult(HttpStatusCode.MethodNotAllowed);
 
             if (request.ContentType != "application/json")
-                return new EmptyResponse(HttpStatusCode.UnsupportedMediaType);
+                return new EmptyResult(HttpStatusCode.UnsupportedMediaType);
 
             var requestBody = await ReadString(request).ConfigureAwait(false);
             var eventRequest = DeserializeEventRequest(requestBody);
 
             if (!VerifyRequest(requestBody, request.Headers, eventRequest.Token, config))
-                return new StringResponse(HttpStatusCode.BadRequest, "Invalid signature/token");
+                return new StringResult(HttpStatusCode.BadRequest, "Invalid signature/token");
 
             switch (eventRequest)
             {
                 case UrlVerification urlVerification:
-                    return new StringResponse(HttpStatusCode.OK, urlVerification.Challenge);
+                    return new StringResult(HttpStatusCode.OK, urlVerification.Challenge);
 
                 case EventCallback eventCallback:
                     await _eventHandler.Handle(eventCallback).ConfigureAwait(false);
-                    return new EmptyResponse(HttpStatusCode.OK);
+                    return new EmptyResult(HttpStatusCode.OK);
 
                 default:
-                    return new StringResponse(HttpStatusCode.BadRequest, "Unrecognized content");
+                    return new StringResult(HttpStatusCode.BadRequest, "Unrecognized content");
             }
         }
 
-        public async Task<SlackResponse> HandleActionRequest(HttpRequest request, SlackEndpointConfiguration config)
+        public async Task<SlackResult> HandleActionRequest(HttpRequest request, SlackEndpointConfiguration config)
         {
             if (request.Method != "POST")
-                return new EmptyResponse(HttpStatusCode.MethodNotAllowed);
+                return new EmptyResult(HttpStatusCode.MethodNotAllowed);
 
             await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
 
@@ -123,16 +123,16 @@ namespace SlackNet.AspNetCore
                 }
             }
 
-            return new StringResponse(HttpStatusCode.BadRequest, "Invalid token or unrecognized content");
+            return new StringResult(HttpStatusCode.BadRequest, "Invalid token or unrecognized content");
         }
 
-        private async Task<SlackResponse> HandleBlockActions(BlockActionRequest blockActionRequest)
+        private async Task<SlackResult> HandleBlockActions(BlockActionRequest blockActionRequest)
         {
             await _blockActionHandler.Handle(blockActionRequest).ConfigureAwait(false);
-            return new EmptyResponse(HttpStatusCode.OK);
+            return new EmptyResult(HttpStatusCode.OK);
         }
 
-        private async Task<SlackResponse> HandleInteractiveMessage(InteractiveMessage interactiveMessage)
+        private async Task<SlackResult> HandleInteractiveMessage(InteractiveMessage interactiveMessage)
         {
             var response = await _interactiveMessageHandler.Handle(interactiveMessage).ConfigureAwait(false);
 
@@ -140,57 +140,57 @@ namespace SlackNet.AspNetCore
                 : interactiveMessage.IsAppUnfurl ? (object)new AttachmentUpdateResponse(response)
                 : new MessageUpdateResponse(response);
 
-            return new JsonResponse(HttpStatusCode.OK, responseObject);
+            return new JsonResult(_jsonSettings, HttpStatusCode.OK, responseObject);
         }
 
-        private async Task<SlackResponse> HandleDialogSubmission(DialogSubmission dialog)
+        private async Task<SlackResult> HandleDialogSubmission(DialogSubmission dialog)
         {
             var errors = (await _dialogSubmissionHandler.Handle(dialog).ConfigureAwait(false))?.ToList()
                 ?? new List<DialogError>();
 
             var body = new DialogErrorResponse { Errors = errors };
             return errors.Any()
-                ? (SlackResponse)new JsonResponse(HttpStatusCode.OK, body)
-                : new EmptyResponse(HttpStatusCode.OK);
+                ? (SlackResult)new JsonResult(_jsonSettings, HttpStatusCode.OK, body)
+                : new EmptyResult(HttpStatusCode.OK);
         }
 
-        private async Task<SlackResponse> HandleDialogCancellation(DialogCancellation dialogCancellation)
+        private async Task<SlackResult> HandleDialogCancellation(DialogCancellation dialogCancellation)
         {
             await _dialogSubmissionHandler.HandleCancel(dialogCancellation).ConfigureAwait(false);
-            return new EmptyResponse(HttpStatusCode.OK);
+            return new EmptyResult(HttpStatusCode.OK);
         }
 
-        private async Task<SlackResponse> HandleMessageShortcut(MessageShortcut messageShortcut)
+        private async Task<SlackResult> HandleMessageShortcut(MessageShortcut messageShortcut)
         {
             await _messageShortcutHandler.Handle(messageShortcut).ConfigureAwait(false);
-            return new EmptyResponse(HttpStatusCode.OK);
+            return new EmptyResult(HttpStatusCode.OK);
         }
 
-        private async Task<SlackResponse> HandleGlobalShortcut(GlobalShortcut globalShortcut)
+        private async Task<SlackResult> HandleGlobalShortcut(GlobalShortcut globalShortcut)
         {
             await _globalShortcutHandler.Handle(globalShortcut).ConfigureAwait(false);
-            return new EmptyResponse(HttpStatusCode.OK);
+            return new EmptyResult(HttpStatusCode.OK);
         }
 
-        private async Task<SlackResponse> HandleViewSubmission(ViewSubmission viewSubmission)
+        private async Task<SlackResult> HandleViewSubmission(ViewSubmission viewSubmission)
         {
             var response = await _viewSubmissionHandler.Handle(viewSubmission).ConfigureAwait(false);
 
             return response?.ResponseAction == null
-                ? (SlackResponse)new EmptyResponse(HttpStatusCode.OK)
-                : new JsonResponse(HttpStatusCode.OK, response);
+                ? (SlackResult)new EmptyResult(HttpStatusCode.OK)
+                : new JsonResult(_jsonSettings, HttpStatusCode.OK, response);
         }
 
-        private async Task<SlackResponse> HandleViewClosed(ViewClosed viewClosed)
+        private async Task<SlackResult> HandleViewClosed(ViewClosed viewClosed)
         {
             await _viewSubmissionHandler.HandleClose(viewClosed).ConfigureAwait(false);
-            return new EmptyResponse(HttpStatusCode.OK);
+            return new EmptyResult(HttpStatusCode.OK);
         }
 
-        public async Task<SlackResponse> HandleOptionsRequest(HttpRequest request, SlackEndpointConfiguration config)
+        public async Task<SlackResult> HandleOptionsRequest(HttpRequest request, SlackEndpointConfiguration config)
         {
             if (request.Method != "POST")
-                return new EmptyResponse(HttpStatusCode.MethodNotAllowed);
+                return new EmptyResult(HttpStatusCode.MethodNotAllowed);
 
             await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
 
@@ -207,26 +207,26 @@ namespace SlackNet.AspNetCore
                 }
             }
 
-            return new StringResponse(HttpStatusCode.BadRequest, "Invalid token or unrecognized content");
+            return new StringResult(HttpStatusCode.BadRequest, "Invalid token or unrecognized content");
         }
 
-        public async Task<SlackResponse> HandleSlashCommandRequest(HttpRequest request, SlackEndpointConfiguration config)
+        public async Task<SlackResult> HandleSlashCommandRequest(HttpRequest request, SlackEndpointConfiguration config)
         {
             if (request.Method != "POST")
-                return new EmptyResponse(HttpStatusCode.MethodNotAllowed);
+                return new EmptyResult(HttpStatusCode.MethodNotAllowed);
 
             await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
 
             var command = await DeserializeForm<SlashCommand>(request).ConfigureAwait(false);
 
             if (!VerifyRequest(await ReadString(request).ConfigureAwait(false), request.Headers, command.Token, config))
-                return new StringResponse(HttpStatusCode.BadRequest, "Invalid signature/token");
+                return new StringResult(HttpStatusCode.BadRequest, "Invalid signature/token");
             
             var response = await _slashCommandHandler.Handle(command).ConfigureAwait(false);
 
             return response == null 
-                ? (SlackResponse)new EmptyResponse(HttpStatusCode.OK) 
-                : new JsonResponse(HttpStatusCode.OK, new SlashCommandMessageResponse(response));
+                ? (SlackResult)new EmptyResult(HttpStatusCode.OK) 
+                : new JsonResult(_jsonSettings, HttpStatusCode.OK, new SlashCommandMessageResponse(response));
         }
 
         private static async Task ReplaceRequestStreamWithMemoryStream(HttpRequest request)
@@ -238,16 +238,16 @@ namespace SlackNet.AspNetCore
             request.Body = buffer;
         }
 
-        private async Task<SlackResponse> HandleLegacyOptionsRequest(OptionsRequest optionsRequest)
+        private async Task<SlackResult> HandleLegacyOptionsRequest(OptionsRequest optionsRequest)
         {
             var response = await _optionProvider.GetOptions(optionsRequest).ConfigureAwait(false);
-            return new JsonResponse(HttpStatusCode.OK, response);
+            return new JsonResult(_jsonSettings, HttpStatusCode.OK, response);
         }
 
-        private async Task<SlackResponse> HandleBlockOptionsRequest(BlockOptionsRequest blockOptionsRequest)
+        private async Task<SlackResult> HandleBlockOptionsRequest(BlockOptionsRequest blockOptionsRequest)
         {
             var response = await _blockOptionProvider.GetOptions(blockOptionsRequest).ConfigureAwait(false);
-            return new JsonResponse(HttpStatusCode.OK, response);
+            return new JsonResult(_jsonSettings, HttpStatusCode.OK, response);
         }
 
         private async Task<T> DeserializePayload<T>(HttpRequest request)

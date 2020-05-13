@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
@@ -10,48 +9,28 @@ namespace SlackNet.AzureFunctionExample
     public class SlackEndpoints
     {
         private readonly ISlackRequestHandler _requestHandler;
-        private readonly SlackJsonSettings _jsonSettings;
         private readonly SlackEndpointConfiguration _endpointConfig;
 
-        public SlackEndpoints(ISlackRequestHandler requestHandler, SlackJsonSettings jsonSettings, SlackEndpointConfiguration endpointConfig)
+        public SlackEndpoints(ISlackRequestHandler requestHandler, SlackEndpointConfiguration endpointConfig)
         {
             _requestHandler = requestHandler;
-            _jsonSettings = jsonSettings;
             _endpointConfig = endpointConfig;
         }
 
         [FunctionName("event")]
-        public async Task<IActionResult> Event([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request)
-        {
-            return SlackResponse(await _requestHandler.HandleEventRequest(request, _endpointConfig).ConfigureAwait(false));
-        }
+        public Task<SlackResult> Event([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request) => 
+            _requestHandler.HandleEventRequest(request, _endpointConfig);
 
         [FunctionName("action")]
-        public async Task<IActionResult> Action([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request)
-        {
-            return SlackResponse(await _requestHandler.HandleActionRequest(request, _endpointConfig).ConfigureAwait(false));
-        }
+        public Task<SlackResult> Action([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request) => 
+            _requestHandler.HandleActionRequest(request, _endpointConfig);
 
         [FunctionName("options")]
-        public async Task<IActionResult> Options([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request)
-        {
-            return SlackResponse(await _requestHandler.HandleOptionsRequest(request, _endpointConfig).ConfigureAwait(false));
-        }
+        public Task<SlackResult> Options([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request) => 
+            _requestHandler.HandleOptionsRequest(request, _endpointConfig);
 
         [FunctionName("command")]
-        public async Task<IActionResult> Command([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request)
-        {
-            return SlackResponse(await _requestHandler.HandleSlashCommandRequest(request, _endpointConfig).ConfigureAwait(false));
-        }
-
-        private ContentResult SlackResponse(SlackResponse response)
-        {
-            return new ContentResult
-                {
-                    StatusCode = (int)response.Status,
-                    ContentType = response.ContentType,
-                    Content = response.Body(_jsonSettings)
-                };
-        }
+        public Task<SlackResult> Command([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request) => 
+            _requestHandler.HandleSlashCommandRequest(request, _endpointConfig);
     }
 }

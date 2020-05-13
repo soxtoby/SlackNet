@@ -6,20 +6,17 @@ namespace SlackNet.AspNetCore
     class SlackRequestMiddleware
     {
         private readonly ISlackRequestHandler _requestHandler;
-        private readonly SlackJsonSettings _jsonSettings;
         private readonly RequestDelegate _next;
         private readonly SlackEndpointConfiguration _configuration;
 
         public SlackRequestMiddleware(
             RequestDelegate next,
             SlackEndpointConfiguration configuration,
-            ISlackRequestHandler requestHandler,
-            SlackJsonSettings jsonSettings)
+            ISlackRequestHandler requestHandler)
         {
             _next = next;
             _configuration = configuration;
             _requestHandler = requestHandler;
-            _jsonSettings = jsonSettings;
         }
 
         public async Task Invoke(HttpContext context)
@@ -36,15 +33,6 @@ namespace SlackNet.AspNetCore
                 await _next(context).ConfigureAwait(false);
         }
 
-        private async Task Respond(HttpResponse httpResponse, SlackResponse slackResponse)
-        {
-            httpResponse.StatusCode = (int)slackResponse.Status;
-
-            if (slackResponse.ContentType != null)
-                httpResponse.ContentType = slackResponse.ContentType;
-
-            if (slackResponse.Body(_jsonSettings) is string body)
-                await httpResponse.WriteAsync(body).ConfigureAwait(false);
-        }
+        private static Task Respond(HttpResponse httpResponse, SlackResult slackResult) => slackResult.ExecuteResultAsync(httpResponse);
     }
 }
