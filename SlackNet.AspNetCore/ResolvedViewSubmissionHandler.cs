@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
 using SlackNet.Interaction;
+using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.AspNetCore
 {
-    class ResolvedViewSubmissionHandler : ResolvedHandler<IViewSubmissionHandler>, IViewSubmissionHandler
+    class ResolvedViewSubmissionHandler : ResolvedHandler<IAsyncViewSubmissionHandler>, IAsyncViewSubmissionHandler
     {
-        public ResolvedViewSubmissionHandler(IServiceProvider serviceProvider, Func<IServiceProvider, IViewSubmissionHandler> getHandler)
+        public ResolvedViewSubmissionHandler(IServiceProvider serviceProvider, Func<IServiceProvider, IAsyncViewSubmissionHandler> getHandler)
             : base(serviceProvider, getHandler) { }
 
+        public Task Handle(ViewSubmission viewSubmission, Responder<ViewSubmissionResponse> respond) => ResolvedHandle(h => h.Handle(viewSubmission, respond));
 
-        public Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission) => ResolvedHandle(h => h.Handle(viewSubmission));
-
-        public Task HandleClose(ViewClosed viewClosed) => ResolvedHandle(h => h.HandleClose(viewClosed));
+        public Task HandleClose(ViewClosed viewClosed, Responder respond) => ResolvedHandle(h => h.HandleClose(viewClosed, respond));
     }
 }

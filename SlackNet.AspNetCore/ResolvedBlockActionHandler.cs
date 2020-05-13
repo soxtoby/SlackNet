@@ -2,26 +2,27 @@
 using System.Threading.Tasks;
 using SlackNet.Blocks;
 using SlackNet.Interaction;
+using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.AspNetCore
 {
-    class ResolvedBlockActionHandler : ResolvedHandler<IBlockActionHandler>, IBlockActionHandler
+    class ResolvedBlockActionHandler : ResolvedHandler<IAsyncBlockActionHandler>, IAsyncBlockActionHandler
     {
-        public ResolvedBlockActionHandler(IServiceProvider serviceProvider, Func<IServiceProvider, IBlockActionHandler> getHandler) 
+        public ResolvedBlockActionHandler(IServiceProvider serviceProvider, Func<IServiceProvider, IAsyncBlockActionHandler> getHandler) 
             : base(serviceProvider, getHandler) { }
 
-        public Task Handle(BlockActionRequest request) => ResolvedHandle(h => h.Handle(request));
+        public Task Handle(BlockActionRequest request, Responder respond) => ResolvedHandle(h => h.Handle(request, respond));
     }
 
-    class ResolvedBlockActionHandler<TAction> : ResolvedHandler<IBlockActionHandler<TAction>>, IBlockActionHandler
+    class ResolvedBlockActionHandler<TAction> : ResolvedHandler<IAsyncBlockActionHandler<TAction>>, IAsyncBlockActionHandler
         where TAction : BlockAction
     {
-        public ResolvedBlockActionHandler(IServiceProvider serviceProvider, Func<IServiceProvider, IBlockActionHandler<TAction>> getHandler) 
+        public ResolvedBlockActionHandler(IServiceProvider serviceProvider, Func<IServiceProvider, IAsyncBlockActionHandler<TAction>> getHandler) 
             : base(serviceProvider, getHandler) { }
 
-        public Task Handle(BlockActionRequest request) =>
+        public Task Handle(BlockActionRequest request, Responder respond) =>
             request.Action is TAction action
-                ? ResolvedHandle(h => h.Handle(action, request))
+                ? ResolvedHandle(h => h.Handle(action, request, respond))
                 : Task.CompletedTask;
     }
 }

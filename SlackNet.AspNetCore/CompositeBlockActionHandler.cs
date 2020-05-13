@@ -2,14 +2,15 @@
 using System.Linq;
 using System.Threading.Tasks;
 using SlackNet.Interaction;
+using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.AspNetCore
 {
-    class CompositeBlockActionHandler : IBlockActionHandler
+    class CompositeBlockActionHandler : IAsyncBlockActionHandler
     {
-        private readonly List<CompositeItem<IBlockActionHandler>> _handlers;
-        public CompositeBlockActionHandler(IEnumerable<CompositeItem<IBlockActionHandler>> handlers) => _handlers = handlers.ToList();
+        private readonly List<CompositeItem<IAsyncBlockActionHandler>> _handlers;
+        public CompositeBlockActionHandler(IEnumerable<CompositeItem<IAsyncBlockActionHandler>> handlers) => _handlers = handlers.ToList();
 
-        public Task Handle(BlockActionRequest request) => Task.WhenAll(_handlers.Select(h => h.Item.Handle(request)));
+        public Task Handle(BlockActionRequest request, Responder respond) => Task.WhenAll(_handlers.Select(h => h.Item.Handle(request, respond)));
     }
 }

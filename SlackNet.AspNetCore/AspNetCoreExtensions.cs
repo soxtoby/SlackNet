@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using SlackNet.Interaction;
+using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.AspNetCore
 {
@@ -19,14 +20,14 @@ namespace SlackNet.AspNetCore
 
             serviceCollection.TryAddSingleton<ISlackRequestHandler, SlackRequestHandler>();
             serviceCollection.TryAddSingleton<IEventHandler, CompositeEventHandler>();
-            serviceCollection.TryAddSingleton<IBlockActionHandler, CompositeBlockActionHandler>();
+            serviceCollection.TryAddSingleton<IAsyncBlockActionHandler, CompositeBlockActionHandler>();
             serviceCollection.TryAddSingleton<IBlockOptionProvider, SwitchingBlockOptionProvider>();
-            serviceCollection.TryAddSingleton<IInteractiveMessageHandler, SwitchingInteractiveMessageHandler>();
-            serviceCollection.TryAddSingleton<IMessageShortcutHandler, CompositeMessageShortcutHandler>();
-            serviceCollection.TryAddSingleton<IGlobalShortcutHandler, CompositeGlobalShortcutHandler>();
+            serviceCollection.TryAddSingleton<IAsyncMessageShortcutHandler, CompositeMessageShortcutHandler>();
+            serviceCollection.TryAddSingleton<IAsyncGlobalShortcutHandler, CompositeGlobalShortcutHandler>();
             serviceCollection.TryAddSingleton<IOptionProvider, SwitchingOptionProvider>();
-            serviceCollection.TryAddSingleton<IViewSubmissionHandler, SwitchingViewSubmissionHandler>();
-            serviceCollection.TryAddSingleton<ISlashCommandHandler, SwitchingSlashCommandHandler>();
+            serviceCollection.TryAddSingleton<IAsyncViewSubmissionHandler, SwitchingViewSubmissionHandler>();
+            serviceCollection.TryAddSingleton<IAsyncSlashCommandHandler, SwitchingSlashCommandHandler>();
+            serviceCollection.TryAddSingleton<IInteractiveMessageHandler, SwitchingInteractiveMessageHandler>();
             serviceCollection.TryAddSingleton<IDialogSubmissionHandler, SwitchingDialogSubmissionHandler>();
             serviceCollection.AddTransient<ISlackApiClient>(c => new SlackApiClient(c.GetService<IHttp>(), c.GetService<ISlackUrlBuilder>(), c.GetService<SlackJsonSettings>(), configuration.ApiToken));
             

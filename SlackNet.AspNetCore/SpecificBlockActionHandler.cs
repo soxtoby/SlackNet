@@ -1,23 +1,24 @@
 ﻿using System.Threading.Tasks;
 using SlackNet.Interaction;
+using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.AspNetCore
 {
-    class SpecificBlockActionHandler : IBlockActionHandler
+    class SpecificBlockActionHandler : IAsyncBlockActionHandler
     {
         private readonly string _actionId;
-        private readonly IBlockActionHandler _handler;
+        private readonly IAsyncBlockActionHandler _handler;
 
-        public SpecificBlockActionHandler(string actionId, IBlockActionHandler handler)
+        public SpecificBlockActionHandler(string actionId, IAsyncBlockActionHandler handler)
         {
             _actionId = actionId;
             _handler = handler;
         }
 
-        public async Task Handle(BlockActionRequest request)
+        public async Task Handle(BlockActionRequest request, Responder respond)
         {
             if (request.Action.ActionId == _actionId)
-                await _handler.Handle(request).ConfigureAwait(false);
+                await _handler.Handle(request, respond).ConfigureAwait(false);
         }
     }
 }

@@ -10,6 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>Slack API RTM Events AspNetCore</PackageTags>
     <UserSecretsId>841b14b1-9d6a-4ab7-9e1f-c1b2c227bb5f</UserSecretsId>
+    <NoWarn>0618;1701;1702</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

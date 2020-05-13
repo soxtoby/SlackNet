@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Interaction;
+using SlackNet.Interaction.Experimental;
 using SSC = SlackNet.AspNetCore.SlackServiceConfiguration;
 
 namespace SlackNet.Tests
@@ -56,6 +57,23 @@ namespace SlackNet.Tests
 
             ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceLegacyDialogSubmissionHandling), typeof(IDialogSubmissionHandler));
             ExpectMethod(publicMethods, nameof(SSC.RegisterDialogSubmissionHandler), new[] { typeof(IDialogSubmissionHandler) }, new[] { typeof(string) });
+
+            // Experimental async API
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceAsyncBlockActionHandling), typeof(IAsyncBlockActionHandler));
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncBlockActionHandler), typeof(IAsyncBlockActionHandler), new Type[0], new Type[0]);
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncBlockActionHandler), typeof(IAsyncBlockActionHandler<BlockAction>), new[] { typeof(BlockAction) }, new Type[0]);
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncBlockActionHandler), typeof(IAsyncBlockActionHandler<BlockAction>), new[] { typeof(BlockAction) }, new[] { typeof(string) });
+
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceAsyncMessageShortcutHandling), typeof(IAsyncMessageShortcutHandler));
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncMessageShortcutHandler), typeof(IAsyncMessageShortcutHandler), new Type[0], new Type[0]);
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncMessageShortcutHandler), typeof(IAsyncMessageShortcutHandler), new Type[0], new[] { typeof(string) });
+
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceAsyncGlobalShortcutHandling), typeof(IAsyncGlobalShortcutHandler));
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncGlobalShortcutHandler), typeof(IAsyncGlobalShortcutHandler), new Type[0], new Type[0]);
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncGlobalShortcutHandler), typeof(IAsyncGlobalShortcutHandler), new Type[0], new[] { typeof(string) });
+
+            ExpectReplaceAndKeyedRegistrationTriplet(publicMethods, nameof(SSC.ReplaceAsyncViewSubmissionHandling), nameof(SSC.RegisterAsyncViewSubmissionHandler), typeof(IAsyncViewSubmissionHandler));
+            ExpectReplaceAndKeyedRegistrationTriplet(publicMethods, nameof(SSC.ReplaceAsyncSlashCommandHandling), nameof(SSC.RegisterAsyncSlashCommandHandler), typeof(IAsyncSlashCommandHandler));
 
             RemainingMethods(publicMethods)
                 .ShouldBeEmpty("Unexpected public method(s)");

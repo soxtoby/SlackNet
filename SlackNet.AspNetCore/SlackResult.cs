@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,14 +10,22 @@ namespace SlackNet.AspNetCore
     public abstract class SlackResult : IActionResult
     {
         private readonly HttpStatusCode _status;
+        private Func<Task> _requestCompletedCallback = () => Task.CompletedTask;
 
         protected SlackResult(HttpStatusCode status) => _status = status;
+
+        public SlackResult OnCompleted(Func<Task> callback)
+        {
+            _requestCompletedCallback = callback;
+            return this;
+        }
 
         public Task ExecuteResultAsync(ActionContext context) => ExecuteResultAsync(context.HttpContext.Response);
 
         public async Task ExecuteResultAsync(HttpResponse response)
         {
             response.StatusCode = (int)_status;
+            response.OnCompleted(_requestCompletedCallback);
 
             if (ContentType != null)
                 response.ContentType = ContentType;

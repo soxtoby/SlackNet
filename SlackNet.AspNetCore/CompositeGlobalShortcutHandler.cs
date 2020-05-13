@@ -2,14 +2,15 @@
 using System.Linq;
 using System.Threading.Tasks;
 using SlackNet.Interaction;
+using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.AspNetCore
 {
-    class CompositeGlobalShortcutHandler : IGlobalShortcutHandler
+    class CompositeGlobalShortcutHandler : IAsyncGlobalShortcutHandler
     {
-        private readonly List<CompositeItem<IGlobalShortcutHandler>> _handlers;
-        public CompositeGlobalShortcutHandler(IEnumerable<CompositeItem<IGlobalShortcutHandler>> handlers) => _handlers = handlers.ToList();
+        private readonly List<CompositeItem<IAsyncGlobalShortcutHandler>> _handlers;
+        public CompositeGlobalShortcutHandler(IEnumerable<CompositeItem<IAsyncGlobalShortcutHandler>> handlers) => _handlers = handlers.ToList();
 
-        public Task Handle(GlobalShortcut shortcut) => Task.WhenAll(_handlers.Select(h => h.Item.Handle(shortcut)));
+        public Task Handle(GlobalShortcut shortcut, Responder respond) => Task.WhenAll(_handlers.Select(h => h.Item.Handle(shortcut, respond)));
     }
 }

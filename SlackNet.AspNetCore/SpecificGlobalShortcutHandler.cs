@@ -1,23 +1,24 @@
 ﻿using System.Threading.Tasks;
 using SlackNet.Interaction;
+using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.AspNetCore
 {
-    class SpecificGlobalShortcutHandler : IGlobalShortcutHandler
+    class SpecificGlobalShortcutHandler : IAsyncGlobalShortcutHandler
     {
         private readonly string _callbackId;
-        private readonly IGlobalShortcutHandler _handler;
+        private readonly IAsyncGlobalShortcutHandler _handler;
 
-        public SpecificGlobalShortcutHandler(string callbackId, IGlobalShortcutHandler handler)
+        public SpecificGlobalShortcutHandler(string callbackId, IAsyncGlobalShortcutHandler handler)
         {
             _callbackId = callbackId;
             _handler = handler;
         }
 
-        public async Task Handle(GlobalShortcut request)
+        public async Task Handle(GlobalShortcut request, Responder respond)
         {
             if (request.CallbackId == _callbackId)
-                await _handler.Handle(request).ConfigureAwait(false);
+                await _handler.Handle(request, respond).ConfigureAwait(false);
         }
     }
 }

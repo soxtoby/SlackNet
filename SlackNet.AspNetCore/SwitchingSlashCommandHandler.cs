@@ -2,18 +2,19 @@
 using System.Linq;
 using System.Threading.Tasks;
 using SlackNet.Interaction;
+using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.AspNetCore
 {
-    class SwitchingSlashCommandHandler : ISlashCommandHandler
+    class SwitchingSlashCommandHandler : IAsyncSlashCommandHandler
     {
-        private readonly Dictionary<string, ISlashCommandHandler> _handlers;
-        public SwitchingSlashCommandHandler(IEnumerable<KeyedItem<ISlashCommandHandler>> handlers) =>
+        private readonly Dictionary<string, IAsyncSlashCommandHandler> _handlers;
+        public SwitchingSlashCommandHandler(IEnumerable<KeyedItem<IAsyncSlashCommandHandler>> handlers) =>
             _handlers = handlers.ToDictionary(h => h.Key, h => h.Item);
 
-        public Task<SlashCommandResponse> Handle(SlashCommand command) =>
+        public Task Handle(SlashCommand command, Responder<SlashCommandResponse> respond) =>
             _handlers.TryGetValue(command.Command, out var handler)
-                ? handler.Handle(command)
+                ? handler.Handle(command, respond)
                 : Task.FromResult((SlashCommandResponse) null);
     }
 }

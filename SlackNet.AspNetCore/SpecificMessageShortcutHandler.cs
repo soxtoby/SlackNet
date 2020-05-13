@@ -1,23 +1,24 @@
 ﻿using System.Threading.Tasks;
 using SlackNet.Interaction;
+using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.AspNetCore
 {
-    class SpecificMessageShortcutHandler : IMessageShortcutHandler
+    class SpecificMessageShortcutHandler : IAsyncMessageShortcutHandler
     {
         private readonly string _callbackId;
-        private readonly IMessageShortcutHandler _handler;
+        private readonly IAsyncMessageShortcutHandler _handler;
 
-        public SpecificMessageShortcutHandler(string callbackId, IMessageShortcutHandler handler)
+        public SpecificMessageShortcutHandler(string callbackId, IAsyncMessageShortcutHandler handler)
         {
             _callbackId = callbackId;
             _handler = handler;
         }
 
-        public async Task Handle(MessageShortcut request)
+        public async Task Handle(MessageShortcut request, Responder respond)
         {
             if (request.CallbackId == _callbackId)
-                await _handler.Handle(request).ConfigureAwait(false);
+                await _handler.Handle(request, respond).ConfigureAwait(false);
         }
     }
 }
