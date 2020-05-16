@@ -252,6 +252,30 @@ namespace SlackNet.AspNetCore
         public SlackServiceConfiguration RegisterMessageShortcutHandler(string callbackId, Func<IServiceProvider, IMessageShortcutHandler> handlerFactory) =>
             RegisterCompositeItem<IAsyncMessageShortcutHandler>(p => new SpecificMessageShortcutHandler(callbackId, new ResolvedMessageShortcutHandler(p, s => new MessageShortcutHandlerAsyncWrapper(handlerFactory(s)))));
 
+        [Obsolete("Use RegisterMessageShortcutHandler instead")]
+        public SlackServiceConfiguration RegisterMessageActionHandler<THandler>()
+            where THandler : class, IMessageActionHandler
+        {
+            _serviceCollection.TryAddScoped<THandler>();
+            return RegisterCompositeItem<IAsyncMessageShortcutHandler>(p => new ResolvedMessageShortcutHandler(p, s => new MessageShortcutHandlerAsyncWrapper(new MessageActionAdapter(s.GetRequiredService<THandler>()))));
+        }
+
+        [Obsolete("Use RegisterMessageShortcutHandler instead")]
+        public SlackServiceConfiguration RegisterMessageActionHandler(IMessageActionHandler handler) =>
+            RegisterCompositeItem<IAsyncMessageShortcutHandler>(c => new MessageShortcutHandlerAsyncWrapper(new MessageActionAdapter(handler)));
+
+        [Obsolete("Use RegisterMessageShortcutHandler instead")]
+        public SlackServiceConfiguration RegisterMessageActionHandler(Func<IServiceProvider, IMessageActionHandler> handlerFactory) =>
+            RegisterCompositeItem<IAsyncMessageShortcutHandler>(p => new ResolvedMessageShortcutHandler(p, s => new MessageShortcutHandlerAsyncWrapper(new MessageActionAdapter(handlerFactory(s)))));
+
+        [Obsolete("Use RegisterMessageShortcutHandler instead")]
+        public SlackServiceConfiguration RegisterMessageActionHandler<THandler>(string callbackId)
+            where THandler : class, IMessageActionHandler
+        {
+            _serviceCollection.TryAddScoped<THandler>();
+            return RegisterCompositeItem<IAsyncMessageShortcutHandler>(p => new SpecificMessageShortcutHandler(callbackId, new ResolvedMessageShortcutHandler(p, s => new MessageShortcutHandlerAsyncWrapper(new MessageActionAdapter(s.GetRequiredService<THandler>())))));
+        }
+
         #endregion Message shortcuts
 
         #region Global shortcuts

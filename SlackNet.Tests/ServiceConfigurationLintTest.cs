@@ -57,6 +57,10 @@ namespace SlackNet.Tests
 
             ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceLegacyDialogSubmissionHandling), typeof(IDialogSubmissionHandler));
             ExpectMethod(publicMethods, nameof(SSC.RegisterDialogSubmissionHandler), new[] { typeof(IDialogSubmissionHandler) }, new[] { typeof(string) });
+            
+            // Backwards compatibility
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterMessageActionHandler), typeof(IMessageActionHandler), new Type[0], new Type[0]);
+            ExpectMethod(publicMethods, nameof(SSC.RegisterMessageActionHandler), new[] { typeof(IMessageActionHandler) }, new[] { typeof(string) });
 
             // Experimental async API
             ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceAsyncBlockActionHandling), typeof(IAsyncBlockActionHandler));
