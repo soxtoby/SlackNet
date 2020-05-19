@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Args = System.Collections.Generic.Dictionary<string, object>;
@@ -335,7 +336,7 @@ namespace SlackNet.WebApi
                     { "cursor", cursor },
                     { "exclude_archived", excludeArchived },
                     { "limit", limit },
-                    { "types", types }
+                    { "types", types?.Select(t => t.ToSnakeCase()) }
                 }, cancellationToken);
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -138,7 +139,7 @@ namespace SlackNet.WebApi
                     { "cursor", cursor },
                     { "exclude_archived", excludeArchived },
                     { "limit", limit },
-                    { "types", types },
+                    { "types", types?.Select(t => t.ToSnakeCase()) },
                     { "user", userId }
                 }, cancellationToken);
 
