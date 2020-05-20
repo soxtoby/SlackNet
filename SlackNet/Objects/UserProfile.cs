@@ -5,6 +5,7 @@ namespace SlackNet
 {
     public class UserProfile
     {
+        public string Title { get; set; }
         public string AvatarHash { get; set; }
         public string StatusEmoji { get; set; }
         public string StatusText { get; set; }
@@ -12,10 +13,14 @@ namespace SlackNet
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string RealName { get; set; }
+        public string RealNameNormalized { get; set; }
+        public string DisplayName { get; set; }
         public string Email { get; set; }
         public string Skype { get; set; }
         public string Phone { get; set; }
-        public bool AlwaysActive { get; set; }
+        public bool? AlwaysActive { get; set; }
+        public string Team { get; set; }
+        public string ImageOriginal { get; set; }
         [JsonProperty("image_24")]
         public string Image24 { get; set; }
         [JsonProperty("image_32")]
