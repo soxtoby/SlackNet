@@ -1,6 +1,6 @@
 ﻿namespace SlackNet
 {
-    public class Im : Hub
+    public class Im : Conversation
     {
         public Im() => IsMember = true;
 

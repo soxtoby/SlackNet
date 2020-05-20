@@ -144,7 +144,7 @@ namespace SlackNet.Tests
             _incomingMessages.OnNext(incoming);
 
             var result = observer.Messages[0].Value.Value;
-            result.Hub.ShouldBe(channel);
+            result.Conversation.ShouldBe(channel);
             result.User.ShouldBe(user);
             result.Text.ShouldBe(incoming.Text);
             result.Ts.ShouldBe(incoming.Ts);
@@ -180,83 +180,83 @@ namespace SlackNet.Tests
         }
 
         [Test]
-        public void GetHubById_NullId_ReturnsNull()
+        public void GetConversationById_NullId_ReturnsNull()
         {
-            _sut.GetHubById(null)
+            _sut.GetConversationById(null)
                 .ShouldComplete()
                 .And.ShouldBeNull();
         }
 
         [Test]
-        public void GetHubById_UnknownIdType_ReturnsNull()
+        public void GetConversationById_UnknownIdType_ReturnsNull()
         {
-            _sut.GetHubById("foo")
+            _sut.GetConversationById("foo")
                 .ShouldComplete()
                 .And.ShouldBeNull();
         }
 
         [Test]
-        public void GetHubById_ChannelId_ReturnsChannelInfoFromApi_AndIsCached()
+        public void GetConversationById_ChannelId_ReturnsChannelInfoFromApi_AndIsCached()
         {
             var channelId = "C123";
             var expectedChannel = new Channel();
             _api.Channels.Info(channelId).Returns(expectedChannel);
 
-            _sut.GetHubById(channelId)
+            _sut.GetConversationById(channelId)
                 .ShouldComplete()
                 .And.ShouldBe(expectedChannel);
-            _sut.GetHubById(channelId)
+            _sut.GetConversationById(channelId)
                 .ShouldComplete()
                 .And.ShouldBe(expectedChannel);
             _api.Channels.Received(1).Info(channelId);
         }
 
         [Test]
-        public void GetHubById_GroupId_ReturnsGroupInfoFromApi_AndIsCached()
+        public void GetConversationById_GroupId_ReturnsGroupInfoFromApi_AndIsCached()
         {
             var groupId = "G123";
             var expectedGroup = new Channel();
             _api.Groups.Info(groupId).Returns(expectedGroup);
 
-            _sut.GetHubById(groupId)
+            _sut.GetConversationById(groupId)
                 .ShouldComplete()
                 .And.ShouldBe(expectedGroup);
-            _sut.GetHubById(groupId)
+            _sut.GetConversationById(groupId)
                 .ShouldComplete()
                 .And.ShouldBe(expectedGroup);
             _api.Groups.Received(1).Info(groupId);
         }
 
         [Test]
-        public void GetHubById_ImId_ReturnsImInfoFromApi_AndIsCached()
+        public void GetConversationById_ImId_ReturnsImInfoFromApi_AndIsCached()
         {
             var imId = "D123";
             var expectedIm = new Im();
             _api.Conversations.OpenAndReturnInfo(imId).Returns(new ImResponse { Channel = expectedIm });
 
-            _sut.GetHubById(imId)
+            _sut.GetConversationById(imId)
                 .ShouldComplete()
                 .And.ShouldBe(expectedIm);
-            _sut.GetHubById(imId)
+            _sut.GetConversationById(imId)
                 .ShouldComplete()
                 .And.ShouldBe(expectedIm);
             _api.Conversations.Received(1).OpenAndReturnInfo(imId);
         }
 
         [Test]
-        public void GetHubByName_ChannelName_FindsChannelWithMatchingName()
+        public void GetConversationByName_ChannelName_FindsChannelWithMatchingName()
         {
             var expectedChannel = new Channel { Id = "C1", Name = "foo" };
             var otherChannel = new Channel { Id = "C2", Name = "bar" };
             _api.Channels.List().Returns(new[] { otherChannel, expectedChannel });
 
-            _sut.GetHubByName("#foo")
+            _sut.GetConversationByName("#foo")
                 .ShouldComplete()
                 .And.ShouldBe(expectedChannel);
         }
 
         [Test]
-        public void GetHubByName_UserName_FindsImWithMatchingUser()
+        public void GetConversationByName_UserName_FindsImWithMatchingUser()
         {
             var matchingUser = new User { Id = "U1", Name = "foo" };
             var otherUser = new User { Id = "U2", Name = "bar" };
@@ -264,19 +264,19 @@ namespace SlackNet.Tests
             var expectedIm = new Im { Id = "D123" };
             _api.Im.Open(matchingUser.Id, true).Returns(new ImResponse { Channel = expectedIm });
 
-            _sut.GetHubByName("@foo")
+            _sut.GetConversationByName("@foo")
                 .ShouldComplete()
                 .And.ShouldBe(expectedIm);
         }
 
         [Test]
-        public void GetHubByName_GroupName_FindsGroupWithMatchingName()
+        public void GetConversationByName_GroupName_FindsGroupWithMatchingName()
         {
             var expectedGroup = new Channel { Id = "G1", Name = "foo" };
             var otherGroup = new Channel { Id = "G2", Name = "bar" };
             _api.Groups.List().Returns(new[] { otherGroup, expectedGroup });
 
-            _sut.GetHubByName("foo")
+            _sut.GetConversationByName("foo")
                 .ShouldComplete()
                 .And.ShouldBe(expectedGroup);
         }
@@ -487,7 +487,7 @@ namespace SlackNet.Tests
         {
             var slackMessage = new SlackMessage(_sut)
             {
-                Hub = new Channel { Id = "channel" },
+                Conversation = new Channel { Id = "channel" },
                 Ts = "123"
             };
             await Connect().ConfigureAwait(false);
@@ -502,7 +502,7 @@ namespace SlackNet.Tests
         {
             var slackMessage = new SlackMessage(_sut)
             {
-                Hub = new Channel { Id = "channel" },
+                Conversation = new Channel { Id = "channel" },
                 Ts = "123",
                 ThreadTs = "456"
             };
@@ -518,7 +518,7 @@ namespace SlackNet.Tests
         {
             var slackMessage = new SlackMessage(_sut)
             {
-                Hub = new Channel { Id = "channel" },
+                Conversation = new Channel { Id = "channel" },
                 Ts = "123"
             };
             await Connect().ConfigureAwait(false);
@@ -529,17 +529,17 @@ namespace SlackNet.Tests
         }
 
         [Test]
-        public async Task Send_ReplyInDifferentHub()
+        public async Task Send_ReplyInDifferentConversation()
         {
             var slackMessage = new SlackMessage(_sut)
             {
-                Hub = new Channel { Id = "channel" },
+                Conversation = new Channel { Id = "channel" },
                 Ts = "123",
                 ThreadTs = "456"
             };
             await Connect().ConfigureAwait(false);
 
-            await _sut.Send(new BotMessage { ReplyTo = slackMessage, Hub = new HubByRef(new Channel { Id = "other_channel" }) }).ConfigureAwait(false);
+            await _sut.Send(new BotMessage { ReplyTo = slackMessage, Conversation = new ConversationByRef(new Channel { Id = "other_channel" }) }).ConfigureAwait(false);
 
             await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == null && message.Channel == "other_channel"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
         }

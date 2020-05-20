@@ -10,7 +10,7 @@ namespace SlackNet.Bot
         /// <summary>
         /// Channel, private group, or IM channel to send message to. Can be an encoded ID, or a name.
         /// </summary>
-        public HubIdentifier Hub { get; set; }
+        public ConversationIdentifier Conversation { get; set; }
         /// <summary>
         /// Text of the message to send.
         /// </summary>

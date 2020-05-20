@@ -17,6 +17,6 @@
 
         public static Link Url(string url, string caption = null) => new Link(url, caption);
         public static Link User(string userId) => new Link('@' + userId, null);
-        public static Link Hub(string hubId) => new Link('#' + hubId, null);
+        public static Link Channel(string channelId) => new Link('#' + channelId, null);
     }
 }
