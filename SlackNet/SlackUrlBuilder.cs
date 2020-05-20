@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -30,7 +31,12 @@ namespace SlackNet
 
         private string ArgValue(object value) =>
               value is string stringValue ? stringValue
-            : value is IEnumerable<string> stringList ? string.Join(",", stringList)
+            : value is IEnumerable enumerable ? SerializeEnumerable(enumerable)
             : JsonConvert.SerializeObject(value, _jsonSettings.SerializerSettings);
+
+        private string SerializeEnumerable(IEnumerable enumerable) =>
+            string.Join(",", enumerable.Cast<object>()
+                .Select(o => JsonConvert.SerializeObject(o, _jsonSettings.SerializerSettings))
+                .Select(val => val.Trim('"')));
     }
 }

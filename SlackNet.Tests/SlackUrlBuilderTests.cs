@@ -1,5 +1,6 @@
 ﻿using EasyAssertions;
 using NUnit.Framework;
+using SlackNet.WebApi;
 using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.Tests
@@ -48,6 +49,13 @@ namespace SlackNet.Tests
         {
             _sut.Url("method", new Args { { "foo", new[] { "?bar", "baz" } } })
                 .ShouldBe(BaseUrl + "method?foo=%3Fbar%2Cbaz");
+        }
+
+        [Test]
+        public void EnumListArgs_CommaSeparatedEscaped()
+        {
+            _sut.Url("method", new Args { { "foo", new[] { ConversationType.PrivateChannel, ConversationType.Im } } })
+                .ShouldBe(BaseUrl + "method?foo=private_channel%2Cim");
         }
 
         [Test]

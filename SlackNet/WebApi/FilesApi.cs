@@ -208,7 +208,7 @@ namespace SlackNet.WebApi
                     { "channel", channelId },
                     { "ts_from", tsFrom },
                     { "ts_to", tsTo },
-                    { "types", types.Select(t => t.ToString().ToLowerInvariant()) },
+                    { "types", types },
                     { "count", count },
                     { "page", page }
                 }, cancellationToken);
