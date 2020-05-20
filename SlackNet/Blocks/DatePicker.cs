@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace SlackNet.Blocks
 {
@@ -19,18 +20,19 @@ namespace SlackNet.Blocks
         /// <summary>
         /// The initial date that is selected when the element is loaded.
         /// </summary>
+        [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
         public DateTime? InitialDate { get; set; }
     }
 
     [SlackType("datepicker")]
     public class DatePickerAction : BlockAction
     {
-        public DateTime SelectedDate { get; set; }
+        public DateTime? SelectedDate { get; set; }
     }
 
     [SlackType("datepicker")]
     public class DatePickerValue : ElementValue
     {
-        public DateTime SelectedDate { get; set; }
+        public DateTime? SelectedDate { get; set; }
     }
 }
