@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 namespace SlackNet.Blocks
 {
@@ -20,7 +19,6 @@ namespace SlackNet.Blocks
         /// <summary>
         /// The initial date that is selected when the element is loaded.
         /// </summary>
-        [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
         public DateTime? InitialDate { get; set; }
     }
 

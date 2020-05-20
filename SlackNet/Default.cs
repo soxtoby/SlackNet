@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Reflection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 namespace SlackNet
@@ -21,6 +20,7 @@ namespace SlackNet
             return new JsonSerializerSettings
                 {
                     NullValueHandling = NullValueHandling.Ignore,
+                    DateFormatString = "yyyy-MM-dd",
                     ContractResolver = new SlackNetContractResolver
                         {
                             NamingStrategy = namingStrategy,
@@ -28,8 +28,7 @@ namespace SlackNet
                     Converters =
                         {
                             new EnumNameConverter(namingStrategy),
-                            new SlackTypeConverter(slackTypeResolver),
-                            new IsoDateTimeConverter { DateTimeFormat = "YYYY-MM-DD" }
+                            new SlackTypeConverter(slackTypeResolver)
                         }
                 };
         }

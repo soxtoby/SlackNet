@@ -8,7 +8,7 @@ namespace SlackNet.Tests.Objects
     public class UserTests
     {
         [Test]
-        public void Serialization_WorksCorrectlyForAvaterFields()
+        public void Serialization_WorksCorrectlyForAvatarFields()
         {
             var jsonStr = @"
 {

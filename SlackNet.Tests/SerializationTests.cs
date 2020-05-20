@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using EasyAssertions;
 using Newtonsoft.Json;
@@ -20,49 +21,49 @@ namespace SlackNet.Tests
         [Test]
         public void SnakeCaseJson_DeserializedToPascalCase()
         {
-            var result = JsonConvert.DeserializeObject<SimpleType>(@"{ ""some_property"": ""foo"" }", _sut);
+            var result = Deserialize<SimpleType>(@"{ ""some_property"": ""foo"" }");
             result.SomeProperty.ShouldBe("foo");
         }
 
         [Test]
         public void PascalCaseProperties_SerializedAsSnakeCase()
         {
-            var result = JsonConvert.SerializeObject(new SimpleType { SomeProperty = "foo" }, _sut);
+            var result = Serialize(new SimpleType { SomeProperty = "foo" });
             result.ShouldBe(@"{""some_property"":""foo""}");
         }
 
         [Test]
         public void EnumValues_DeserializedFromSnakeCase()
         {
-            var result = JsonConvert.DeserializeObject<EnumProperty>(@"{ ""property"": ""test_value"" }",_sut);
+            var result = Deserialize<EnumProperty>(@"{ ""property"": ""test_value"" }");
             result.Property.ShouldBe(TestEnum.TestValue);
         }
 
         [Test]
         public void EnumValues_SerializedToSnakeCase()
         {
-            var result = JsonConvert.SerializeObject(new EnumProperty { Property = TestEnum.TestValue }, _sut);
+            var result = Serialize(new EnumProperty { Property = TestEnum.TestValue });
             result.ShouldBe(@"{""property"":""test_value""}");
         }
 
         [Test]
         public void EnumValues_WithEnumMemberAttribute_DeserializedFromAttributeValue()
         {
-            var result = JsonConvert.DeserializeObject<EnumProperty>(@"{ ""property"": ""other_value"" }", _sut);
+            var result = Deserialize<EnumProperty>(@"{ ""property"": ""other_value"" }");
             result.Property.ShouldBe(TestEnum.RenamedValue);
         }
 
         [Test]
         public void EnumValues_WithEnumMemberAttribute_SerializedToAttributeValue()
         {
-            var result = JsonConvert.SerializeObject(new EnumProperty { Property = TestEnum.RenamedValue }, _sut);
+            var result = Serialize(new EnumProperty { Property = TestEnum.RenamedValue });
             result.ShouldBe(@"{""property"":""other_value""}");
         }
 
         [Test]
         public void SlackTypesCanBeDeserialized()
         {
-            var result = JsonConvert.DeserializeObject<Event>(@"{ ""type"": ""message"", ""text"": ""foo"" }", _sut);
+            var result = Deserialize<Event>(@"{ ""type"": ""message"", ""text"": ""foo"" }");
             result.ShouldBeA<MessageEvent>()
                 .And.Text.ShouldBe("foo");
         }
@@ -70,7 +71,7 @@ namespace SlackNet.Tests
         [Test]
         public void SlackSubTypesCanBeDeserialized()
         {
-            var result = JsonConvert.DeserializeObject<Event>(@"{ ""type"": ""message"", ""subtype"": ""bot_message"", ""text"": ""foo"" }", _sut);
+            var result = Deserialize<Event>(@"{ ""type"": ""message"", ""subtype"": ""bot_message"", ""text"": ""foo"" }");
             result.ShouldBeA<BotMessage>()
                 .And.Text.ShouldBe("foo");
         }
@@ -78,7 +79,7 @@ namespace SlackNet.Tests
         [Test]
         public void SlackTypePropertyCanBeDeserialized()
         {
-            var result = JsonConvert.DeserializeObject<HasSlackTypeProperty>(@"{ ""event"": { ""type"": ""message"", ""text"": ""foo"" } }", _sut);
+            var result = Deserialize<HasSlackTypeProperty>(@"{ ""event"": { ""type"": ""message"", ""text"": ""foo"" } }");
             result.Event.ShouldBeA<MessageEvent>()
                 .And.Text.ShouldBe("foo");
         }
@@ -86,7 +87,7 @@ namespace SlackNet.Tests
         [Test]
         public void SlackTypesInArrayCanBeDeserialized()
         {
-            var result = JsonConvert.DeserializeObject<HasSlackTypeArray>(@"{ ""event_list"": [{ ""type"": ""message"", ""text"": ""foo"" }] }", _sut);
+            var result = Deserialize<HasSlackTypeArray>(@"{ ""event_list"": [{ ""type"": ""message"", ""text"": ""foo"" }] }");
             result.EventList.ShouldBeASingular<MessageEvent>()
                 .And.Text.ShouldBe("foo");
         }
@@ -94,7 +95,7 @@ namespace SlackNet.Tests
         [Test]
         public void Icons()
         {
-            var result = JsonConvert.DeserializeObject<Icons>(@"{ ""icon_32"": ""foo"", ""icon_64"": ""bar"" }");
+            var result = Deserialize<Icons>(@"{ ""icon_32"": ""foo"", ""icon_64"": ""bar"" }");
             result.Images["icon_32"].ShouldBe("foo");
             result.Images["icon_64"].ShouldBe("bar");
         }
@@ -102,43 +103,35 @@ namespace SlackNet.Tests
         [Test]
         public void IgnoreIfEmpty_IsEmpty_Ignored()
         {
-            var result = JsonConvert.SerializeObject(new IgnoreIfEmptyProperty { List = new List<string>() }, _sut);
+            var result = Serialize(new IgnoreIfEmptyProperty { List = new List<string>() });
             result.ShouldBe("{}");
         }
 
         [Test]
         public void IgnoreIfEmpty_NotEmpty_Serialized()
         {
-            var result = JsonConvert.SerializeObject(new IgnoreIfEmptyProperty { List = new List<string>{ "foo" } }, _sut);
+            var result = Serialize(new IgnoreIfEmptyProperty { List = new List<string>{ "foo" } });
             result.ShouldBe(@"{""list"":[""foo""]}");
         }
 
         [Test]
         public void IgnoreIfDefault_IsDefault_Ignored()
         {
-            var result = JsonConvert.SerializeObject(new IgnoreIfDefaultProperty { Value = TestEnum.Default }, _sut);
+            var result = Serialize(new IgnoreIfDefaultProperty { Value = TestEnum.Default });
             result.ShouldBe("{}");
         }
 
         [Test]
         public void IgnoreIfDefault_NotDefault_Serialized()
         {
-            var result = JsonConvert.SerializeObject(new IgnoreIfDefaultProperty { Value = TestEnum.TestValue }, _sut);
+            var result = Serialize(new IgnoreIfDefaultProperty { Value = TestEnum.TestValue });
             result.ShouldBe(@"{""value"":""test_value""}");
-        }
-
-        [Test]
-        public void UserProfileFields_Null_IsNull()
-        {
-            var result = JsonConvert.DeserializeObject<UserProfile>(@"{""fields"":null,""phone"":""123""}");
-            result.Fields.ShouldBeNull();
-            result.Phone.ShouldBe("123");
         }
 
         [Test]
         public void UserProfileFields_EmptyArray_IsEmpty()
         {
-            var result = JsonConvert.DeserializeObject<UserProfile>(@"{""fields"":[],""phone"":""123""}");
+            var result = Deserialize<UserProfile>(@"{""fields"":[],""phone"":""123""}");
             result.Fields.ShouldBeEmpty();
             result.Phone.ShouldBe("123");
         }
@@ -146,11 +139,43 @@ namespace SlackNet.Tests
         [Test]
         public void UserProfileFields_PopulatedObject_IsPopulated()
         {
-            var result = JsonConvert.DeserializeObject<UserProfile>(@"{""fields"":{""fieldId"":{""value"":""foo""}},""phone"":""123""}");
+            var result = Deserialize<UserProfile>(@"{""fields"":{""fieldId"":{""value"":""foo""}},""phone"":""123""}");
             result.Fields.Keys.ShouldMatch(new[] { "fieldId" });
             result.Fields["fieldId"].Value.ShouldBe("foo");
             result.Phone.ShouldBe("123");
         }
+
+        [Test]
+        public void DateTime_SerializedAsDateString()
+        {
+            Serialize(new HasDateTimeProperty { Required = new DateTime(2001, 2, 3) })
+                .ShouldBe(@"{""required"":""2001-02-03""}");
+
+            Serialize(new HasDateTimeProperty { Required = new DateTime(2001, 2, 3), Optional = new DateTime(2004, 5, 6) })
+                .ShouldBe(@"{""required"":""2001-02-03"",""optional"":""2004-05-06""}");
+        }
+
+        [Test]
+        public void DateTime_DeserializedFromDateString()
+        {
+            Deserialize<HasDateTimeProperty>(@"{""required"":""2001-02-03""}")
+                .Assert(o =>
+                {
+                    o.Required.ShouldBe(new DateTime(2001, 2, 3));
+                    o.Optional.ShouldBeNull();
+                });
+
+            Deserialize<HasDateTimeProperty>(@"{""required"":""2001-02-03"",""optional"":""2004-05-06""}")
+                .Assert(o =>
+                {
+                    o.Required.ShouldBe(new DateTime(2001, 2, 3));
+                    o.Optional.ShouldBe(new DateTime(2004, 5, 6));
+                });
+        }
+
+        private string Serialize(object obj) => JsonConvert.SerializeObject(obj, _sut);
+
+        private T Deserialize<T>(string json) => JsonConvert.DeserializeObject<T>(json, _sut);
 
         class SimpleType
         {
@@ -192,6 +217,12 @@ namespace SlackNet.Tests
         {
             [IgnoreIfDefault]
             public TestEnum Value { get; set; }
+        }
+
+        class HasDateTimeProperty
+        {
+            public DateTime Required { get; set; }
+            public DateTime? Optional { get; set; }
         }
     }
 }
