@@ -148,5 +148,15 @@ namespace SlackNet
         /// A list of user IDs for all users in this channel. This includes any disabled accounts that were in this channel when they were disabled.
         /// </summary>
         public IList<string> Members { get; set; } = new List<string>();
+        
+        /// <summary>
+        /// User ID,  present if conversation is IM.
+        /// </summary>
+        public string User { get; set; }
+        
+        /// <summary>
+        /// Indicates if user is deleted, present if conversation is IM.
+        /// </summary>
+        public bool? IsUserDeleted { get; set; }
     }
 }
