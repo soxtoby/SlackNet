@@ -5,7 +5,8 @@ namespace SlackNet
 {
     public class User
     {
-        public string Id { get; set; }public string TeamId { get; set; }
+        public string Id { get; set; }
+        public string TeamId { get; set; }
         public string Name { get; set; }
         public bool Deleted { get; set; }
         public string Color { get; set; }
