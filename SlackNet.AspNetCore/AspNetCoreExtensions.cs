@@ -34,6 +34,14 @@ namespace SlackNet.AspNetCore
             return serviceCollection;
         }
 
+        /// <summary>
+        /// Adds the Slack request-handling middleware to ASP.NET.
+        /// By default, the following routes are configured:
+        /// <br /><c>/slack/event</c> - Event subscriptions
+        /// <br /><c>/slack/action</c> - Interactive component requests
+        /// <br /><c>/slack/options</c> - Options loading (for message menus)
+        /// <br /><c>/slack/command</c> - Slash command requests
+        /// </summary>
         public static IApplicationBuilder UseSlackNet(this IApplicationBuilder app, Action<SlackEndpointConfiguration> configure = null)
         {
             var config = new SlackEndpointConfiguration();
