@@ -100,6 +100,38 @@ Copy [SlackEndpoint.cs](https://github.com/soxtoby/SlackNet/blob/master/SlackNet
 This provides the functions for Slack to call, and delegates request handling the same way the regular ASP.NET integration does, with the same methods for registering event handlers as above.
 
 See the `SlackNet.AzureFunctionExample` and `SlackNet.EventsExample` projects for more detail.
+## Endpoints naming convention
+
+SlackNet requires the Slack app endpoints to be named after the following convention:
+
+**Event subscriptions**
+
+`{route_prefix}/event`
+
+
+**Interactivity**
+
+`{route_prefix}/action`
+
+
+**Select menus**
+
+`{route_prefix}/options`
+
+
+**Slash commands**
+
+`{route_prefix}/command`
+
+
+By default, the value of `{route_prefix}` is `slack`, but this can be configured like so:
+
+```
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    app.UseSlackNet(c => c.UseSigningSecret("<your signing secret here>").MapToPrefix("api/slack"));
+}
+```
 
 ## Contributing
 Contributions are welcome. Currently, changes must be made on a feature branch, otherwise the CI build will fail.
