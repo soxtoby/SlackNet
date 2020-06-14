@@ -191,9 +191,19 @@ namespace SlackNet.AspNetCore
 
             var firstCompletedTask = await Task.WhenAny(earlyResponse.Task, handlingComplete).ConfigureAwait(false);
 
-            return firstCompletedTask == earlyResponse.Task
-                ? earlyResponse.Task.Result.OnCompleted(() => handlingComplete)
-                : defaultResult();
+            if (firstCompletedTask == earlyResponse.Task)
+            {
+                return earlyResponse.Task.Result.OnCompleted(() =>
+                {
+                    requestComplete.SetResult(0);
+                    return handlingComplete;
+                });
+            }
+            else
+            {
+                await handlingComplete.ConfigureAwait(false); // Fish for exception
+                return defaultResult();
+            }
         }
 
         public async Task<SlackResult> HandleOptionsRequest(HttpRequest request, SlackEndpointConfiguration config)
