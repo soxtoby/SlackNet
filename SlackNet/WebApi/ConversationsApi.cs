@@ -101,6 +101,14 @@ namespace SlackNet.WebApi
         Task<ConversationListResponse> List(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string cursor = null, CancellationToken? cancellationToken = null);
 
         /// <summary>
+        /// Sets the read cursor in a channel.
+        /// </summary>
+        /// <param name="channelId">Channel or conversation to set the read cursor for.</param>
+        /// <param name="messageTs">Unique identifier of message you want marked as most recently seen in this conversation.</param>
+        /// <param name="cancellationToken"></param>
+        Task Mark(string channelId, string messageTs, CancellationToken? cancellationToken = null);
+
+        /// <summary>
         /// Retrieve members of a conversation.
         /// </summary>
         /// <param name="channelId">ID of the conversation to retrieve members for.</param>
@@ -336,6 +344,19 @@ namespace SlackNet.WebApi
                     { "exclude_archived", excludeArchived },
                     { "limit", limit },
                     { "types", types }
+                }, cancellationToken);
+
+        /// <summary>
+        /// Sets the read cursor in a channel.
+        /// </summary>
+        /// <param name="channelId">Channel or conversation to set the read cursor for.</param>
+        /// <param name="messageTs">Unique identifier of message you want marked as most recently seen in this conversation.</param>
+        /// <param name="cancellationToken"></param>
+        public Task Mark(string channelId, string messageTs, CancellationToken? cancellationToken = null) =>
+            _client.Post("conversations.mark", new Args
+                {
+                    { "channel", channelId },
+                    { "ts", messageTs }
                 }, cancellationToken);
 
         /// <summary>
