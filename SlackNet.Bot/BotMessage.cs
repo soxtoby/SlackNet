@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using SlackNet.Blocks;
 using SlackNet.WebApi;
@@ -7,10 +8,36 @@ namespace SlackNet.Bot
 {
     public class BotMessage
     {
+        private ConversationIdentifier _conversation;
+        private HubIdentifier _hub;
+
         /// <summary>
         /// Channel, private group, or IM channel to send message to. Can be an encoded ID, or a name.
         /// </summary>
-        public HubIdentifier Hub { get; set; }
+        public ConversationIdentifier Conversation
+        {
+            get => _conversation;
+            set
+            {
+                _conversation = value;
+                _hub = value;
+            }
+        }
+
+        /// <summary>
+        /// Channel, private group, or IM channel to send message to. Can be an encoded ID, or a name.
+        /// </summary>
+        [Obsolete("Use Conversation instead")]
+        public HubIdentifier Hub
+        {
+            get => _hub;
+            set
+            {
+                _conversation = value;
+                _hub = value;
+            }
+        }
+
         /// <summary>
         /// Text of the message to send.
         /// </summary>

@@ -137,7 +137,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="channelId">Resume a conversation by supplying an im or mpim's ID.</param>
         /// <param name="cancellationToken"></param>
-        Task<ImResponse> OpenAndReturnInfo(string channelId, CancellationToken? cancellationToken = null);
+        Task<ConversationOpenResponse> OpenAndReturnInfo(string channelId, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Opens or resumes a direct message or multi-person direct message.
@@ -145,7 +145,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="userIds">List of users. If only one user is included, this creates a 1:1 DM. The ordering of the users is preserved whenever a multi-person direct message is returned.</param>
         /// <param name="cancellationToken"></param>
-        Task<ImResponse> OpenAndReturnInfo(IEnumerable<string> userIds, CancellationToken? cancellationToken = null);
+        Task<ConversationOpenResponse> OpenAndReturnInfo(IEnumerable<string> userIds, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Renames a conversation.
@@ -383,8 +383,8 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="channelId">Resume a conversation by supplying an im or mpim's ID.</param>
         /// <param name="cancellationToken"></param>
-        public Task<ImResponse> OpenAndReturnInfo(string channelId, CancellationToken? cancellationToken = null) => 
-            Open<ImResponse>(true, channelId, null, cancellationToken);
+        public Task<ConversationOpenResponse> OpenAndReturnInfo(string channelId, CancellationToken? cancellationToken = null) => 
+            Open<ConversationOpenResponse>(true, channelId, null, cancellationToken);
 
         /// <summary>
         /// Opens or resumes a direct message or multi-person direct message.
@@ -392,8 +392,8 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="userIds">List of users. If only one user is included, this creates a 1:1 DM. The ordering of the users is preserved whenever a multi-person direct message is returned.</param>
         /// <param name="cancellationToken"></param>
-        public Task<ImResponse> OpenAndReturnInfo(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) => 
-            Open<ImResponse>(true, null, userIds, cancellationToken);
+        public Task<ConversationOpenResponse> OpenAndReturnInfo(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) => 
+            Open<ConversationOpenResponse>(true, null, userIds, cancellationToken);
 
         private Task<T> Open<T>(bool returnIm, string channelId = null, IEnumerable<string> userIds = null, CancellationToken? cancellationToken = null) where T : class =>
             _client.Post<T>("conversations.open", new Args

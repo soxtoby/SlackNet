@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -134,8 +132,8 @@ namespace SlackNet.Tests
                 User = "U456",
                 Attachments = { new Attachment { Text = "bar" } }
             };
-            var channel = new Channel { Name = "channel" };
-            _api.Channels.Info(incoming.Channel).Returns(channel);
+            var channel = new Conversation { Name = "channel" };
+            _api.Conversations.Info(incoming.Channel).Returns(channel);
             var user = new User { Name = "user" };
             _api.Users.Info(incoming.User).Returns(user);
             var observer = _scheduler.CreateObserver<IMessage>();
@@ -144,7 +142,8 @@ namespace SlackNet.Tests
             _incomingMessages.OnNext(incoming);
 
             var result = observer.Messages[0].Value.Value;
-            result.Hub.ShouldBe(channel);
+            result.Conversation.ShouldBe(channel);
+            result.Hub.ShouldBeA<Channel>().And.Name.ShouldBe(channel.Name);
             result.User.ShouldBe(user);
             result.Text.ShouldBe(incoming.Text);
             result.Ts.ShouldBe(incoming.Ts);
@@ -180,235 +179,113 @@ namespace SlackNet.Tests
         }
 
         [Test]
-        public void GetHubById_NullId_ReturnsNull()
+        public void GetConversationById_NullId_ReturnsNull()
         {
-            _sut.GetHubById(null)
+            _sut.GetConversationById(null)
                 .ShouldComplete()
                 .And.ShouldBeNull();
         }
 
         [Test]
-        public void GetHubById_UnknownIdType_ReturnsNull()
+        public void GetConversationById_IdSpecified_ReturnsConversationInfoFromApi_AndIsCached()
         {
-            _sut.GetHubById("foo")
+            var conversationId = "C123";
+            var expectedConversation = new Conversation();
+            _api.Conversations.Info(conversationId).Returns(expectedConversation);
+
+            _sut.GetConversationById(conversationId)
                 .ShouldComplete()
-                .And.ShouldBeNull();
+                .And.ShouldBe(expectedConversation);
+            _sut.GetConversationById(conversationId)
+                .ShouldComplete()
+                .And.ShouldBe(expectedConversation);
+            _api.Conversations.Received(1).Info(conversationId);
         }
 
         [Test]
-        public void GetHubById_ChannelId_ReturnsChannelInfoFromApi_AndIsCached()
+        public void GetConversationByName_FindsChannelWithMatchingName_AndCaches()
         {
-            var channelId = "C123";
-            var expectedChannel = new Channel();
-            _api.Channels.Info(channelId).Returns(expectedChannel);
+            var expectedConversation = new Conversation { Id = "C1", Name = "foo"};
+            var otherConversation = new Conversation { Id = "C2", Name = "bar" };
+            _api.Conversations.List().Returns(ConversationList(otherConversation, expectedConversation));
 
-            _sut.GetHubById(channelId)
+            _sut.GetConversationByName("#foo")
                 .ShouldComplete()
-                .And.ShouldBe(expectedChannel);
-            _sut.GetHubById(channelId)
+                .And.ShouldBe(expectedConversation);
+            _sut.GetConversationByName("foo")
                 .ShouldComplete()
-                .And.ShouldBe(expectedChannel);
-            _api.Channels.Received(1).Info(channelId);
+                .And.ShouldBe(expectedConversation);
+            _api.Conversations.Received(1).List();
         }
 
         [Test]
-        public void GetHubById_GroupId_ReturnsGroupInfoFromApi_AndIsCached()
-        {
-            var groupId = "G123";
-            var expectedGroup = new Channel();
-            _api.Groups.Info(groupId).Returns(expectedGroup);
-
-            _sut.GetHubById(groupId)
-                .ShouldComplete()
-                .And.ShouldBe(expectedGroup);
-            _sut.GetHubById(groupId)
-                .ShouldComplete()
-                .And.ShouldBe(expectedGroup);
-            _api.Groups.Received(1).Info(groupId);
-        }
-
-        [Test]
-        public void GetHubById_ImId_ReturnsImInfoFromApi_AndIsCached()
-        {
-            var imId = "D123";
-            var expectedIm = new Im();
-            _api.Conversations.OpenAndReturnInfo(imId).Returns(new ImResponse { Channel = expectedIm });
-
-            _sut.GetHubById(imId)
-                .ShouldComplete()
-                .And.ShouldBe(expectedIm);
-            _sut.GetHubById(imId)
-                .ShouldComplete()
-                .And.ShouldBe(expectedIm);
-            _api.Conversations.Received(1).OpenAndReturnInfo(imId);
-        }
-
-        [Test]
-        public void GetHubByName_ChannelName_FindsChannelWithMatchingName()
-        {
-            var expectedChannel = new Channel { Id = "C1", Name = "foo" };
-            var otherChannel = new Channel { Id = "C2", Name = "bar" };
-            _api.Channels.List().Returns(new[] { otherChannel, expectedChannel });
-
-            _sut.GetHubByName("#foo")
-                .ShouldComplete()
-                .And.ShouldBe(expectedChannel);
-        }
-
-        [Test]
-        public void GetHubByName_UserName_FindsImWithMatchingUser()
+        public void GetConversationByName_UserName_OpensImWithUser_AndCaches()
         {
             var matchingUser = new User { Id = "U1", Name = "foo" };
             var otherUser = new User { Id = "U2", Name = "bar" };
             _api.Users.List().Returns(new UserListResponse { Members = { otherUser, matchingUser } });
-            var expectedIm = new Im { Id = "D123" };
-            _api.Im.Open(matchingUser.Id, true).Returns(new ImResponse { Channel = expectedIm });
+            var expectedIm = new Conversation { Id = "D123", User = matchingUser.Id, IsIm = true };
+            _api.Conversations.List().Returns(ConversationList());
+            _api.Conversations.OpenAndReturnInfo(UserIds(matchingUser.Id)).Returns(new ConversationOpenResponse { Channel = expectedIm });
 
-            _sut.GetHubByName("@foo")
+            _sut.GetConversationByName("@foo")
                 .ShouldComplete()
                 .And.ShouldBe(expectedIm);
-        }
-
-        [Test]
-        public void GetHubByName_GroupName_FindsGroupWithMatchingName()
-        {
-            var expectedGroup = new Channel { Id = "G1", Name = "foo" };
-            var otherGroup = new Channel { Id = "G2", Name = "bar" };
-            _api.Groups.List().Returns(new[] { otherGroup, expectedGroup });
-
-            _sut.GetHubByName("foo")
-                .ShouldComplete()
-                .And.ShouldBe(expectedGroup);
-        }
-
-        [Test]
-        public void GetChannelByName_FindsChannelWithMatchingName_AndCaches()
-        {
-            var expectedChannel = new Channel { Id = "C1", Name = "foo" };
-            var otherChannel = new Channel { Id = "C2", Name = "bar" };
-            _api.Channels.List().Returns(new[] { otherChannel, expectedChannel });
-
-            _sut.GetChannelByName("#foo")
-                .ShouldComplete()
-                .And.ShouldBe(expectedChannel);
-            _sut.GetChannelByName("foo")
-                .ShouldComplete()
-                .And.ShouldBe(expectedChannel);
-            _api.Channels.Received(1).List();
-        }
-
-        [Test]
-        public void GetImByName_FindsImWithMatchingUserName_AndCaches()
-        {
-            var matchingUser = new User { Id = "U1", Name = "foo" };
-            var otherUser = new User { Id = "U2", Name = "bar" };
-            _api.Users.List().Returns(new UserListResponse { Members = { otherUser, matchingUser } });
-            var expectedIm = new Im { Id = "D123", User = matchingUser.Id };
-            _api.Im.Open(matchingUser.Id, true).Returns(new ImResponse { Channel = expectedIm });
-
-            _sut.GetImByName("@foo")
-                .ShouldComplete()
-                .And.ShouldBe(expectedIm);
-            _sut.GetImByName("foo")
+            _sut.GetConversationByName("@foo")
                 .ShouldComplete()
                 .And.ShouldBe(expectedIm);
             _api.Users.Received(1).List();
-            _api.Im.ReceivedWithAnyArgs(1).Open(Arg.Any<string>());
+            _api.Conversations.ReceivedWithAnyArgs(1).OpenAndReturnInfo(Arg.Any<string[]>());
         }
 
         [Test]
-        public void GetGroupByName_FindsGroupWithMatchingName_AndCaches()
+        public void GetConversationByUserId_OpensImWithUser_AndCaches()
         {
-            var expectedGroup = new Channel { Id = "G1", Name = "foo", IsGroup = true };
-            var otherGroup = new Channel { Id = "G2", Name = "bar", IsGroup = true };
-            _api.Groups.List().Returns(new[] { otherGroup, expectedGroup });
+            var expectedIm = new Conversation { Id = "D123", User = "U123", IsIm = true };
+            _api.Conversations.List().Returns(ConversationList());
+            _api.Conversations.OpenAndReturnInfo(UserIds(expectedIm.User)).Returns(new ConversationOpenResponse { Channel = expectedIm });
 
-            _sut.GetGroupByName("foo")
-                .ShouldComplete()
-                .And.ShouldBe(expectedGroup);
-            _sut.GetGroupByName("foo")
-                .ShouldComplete()
-                .And.ShouldBe(expectedGroup);
-            _api.Groups.Received(1).List();
-        }
-
-        [Test]
-        public void GetImByUserId_OpensImWithUser_AndCaches()
-        {
-            var expectedIm = new Im { Id = "D123", User = "U123" };
-            _api.Im.Open(expectedIm.User, true).Returns(new ImResponse { Channel = expectedIm });
-
-            _sut.GetImByUserId(expectedIm.User)
+            _sut.GetConversationByUserId(expectedIm.User)
                 .ShouldComplete()
                 .And.ShouldBe(expectedIm);
-            _sut.GetImByUserId(expectedIm.User)
+            _sut.GetConversationByUserId(expectedIm.User)
                 .ShouldComplete()
                 .And.ShouldBe(expectedIm);
-            _api.Im.Received(1).Open(expectedIm.User, true);
+            _api.Conversations.Received(1).OpenAndReturnInfo(UserIds(expectedIm.User));
         }
 
         [Test]
-        public void GetChannels_FetchesChannelList_AndCaches()
+        public void GetConversations_FetchesConversationList_AndCaches()
         {
-            var channel1 = new Channel { Id = "C1" };
-            var channel2 = new Channel { Id = "C2" };
-            _api.Channels.List().Returns(new[] { channel1, channel2 });
+            var conversation1 = new Conversation { Id = "C1" };
+            var conversation2 = new Conversation { Id = "C2" };
+            _api.Conversations.List().Returns(ConversationList(conversation1, conversation2));
 
-            _sut.GetChannels()
+            _sut.GetConversations()
                 .ShouldComplete()
-                .And.ShouldMatch(new[] { channel1, channel2 });
-            _sut.GetChannels()
+                .And.ShouldOnlyContain(new[] { conversation1, conversation2 });
+            _sut.GetConversations()
                 .ShouldComplete()
-                .And.ShouldMatch(new[] { channel1, channel2 });
-            _api.Channels.Received(1).List();
+                .And.ShouldOnlyContain(new[] { conversation1, conversation2 });
+            _api.Conversations.Received(1).List();
         }
 
         [Test]
-        public void GetGroups_FetchesGroupList_AndCaches()
+        public void GetConversations_FetchesAllPages()
         {
-            var group1 = new Channel { Id = "G1" };
-            var group2 = new Channel { Id = "G2" };
-            _api.Groups.List().Returns(new[] { group1, group2 });
+            var conversation1 = new Conversation { Id = "C1" };
+            var conversation2 = new Conversation { Id = "C2" };
+            var page2Cursor = "next cursor";
+            _api.Conversations.List().Returns(new ConversationListResponse { Channels = new[] { conversation1 }, ResponseMetadata = new ResponseMetadata { NextCursor = page2Cursor } });
+            _api.Conversations.List(cursor: page2Cursor).Returns(new ConversationListResponse { Channels = new[] { conversation2 }, ResponseMetadata = new ResponseMetadata() });
 
-            _sut.GetGroups()
+            _sut.GetConversations()
                 .ShouldComplete()
-                .And.ShouldMatch(new[] { group1, group2 });
-            _sut.GetGroups()
+                .And.ShouldOnlyContain(new[] { conversation1, conversation2 });
+            _sut.GetConversations()
                 .ShouldComplete()
-                .And.ShouldMatch(new[] { group1, group2 });
-            _api.Groups.Received(1).List();
-        }
-
-        [Test]
-        public void GetMpIms_FetchesMpImList_AndCaches()
-        {
-            var mpim1 = new Channel { Id = "G1" };
-            var mpim2 = new Channel { Id = "G2" };
-            _api.Mpim.List().Returns(new[] { mpim1, mpim2 });
-
-            _sut.GetMpIms()
-                .ShouldComplete()
-                .And.ShouldMatch(new[] { mpim1, mpim2 });
-            _sut.GetMpIms()
-                .ShouldComplete()
-                .And.ShouldMatch(new[] { mpim1, mpim2 });
-            _api.Mpim.Received(1).List();
-        }
-
-        [Test]
-        public void GetIms_FetchesOpenIms_AndCaches()
-        {
-            var im1 = new Im { Id = "D1" };
-            var im2 = new Im { Id = "D2" };
-            _api.Im.List().Returns(new[] { im1, im2 });
-
-            _sut.GetIms()
-                .ShouldComplete()
-                .And.ShouldMatch(new[] { im1, im2 });
-            _sut.GetIms()
-                .ShouldComplete()
-                .And.ShouldMatch(new[] { im1, im2 });
-            _api.Im.Received(1).List();
+                .And.ShouldOnlyContain(new[] { conversation1, conversation2 });
+            _api.Conversations.Received(1).List();
         }
 
         [Test]
@@ -487,7 +364,7 @@ namespace SlackNet.Tests
         {
             var slackMessage = new SlackMessage(_sut)
             {
-                Hub = new Channel { Id = "channel" },
+                Conversation = new Conversation { Id = "channel" },
                 Ts = "123"
             };
             await Connect().ConfigureAwait(false);
@@ -502,7 +379,7 @@ namespace SlackNet.Tests
         {
             var slackMessage = new SlackMessage(_sut)
             {
-                Hub = new Channel { Id = "channel" },
+                Conversation = new Conversation { Id = "channel" },
                 Ts = "123",
                 ThreadTs = "456"
             };
@@ -518,7 +395,7 @@ namespace SlackNet.Tests
         {
             var slackMessage = new SlackMessage(_sut)
             {
-                Hub = new Channel { Id = "channel" },
+                Conversation = new Conversation { Id = "channel" },
                 Ts = "123"
             };
             await Connect().ConfigureAwait(false);
@@ -529,17 +406,17 @@ namespace SlackNet.Tests
         }
 
         [Test]
-        public async Task Send_ReplyInDifferentHub()
+        public async Task Send_ReplyInDifferentConversation()
         {
             var slackMessage = new SlackMessage(_sut)
             {
-                Hub = new Channel { Id = "channel" },
+                Conversation = new Conversation { Id = "channel" },
                 Ts = "123",
                 ThreadTs = "456"
             };
             await Connect().ConfigureAwait(false);
 
-            await _sut.Send(new BotMessage { ReplyTo = slackMessage, Hub = new HubByRef(new Channel { Id = "other_channel" }) }).ConfigureAwait(false);
+            await _sut.Send(new BotMessage { ReplyTo = slackMessage, Conversation = new Conversation { Id = "other_channel" } }).ConfigureAwait(false);
 
             await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == null && message.Channel == "other_channel"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
         }
@@ -594,6 +471,268 @@ namespace SlackNet.Tests
             _rtm.Received(3).SendTyping(channelId);
         }
 
+        #region Hubs
+
+        [Test]
+        public void GetHubById_NullId_ReturnsNull()
+        {
+            _sut.GetHubById(null)
+                .ShouldComplete()
+                .And.ShouldBeNull();
+        }
+
+        [Test]
+        public void GetHubById_UnknownIdType_ReturnsNull()
+        {
+            _sut.GetHubById("foo")
+                .ShouldComplete()
+                .And.ShouldBeNull();
+        }
+
+        [Test]
+        public async Task GetHubById_ChannelId_ReturnsChannelInfoFromApi_AndIsCached()
+        {
+            var channelId = "C123";
+            var expectedChannel = new Conversation { Id = channelId, Name = "expected", IsChannel = true };
+            _api.Conversations.Info(channelId).Returns(expectedChannel);
+
+            var result = await _sut.GetHubById(channelId);
+                
+            result.ShouldBeA<Channel>()
+                .And.Name.ShouldBe(expectedChannel.Name);
+            _sut.GetHubById(channelId)
+                .ShouldComplete()
+                .And.ShouldBe(result);
+            await _api.Conversations.Received(1).Info(channelId);
+        }
+
+        [Test]
+        public async Task GetHubById_GroupId_ReturnsGroupInfoFromApi_AndIsCached()
+        {
+            var groupId = "G123";
+            var expectedGroup = new Conversation { Id = groupId, Name = "expected", IsGroup = true };
+            _api.Conversations.Info(groupId).Returns(expectedGroup);
+
+            var result = await _sut.GetHubById(groupId);
+
+            result.ShouldBeA<Channel>()
+                .And.Name.ShouldBe(expectedGroup.Name);
+            _sut.GetHubById(groupId)
+                .ShouldComplete()
+                .And.ShouldBe(result);
+            await _api.Conversations.Received(1).Info(groupId);
+        }
+
+        [Test]
+        public async Task GetHubById_ImId_ReturnsImInfoFromApi_AndIsCached()
+        {
+            var imId = "D123";
+            var expectedIm = new Conversation { Id = imId, User = "expected", IsIm = true };
+            _api.Conversations.Info(imId).Returns(expectedIm);
+
+            var result = await _sut.GetHubById(imId);
+
+            result.ShouldBeA<Im>()
+                .And.User.ShouldBe(expectedIm.User);
+            _sut.GetHubById(imId)
+                .ShouldComplete()
+                .And.ShouldBe(result);
+            await _api.Conversations.Received(1).Info(imId);
+        }
+
+        [Test]
+        public void GetHubByName_ChannelName_FindsChannelWithMatchingName()
+        {
+            var expectedChannel = new Conversation { Id = "C1", Name = "foo", IsChannel = true };
+            var otherChannel = new Conversation { Id = "C2", Name = "bar", IsChannel = true };
+            _api.Conversations.List().Returns(ConversationList(otherChannel, expectedChannel));
+
+            _sut.GetHubByName("#foo")
+                .ShouldComplete()
+                .And.ShouldBeA<Channel>()
+                .And.Name.ShouldBe(expectedChannel.Name);
+        }
+
+        [Test]
+        public void GetHubByName_UserName_FindsImWithMatchingUser()
+        {
+            var matchingUser = new User { Id = "U1", Name = "foo" };
+            var otherUser = new User { Id = "U2", Name = "bar" };
+            _api.Users.List().Returns(new UserListResponse { Members = { otherUser, matchingUser } });
+            var expectedIm = new Conversation { Id = "D123", User = matchingUser.Id, IsIm = true };
+            _api.Conversations.OpenAndReturnInfo(UserIds(matchingUser.Id)).Returns(new ConversationOpenResponse { Channel = expectedIm });
+
+            _sut.GetHubByName("@foo")
+                .ShouldComplete()
+                .And.ShouldBeA<Im>()
+                .And(im =>
+                    {
+                        im.Id.ShouldBe(expectedIm.Id);
+                        im.User.ShouldBe(expectedIm.User);
+                    });
+        }
+
+        [Test]
+        public void GetHubByName_GroupName_FindsGroupWithMatchingName()
+        {
+            var expectedGroup = new Conversation { Id = "G1", Name = "foo", IsGroup = true };
+            var otherGroup = new Conversation { Id = "G2", Name = "bar", IsGroup = true };
+            _api.Conversations.List().Returns(ConversationList(otherGroup, expectedGroup));
+
+            _sut.GetHubByName("foo")
+                .ShouldComplete()
+                .And.ShouldBeA<Channel>()
+                .And.Name.ShouldBe(expectedGroup.Name);
+        }
+
+        [Test]
+        public async Task GetChannelByName_FindsChannelWithMatchingName_AndCaches()
+        {
+            var expectedChannel = new Conversation { Id = "C1", Name = "foo", IsChannel = true };
+            var otherChannel = new Conversation { Id = "C2", Name = "bar", IsChannel = true };
+            _api.Conversations.List().Returns(ConversationList(otherChannel, expectedChannel));
+
+            var result = await _sut.GetChannelByName("#foo");
+
+            result.ShouldBeA<Channel>()
+                .And.Name.ShouldBe(expectedChannel.Name);
+            _sut.GetChannelByName("foo")
+                .ShouldComplete()
+                .And.ShouldBe(result);
+            await _api.Conversations.Received(1).List();
+        }
+
+        [Test]
+        public async Task GetImByName_FindsImWithMatchingUserName_AndCaches()
+        {
+            var matchingUser = new User { Id = "U1", Name = "foo" };
+            var otherUser = new User { Id = "U2", Name = "bar" };
+            _api.Users.List().Returns(new UserListResponse { Members = { otherUser, matchingUser } });
+            var expectedIm = new Conversation { Id = "D123", User = matchingUser.Id, IsIm = true };
+            _api.Conversations.OpenAndReturnInfo(UserIds(matchingUser.Id)).Returns(new ConversationOpenResponse { Channel = expectedIm });
+
+            var result = await _sut.GetImByName("@foo");
+                
+            result.ShouldBeA<Im>()
+                .And(im =>
+                    {
+                        im.Id.ShouldBe(expectedIm.Id);
+                        im.User.ShouldBe(expectedIm.User);
+                    });
+            _sut.GetImByName("foo")
+                .ShouldComplete()
+                .And.ShouldBe(result);
+            await _api.Users.Received(1).List();
+            await _api.Conversations.ReceivedWithAnyArgs(1).OpenAndReturnInfo(Arg.Any<string[]>());
+        }
+
+        [Test]
+        public async Task GetGroupByName_FindsGroupWithMatchingName_AndCaches()
+        {
+            var expectedGroup = new Conversation { Id = "G1", Name = "foo", IsGroup = true };
+            var otherGroup = new Conversation { Id = "G2", Name = "bar", IsGroup = true };
+            _api.Conversations.List().Returns(ConversationList(otherGroup, expectedGroup));
+
+            var result = await _sut.GetGroupByName("foo");
+            
+            result.ShouldBeA<Channel>()
+                .And.Name.ShouldBe(expectedGroup.Name);
+            _sut.GetGroupByName("foo")
+                .ShouldComplete()
+                .And.ShouldBe(result);
+            await _api.Conversations.Received(1).List();
+        }
+
+        [Test]
+        public async Task GetImByUserId_OpensImWithUser_AndCaches()
+        {
+            var expectedIm = new Conversation { Id = "D123", User = "U123", IsIm = true };
+            _api.Conversations.OpenAndReturnInfo(UserIds(expectedIm.User)).Returns(new ConversationOpenResponse { Channel = expectedIm });
+
+            var result = await _sut.GetImByUserId(expectedIm.User);
+                
+            result.ShouldBeA<Im>()
+                .And.Id.ShouldBe(expectedIm.Id);
+            _sut.GetImByUserId(expectedIm.User)
+                .ShouldComplete()
+                .And.ShouldBe(result);
+            await _api.Conversations.Received(1).OpenAndReturnInfo(UserIds(expectedIm.User));
+        }
+
+        [Test]
+        public async Task GetChannels_FetchesChannelList_AndCaches()
+        {
+            var channel1 = new Conversation { Id = "C1", IsChannel = true };
+            var channel2 = new Conversation { Id = "C2", IsChannel = true };
+            var notAChannel = new Conversation { Id = "D1", IsIm = true };
+            _api.Conversations.List().Returns(ConversationList(channel1, channel2, notAChannel));
+
+            var results = await _sut.GetChannels();
+
+            results.ShouldAllBeA<Channel>()
+                .And.ShouldOnlyContain(new[] { channel1, channel2 }, (ch, co) => ch.Id == co.Id);
+            _sut.GetChannels()
+                .ShouldComplete()
+                .And.ShouldOnlyContain(results);
+            await _api.Conversations.Received(1).List();
+        }
+
+        [Test]
+        public async Task GetGroups_FetchesGroupList_AndCaches()
+        {
+            var group1 = new Conversation { Id = "G1", IsGroup = true };
+            var group2 = new Conversation { Id = "G2", IsGroup = true };
+            var notAGroup = new Conversation { Id = "C1", IsChannel = true };
+            _api.Conversations.List().Returns(ConversationList(group1, group2, notAGroup));
+
+            var results = await _sut.GetGroups();
+                
+            results.ShouldAllBeA<Channel>()
+                .And.ShouldOnlyContain(new[] { group1, group2 }, (ch, co) => ch.Id == co.Id);
+            _sut.GetGroups()
+                .ShouldComplete()
+                .And.ShouldOnlyContain(results);
+            await _api.Conversations.Received(1).List();
+        }
+
+        [Test]
+        public async Task GetMpIms_FetchesMpImList_AndCaches()
+        {
+            var mpim1 = new Conversation { Id = "G1", IsMpim = true };
+            var mpim2 = new Conversation { Id = "G2", IsMpim = true };
+            var notAnMpim = new Conversation { Id = "C1", IsChannel = true };
+            _api.Conversations.List().Returns(ConversationList(mpim1, mpim2, notAnMpim));
+
+            var results = await _sut.GetMpIms();
+
+            results.ShouldAllBeA<Channel>()
+                .And.ShouldOnlyContain(new[] { mpim1, mpim2 }, (ch, co) => ch.Id == co.Id);
+            _sut.GetMpIms()
+                .ShouldComplete()
+                .And.ShouldOnlyContain(results);
+            await _api.Conversations.Received(1).List();
+        }
+
+        [Test]
+        public async Task GetIms_FetchesOpenIms_AndCaches()
+        {
+            var im1 = new Conversation { Id = "D1", IsIm = true };
+            var im2 = new Conversation { Id = "D2", IsIm = true };
+            var notAnIm = new Conversation { Id = "G1", IsMpim = true };
+            _api.Conversations.List().Returns(ConversationList(im1, im2, notAnIm));
+
+            var results = await _sut.GetIms();
+                
+            results.ShouldAllBeA<Im>()
+                .And.ShouldOnlyContain(new[] { im1, im2 }, (im, co) => im.Id == co.Id);
+            _sut.GetIms()
+                .ShouldComplete()
+                .And.ShouldOnlyContain(results);
+            await _api.Conversations.Received(1).List();
+        }
+
+        #endregion
+
         private async Task Connect()
         {
             _rtm.Connect().Returns(new ConnectResponse { Self = new Self { Id = "test_bot", Name = "TestBot" } });
@@ -606,6 +745,12 @@ namespace SlackNet.Tests
             _sut.Messages.Subscribe(observer);
             return observer;
         }
+
+        private static ConversationListResponse ConversationList(params Conversation[] conversations) => 
+            new ConversationListResponse { Channels = conversations, ResponseMetadata = new ResponseMetadata() };
+
+        private static string[] UserIds(params string[] userIds) => 
+            Arg.Is<string[]>(us => us.SequenceEqual(userIds));
     }
 }
 

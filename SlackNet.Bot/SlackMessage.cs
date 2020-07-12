@@ -12,6 +12,8 @@ namespace SlackNet.Bot
         private readonly ISlackBot _bot;
         public SlackMessage(ISlackBot bot) => _bot = bot;
 
+        public Conversation Conversation { get; set; }
+        [Obsolete("Use Conversation instead")]
         public Hub Hub { get; set; }
         public User User { get; set; }
         public string Text { get; set; }
@@ -28,14 +30,14 @@ namespace SlackNet.Bot
         public bool MentionsBot =>
             Text.IndexOf(_bot.Id, StringComparison.OrdinalIgnoreCase) >= 0
             || Text.IndexOf(_bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
-            || Hub?.IsIm == true;
+            || Conversation?.IsIm == true;
 
         public Task ReplyWith(string text, bool createThread = false, CancellationToken? cancellationToken = null) => 
             ReplyWith(new BotMessage { Text = text }, createThread, cancellationToken);
 
         public async Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false, CancellationToken? cancellationToken = null)
         {
-            await _bot.WhileTyping(Hub.Id, async () =>
+            await _bot.WhileTyping(Conversation.Id, async () =>
                 {
                     var reply = await createReply().ConfigureAwait(false);
                     if (reply != null)

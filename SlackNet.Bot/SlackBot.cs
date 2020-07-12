@@ -55,57 +55,25 @@ namespace SlackNet.Bot
         event EventHandler<IMessage> OnMessage;
 
         /// <summary>
-        /// Get information on a public or private channel, IM, or multi-person IM.
+        /// Get full list conversations the bot user has access to.
         /// </summary>
-        Task<Hub> GetHubById(string hubId);
+        Task<IReadOnlyCollection<Conversation>> GetConversations();
 
         /// <summary>
-        /// Find hub with matching name.
+        /// Retrieve information about a conversation.
         /// </summary>
-        /// <param name="channel">Channel, group or IM name, with leading # or @ symbol as appropriate.</param>
-        Task<Hub> GetHubByName(string channel);
+        Task<Conversation> GetConversationById(string conversationId);
 
         /// <summary>
-        /// Find channel by name, with or without leading #.
+        /// Find conversation with matching name.
         /// </summary>
-        Task<Hub> GetChannelByName(string name);
-
-        /// <summary>
-        /// Find private group by name.
-        /// </summary>
-        Task<Hub> GetGroupByName(string name);
-
-        /// <summary>
-        /// Find user by name, with or without leading @.
-        /// </summary>
-        Task<Im> GetImByName(string username);
+        /// <param name="conversationName">Channel, group or IM name, with leading # or @ symbol as appropriate.</param>
+        Task<Conversation> GetConversationByName(string conversationName);
 
         /// <summary>
         /// Get and open Im by user ID.
         /// </summary>
-        Task<Im> GetImByUserId(string userId);
-
-        /// <summary>
-        /// Get full list of public channels.
-        /// </summary>
-        /// <returns></returns>
-        Task<IReadOnlyList<Channel>> GetChannels();
-
-        /// <summary>
-        /// Get list of private groups that the bot is in.
-        /// </summary>
-        Task<IReadOnlyList<Channel>> GetGroups();
-
-        /// <summary>
-        /// Get list of multi-person IMs that the bot is in.
-        /// </summary>
-        /// <returns></returns>
-        Task<IReadOnlyList<Channel>> GetMpIms();
-
-        /// <summary>
-        /// Get list of IMs that have been opened with the bot.
-        /// </summary>
-        Task<IReadOnlyList<Im>> GetIms();
+        Task<Conversation> GetConversationByUserId(string userId);
 
         /// <summary>
         /// Get user information.
@@ -141,6 +109,71 @@ namespace SlackNet.Bot
         /// Clear bot's cache of hubs, users etc.
         /// </summary>
         void ClearCache();
+        
+        #region Hubs
+        
+        /// <summary>
+        /// Get information on a public or private channel, IM, or multi-person IM.
+        /// </summary>
+        [Obsolete("Use GetConversationById instead")]
+        Task<Hub> GetHubById(string hubId);
+
+        /// <summary>
+        /// Find hub with matching name.
+        /// </summary>
+        /// <param name="channel">Channel, group or IM name, with leading # or @ symbol as appropriate.</param>
+        [Obsolete("Use GetConversationByName instead")]
+        Task<Hub> GetHubByName(string channel);
+
+        /// <summary>
+        /// Find channel by name, with or without leading #.
+        /// </summary>
+        [Obsolete("Use GetConversationByName instead")]
+        Task<Hub> GetChannelByName(string name);
+
+        /// <summary>
+        /// Find private group by name.
+        /// </summary>
+        [Obsolete("Use GetConversationByName instead")]
+        Task<Hub> GetGroupByName(string name);
+
+        /// <summary>
+        /// Find user by name, with or without leading @.
+        /// </summary>
+        [Obsolete("Use GetConversationByName instead")]
+        Task<Im> GetImByName(string username);
+
+        /// <summary>
+        /// Get and open Im by user ID.
+        /// </summary>
+        [Obsolete("Use GetConversationByUserId instead")]
+        Task<Im> GetImByUserId(string userId);
+
+        /// <summary>
+        /// Get full list of public channels.
+        /// </summary>
+        [Obsolete("Use GetConversations instead")]
+        Task<IReadOnlyList<Channel>> GetChannels();
+
+        /// <summary>
+        /// Get list of private groups that the bot is in.
+        /// </summary>
+        [Obsolete("Use GetConversations instead")]
+        Task<IReadOnlyList<Channel>> GetGroups();
+
+        /// <summary>
+        /// Get list of multi-person IMs that the bot is in.
+        /// </summary>
+        [Obsolete("Use GetConversations instead")]
+        Task<IReadOnlyList<Channel>> GetMpIms();
+
+        /// <summary>
+        /// Get list of IMs that have been opened with the bot.
+        /// </summary>
+        [Obsolete("Use GetConversations instead")]
+        Task<IReadOnlyList<Im>> GetIms();
+        
+        #endregion
     }
 
     public class SlackBot : ISlackBot, IDisposable
@@ -149,14 +182,14 @@ namespace SlackNet.Bot
         private readonly ISlackApiClient _api;
         private readonly IScheduler _scheduler;
         private readonly ConcurrentQueue<IMessageHandler> _handlers = new ConcurrentQueue<IMessageHandler>();
-        private readonly ConcurrentDictionary<string, Task<Hub>> _hubs = new ConcurrentDictionary<string, Task<Hub>>();
-        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _channels = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
-        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _groups = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
-        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _mpims = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
+        
+        private readonly ConcurrentValue<Task> _conversationsFetched = new ConcurrentValue<Task>();
+        private readonly ConcurrentDictionary<string, Task<Conversation>> _conversations = new ConcurrentDictionary<string, Task<Conversation>>();
+        
         private readonly ConcurrentDictionary<string, Task<User>> _users = new ConcurrentDictionary<string, Task<User>>();
         private readonly ConcurrentDictionary<string, Task<BotInfo>> _bots = new ConcurrentDictionary<string, Task<BotInfo>>();
         private readonly ConcurrentValue<Task<IReadOnlyList<User>>> _allUsers = new ConcurrentValue<Task<IReadOnlyList<User>>>();
-        private readonly ConcurrentValue<Task<IReadOnlyList<Im>>> _ims = new ConcurrentValue<Task<IReadOnlyList<Im>>>();
+        
         private readonly SyncedSubject<IMessage> _incomingMessages = new SyncedSubject<IMessage>();
         private readonly SyncedSubject<BotMessage> _outgoingMessages = new SyncedSubject<BotMessage>();
         private IObservable<PostedMessage> _sentMessages;
@@ -249,21 +282,33 @@ namespace SlackNet.Bot
 
         private async Task<SlackMessage> CreateSlackMessage(MessageEvent message)
         {
-            if (message.User == null && message is Events.BotMessage b)
-            {
-                var botInfo = await GetBotUserById(b.BotId).ConfigureAwait(false);
-                message.User = botInfo.UserId;
-            }
+            var user = GetMessageUser(message);
+            var conversation = GetConversationById(message.Channel);
+            var hub = GetHubById(message.Channel);
 
             return new SlackMessage(this)
                 {
                     Ts = message.Ts,
                     ThreadTs = message.ThreadTs,
                     Text = message.Text,
-                    Hub = await GetHubById(message.Channel).ConfigureAwait(false),
-                    User = await GetUserById(message.User).ConfigureAwait(false),
+                    User = await user.ConfigureAwait(false),
+                    Conversation = await conversation.ConfigureAwait(false),
+                    Hub = await hub.ConfigureAwait(false),
                     Attachments = message.Attachments
                 };
+        }
+
+        private async Task<User> GetMessageUser(MessageEvent message)
+        {
+            var userId = message.User;
+            
+            if (userId == null && message is Events.BotMessage b)
+            {
+                var botInfo = await GetBotUserById(b.BotId).ConfigureAwait(false);
+                userId = botInfo.UserId;
+            }
+
+            return await GetUserById(userId).ConfigureAwait(false);
         }
 
         private void HandleMessage(IMessage message)
@@ -274,106 +319,77 @@ namespace SlackNet.Bot
                 .ForEach(h => h.HandleMessage(message));
             _incomingMessages.OnNext(message);
         }
-
+        
         /// <summary>
-        /// Get information on a public or private channel, IM, or multi-person IM.
+        /// Retrieve information about a conversation.
         /// </summary>
-        public async Task<Hub> GetHubById(string hubId) =>
-            string.IsNullOrEmpty(hubId)
+        public async Task<Conversation> GetConversationById(string conversationId) =>
+            string.IsNullOrEmpty(conversationId)
                 ? null
-                : await _hubs.GetOrAdd(hubId, FetchHub).ConfigureAwait(false);
+                : await _conversations.GetOrAdd(conversationId, FetchConversation).ConfigureAwait(false);
 
-        private async Task<Hub> FetchHub(string hubId) =>
-              hubId[0] == 'C' ? await _api.Channels.Info(hubId).NullIfNotFound().ConfigureAwait(false)
-            : hubId[0] == 'G' ? await _api.Groups.Info(hubId).NullIfNotFound().ConfigureAwait(false)
-            : hubId[0] == 'D' ? (Hub)(await _api.Conversations.OpenAndReturnInfo(hubId).NullIfNotFound().ConfigureAwait(false))?.Channel
-            : null;
+        private async Task<Conversation> FetchConversation(string conversationId) =>
+            await _api.Conversations.Info(conversationId).NullIfNotFound().ConfigureAwait(false);
 
         /// <summary>
-        /// Find hub with matching name.
+        /// Find conversation with matching name.
         /// </summary>
-        /// <param name="channel">Channel, group or IM name, with leading # or @ symbol as appropriate.</param>
-        public async Task<Hub> GetHubByName(string channel) =>
-              channel.FirstOrDefault() == '#' ? await GetChannelByName(channel).ConfigureAwait(false)
-            : channel.FirstOrDefault() == '@' ? await GetImByName(channel).ConfigureAwait(false)
-            : await GetGroupByName(channel).ConfigureAwait(false);
-
-        /// <summary>
-        /// Find channel by name, with or without leading #.
-        /// </summary>
-        public async Task<Hub> GetChannelByName(string name) =>
-            await FindCachedHub<Channel>(h => h.IsChannel && h.Name == WithoutLeadingHash(name)).ConfigureAwait(false)
-            ?? (await GetChannels().ConfigureAwait(false))
-                .FirstOrDefault(c => c.Name == WithoutLeadingHash(name));
-
-        private static string WithoutLeadingHash(string name) => name.TrimStart('#');
-
-        /// <summary>
-        /// Find private group by name.
-        /// </summary>
-        public async Task<Hub> GetGroupByName(string name) =>
-            await FindCachedHub<Channel>(h => h.IsGroup && h.Name == name).ConfigureAwait(false)
-            ?? (await GetGroups().ConfigureAwait(false))
-                .FirstOrDefault(g => g.Name == name);
-
-        /// <summary>
-        /// Get an open Im by user name, with or without leading @.
-        /// </summary>
-        public async Task<Im> GetImByName(string username) =>
-            await GetImByUserId(
-                (await GetUserByName(username).ConfigureAwait(false))?.Id).ConfigureAwait(false);
-
+        /// <param name="conversationName">Channel, group or IM name, with leading # or @ symbol or without.</param>
+        public async Task<Conversation> GetConversationByName(string conversationName) =>
+            conversationName.FirstOrDefault() == '@'
+                ? await GetConversationByUserId((await GetUserByName(conversationName).ConfigureAwait(false)).Id).ConfigureAwait(false)
+                : await FindConversation(c => c.Name == conversationName.TrimStart('#')).ConfigureAwait(false);
+        
         /// <summary>
         /// Get and open Im by user ID.
         /// </summary>
-        public async Task<Im> GetImByUserId(string userId) =>
+        public async Task<Conversation> GetConversationByUserId(string userId) =>
             userId == null ? null
-                : await FindCachedHub<Im>(h => h.User == userId).ConfigureAwait(false)
-                    ?? await OpenAndCacheIm(userId).ConfigureAwait(false);
+                : await FindConversation(c => c.IsIm && c.User == userId).ConfigureAwait(false)
+                ?? await OpenAndCacheImConversation(userId).ConfigureAwait(false);
 
-        private async Task<Im> OpenAndCacheIm(string userId)
+        private async Task<Conversation> OpenAndCacheImConversation(string userId)
         {
-            var im = await OpenIm(userId).ConfigureAwait(false);
-            if (im != null)
-                _hubs[im.Id] = Task.FromResult((Hub)im);
-            return im;
+            var channel = await OpenImConversation(userId).ConfigureAwait(false);
+            if (channel != null)
+                _conversations[channel.Id] = Task.FromResult(channel);
+            return channel;
         }
 
-        private Task<T> FindCachedHub<T>(Func<T, bool> predicate) where T : Hub => _hubs.Values.FirstOrDefaultAsync(predicate);
+        private async Task<Conversation> FindConversation(Func<Conversation, bool> predicate) =>
+            (await GetConversations().ConfigureAwait(false)).FirstOrDefault(predicate);
 
-        private async Task<Im> OpenIm(string userId) => (await _api.Im.Open(userId, true).NullIfNotFound().ConfigureAwait(false))?.Channel;
-
-        /// <summary>
-        /// Get full list of public channels.
-        /// </summary>
-        /// <returns></returns>
-        public Task<IReadOnlyList<Channel>> GetChannels() => _channels.GetOrCreateValue(FetchChannels);
-        private async Task<IReadOnlyList<Channel>> FetchChannels() => CacheHubs(await _api.Channels.List().ConfigureAwait(false));
+        private async Task<Conversation> OpenImConversation(string userId) =>
+            (await _api.Conversations.OpenAndReturnInfo(new[] { userId }).NullIfNotFound().ConfigureAwait(false))?.Channel;
 
         /// <summary>
-        /// Get list of private groups that the bot is in.
+        /// Get full list conversations the bot user has access to.
         /// </summary>
-        public Task<IReadOnlyList<Channel>> GetGroups() => _groups.GetOrCreateValue(FetchGroups);
-        private async Task<IReadOnlyList<Channel>> FetchGroups() => CacheHubs(await _api.Groups.List().ConfigureAwait(false));
-
-        /// <summary>
-        /// Get list of multi-person IMs that the bot is in.
-        /// </summary>
-        /// <returns></returns>
-        public Task<IReadOnlyList<Channel>> GetMpIms() => _mpims.GetOrCreateValue(FetchMpims);
-        private async Task<IReadOnlyList<Channel>> FetchMpims() => CacheHubs(await _api.Mpim.List().ConfigureAwait(false));
-
-        private IReadOnlyList<Channel> CacheHubs(IReadOnlyList<Channel> channels)
+        public async Task<IReadOnlyCollection<Conversation>> GetConversations()
         {
-            foreach (var channel in channels)
-                _hubs[channel.Id] = Task.FromResult((Hub)channel);
-            return channels;
+            await _conversationsFetched.GetOrCreateValue(FetchConversations).ConfigureAwait(false);
+            return (await _conversations.Values
+                    .ToObservable()
+                    .SelectMany(c => c)
+                    .ToList()
+                    .ToTask().ConfigureAwait(false))
+                .ToList();
         }
 
-        /// <summary>
-        /// Get list of IMs that have been opened with the bot.
-        /// </summary>
-        public async Task<IReadOnlyList<Im>> GetIms() => await _ims.GetOrCreateValue(() => _api.Im.List()).ConfigureAwait(false);
+        private async Task FetchConversations()
+        {
+            string cursor = null;
+            
+            do
+            {
+                var response = await _api.Conversations.List(cursor: cursor).ConfigureAwait(false);
+                
+                foreach (var conversation in response.Channels) 
+                    _conversations[conversation.Id] = Task.FromResult(conversation);
+
+                cursor = response.ResponseMetadata.NextCursor;
+            } while (cursor != null);
+        }
 
         /// <summary>
         /// Get user information.
@@ -444,9 +460,9 @@ namespace SlackNet.Bot
         private async Task<PostMessageResponse> PostMessage(BotMessage message) =>
             await _api.Chat.PostMessage(new Message
                 {
-                    Channel = message.Hub != null
-                        ? await message.Hub.HubId(this).ConfigureAwait(false)
-                        : message.ReplyTo?.Hub?.Id,
+                    Channel = message.Conversation != null
+                        ? await message.Conversation.ConversationId(this).ConfigureAwait(false)
+                        : message.ReplyTo?.Conversation?.Id,
                     Text = message.Text,
                     Attachments = message.Attachments,
                     Blocks = message.Blocks,
@@ -462,10 +478,9 @@ namespace SlackNet.Bot
                     AsUser = true
                 }, message.CancellationToken).ConfigureAwait(false);
 
-        private async Task<bool> ReplyingInDifferentHub(BotMessage message)
-        {
-            return message.Hub != null && await message.Hub.HubId(this).ConfigureAwait(false) != message.ReplyTo?.Hub.Id;
-        }
+        private async Task<bool> ReplyingInDifferentHub(BotMessage message) => 
+            message.Conversation != null 
+            && await message.Conversation.ConversationId(this).ConfigureAwait(false) != message.ReplyTo?.Conversation.Id;
 
         /// <summary>
         /// Show typing indicator in Slack while performing some action.
@@ -481,12 +496,15 @@ namespace SlackNet.Bot
         /// </summary>
         public void ClearCache()
         {
+            _conversationsFetched.Clear();
+            _conversations.Clear();
+            _users.Clear();
+            _allUsers.Clear();
+            
             _hubs.Clear();
             _channels.Clear();
             _groups.Clear();
             _mpims.Clear();
-            _users.Clear();
-            _allUsers.Clear();
             _ims.Clear();
         }
 
@@ -502,6 +520,144 @@ namespace SlackNet.Bot
             _incomingSubscription?.Dispose();
             _outgoingSubscription?.Dispose();
         }
+        
+        #region Hubs
+
+        private readonly ConcurrentDictionary<string, Task<Hub>> _hubs = new ConcurrentDictionary<string, Task<Hub>>();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _channels = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _groups = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _mpims = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Im>>> _ims = new ConcurrentValue<Task<IReadOnlyList<Im>>>();
+
+        /// <summary>
+        /// Get information on a public or private channel, IM, or multi-person IM.
+        /// </summary>
+        [Obsolete("Use GetConversationById instead")]
+        public async Task<Hub> GetHubById(string hubId) =>
+            string.IsNullOrEmpty(hubId)
+                ? null
+                : await _hubs.GetOrAdd(hubId, FetchHub).ConfigureAwait(false);
+
+        private async Task<Hub> FetchHub(string hubId) =>
+            (await GetConversationById(hubId).ConfigureAwait(false))?.ToHub();
+            
+        /// <summary>
+        /// Find hub with matching name.
+        /// </summary>
+        /// <param name="channel">Channel, group or IM name, with leading # or @ symbol as appropriate.</param>
+        [Obsolete("Use GetConversationByName instead")]
+        public async Task<Hub> GetHubByName(string channel) =>
+              channel.FirstOrDefault() == '#' ? await GetChannelByName(channel).ConfigureAwait(false)
+            : channel.FirstOrDefault() == '@' ? await GetImByName(channel).ConfigureAwait(false)
+            : await GetGroupByName(channel).ConfigureAwait(false);
+
+        /// <summary>
+        /// Find channel by name, with or without leading #.
+        /// </summary>
+        [Obsolete("Use GetConversationByName instead")]
+        public async Task<Hub> GetChannelByName(string name) =>
+            await FindCachedHub<Channel>(h => h.IsChannel && h.Name == WithoutLeadingHash(name)).ConfigureAwait(false)
+            ?? (await GetChannels().ConfigureAwait(false))
+                .FirstOrDefault(c => c.Name == WithoutLeadingHash(name));
+
+        private static string WithoutLeadingHash(string name) => name.TrimStart('#');
+
+        /// <summary>
+        /// Find private group by name.
+        /// </summary>
+        [Obsolete("Use GetConversationByName instead")]
+        public async Task<Hub> GetGroupByName(string name) =>
+            await FindCachedHub<Channel>(h => h.IsGroup && h.Name == name).ConfigureAwait(false)
+            ?? (await GetGroups().ConfigureAwait(false))
+                .FirstOrDefault(g => g.Name == name);
+
+        /// <summary>
+        /// Get an open Im by user name, with or without leading @.
+        /// </summary>
+        [Obsolete("Use GetConversationByName instead")]
+        public async Task<Im> GetImByName(string username) =>
+            await GetImByUserId(
+                (await GetUserByName(username).ConfigureAwait(false))?.Id).ConfigureAwait(false);
+
+        /// <summary>
+        /// Get and open Im by user ID.
+        /// </summary>
+        [Obsolete("Use GetConversationByUserId instead")]
+        public async Task<Im> GetImByUserId(string userId) =>
+            userId == null ? null
+                : await FindCachedHub<Im>(h => h.User == userId).ConfigureAwait(false)
+                    ?? await OpenAndCacheIm(userId).ConfigureAwait(false);
+
+        private Task<T> FindCachedHub<T>(Func<T, bool> predicate) where T : Hub => _hubs.Values.FirstOrDefaultAsync(predicate);
+        
+        private async Task<Im> OpenAndCacheIm(string userId)
+        {
+            var im = await OpenIm(userId).ConfigureAwait(false);
+            if (im != null)
+                _hubs[im.Id] = Task.FromResult((Hub)im);
+            return im;
+        }
+        
+        private async Task<Im> OpenIm(string userId) => 
+            (await OpenImConversation(userId).ConfigureAwait(false))?.ToIm();
+
+        /// <summary>
+        /// Get full list of public channels.
+        /// </summary>
+        [Obsolete("Use GetConversations instead")]
+        public Task<IReadOnlyList<Channel>> GetChannels() => _channels.GetOrCreateValue(FetchChannels);
+
+        private async Task<IReadOnlyList<Channel>> FetchChannels() => CacheHubs(
+            (await GetConversations().ConfigureAwait(false))
+            .Where(c => c.IsChannel)
+            .Select(ConversationConversion.ToChannel)
+            .ToList());
+
+        /// <summary>
+        /// Get list of private groups that the bot is in.
+        /// </summary>
+        [Obsolete("Use GetConversations instead")]
+        public Task<IReadOnlyList<Channel>> GetGroups() => _groups.GetOrCreateValue(FetchGroups);
+        
+        private async Task<IReadOnlyList<Channel>> FetchGroups() => CacheHubs(
+            (await GetConversations().ConfigureAwait(false))
+            .Where(c => c.IsGroup)
+            .Select(ConversationConversion.ToChannel)
+            .ToList());
+
+        /// <summary>
+        /// Get list of multi-person IMs that the bot is in.
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete("Use GetConversations instead")]
+        public Task<IReadOnlyList<Channel>> GetMpIms() => _mpims.GetOrCreateValue(FetchMpims);
+        
+        private async Task<IReadOnlyList<Channel>> FetchMpims() => CacheHubs(
+            (await GetConversations().ConfigureAwait(false))
+            .Where(c => c.IsMpim)
+            .Select(ConversationConversion.ToChannel)
+            .ToList());
+
+        private IReadOnlyList<Channel> CacheHubs(IReadOnlyList<Channel> channels)
+        {
+            foreach (var channel in channels)
+                _hubs[channel.Id] = Task.FromResult((Hub)channel);
+            return channels;
+        }
+
+        /// <summary>
+        /// Get list of IMs that have been opened with the bot.
+        /// </summary>
+        [Obsolete("Use GetConversations instead")]
+        public Task<IReadOnlyList<Im>> GetIms() => _ims.GetOrCreateValue(FetchIms);
+
+        private async Task<IReadOnlyList<Im>> FetchIms() =>
+            (await GetConversations().ConfigureAwait(false))
+            .Where(c => c.IsIm)
+            .Select(ConversationConversion.ToIm)
+            .ToList();
+        
+        #endregion
     }
 
     class PostedMessage

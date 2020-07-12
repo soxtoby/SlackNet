@@ -4,6 +4,7 @@ using SlackNet.Events;
 
 namespace SlackNet
 {
+    [Obsolete("Use Conversation instead")]
     public class Hub
     {
         public string Id { get; set; }

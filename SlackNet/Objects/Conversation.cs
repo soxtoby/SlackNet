@@ -158,5 +158,9 @@ namespace SlackNet
         /// Has the other user in an IM been deleted.
         /// </summary>
         public bool IsUserDeleted { get; set; }
+
+        public override string ToString() => IsIm
+            ? Link.User(User).ToString()
+            : Link.Conversation(Id).ToString();
     }
 }

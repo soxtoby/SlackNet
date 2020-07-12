@@ -1,5 +1,8 @@
-﻿namespace SlackNet
+﻿using System;
+
+namespace SlackNet
 {
+    [Obsolete("Use Conversation instead")]
     public class Channel : Hub
     {
         /// <summary>

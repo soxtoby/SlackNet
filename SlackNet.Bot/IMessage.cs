@@ -8,6 +8,8 @@ namespace SlackNet.Bot
 {
     public interface IMessage
     {
+        Conversation Conversation { get; set; }
+        [Obsolete("Use Conversation instead")]
         Hub Hub { get; set; }
         User User { get; set; }
         string Text { get; set; }

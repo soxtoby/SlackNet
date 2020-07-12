@@ -1,5 +1,8 @@
-﻿namespace SlackNet
+﻿using System;
+
+namespace SlackNet
 {
+    [Obsolete("Use Conversation instead")]
     public class Im : Hub
     {
         public Im() => IsMember = true;
