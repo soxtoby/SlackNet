@@ -8,11 +8,11 @@ namespace SlackNet
 {
     public static class Default
     {
-        public static IHttp Http(SlackJsonSettings jsonSettings) => new Http(new HttpClient(), jsonSettings);
+        public static IHttp Http(SlackJsonSettings jsonSettings = null, HttpClient httpClient = null) => new Http(httpClient ?? new HttpClient(), jsonSettings ?? JsonSettings());
 
-        public static ISlackUrlBuilder UrlBuilder(SlackJsonSettings jsonSettings) => new SlackUrlBuilder(jsonSettings);
+        public static ISlackUrlBuilder UrlBuilder(SlackJsonSettings jsonSettings = null) => new SlackUrlBuilder(jsonSettings ?? JsonSettings());
 
-        public static SlackJsonSettings JsonSettings(ISlackTypeResolver slackTypeResolver) => new SlackJsonSettings(SerializerSettings(slackTypeResolver));
+        public static SlackJsonSettings JsonSettings(ISlackTypeResolver slackTypeResolver = null) => new SlackJsonSettings(SerializerSettings(slackTypeResolver ?? SlackTypeResolver()));
 
         private static JsonSerializerSettings SerializerSettings(ISlackTypeResolver slackTypeResolver)
         {
@@ -32,6 +32,8 @@ namespace SlackNet
                         }
                 };
         }
+        
+        public static ISlackTypeResolver SlackTypeResolver() => new SlackTypeResolver(AssembliesContainingSlackTypes);
 
         public static ISlackTypeResolver SlackTypeResolver(params Assembly[] assembliesContainingSlackTypes) => new SlackTypeResolver(assembliesContainingSlackTypes);
 
