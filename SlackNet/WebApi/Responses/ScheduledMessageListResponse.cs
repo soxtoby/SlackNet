@@ -5,7 +5,7 @@ namespace SlackNet.WebApi
     public class ScheduledMessageListResponse
     {
         public IList<ScheduledMessage> ScheduledMessages { get; set; } = new List<ScheduledMessage>();
-        public ResponseMetadata ResponseMetadata { get; set; }
+        public ResponseMetadata ResponseMetadata { get; set; } = new ResponseMetadata();
     }
 
     public class ScheduledMessage

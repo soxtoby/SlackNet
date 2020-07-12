@@ -48,8 +48,12 @@ namespace SlackNet.WebApi
         /// <param name="full">If true always return the complete reaction list.</param>
         /// <param name="count">Number of items to return per page.</param>
         /// <param name="page">Page number of results to return.</param>
+        /// <param name="cursor">
+        /// Parameter for pagination.
+        /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="ReactionItemListResponse.ResponseMetadata"/>. 
+        /// </param>
         /// <param name="cancellationToken"></param>
-        Task<ReactionItemListResponse> List(string userId = null, bool full = false, int count = 100, int page = 1, CancellationToken? cancellationToken = null);
+        Task<ReactionItemListResponse> List(string userId = null, bool full = false, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Removes a reaction (emoji) from a file.
@@ -148,14 +152,19 @@ namespace SlackNet.WebApi
         /// <param name="full">If true always return the complete reaction list.</param>
         /// <param name="count">Number of items to return per page.</param>
         /// <param name="page">Page number of results to return.</param>
+        /// <param name="cursor">
+        /// Parameter for pagination.
+        /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="ReactionItemListResponse.ResponseMetadata"/>. 
+        /// </param>
         /// <param name="cancellationToken"></param>
-        public Task<ReactionItemListResponse> List(string userId = null, bool full = false, int count = 100, int page = 1, CancellationToken? cancellationToken = null) =>
+        public Task<ReactionItemListResponse> List(string userId = null, bool full = false, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null) =>
             _client.Get<ReactionItemListResponse>("reactions.list", new Args
                 {
                     { "user", userId },
                     { "full", full },
                     { "count", count },
-                    { "page", page }
+                    { "page", page },
+                    { "cursor", cursor }
                 }, cancellationToken);
 
         /// <summary>

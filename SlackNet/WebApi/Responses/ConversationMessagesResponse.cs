@@ -7,6 +7,6 @@ namespace SlackNet.WebApi
     {
         public IList<MessageEvent> Messages { get; set; } = new List<MessageEvent>();
         public bool HasMore { get; set; }
-        public ResponseMetadata ResponseMetadata { get; set; }
+        public ResponseMetadata ResponseMetadata { get; set; } = new ResponseMetadata();
     }
 }

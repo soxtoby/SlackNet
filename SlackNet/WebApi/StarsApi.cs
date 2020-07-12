@@ -40,9 +40,12 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="count">Number of items to return per page.</param>
         /// <param name="page">Page number of results to return.</param>
+        /// <param name="cursor">
+        /// Parameter for pagination.
+        /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="StarListResponse.ResponseMetadata"/>.
+        /// </param>
         /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task<StarListResponse> List(int count = 100, int page = 1, CancellationToken? cancellationToken = null);
+        Task<StarListResponse> List(int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Removes a star from a file.
@@ -121,13 +124,17 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="count">Number of items to return per page.</param>
         /// <param name="page">Page number of results to return.</param>
+        /// <param name="cursor">
+        /// Parameter for pagination.
+        /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="StarListResponse.ResponseMetadata"/>.
+        /// </param>
         /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public Task<StarListResponse> List(int count = 100, int page = 1, CancellationToken? cancellationToken = null) =>
+        public Task<StarListResponse> List(int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null) =>
             _client.Get<StarListResponse>("stars.list", new Args
                 {
                     { "count", count },
-                    { "page", page }
+                    { "page", page },
+                    { "cursor", cursor }
                 }, cancellationToken);
 
         /// <summary>
