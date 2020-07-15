@@ -116,8 +116,9 @@ namespace SlackNet
             {
                 return serializer.Deserialize(reader, objectType);
             }
-            catch
-            {
+            catch (Exception ex)
+            { 
+                Console.Write($"Couldn't deserialize, fallback to default value. " + ex.Source);
                 return DefaultValue(objectType);
             }
             finally
