@@ -12,8 +12,8 @@ namespace SlackNet
     class SlackTypeConverter : JsonConverter
     {
         private readonly ISlackTypeResolver _slackTypeResolver;
-        private bool _isInsideRead;
-        private JsonReader _reader;
+        [ThreadStatic] private static bool _isInsideRead;
+        [ThreadStatic] private static JsonReader _reader;
 
         public SlackTypeConverter(ISlackTypeResolver slackTypeResolver)
         {
@@ -114,7 +114,7 @@ namespace SlackNet
                 : _slackTypeResolver.FindType(baseType, slackType);
         }
 
-        private object ReadInner(JsonReader reader, Type objectType, JsonSerializer serializer)
+        private static object ReadInner(JsonReader reader, Type objectType, JsonSerializer serializer)
         {
             _reader = reader;
             _isInsideRead = true;
