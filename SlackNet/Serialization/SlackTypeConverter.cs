@@ -12,8 +12,8 @@ namespace SlackNet
     class SlackTypeConverter : JsonConverter
     {
         private readonly ISlackTypeResolver _slackTypeResolver;
-        private bool _isInsideRead;
-        private JsonReader _reader;
+        [ThreadStatic] private static bool _isInsideRead;
+        [ThreadStatic] private static JsonReader _reader;
 
         public SlackTypeConverter(ISlackTypeResolver slackTypeResolver)
         {
@@ -56,14 +56,12 @@ namespace SlackNet
             while (reader.Read() && reader.TokenType != JsonToken.EndArray)
                 list.Add(ReadJson(reader, elementType, serializer));
 
-            if (targetType.IsArray)
-            {
-                var array = Array.CreateInstance(targetType.GetElementType(), list.Count);
-                list.CopyTo(array, 0);
-                list = array;
-            }
+            if (!targetType.IsArray) return list;
+            
+            var array = Array.CreateInstance(targetType.GetElementType(), list.Count);
+            list.CopyTo(array, 0);
 
-            return list;
+            return array;
         }
 
         private static IList CreateCompatibleList(Type targetContainerType, Type elementType) =>
@@ -79,7 +77,7 @@ namespace SlackNet
         private object ReadObject(JsonReader reader, Type objectType, JsonSerializer serializer)
         {
             var jObject = JObject.Load(reader);
-            var targetType = GetType(jObject, objectType) ?? objectType;
+            var targetType = GetType(jObject, objectType);
             return ReadInner(CreateAnotherReader(jObject, reader), targetType, serializer);
         }
 
@@ -96,25 +94,21 @@ namespace SlackNet
             return jObjectReader;
         }
 
-        private Type GetType(JObject jObject, Type parentType)
+        private Type GetType(JToken jObject, Type parentType)
         {
-            if (jObject.Value<uint>("reply_to") > 0)
-                return typeof(Reply);
+            if (jObject.Value<uint>("reply_to") > 0) return typeof(Reply);
 
             var type = GetType(jObject, "type", parentType);
-            return type == null ? null
-                : GetType(jObject, "subtype", type)
-                ?? type;
+            return GetType(jObject, "subtype", type);
         }
 
-        private Type GetType(JObject jObject, string typeProperty, Type baseType)
+        private Type GetType(JToken jObject, string typeProperty, Type baseType)
         {
             var slackType = jObject.Value<string>(typeProperty);
-            return slackType == null ? null
-                : _slackTypeResolver.FindType(baseType, slackType);
+            return slackType == null ? baseType : _slackTypeResolver.FindType(baseType, slackType);
         }
 
-        private object ReadInner(JsonReader reader, Type objectType, JsonSerializer serializer)
+        private static object ReadInner(JsonReader reader, Type objectType, JsonSerializer serializer)
         {
             _reader = reader;
             _isInsideRead = true;
@@ -122,8 +116,9 @@ namespace SlackNet
             {
                 return serializer.Deserialize(reader, objectType);
             }
-            catch
-            {
+            catch (Exception ex)
+            { 
+                Console.Write($"Couldn't deserialize, fallback to default value. " + ex.Source);
                 return DefaultValue(objectType);
             }
             finally
