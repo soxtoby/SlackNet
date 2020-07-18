@@ -75,7 +75,10 @@ namespace SlackNet.AspNetCore
             var requestBody = await ReadString(request).ConfigureAwait(false);
             var eventRequest = DeserializeEventRequest(requestBody);
 
-            if (!VerifyRequest(requestBody, request.Headers, eventRequest.Token, config))
+            var shouldSkipVerification = eventRequest is UrlVerification && !config.VerifyEventUrl;
+            var isRequestVerified = shouldSkipVerification || VerifyRequest(requestBody, request.Headers, eventRequest.Token, config);
+            
+            if (!isRequestVerified)
                 return new StringResult(HttpStatusCode.BadRequest, "Invalid signature/token");
 
             switch (eventRequest)

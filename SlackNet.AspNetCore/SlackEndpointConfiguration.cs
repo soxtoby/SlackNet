@@ -35,9 +35,16 @@
             SigningSecret = signingSecret;
             return this;
         }
+        
+        public SlackEndpointConfiguration UseEventUrlVerification(bool verifyEventUrl)
+        {
+            VerifyEventUrl = verifyEventUrl;
+            return this;
+        }
 
         public string RoutePrefix { get; private set; } = "slack";
         public string VerificationToken { get; private set; }
         public string SigningSecret { get; private set; }
+        public bool VerifyEventUrl { get; private set; } = true;
     }
 }
