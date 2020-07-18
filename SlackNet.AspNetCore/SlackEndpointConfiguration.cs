@@ -35,7 +35,13 @@
             SigningSecret = signingSecret;
             return this;
         }
-        
+
+        /// <summary>
+        /// Verify the signing secret or token of Slack's URL verification requests. Enabled by default. 
+        /// </summary>
+        /// <remarks>
+        /// You should only disable this temporarily and in certain circumstances (see <a href="https://github.com/soxtoby/SlackNet/pull/57">SlackNet pull request #57</a> for more information).
+        /// </remarks>
         public SlackEndpointConfiguration UseEventUrlVerification(bool verifyEventUrl)
         {
             VerifyEventUrl = verifyEventUrl;
