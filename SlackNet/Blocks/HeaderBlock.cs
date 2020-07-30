@@ -12,6 +12,6 @@ namespace SlackNet.Blocks
         /// <summary>
         /// The text for the block.
         /// </summary>
-        public TextObject Text { get; set; }
+        public PlainText Text { get; set; }
     }
 }
