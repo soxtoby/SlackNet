@@ -388,7 +388,7 @@ namespace SlackNet.Bot
                     _conversations[conversation.Id] = Task.FromResult(conversation);
 
                 cursor = response.ResponseMetadata.NextCursor;
-            } while (cursor != null);
+            } while (!string.IsNullOrEmpty(cursor));
         }
 
         /// <summary>
@@ -433,7 +433,7 @@ namespace SlackNet.Bot
                 foreach (var user in response.Members)
                     _users[user.Id] = Task.FromResult(user);
 
-                cursor = response.ResponseMetadata?.NextCursor;
+                cursor = response.ResponseMetadata.NextCursor;
             } while (!string.IsNullOrEmpty(cursor));
             return users;
         }
