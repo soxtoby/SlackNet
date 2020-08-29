@@ -40,7 +40,7 @@ namespace SlackNet
             JsonSerializer.Create(_jsonSettings.SerializerSettings).Deserialize<T>(new JsonTextReader(new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(false))));
     }
 
-    class SlackRateLimitException : Exception
+    public class SlackRateLimitException : Exception
     {
         public TimeSpan? RetryAfter { get; }
         
