@@ -50,5 +50,7 @@ namespace SlackNet.Interaction
 
         public string ChannelId { get; set; }
         public string ChannelName { get; set; }
+
+        public string ApiAppId { get; set; }
     }
 }
