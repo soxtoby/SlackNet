@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -207,7 +208,7 @@ namespace SlackNet.Tests
         {
             var expectedConversation = new Conversation { Id = "C1", Name = "foo"};
             var otherConversation = new Conversation { Id = "C2", Name = "bar" };
-            _api.Conversations.List().Returns(ConversationList(otherConversation, expectedConversation));
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(otherConversation, expectedConversation));
 
             _sut.GetConversationByName("#foo")
                 .ShouldComplete()
@@ -215,7 +216,7 @@ namespace SlackNet.Tests
             _sut.GetConversationByName("foo")
                 .ShouldComplete()
                 .And.ShouldBe(expectedConversation);
-            _api.Conversations.Received(1).List();
+            _api.Conversations.Received(1).List(types: IsOfAllConversationTypes());
         }
 
         [Test]
@@ -225,7 +226,7 @@ namespace SlackNet.Tests
             var otherUser = new User { Id = "U2", Name = "bar" };
             _api.Users.List().Returns(new UserListResponse { Members = { otherUser, matchingUser } });
             var expectedIm = new Conversation { Id = "D123", User = matchingUser.Id, IsIm = true };
-            _api.Conversations.List().Returns(ConversationList());
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList());
             _api.Conversations.OpenAndReturnInfo(UserIds(matchingUser.Id)).Returns(new ConversationOpenResponse { Channel = expectedIm });
 
             _sut.GetConversationByName("@foo")
@@ -242,7 +243,7 @@ namespace SlackNet.Tests
         public void GetConversationByUserId_OpensImWithUser_AndCaches()
         {
             var expectedIm = new Conversation { Id = "D123", User = "U123", IsIm = true };
-            _api.Conversations.List().Returns(ConversationList());
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList());
             _api.Conversations.OpenAndReturnInfo(UserIds(expectedIm.User)).Returns(new ConversationOpenResponse { Channel = expectedIm });
 
             _sut.GetConversationByUserId(expectedIm.User)
@@ -259,7 +260,7 @@ namespace SlackNet.Tests
         {
             var conversation1 = new Conversation { Id = "C1" };
             var conversation2 = new Conversation { Id = "C2" };
-            _api.Conversations.List().Returns(ConversationList(conversation1, conversation2));
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(conversation1, conversation2));
 
             _sut.GetConversations()
                 .ShouldComplete()
@@ -267,7 +268,7 @@ namespace SlackNet.Tests
             _sut.GetConversations()
                 .ShouldComplete()
                 .And.ShouldOnlyContain(new[] { conversation1, conversation2 });
-            _api.Conversations.Received(1).List();
+            _api.Conversations.Received(1).List(types: IsOfAllConversationTypes());
         }
 
         [Test]
@@ -276,8 +277,8 @@ namespace SlackNet.Tests
             var conversation1 = new Conversation { Id = "C1" };
             var conversation2 = new Conversation { Id = "C2" };
             var page2Cursor = "next cursor";
-            _api.Conversations.List().Returns(new ConversationListResponse { Channels = new[] { conversation1 }, ResponseMetadata = new ResponseMetadata { NextCursor = page2Cursor } });
-            _api.Conversations.List(cursor: page2Cursor).Returns(new ConversationListResponse { Channels = new[] { conversation2 }, ResponseMetadata = new ResponseMetadata() });
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(new ConversationListResponse { Channels = new[] { conversation1 }, ResponseMetadata = new ResponseMetadata { NextCursor = page2Cursor } });
+            _api.Conversations.List(cursor: page2Cursor, types: IsOfAllConversationTypes()).Returns(new ConversationListResponse { Channels = new[] { conversation2 }, ResponseMetadata = new ResponseMetadata() });
 
             _sut.GetConversations()
                 .ShouldComplete()
@@ -285,7 +286,7 @@ namespace SlackNet.Tests
             _sut.GetConversations()
                 .ShouldComplete()
                 .And.ShouldOnlyContain(new[] { conversation1, conversation2 });
-            _api.Conversations.Received(1).List();
+            _api.Conversations.Received(1).List(types: IsOfAllConversationTypes());
         }
 
         [Test]
@@ -545,7 +546,7 @@ namespace SlackNet.Tests
         {
             var expectedChannel = new Conversation { Id = "C1", Name = "foo", IsChannel = true };
             var otherChannel = new Conversation { Id = "C2", Name = "bar", IsChannel = true };
-            _api.Conversations.List().Returns(ConversationList(otherChannel, expectedChannel));
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(otherChannel, expectedChannel));
 
             _sut.GetHubByName("#foo")
                 .ShouldComplete()
@@ -577,7 +578,7 @@ namespace SlackNet.Tests
         {
             var expectedGroup = new Conversation { Id = "G1", Name = "foo", IsGroup = true };
             var otherGroup = new Conversation { Id = "G2", Name = "bar", IsGroup = true };
-            _api.Conversations.List().Returns(ConversationList(otherGroup, expectedGroup));
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(otherGroup, expectedGroup));
 
             _sut.GetHubByName("foo")
                 .ShouldComplete()
@@ -590,7 +591,7 @@ namespace SlackNet.Tests
         {
             var expectedChannel = new Conversation { Id = "C1", Name = "foo", IsChannel = true };
             var otherChannel = new Conversation { Id = "C2", Name = "bar", IsChannel = true };
-            _api.Conversations.List().Returns(ConversationList(otherChannel, expectedChannel));
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(otherChannel, expectedChannel));
 
             var result = await _sut.GetChannelByName("#foo");
 
@@ -599,7 +600,7 @@ namespace SlackNet.Tests
             _sut.GetChannelByName("foo")
                 .ShouldComplete()
                 .And.ShouldBe(result);
-            await _api.Conversations.Received(1).List();
+            await _api.Conversations.Received(1).List(types: IsOfAllConversationTypes());
         }
 
         [Test]
@@ -631,7 +632,7 @@ namespace SlackNet.Tests
         {
             var expectedGroup = new Conversation { Id = "G1", Name = "foo", IsGroup = true };
             var otherGroup = new Conversation { Id = "G2", Name = "bar", IsGroup = true };
-            _api.Conversations.List().Returns(ConversationList(otherGroup, expectedGroup));
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(otherGroup, expectedGroup));
 
             var result = await _sut.GetGroupByName("foo");
             
@@ -640,7 +641,7 @@ namespace SlackNet.Tests
             _sut.GetGroupByName("foo")
                 .ShouldComplete()
                 .And.ShouldBe(result);
-            await _api.Conversations.Received(1).List();
+            await _api.Conversations.Received(1).List(types: IsOfAllConversationTypes());
         }
 
         [Test]
@@ -665,7 +666,7 @@ namespace SlackNet.Tests
             var channel1 = new Conversation { Id = "C1", IsChannel = true };
             var channel2 = new Conversation { Id = "C2", IsChannel = true };
             var notAChannel = new Conversation { Id = "D1", IsIm = true };
-            _api.Conversations.List().Returns(ConversationList(channel1, channel2, notAChannel));
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(channel1, channel2, notAChannel));
 
             var results = await _sut.GetChannels();
 
@@ -674,7 +675,7 @@ namespace SlackNet.Tests
             _sut.GetChannels()
                 .ShouldComplete()
                 .And.ShouldOnlyContain(results);
-            await _api.Conversations.Received(1).List();
+            await _api.Conversations.Received(1).List(types: IsOfAllConversationTypes());
         }
 
         [Test]
@@ -683,7 +684,7 @@ namespace SlackNet.Tests
             var group1 = new Conversation { Id = "G1", IsGroup = true };
             var group2 = new Conversation { Id = "G2", IsGroup = true };
             var notAGroup = new Conversation { Id = "C1", IsChannel = true };
-            _api.Conversations.List().Returns(ConversationList(group1, group2, notAGroup));
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(group1, group2, notAGroup));
 
             var results = await _sut.GetGroups();
                 
@@ -692,7 +693,7 @@ namespace SlackNet.Tests
             _sut.GetGroups()
                 .ShouldComplete()
                 .And.ShouldOnlyContain(results);
-            await _api.Conversations.Received(1).List();
+            await _api.Conversations.Received(1).List(types: IsOfAllConversationTypes());
         }
 
         [Test]
@@ -701,7 +702,7 @@ namespace SlackNet.Tests
             var mpim1 = new Conversation { Id = "G1", IsMpim = true };
             var mpim2 = new Conversation { Id = "G2", IsMpim = true };
             var notAnMpim = new Conversation { Id = "C1", IsChannel = true };
-            _api.Conversations.List().Returns(ConversationList(mpim1, mpim2, notAnMpim));
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(mpim1, mpim2, notAnMpim));
 
             var results = await _sut.GetMpIms();
 
@@ -710,7 +711,7 @@ namespace SlackNet.Tests
             _sut.GetMpIms()
                 .ShouldComplete()
                 .And.ShouldOnlyContain(results);
-            await _api.Conversations.Received(1).List();
+            await _api.Conversations.Received(1).List(types: IsOfAllConversationTypes());
         }
 
         [Test]
@@ -719,7 +720,7 @@ namespace SlackNet.Tests
             var im1 = new Conversation { Id = "D1", IsIm = true };
             var im2 = new Conversation { Id = "D2", IsIm = true };
             var notAnIm = new Conversation { Id = "G1", IsMpim = true };
-            _api.Conversations.List().Returns(ConversationList(im1, im2, notAnIm));
+            _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(im1, im2, notAnIm));
 
             var results = await _sut.GetIms();
                 
@@ -728,7 +729,7 @@ namespace SlackNet.Tests
             _sut.GetIms()
                 .ShouldComplete()
                 .And.ShouldOnlyContain(results);
-            await _api.Conversations.Received(1).List();
+            await _api.Conversations.Received(1).List(types: IsOfAllConversationTypes());
         }
 
         #endregion
@@ -751,6 +752,22 @@ namespace SlackNet.Tests
 
         private static string[] UserIds(params string[] userIds) => 
             Arg.Is<string[]>(us => us.SequenceEqual(userIds));
+
+        private static IEnumerable<ConversationType> IsOfAllConversationTypes(params ConversationType[] conversationTypes)
+        {
+            if (conversationTypes == null)
+            {
+                conversationTypes = new[]
+                    {
+                        ConversationType.PrivateChannel,
+                        ConversationType.Mpim,
+                        ConversationType.PublicChannel,
+                        ConversationType.Im
+                    };
+            }
+
+            return Arg.Is<IEnumerable<ConversationType>>(types => conversationTypes.All(types.Contains));
+        }
     }
 }
 
