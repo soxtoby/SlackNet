@@ -45,6 +45,12 @@ namespace SlackNet.Blocks
     }
 
     [SlackType("plain_text_input")]
+    public class PlainTextInputAction : BlockAction
+    {
+        public string Value { get; set; }
+    }
+
+    [SlackType("plain_text_input")]
     public class PlainTextInputValue : ElementValue
     {
         public string Value { get; set; }
