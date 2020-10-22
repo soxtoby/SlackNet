@@ -37,6 +37,11 @@ namespace SlackNet.Blocks
         /// The maximum length of input that the user can provide. If the user provides more, they will receive an error.
         /// </summary>
         public int? MaxLength { get; set; }
+        
+        /// <summary>
+        /// A <see cref="DispatchActionConfig"/> that determines when during text input the element returns a <see cref="BlockAction"/> payload.
+        /// </summary>
+        public DispatchActionConfig DispatchActionConfig { get; set; }
     }
 
     [SlackType("plain_text_input")]
