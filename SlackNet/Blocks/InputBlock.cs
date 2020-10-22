@@ -29,7 +29,7 @@ namespace SlackNet.Blocks
         public bool Optional { get; set; }
         
         /// <summary>
-        /// A boolean that indicates whether or not the use of elements in this block should dispatch a block_actions payload. Defaults to false.
+        /// A boolean that indicates whether or not the use of elements in this block should dispatch a <see cref="BlockAction"/> payload. Defaults to false.
         /// </summary>
         public bool DispatchAction { get; set; }
     }
