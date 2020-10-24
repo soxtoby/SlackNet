@@ -27,5 +27,10 @@ namespace SlackNet.Blocks
         /// A boolean that indicates whether the input element may be empty when a user submits the modal.
         /// </summary>
         public bool Optional { get; set; }
+        
+        /// <summary>
+        /// A boolean that indicates whether or not the use of elements in this block should dispatch a <see cref="BlockAction"/> payload. Defaults to false.
+        /// </summary>
+        public bool DispatchAction { get; set; }
     }
 }
