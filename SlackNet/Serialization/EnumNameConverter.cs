@@ -8,7 +8,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace SlackNet
 {
-    class EnumNameConverter : JsonConverter
+    class EnumNameConverter : JsonConverter<Enum>
     {
         private readonly NamingStrategy _namingStrategy;
         public EnumNameConverter(NamingStrategy namingStrategy) => _namingStrategy = namingStrategy;
@@ -21,13 +21,8 @@ namespace SlackNet
                 writer.WriteValue(SerializedName((Enum)value));
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        protected override Enum ReadJsonValue(JsonReader reader, Type objectType, Enum existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            if (reader.TokenType == JsonToken.Null)
-                return IsNullable(objectType)
-                    ? throw new JsonSerializationException(string.Format(CultureInfo.InvariantCulture, "Cannot convert null value to {0}.", objectType))
-                    : (object)null;
-
             try
             {
                 if (reader.TokenType == JsonToken.String)
@@ -43,7 +38,7 @@ namespace SlackNet
             throw new JsonSerializationException(string.Format(CultureInfo.InvariantCulture, "Unexpected token {0} when parsing enum.", reader.TokenType));
         }
 
-        private object ParseEnumName(Type type, string name) => 
+        private Enum ParseEnumName(Type type, string name) =>
             Enum.GetValues(type)
                 .Cast<Enum>()
                 .FirstOrDefault(e => SerializedName(e) == name);
@@ -62,19 +57,5 @@ namespace SlackNet
 
             return _namingStrategy.GetPropertyName(explicitName ?? enumText, explicitName != null);
         }
-
-        public override bool CanConvert(Type objectType) => typeof(Enum).GetTypeInfo().IsAssignableFrom(UnderlyingType(objectType).GetTypeInfo());
-
-        private static bool IsNullable(Type objectType)
-        {
-            var typeInfo = objectType.GetTypeInfo();
-            return typeInfo.IsGenericType
-                && typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>);
-        }
-
-        private static Type UnderlyingType(Type objectType) =>
-            IsNullable(objectType)
-                ? Nullable.GetUnderlyingType(objectType)
-                : objectType;
     }
 }

@@ -173,6 +173,34 @@ namespace SlackNet.Tests
                 });
         }
 
+        [Test]
+        public void TimeSpan_SerializedAsHoursAndMinutes()
+        {
+            Serialize(new HasTimeSpanProperty { Required = new TimeSpan(1, 2, 3) })
+                .ShouldBe(@"{""required"":""01:02""}");
+
+            Serialize(new HasTimeSpanProperty { Required = new TimeSpan(13, 14, 15), Optional = new TimeSpan(16, 17, 18) })
+                .ShouldBe(@"{""required"":""13:14"",""optional"":""16:17""}");
+        }
+
+        [Test]
+        public void TimeSpan_DeserializedFromHoursAndMinutes()
+        {
+            Deserialize<HasTimeSpanProperty>(@"{""required"":""01:02""}")
+                .Assert(o =>
+                {
+                    o.Required.ShouldBe(new TimeSpan(1, 2, 0));
+                    o.Optional.ShouldBeNull();
+                });
+
+            Deserialize<HasTimeSpanProperty>(@"{""required"":""13:14"",""optional"":""16:17""}")
+                .Assert(o =>
+                {
+                    o.Required.ShouldBe(new TimeSpan(13, 14, 0));
+                    o.Optional.ShouldBe(new TimeSpan(16, 17, 0));
+                });
+        }
+
         private string Serialize(object obj) => JsonConvert.SerializeObject(obj, _sut);
 
         private T Deserialize<T>(string json) => JsonConvert.DeserializeObject<T>(json, _sut);
@@ -223,6 +251,12 @@ namespace SlackNet.Tests
         {
             public DateTime Required { get; set; }
             public DateTime? Optional { get; set; }
+        }
+
+        class HasTimeSpanProperty
+        {
+            public TimeSpan Required { get; set; }
+            public TimeSpan? Optional { get; set; }
         }
     }
 }

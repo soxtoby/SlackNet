@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SlackNet.Blocks;
 using SlackNet.Events;
@@ -11,9 +12,15 @@ namespace SlackNet.EventsExample
     public class AppHome : IEventHandler<AppHomeOpened>, IBlockActionHandler<ButtonAction>, IViewSubmissionHandler
     {
         private const string OpenModal = "open_modal";
-        private const string InlineCheckboxes = "checkboxes";
         private const string InputBlockId = "input_block";
         private const string InputActionId = "text_input";
+        private const string SingleSelectActionId = "single_select";
+        private const string MultiSelectActionId = "multi_select";
+        private const string DatePickerActionId = "date_picker";
+        private const string TimePickerActionId = "time_picker";
+        private const string RadioActionId = "radio";
+        private const string CheckboxActionId = "checkbox";
+        private const string SingleUserActionId = "single_user";
         public static readonly string ModalCallbackId = "home_modal";
 
         private readonly ISlackApiClient _slack;
@@ -67,7 +74,7 @@ namespace SlackNet.EventsExample
                                         BlockId = "single_select_block",
                                         Element = new StaticSelectMenu
                                             {
-                                                ActionId = "single_select",
+                                                ActionId = SingleSelectActionId,
                                                 Options = ExampleOptions()
                                             }
                                     },
@@ -77,7 +84,7 @@ namespace SlackNet.EventsExample
                                         BlockId = "multi_select_block",
                                         Element = new StaticMultiSelectMenu
                                             {
-                                                ActionId = "multi_select",
+                                                ActionId = MultiSelectActionId,
                                                 Options = ExampleOptions()
                                             }
                                     },
@@ -85,7 +92,13 @@ namespace SlackNet.EventsExample
                                     {
                                         Label = "Date",
                                         BlockId = "date_block",
-                                        Element = new DatePicker { ActionId = "date_picker" }
+                                        Element = new DatePicker { ActionId = DatePickerActionId }
+                                    },
+                                new InputBlock
+                                    {
+                                        Label = "Time",
+                                        BlockId = "time_block",
+                                        Element = new TimePicker { ActionId = TimePickerActionId }
                                     },
                                 new InputBlock
                                     {
@@ -93,7 +106,7 @@ namespace SlackNet.EventsExample
                                         BlockId = "radio_block",
                                         Element = new RadioButtonGroup
                                             {
-                                                ActionId = "radio",
+                                                ActionId = RadioActionId,
                                                 Options = ExampleOptions()
                                             }
                                     },
@@ -103,7 +116,7 @@ namespace SlackNet.EventsExample
                                         BlockId = "checkbox_block",
                                         Element = new CheckboxGroup
                                             {
-                                                ActionId = "checkbox",
+                                                ActionId = CheckboxActionId,
                                                 Options = ExampleOptions()
                                             }
                                     },
@@ -113,7 +126,7 @@ namespace SlackNet.EventsExample
                                         BlockId = "single_user_block",
                                         Element = new UserSelectMenu
                                             {
-                                                ActionId = "single_user"
+                                                ActionId = SingleUserActionId
                                             }
                                     }
                             },
@@ -134,10 +147,32 @@ namespace SlackNet.EventsExample
 
         public async Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission)
         {
+            var state = viewSubmission.View.State;
+            var values = new Dictionary<string, string>
+                {
+
+                    { "Input", state.GetValue<PlainTextInputValue>(InputActionId).Value },
+                    { "Single-select", state.GetValue<StaticSelectValue>(SingleSelectActionId).SelectedOption?.Text.Text ?? "none" },
+                    { "Multi-select", string.Join(", ", state.GetValue<StaticMultiSelectValue>(MultiSelectActionId).SelectedOptions.Select(o => o.Text).DefaultIfEmpty("none")) },
+                    { "Date", state.GetValue<DatePickerValue>(DatePickerActionId).SelectedDate?.ToString("yyyy-MM-dd") ?? "none" },
+                    { "Time", state.GetValue<TimePickerValue>(TimePickerActionId).SelectedTime?.ToString("hh\\:mm") ?? "none" },
+                    { "Radio options", state.GetValue<RadioButtonGroupValue>(RadioActionId).SelectedOption?.Text.Text ?? "none" },
+                    { "Checkbox options", string.Join(", ", state.GetValue<CheckboxGroupValue>(CheckboxActionId).SelectedOptions.Select(o => o.Text).DefaultIfEmpty("none")) },
+                    { "Single user select", state.GetValue<UserSelectValue>(SingleUserActionId).SelectedUser ?? "none" }
+                };
+
             await _slack.Chat.PostMessage(new Message
                 {
                     Channel = await UserIm(viewSubmission.User).ConfigureAwait(false),
-                    Text = $"You entered: {viewSubmission.View.State.GetValue<PlainTextInputValue>(InputActionId).Value}"
+                    Text = $"You entered: {state.GetValue<PlainTextInputValue>(InputActionId).Value}",
+                    Blocks =
+                        {
+                            new SectionBlock
+                                {
+                                    Text = new Markdown("You entered:\n"
+                                        + string.Join("\n", values.Select(kv => $"*{kv.Key}:* {kv.Value}")))
+                                }
+                        }
                 }).ConfigureAwait(false);
 
             return ViewSubmissionResponse.Null;

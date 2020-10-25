@@ -4,7 +4,6 @@ namespace SlackNet.Blocks
 {
     /// <summary>
     /// An element which lets users easily select a date from a calendar style UI.
-    /// Date picker elements can be used inside of section and actions blocks.
     /// </summary>
     [SlackType("datepicker")]
     public class DatePicker : ActionElement, IInputBlockElement
@@ -12,7 +11,7 @@ namespace SlackNet.Blocks
         public DatePicker() : base("datepicker") { }
 
         /// <summary>
-        /// A plain text object that defines the placeholder text shown on the menu. 
+        /// A plain text object that defines the placeholder text shown on the datepicker.
         /// </summary>
         public PlainText Placeholder { get; set; }
 
