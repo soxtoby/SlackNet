@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace SlackNet.Events
@@ -12,6 +13,8 @@ namespace SlackNet.Events
         public string ApiAppId { get; set; }
         public Event Event { get; set; }
         public string[] AuthedUsers { get; set; }
+        public IList<Authorization> Authorizations { get; set; }
+        public string EventContext { get; set; }
         public string EventId { get; set; }
         public int EventTime { get; set; }
         [JsonIgnore]
