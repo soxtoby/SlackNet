@@ -66,7 +66,7 @@ namespace SlackNet.Tests
         }
 
         private static bool MethodsEqual(MethodInfo a, MethodInfo b) =>
-            a.Name == b.Name 
+            a.Name == b.Name
             && ParameterTypes(a).SequenceEqual(ParameterTypes(b));
 
         private static IEnumerable<Type> ParameterTypes(MethodInfo method)
@@ -186,6 +186,7 @@ namespace SlackNet.Tests
             }
 
             public IApiApi Api { get; }
+            public IAppsEventsAuthorizationsApi AppsEventsAuthorizations { get; }
             public IAuthApi Auth { get; }
             public IBotsApi Bots { get; }
             public IChannelsApi Channels { get; }

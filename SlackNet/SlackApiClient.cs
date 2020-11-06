@@ -15,6 +15,7 @@ namespace SlackNet
     public interface ISlackApiClient
     {
         IApiApi Api { get; }
+        IAppsEventsAuthorizationsApi AppsEventsAuthorizations { get; }
         IAuthApi Auth { get; }
         IBotsApi Bots { get; }
         IChannelsApi Channels { get; }
@@ -70,7 +71,7 @@ namespace SlackNet
         /// <param name="args">Arguments to send to Slack. Authorization headers will be added automatically.</param>
         /// <param name="cancellationToken"></param>
         Task Post(string apiMethod, Args args, CancellationToken? cancellationToken);
-        
+
         /// <summary>
         /// Calls a Slack API that requires POST content.
         /// </summary>
@@ -79,7 +80,7 @@ namespace SlackNet
         /// <param name="args">Arguments to send to Slack. Authorization headers will be added automatically.</param>
         /// <param name="cancellationToken"></param>
         Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class;
-        
+
         /// <summary>
         /// Calls a Slack API that requires POST content.
         /// </summary>
@@ -88,7 +89,7 @@ namespace SlackNet
         /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
         /// <param name="cancellationToken"></param>
         Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken);
-        
+
         /// <summary>
         /// Calls a Slack API that requires POST content.
         /// </summary>
@@ -147,6 +148,7 @@ namespace SlackNet
         public ISlackApiClient WithAccessToken(string accessToken) => new SlackApiClient(_http, _urlBuilder, _jsonSettings, accessToken);
 
         public IApiApi Api => new ApiApi(this);
+        public IAppsEventsAuthorizationsApi AppsEventsAuthorizations => new AppsEventsAuthorizationsApi(this);
         public IAuthApi Auth => new AuthApi(this);
         public IBotsApi Bots => new BotsApi(this);
         public IChannelsApi Channels => new ChannelsApi(this);
@@ -194,7 +196,7 @@ namespace SlackNet
         /// <param name="apiMethod">Name of Slack method.</param>
         /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
         /// <param name="cancellationToken"></param>
-        public Task<T> Get<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class => 
+        public Task<T> Get<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class =>
             WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Get, Url(apiMethod, args)), cancellationToken);
 
         /// <summary>
@@ -213,7 +215,7 @@ namespace SlackNet
         /// <param name="apiMethod">Name of Slack method.</param>
         /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
         /// <param name="cancellationToken"></param>
-        public Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class => 
+        public Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class =>
             Post<T>(Url(apiMethod), (object)StripNullArgs(args), cancellationToken);
 
         /// <summary>
@@ -234,7 +236,7 @@ namespace SlackNet
         /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
         /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
         /// <param name="cancellationToken"></param>
-        public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) where T : class => 
+        public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) where T : class =>
             WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, Url(apiMethod, args)) { Content = content }, cancellationToken);
 
         /// <summary>
@@ -257,7 +259,7 @@ namespace SlackNet
 
         private string Url(string apiMethod) =>
             _urlBuilder.Url(apiMethod, new Args());
-        
+
         private string Url(string apiMethod, Args args)
         {
             if (!args.ContainsKey("token"))
@@ -287,7 +289,7 @@ namespace SlackNet
                 ? response.Data?.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings))
                 : throw new SlackException(response.Data?.ToObject<ErrorResponse>(JsonSerializer.Create(_jsonSettings.SerializerSettings)));
 
-        private static Args StripNullArgs(Args args) => 
+        private static Args StripNullArgs(Args args) =>
             args.Where(kv => kv.Value != null)
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
     }
