@@ -41,7 +41,7 @@ namespace SlackNet.Blocks
     }
 
     [SlackType("user")]
-    public class RichTextUser
+    public class RichTextUser : RichTextSectionElement
     {
         public string UserId { get; set; }
         public RichTextStyle Style { get; set; } = new RichTextStyle();
