@@ -136,7 +136,7 @@ namespace SlackNet.Tests
                 SlackMethod = null;
                 Args = null;
             }
-
+            
             public Task Get(string apiMethod, Args args, CancellationToken? cancellationToken)
             {
                 SlackMethod = apiMethod;
@@ -217,6 +217,7 @@ namespace SlackNet.Tests
             public IUsersApi Users { get; }
             public IUserProfileApi UserProfile { get; }
             public IViewsApi Views { get; }
+            public IWorkflowsApi Workflows { get; }
         }
     }
 }

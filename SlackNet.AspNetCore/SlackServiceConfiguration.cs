@@ -500,6 +500,85 @@ namespace SlackNet.AspNetCore
         }
 
         #endregion Slash commands
+        
+        
+        #region Workflow Step Edits
+
+        /// <summary>
+        /// Take over all workflow Step Edit handling with your own handler.
+        /// Handlers registered with <c>RegisterWorkflowStepEditHandler</c> will be ignored.
+        /// </summary>
+        [Obsolete(Warning.Experimental)]
+        public SlackServiceConfiguration ReplaceAsyncWorkflowStepEditHandling(Func<IServiceProvider, IAsyncWorkflowStepEditHandler> handlerFactory) =>
+            RegisterReplacementHandler<IAsyncWorkflowStepEditHandler>(handlerFactory);
+
+        [Obsolete(Warning.Experimental)]
+        public SlackServiceConfiguration RegisterAsyncWorkflowStepEditHandler<THandler>()
+            where THandler : class, IAsyncWorkflowStepEditHandler
+        {
+            _serviceCollection.TryAddScoped<THandler>();
+            return RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(p => new ResolvedWorkflowStepEditHandler(p, s => s.GetRequiredService<THandler>()));
+        }
+
+        [Obsolete(Warning.Experimental)]
+        public SlackServiceConfiguration RegisterAsyncWorkflowStepEditHandler(IAsyncWorkflowStepEditHandler handler) =>
+            RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(c => handler);
+
+        [Obsolete(Warning.Experimental)]
+        public SlackServiceConfiguration RegisterAsyncWorkflowStepEditHandler(Func<IServiceProvider, IAsyncWorkflowStepEditHandler> handlerFactory) =>
+            RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(p => new ResolvedWorkflowStepEditHandler(p, handlerFactory));
+
+        [Obsolete(Warning.Experimental)]
+        public SlackServiceConfiguration RegisterAsyncWorkflowStepEditHandler<THandler>(string callbackId)
+            where THandler : class, IAsyncWorkflowStepEditHandler
+        {
+            _serviceCollection.TryAddScoped<THandler>();
+            return RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(p => new SpecificWorkflowStepEditHandler(callbackId, new ResolvedWorkflowStepEditHandler(p, s => s.GetRequiredService<THandler>())));
+        }
+
+        [Obsolete(Warning.Experimental)]
+        public SlackServiceConfiguration RegisterAsyncWorkflowStepEditHandler(string callbackId, IAsyncWorkflowStepEditHandler handler) =>
+            RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(p => new SpecificWorkflowStepEditHandler(callbackId, handler));
+
+        [Obsolete(Warning.Experimental)]
+        public SlackServiceConfiguration RegisterAsyncWorkflowStepEditHandler(string callbackId, Func<IServiceProvider, IAsyncWorkflowStepEditHandler> handlerFactory) =>
+            RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(p => new SpecificWorkflowStepEditHandler(callbackId, new ResolvedWorkflowStepEditHandler(p, handlerFactory)));
+
+        /// <summary>
+        /// Take over all workflow Step Edit handling with your own handler.
+        /// Handlers registered with <c>RegisterWorkflowStepEditHandler</c> will be ignored.
+        /// </summary>
+        public SlackServiceConfiguration ReplaceWorkflowStepEditHandling(Func<IServiceProvider, IWorkflowStepEditHandler> handlerFactory) =>
+            RegisterReplacementHandler<IAsyncWorkflowStepEditHandler>(p => new WorkflowStepEditHandlerAsyncWrapper(handlerFactory(p)));
+
+        public SlackServiceConfiguration RegisterWorkflowStepEditHandler<THandler>()
+            where THandler : class, IWorkflowStepEditHandler
+        {
+            _serviceCollection.TryAddScoped<THandler>();
+            return RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(p => new ResolvedWorkflowStepEditHandler(p, s => new WorkflowStepEditHandlerAsyncWrapper(s.GetRequiredService<THandler>())));
+        }
+
+        public SlackServiceConfiguration RegisterWorkflowStepEditHandler(IWorkflowStepEditHandler handler) =>
+            RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(c => new WorkflowStepEditHandlerAsyncWrapper(handler));
+
+        public SlackServiceConfiguration RegisterWorkflowStepEditHandler(Func<IServiceProvider, IWorkflowStepEditHandler> handlerFactory) =>
+            RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(p => new ResolvedWorkflowStepEditHandler(p, s => new WorkflowStepEditHandlerAsyncWrapper(handlerFactory(s))));
+
+        public SlackServiceConfiguration RegisterWorkflowStepEditHandler<THandler>(string callbackId)
+            where THandler : class, IWorkflowStepEditHandler
+        {
+            _serviceCollection.TryAddScoped<THandler>();
+            return RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(p => new SpecificWorkflowStepEditHandler(callbackId, new ResolvedWorkflowStepEditHandler(p, s => new WorkflowStepEditHandlerAsyncWrapper(s.GetRequiredService<THandler>()))));
+        }
+
+        public SlackServiceConfiguration RegisterWorkflowStepEditHandler(string callbackId, IWorkflowStepEditHandler handler) =>
+            RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(p => new SpecificWorkflowStepEditHandler(callbackId, new WorkflowStepEditHandlerAsyncWrapper(handler)));
+
+        public SlackServiceConfiguration RegisterWorkflowStepEditHandler(string callbackId, Func<IServiceProvider, IWorkflowStepEditHandler> handlerFactory) =>
+            RegisterCompositeItem<IAsyncWorkflowStepEditHandler>(p => new SpecificWorkflowStepEditHandler(callbackId, new ResolvedWorkflowStepEditHandler(p, s => new WorkflowStepEditHandlerAsyncWrapper(handlerFactory(s)))));
+
+        #endregion Workflow Step Edits
+
 
         /// <summary>
         /// Take over all interactive message handling with your own handler.
