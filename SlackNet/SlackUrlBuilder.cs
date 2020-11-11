@@ -31,8 +31,9 @@ namespace SlackNet
 
         private string ArgValue(object value) =>
               value is string stringValue ? stringValue
-            : value is IEnumerable enumerable ? SerializeEnumerable(enumerable)
-            : JsonConvert.SerializeObject(value, _jsonSettings.SerializerSettings);
+              : value is IDictionary dictionary ? JsonConvert.SerializeObject(dictionary, _jsonSettings.SerializerSettings)
+              : value is IEnumerable enumerable ? SerializeEnumerable(enumerable) 
+              : JsonConvert.SerializeObject(value, _jsonSettings.SerializerSettings);
 
         private string SerializeEnumerable(IEnumerable enumerable) =>
             string.Join(",", enumerable.Cast<object>()

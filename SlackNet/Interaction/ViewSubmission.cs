@@ -15,5 +15,7 @@ namespace SlackNet.Interaction
         /// This should be used to ensure the correct view is being updated when updates are happening asynchronously.
         /// </summary>
         public string Hash { get; set; }
+        
+        public WorkflowStep WorkflowStep { get; set; }
     }
 }
