@@ -44,6 +44,10 @@ namespace SlackNet.Tests
             ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterGlobalShortcutHandler), typeof(IGlobalShortcutHandler), new Type[0], new Type[0]);
             ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterGlobalShortcutHandler), typeof(IGlobalShortcutHandler), new Type[0], new[] { typeof(string) });
 
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceWorkflowStepEditHandling), typeof(IWorkflowStepEditHandler));
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterWorkflowStepEditHandler), typeof(IWorkflowStepEditHandler), new Type[0], new Type[0]);
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterWorkflowStepEditHandler), typeof(IWorkflowStepEditHandler), new Type[0], new[] { typeof(string) });
+
             ExpectReplaceAndKeyedRegistrationTriplet(publicMethods, nameof(SSC.ReplaceBlockOptionProviding), nameof(SSC.RegisterBlockOptionProvider), typeof(IBlockOptionProvider));
             ExpectReplaceAndKeyedRegistrationTriplet(publicMethods, nameof(SSC.ReplaceViewSubmissionHandling), nameof(SSC.RegisterViewSubmissionHandler), typeof(IViewSubmissionHandler));
             ExpectReplaceAndKeyedRegistrationTriplet(publicMethods, nameof(SSC.ReplaceSlashCommandHandling), nameof(SSC.RegisterSlashCommandHandler), typeof(ISlashCommandHandler));
@@ -57,7 +61,7 @@ namespace SlackNet.Tests
 
             ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceLegacyDialogSubmissionHandling), typeof(IDialogSubmissionHandler));
             ExpectMethod(publicMethods, nameof(SSC.RegisterDialogSubmissionHandler), new[] { typeof(IDialogSubmissionHandler) }, new[] { typeof(string) });
-            
+
             // Backwards compatibility
             ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterMessageActionHandler), typeof(IMessageActionHandler), new Type[0], new Type[0]);
             ExpectMethod(publicMethods, nameof(SSC.RegisterMessageActionHandler), new[] { typeof(IMessageActionHandler) }, new[] { typeof(string) });
@@ -75,6 +79,10 @@ namespace SlackNet.Tests
             ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceAsyncGlobalShortcutHandling), typeof(IAsyncGlobalShortcutHandler));
             ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncGlobalShortcutHandler), typeof(IAsyncGlobalShortcutHandler), new Type[0], new Type[0]);
             ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncGlobalShortcutHandler), typeof(IAsyncGlobalShortcutHandler), new Type[0], new[] { typeof(string) });
+
+            ExpectReplaceMethod(publicMethods, nameof(SSC.ReplaceAsyncWorkflowStepEditHandling), typeof(IAsyncWorkflowStepEditHandler));
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncWorkflowStepEditHandler), typeof(IAsyncWorkflowStepEditHandler), new Type[0], new Type[0]);
+            ExpectRegistrationTriplet(publicMethods, nameof(SSC.RegisterAsyncWorkflowStepEditHandler), typeof(IAsyncWorkflowStepEditHandler), new Type[0], new[] { typeof(string) });
 
             ExpectReplaceAndKeyedRegistrationTriplet(publicMethods, nameof(SSC.ReplaceAsyncViewSubmissionHandling), nameof(SSC.RegisterAsyncViewSubmissionHandler), typeof(IAsyncViewSubmissionHandler));
             ExpectReplaceAndKeyedRegistrationTriplet(publicMethods, nameof(SSC.ReplaceAsyncSlashCommandHandling), nameof(SSC.RegisterAsyncSlashCommandHandler), typeof(IAsyncSlashCommandHandler));
@@ -103,7 +111,7 @@ namespace SlackNet.Tests
             ExpectMethod(publicMethods, name, new Type[0], new[] { FactoryFunc(handlerType) });
         }
 
-        private static Type FactoryFunc(Type implementationTypeConstraint) => 
+        private static Type FactoryFunc(Type implementationTypeConstraint) =>
             typeof(Func<,>).MakeGenericType(typeof(IServiceProvider), implementationTypeConstraint);
 
         private static void ExpectMethod(List<MethodInfo> methods, string name, IEnumerable<Type> genericParameters, IEnumerable<Type> methodParameters) =>

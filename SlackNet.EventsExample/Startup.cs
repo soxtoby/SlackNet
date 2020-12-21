@@ -41,8 +41,12 @@ namespace SlackNet.EventsExample
                 .RegisterEventHandler<AppHomeOpened, AppHome>()
                 .RegisterBlockActionHandler<ButtonAction, AppHome>()
                 .RegisterViewSubmissionHandler<AppHome>(AppHome.ModalCallbackId)
-            
+
                 .RegisterSlashCommandHandler<EchoCommand>("/echo")
+
+                .RegisterWorkflowStepEditHandler<WorkflowExample>(WorkflowExample.StepCallbackId)
+                .RegisterViewSubmissionHandler<WorkflowExample>(WorkflowExample.ConfigCallback)
+                .RegisterEventHandler<WorkflowStepExecute, WorkflowExample>()
             );
             services.AddMvc();
         }
@@ -54,7 +58,7 @@ namespace SlackNet.EventsExample
                 app.UseDeveloperExceptionPage();
 
             app.UseSlackNet(c => c.UseSigningSecret(Configuration["Slack:SigningSecret"]));
-            
+
             app.UseMvc();
         }
     }

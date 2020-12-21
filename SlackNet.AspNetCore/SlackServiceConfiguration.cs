@@ -25,7 +25,7 @@ namespace SlackNet.AspNetCore
         /// Take over all event handling with your own handler.
         /// Handlers registered with <c>RegisterEventHandler</c> will be ignored.
         /// </summary>
-        public SlackServiceConfiguration ReplaceEventHandling(Func<IServiceProvider, IEventHandler> handlerFactory) => 
+        public SlackServiceConfiguration ReplaceEventHandling(Func<IServiceProvider, IEventHandler> handlerFactory) =>
             RegisterReplacementHandler<IEventHandler>(handlerFactory);
 
         public SlackServiceConfiguration RegisterEventHandler<THandler>()
@@ -35,10 +35,10 @@ namespace SlackNet.AspNetCore
             return RegisterCompositeItem<IEventHandler>(p => new ResolvedEventHandler(p, s => s.GetRequiredService<THandler>()));
         }
 
-        public SlackServiceConfiguration RegisterEventHandler(IEventHandler handler) => 
+        public SlackServiceConfiguration RegisterEventHandler(IEventHandler handler) =>
             RegisterCompositeItem<IEventHandler>(p => new ResolvedEventHandler(p, s => handler));
 
-        public SlackServiceConfiguration RegisterEventHandler(Func<IServiceProvider, IEventHandler> handlerFactory) => 
+        public SlackServiceConfiguration RegisterEventHandler(Func<IServiceProvider, IEventHandler> handlerFactory) =>
             RegisterCompositeItem<IEventHandler>(p => new ResolvedEventHandler(p, handlerFactory));
 
         public SlackServiceConfiguration RegisterEventHandler<TEvent, THandler>()
@@ -53,7 +53,7 @@ namespace SlackNet.AspNetCore
             where TEvent : Event =>
             RegisterCompositeItem<IEventHandler>(p => new ResolvedEventHandler<TEvent>(p, s => handler));
 
-        public SlackServiceConfiguration RegisterEventHandler<TEvent>(Func<IServiceProvider, IEventHandler<TEvent>> handlerFactory) 
+        public SlackServiceConfiguration RegisterEventHandler<TEvent>(Func<IServiceProvider, IEventHandler<TEvent>> handlerFactory)
             where TEvent : Event =>
             RegisterCompositeItem<IEventHandler>(p => new ResolvedEventHandler<TEvent>(p, handlerFactory));
 
@@ -66,7 +66,7 @@ namespace SlackNet.AspNetCore
         /// Handlers registered with <c>RegisterAsyncBlockActionHandler</c> will be ignored.
         /// </summary>
         [Obsolete(Warning.Experimental)]
-        public SlackServiceConfiguration ReplaceAsyncBlockActionHandling(Func<IServiceProvider, IAsyncBlockActionHandler> handlerFactory) => 
+        public SlackServiceConfiguration ReplaceAsyncBlockActionHandling(Func<IServiceProvider, IAsyncBlockActionHandler> handlerFactory) =>
             RegisterReplacementHandler<IAsyncBlockActionHandler>(handlerFactory);
 
         [Obsolete(Warning.Experimental)]
@@ -78,11 +78,11 @@ namespace SlackNet.AspNetCore
         }
 
         [Obsolete(Warning.Experimental)]
-        public SlackServiceConfiguration RegisterAsyncBlockActionHandler(IAsyncBlockActionHandler handler) => 
+        public SlackServiceConfiguration RegisterAsyncBlockActionHandler(IAsyncBlockActionHandler handler) =>
             RegisterCompositeItem<IAsyncBlockActionHandler>(p => handler);
 
         [Obsolete(Warning.Experimental)]
-        public SlackServiceConfiguration RegisterAsyncBlockActionHandler(Func<IServiceProvider, IAsyncBlockActionHandler> handlerFactory) => 
+        public SlackServiceConfiguration RegisterAsyncBlockActionHandler(Func<IServiceProvider, IAsyncBlockActionHandler> handlerFactory) =>
             RegisterCompositeItem<IAsyncBlockActionHandler>(p => new ResolvedBlockActionHandler(p, handlerFactory));
 
         [Obsolete(Warning.Experimental)]
@@ -184,7 +184,7 @@ namespace SlackNet.AspNetCore
         /// Handlers registered with <c>RegisterMessageShortcutHandler</c> will be ignored.
         /// </summary>
         [Obsolete(Warning.Experimental)]
-        public SlackServiceConfiguration ReplaceAsyncMessageShortcutHandling(Func<IServiceProvider, IAsyncMessageShortcutHandler> handlerFactory) => 
+        public SlackServiceConfiguration ReplaceAsyncMessageShortcutHandling(Func<IServiceProvider, IAsyncMessageShortcutHandler> handlerFactory) =>
             RegisterReplacementHandler<IAsyncMessageShortcutHandler>(handlerFactory);
 
         [Obsolete(Warning.Experimental)]
@@ -196,11 +196,11 @@ namespace SlackNet.AspNetCore
         }
 
         [Obsolete(Warning.Experimental)]
-        public SlackServiceConfiguration RegisterAsyncMessageShortcutHandler(IAsyncMessageShortcutHandler handler) => 
+        public SlackServiceConfiguration RegisterAsyncMessageShortcutHandler(IAsyncMessageShortcutHandler handler) =>
             RegisterCompositeItem<IAsyncMessageShortcutHandler>(c => handler);
 
         [Obsolete(Warning.Experimental)]
-        public SlackServiceConfiguration RegisterAsyncMessageShortcutHandler(Func<IServiceProvider, IAsyncMessageShortcutHandler> handlerFactory) => 
+        public SlackServiceConfiguration RegisterAsyncMessageShortcutHandler(Func<IServiceProvider, IAsyncMessageShortcutHandler> handlerFactory) =>
             RegisterCompositeItem<IAsyncMessageShortcutHandler>(p => new ResolvedMessageShortcutHandler(p, handlerFactory));
 
         [Obsolete(Warning.Experimental)]
@@ -212,11 +212,11 @@ namespace SlackNet.AspNetCore
         }
 
         [Obsolete(Warning.Experimental)]
-        public SlackServiceConfiguration RegisterAsyncMessageShortcutHandler(string callbackId, IAsyncMessageShortcutHandler handler) => 
+        public SlackServiceConfiguration RegisterAsyncMessageShortcutHandler(string callbackId, IAsyncMessageShortcutHandler handler) =>
             RegisterCompositeItem<IAsyncMessageShortcutHandler>(p => new SpecificMessageShortcutHandler(callbackId, handler));
 
         [Obsolete(Warning.Experimental)]
-        public SlackServiceConfiguration RegisterAsyncMessageShortcutHandler(string callbackId, Func<IServiceProvider, IAsyncMessageShortcutHandler> handlerFactory) => 
+        public SlackServiceConfiguration RegisterAsyncMessageShortcutHandler(string callbackId, Func<IServiceProvider, IAsyncMessageShortcutHandler> handlerFactory) =>
             RegisterCompositeItem<IAsyncMessageShortcutHandler>(p => new SpecificMessageShortcutHandler(callbackId, new ResolvedMessageShortcutHandler(p, handlerFactory)));
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace SlackNet.AspNetCore
         [Obsolete(Warning.Experimental)]
         public SlackServiceConfiguration RegisterAsyncGlobalShortcutHandler(string callbackId, Func<IServiceProvider, IAsyncGlobalShortcutHandler> handlerFactory) =>
             RegisterCompositeItem<IAsyncGlobalShortcutHandler>(p => new SpecificGlobalShortcutHandler(callbackId, new ResolvedGlobalShortcutHandler(p, handlerFactory)));
-        
+
         /// <summary>
         /// Take over all global shortcut handling with your own handler.
         /// Handlers registered with <c>RegisterGlobalShortcutHandler</c> will be ignored.
@@ -361,7 +361,7 @@ namespace SlackNet.AspNetCore
         /// Take over all block option providing with your own handler.
         /// Providers registered with <c>RegisterBlockOptionProvider</c> will be ignored.
         /// </summary>
-        public SlackServiceConfiguration ReplaceBlockOptionProviding(Func<IServiceProvider, IBlockOptionProvider> providerFactory) => 
+        public SlackServiceConfiguration ReplaceBlockOptionProviding(Func<IServiceProvider, IBlockOptionProvider> providerFactory) =>
             RegisterReplacementHandler<IBlockOptionProvider>(providerFactory);
 
         public SlackServiceConfiguration RegisterBlockOptionProvider<TProvider>(string actionId)
@@ -371,10 +371,10 @@ namespace SlackNet.AspNetCore
             return RegisterKeyedItem<IBlockOptionProvider>(actionId, p => new ResolvedBlockOptionProvider(p, s => s.GetRequiredService<TProvider>()));
         }
 
-        public SlackServiceConfiguration RegisterBlockOptionProvider(string actionId, IBlockOptionProvider optionProvider) => 
+        public SlackServiceConfiguration RegisterBlockOptionProvider(string actionId, IBlockOptionProvider optionProvider) =>
             RegisterKeyedItem<IBlockOptionProvider>(actionId, p => new ResolvedBlockOptionProvider(p, s => optionProvider));
 
-        public SlackServiceConfiguration RegisterBlockOptionProvider(string actionId, Func<IServiceProvider, IBlockOptionProvider> providerFactory) => 
+        public SlackServiceConfiguration RegisterBlockOptionProvider(string actionId, Func<IServiceProvider, IBlockOptionProvider> providerFactory) =>
             RegisterKeyedItem<IBlockOptionProvider>(actionId,  p => new ResolvedBlockOptionProvider(p, providerFactory));
 
         #endregion Block option providers
@@ -386,7 +386,7 @@ namespace SlackNet.AspNetCore
         /// Handlers registered with <c>RegisterViewSubmissionHandler</c> will be ignored.
         /// </summary>
         [Obsolete(Warning.Experimental)]
-        public SlackServiceConfiguration ReplaceAsyncViewSubmissionHandling(Func<IServiceProvider, IAsyncViewSubmissionHandler> handlerFactory) => 
+        public SlackServiceConfiguration ReplaceAsyncViewSubmissionHandling(Func<IServiceProvider, IAsyncViewSubmissionHandler> handlerFactory) =>
             RegisterReplacementHandler<IAsyncViewSubmissionHandler>(handlerFactory);
 
         [Obsolete(Warning.Experimental)]
@@ -419,10 +419,10 @@ namespace SlackNet.AspNetCore
             return RegisterKeyedItem<IAsyncViewSubmissionHandler>(callbackId, p => new ResolvedViewSubmissionHandler(p, s => new ViewSubmissionHandlerAsyncWrapper(s.GetRequiredService<THandler>())));
         }
 
-        public SlackServiceConfiguration RegisterViewSubmissionHandler(string callbackId, IViewSubmissionHandler handler) => 
+        public SlackServiceConfiguration RegisterViewSubmissionHandler(string callbackId, IViewSubmissionHandler handler) =>
             RegisterKeyedItem<IAsyncViewSubmissionHandler>(callbackId, p => new ResolvedViewSubmissionHandler(p, s => new ViewSubmissionHandlerAsyncWrapper(handler)));
 
-        public SlackServiceConfiguration RegisterViewSubmissionHandler(string callbackId, Func<IServiceProvider, IViewSubmissionHandler> handlerFactory) => 
+        public SlackServiceConfiguration RegisterViewSubmissionHandler(string callbackId, Func<IServiceProvider, IViewSubmissionHandler> handlerFactory) =>
             RegisterKeyedItem<IAsyncViewSubmissionHandler>(callbackId, p => new ResolvedViewSubmissionHandler(p, s => new ViewSubmissionHandlerAsyncWrapper(handlerFactory(s))));
 
         #endregion View submission
@@ -470,7 +470,7 @@ namespace SlackNet.AspNetCore
         /// Take over all slash command handling with your own handler.
         /// Handlers registered with <c>RegisterSlashCommandHandler</c> will be ignored.
         /// </summary>
-        public SlackServiceConfiguration ReplaceSlashCommandHandling(Func<IServiceProvider, ISlashCommandHandler> handlerFactory) => 
+        public SlackServiceConfiguration ReplaceSlashCommandHandling(Func<IServiceProvider, ISlashCommandHandler> handlerFactory) =>
             RegisterReplacementHandler<IAsyncSlashCommandHandler>(p => new SlashCommandHandlerAsyncWrapper(handlerFactory(p)));
 
         public SlackServiceConfiguration RegisterSlashCommandHandler<THandler>(string command)
@@ -500,8 +500,7 @@ namespace SlackNet.AspNetCore
         }
 
         #endregion Slash commands
-        
-        
+
         #region Workflow Step Edits
 
         /// <summary>
@@ -579,12 +578,11 @@ namespace SlackNet.AspNetCore
 
         #endregion Workflow Step Edits
 
-
         /// <summary>
         /// Take over all interactive message handling with your own handler.
         /// Handlers registered with <c>RegisterInteractiveMessageHandler</c> will be ignored.
         /// </summary>
-        public SlackServiceConfiguration ReplaceLegacyInteractiveMessageHandling(Func<IServiceProvider, IInteractiveMessageHandler> handlerFactory) => 
+        public SlackServiceConfiguration ReplaceLegacyInteractiveMessageHandling(Func<IServiceProvider, IInteractiveMessageHandler> handlerFactory) =>
             RegisterReplacementHandler<IInteractiveMessageHandler>(handlerFactory);
 
         public SlackServiceConfiguration RegisterInteractiveMessageHandler<THandler>(string actionName)
@@ -598,7 +596,7 @@ namespace SlackNet.AspNetCore
         /// Take over all legacy option providing with your own provider.
         /// Providers registered with <c>RegisterOptionProvider</c> will be ignored.
         /// </summary>
-        public SlackServiceConfiguration ReplaceLegacyOptionProviding(Func<IServiceProvider, IOptionProvider> providerFactory) => 
+        public SlackServiceConfiguration ReplaceLegacyOptionProviding(Func<IServiceProvider, IOptionProvider> providerFactory) =>
             RegisterReplacementHandler<IOptionProvider>(providerFactory);
 
         public SlackServiceConfiguration RegisterOptionProvider<TProvider>(string actionName)
@@ -612,7 +610,7 @@ namespace SlackNet.AspNetCore
         /// Take over all legacy dialog submission handling with your own handler.
         /// Handlers registered with <c>RegisterDialogSubmissionHandler</c> will be ignored.
         /// </summary>
-        public SlackServiceConfiguration ReplaceLegacyDialogSubmissionHandling(Func<IServiceProvider, IDialogSubmissionHandler> handlerFactory) => 
+        public SlackServiceConfiguration ReplaceLegacyDialogSubmissionHandling(Func<IServiceProvider, IDialogSubmissionHandler> handlerFactory) =>
             RegisterReplacementHandler<IDialogSubmissionHandler>(handlerFactory);
 
         public SlackServiceConfiguration RegisterDialogSubmissionHandler<THandler>(string callbackId)
@@ -634,7 +632,7 @@ namespace SlackNet.AspNetCore
             return this;
         }
 
-        private SlackServiceConfiguration RegisterReplacementHandler<T>(Func<IServiceProvider, T> handlerFactory) 
+        private SlackServiceConfiguration RegisterReplacementHandler<T>(Func<IServiceProvider, T> handlerFactory)
             where T : class
         {
             _serviceCollection.AddSingleton<T>(handlerFactory);

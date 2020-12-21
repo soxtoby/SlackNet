@@ -11,6 +11,6 @@ namespace SlackNet.AspNetCore
         private readonly List<CompositeItem<IAsyncWorkflowStepEditHandler>> _handlers;
         public CompositeWorkflowStepEditEditHandler(IEnumerable<CompositeItem<IAsyncWorkflowStepEditHandler>> handlers) => _handlers = handlers.ToList();
 
-        public Task Handle(WorkflowStepEdit shortcut, Responder respond) => Task.WhenAll(_handlers.Select(h => h.Item.Handle(shortcut, respond)));
+        public Task Handle(WorkflowStepEdit workflowStepEdit, Responder respond) => Task.WhenAll(_handlers.Select(h => h.Item.Handle(workflowStepEdit, respond)));
     }
 }

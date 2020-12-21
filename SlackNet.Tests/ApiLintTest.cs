@@ -94,7 +94,7 @@ namespace SlackNet.Tests
             args.Keys.AllItemsSatisfy(arg => arg.ShouldMatch("[a-z_]", $"{method.DeclaringType.Name}.{method.Name} has incorrect casing for argument {arg}"));
 
         private static object DummyValue(ParameterInfo param) =>
-              param.ParameterType == typeof(string) && param.Name == "contentType" ? "text/png"
+            param.ParameterType == typeof(string) && param.Name == "contentType" ? "text/png"
             : param.ParameterType == typeof(string) ? "foo"
             : param.ParameterType == typeof(int) ? 0
             : param.ParameterType == typeof(int?) ? null
@@ -119,6 +119,10 @@ namespace SlackNet.Tests
             : param.ParameterType == typeof(Stream) ? Stream.Null
             : param.ParameterType == typeof(Args) ? new Args()
             : param.ParameterType == typeof(IDictionary<string, Attachment>) ? new Dictionary<string, Attachment>()
+            : param.ParameterType == typeof(IDictionary<string, WorkflowInput>) ? new Dictionary<string, WorkflowInput>()
+            : param.ParameterType == typeof(IDictionary<string, string>) ? new Dictionary<string, string>()
+            : param.ParameterType == typeof(IEnumerable<WorkflowOutput>) ? Enumerable.Empty<WorkflowOutput>()
+            : param.ParameterType == typeof(WorkflowError) ? new WorkflowError()
             : param.ParameterType == typeof(CancellationToken?) ? (object)null
             : throw new AssertionException($"Unexpected param type {param.ParameterType.Name} in {param.Member.DeclaringType.Name}.{param.Member.Name}");
 
@@ -136,7 +140,7 @@ namespace SlackNet.Tests
                 SlackMethod = null;
                 Args = null;
             }
-            
+
             public Task Get(string apiMethod, Args args, CancellationToken? cancellationToken)
             {
                 SlackMethod = apiMethod;
