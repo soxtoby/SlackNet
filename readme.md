@@ -14,7 +14,7 @@ var api = new SlackApiClient("<your OAuth access token here>");
 ```
 then start calling methods:
 ```c#
-var channels = await api.Channels.List();
+var channels = await api.Conversations.List();
 ```
 
 To use the RTM API:
@@ -62,7 +62,7 @@ message.ReplyWith(async () => {
 SlackNet.Bot includes a simplified API for getting common information from Slack:
 ```c#
 var user = await bot.GetUserByName("someuser");
-var channels = await bot.GetChannels();
+var conversations = await bot.GetConversations();
 // etc.
 ```
 Everything is cached, so go nuts getting the information you need. You can clear the cache with `bot.ClearCache()`.

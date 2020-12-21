@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SlackNet.Events;
@@ -6,6 +7,7 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
+    [Obsolete("Use IConversationsApi instead")]
     public interface IMpimApi
     {
         /// <summary>
@@ -68,6 +70,7 @@ namespace SlackNet.WebApi
         Task<IReadOnlyList<MessageEvent>> Replies(string channelId, string threadTs, CancellationToken? cancellationToken = null);
     }
 
+    [Obsolete("Use IConversationsApi instead")]
     public class MpimApi : IMpimApi
     {
         private readonly ISlackApiClient _client;

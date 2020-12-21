@@ -18,6 +18,7 @@ namespace SlackNet
         IAppsEventsAuthorizationsApi AppsEventsAuthorizations { get; }
         IAuthApi Auth { get; }
         IBotsApi Bots { get; }
+        [Obsolete("Use Conversations instead")]
         IChannelsApi Channels { get; }
         IChatApi Chat { get; }
         IConversationsApi Conversations { get; }
@@ -26,9 +27,12 @@ namespace SlackNet
         IEmojiApi Emoji { get; }
         IFileCommentsApi FileComments { get; }
         IFilesApi Files { get; }
+        [Obsolete("Use Conversations instead")]
         IGroupsApi Groups { get; }
+        [Obsolete("Use Conversations instead")]
         IImApi Im { get; }
         IMigrationApi Migration { get; }
+        [Obsolete("Use Conversations instead")]
         IMpimApi Mpim { get; }
         IOAuthApi OAuth { get; }
         IPinsApi Pins { get; }

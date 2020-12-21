@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SlackNet.Events;
@@ -6,6 +7,7 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
+    [Obsolete("Use IConversationsApi instead")]
     public interface IGroupsApi
     {
         /// <summary>
@@ -95,7 +97,7 @@ namespace SlackNet.WebApi
         Task Leave(string channelId, CancellationToken? cancellationToken = null);
 
         /// <summary>
-        /// Returns a list of private channels in the team that the caller is in and archived groups that the caller was in. 
+        /// Returns a list of private channels in the team that the caller is in and archived groups that the caller was in.
         /// The list of (non-deactivated) members in each private channel is also returned.
         /// </summary>
         /// <param name="excludeArchived">Don't return archived private channels.</param>
@@ -161,6 +163,7 @@ namespace SlackNet.WebApi
         Task Unarchive(string channelId, CancellationToken? cancellationToken = null);
     }
 
+    [Obsolete("Use ConversationsApi instead")]
     public class GroupsApi : IGroupsApi
     {
         private readonly ISlackApiClient _client;
@@ -285,7 +288,7 @@ namespace SlackNet.WebApi
             _client.Post("groups.leave", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
-        /// Returns a list of private channels in the team that the caller is in and archived groups that the caller was in. 
+        /// Returns a list of private channels in the team that the caller is in and archived groups that the caller was in.
         /// The list of (non-deactivated) members in each private channel is also returned.
         /// </summary>
         /// <param name="excludeArchived">Don't return archived private channels.</param>

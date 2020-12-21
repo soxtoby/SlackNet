@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
+    [Obsolete("Use IConversationsApi instead")]
     public interface IChannelsApi
     {
         /// <summary>
@@ -64,8 +66,8 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns>
         /// If successful, the command returns a channel object, including state information.
-        /// If you are already in the channel, the response is slightly different. 
-        /// <see cref="ChannelJoinResponse.AlreadyInChannel"/> will be true, and a limited channel object will be returned. 
+        /// If you are already in the channel, the response is slightly different.
+        /// <see cref="ChannelJoinResponse.AlreadyInChannel"/> will be true, and a limited channel object will be returned.
         /// This allows a client to see that the request to join GeNERaL is the same as the channel #general that the user is already in.
         /// </returns>
         Task<ChannelJoinResponse> Join(string channelName, bool validate = false, CancellationToken? cancellationToken = null);
@@ -87,8 +89,8 @@ namespace SlackNet.WebApi
         Task Leave(string channelId, CancellationToken? cancellationToken = null);
 
         /// <summary>
-        /// Returns a list of all channels in the team. 
-        /// This includes channels the caller is in, channels they are not currently in, and archived channels but does not include private channels. 
+        /// Returns a list of all channels in the team.
+        /// This includes channels the caller is in, channels they are not currently in, and archived channels but does not include private channels.
         /// The number of (non-deactivated) members in each channel is also returned.
         /// To retrieve a list of private channels, use groups.list.
         /// </summary>
@@ -107,7 +109,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// Renames a team channel.
-        /// The only people who can rename a channel are Team Admins, or the person that originally created the channel. 
+        /// The only people who can rename a channel are Team Admins, or the person that originally created the channel.
         /// Others will receive a "not_authorized" error.
         /// </summary>
         /// <param name="channelId">Channel to rename</param>
@@ -150,6 +152,7 @@ namespace SlackNet.WebApi
         Task Unarchive(string channelId, CancellationToken? cancellationToken = null);
     }
 
+    [Obsolete("Use ConversationsApi instead")]
     public class ChannelsApi : IChannelsApi
     {
         private readonly ISlackApiClient _client;
@@ -235,8 +238,8 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         /// <returns>
         /// If successful, the command returns a channel object, including state information.
-        /// If you are already in the channel, the response is slightly different. 
-        /// <see cref="ChannelJoinResponse.AlreadyInChannel"/> will be true, and a limited channel object will be returned. 
+        /// If you are already in the channel, the response is slightly different.
+        /// <see cref="ChannelJoinResponse.AlreadyInChannel"/> will be true, and a limited channel object will be returned.
         /// This allows a client to see that the request to join GeNERaL is the same as the channel #general that the user is already in.
         /// </returns>
         public Task<ChannelJoinResponse> Join(string channelName, bool validate = false, CancellationToken? cancellationToken = null) =>
@@ -269,8 +272,8 @@ namespace SlackNet.WebApi
             _client.Post("channels.leave", new Args { { "channel", channelId } }, cancellationToken);
 
         /// <summary>
-        /// Returns a list of all channels in the team. 
-        /// This includes channels the caller is in, channels they are not currently in, and archived channels but does not include private channels. 
+        /// Returns a list of all channels in the team.
+        /// This includes channels the caller is in, channels they are not currently in, and archived channels but does not include private channels.
         /// The number of (non-deactivated) members in each channel is also returned.
         /// To retrieve a list of private channels, use groups.list.
         /// </summary>
@@ -300,7 +303,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// Renames a team channel.
-        /// The only people who can rename a channel are Team Admins, or the person that originally created the channel. 
+        /// The only people who can rename a channel are Team Admins, or the person that originally created the channel.
         /// Others will receive a "not_authorized" error.
         /// </summary>
         /// <param name="channelId">Channel to rename</param>
