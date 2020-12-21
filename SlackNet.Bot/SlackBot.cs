@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SlackNet.Events;
+using SlackNet.WebApi;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +9,6 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
-using SlackNet.Events;
-using SlackNet.WebApi;
 
 namespace SlackNet.Bot
 {
@@ -109,9 +109,9 @@ namespace SlackNet.Bot
         /// Clear bot's cache of hubs, users etc.
         /// </summary>
         void ClearCache();
-        
+
         #region Hubs
-        
+
         /// <summary>
         /// Get information on a public or private channel, IM, or multi-person IM.
         /// </summary>
@@ -172,7 +172,7 @@ namespace SlackNet.Bot
         /// </summary>
         [Obsolete("Use GetConversations instead")]
         Task<IReadOnlyList<Im>> GetIms();
-        
+
         #endregion
     }
 
@@ -182,14 +182,14 @@ namespace SlackNet.Bot
         private readonly ISlackApiClient _api;
         private readonly IScheduler _scheduler;
         private readonly ConcurrentQueue<IMessageHandler> _handlers = new ConcurrentQueue<IMessageHandler>();
-        
+
         private readonly ConcurrentValue<Task> _conversationsFetched = new ConcurrentValue<Task>();
         private readonly ConcurrentDictionary<string, Task<Conversation>> _conversations = new ConcurrentDictionary<string, Task<Conversation>>();
-        
+
         private readonly ConcurrentDictionary<string, Task<User>> _users = new ConcurrentDictionary<string, Task<User>>();
         private readonly ConcurrentDictionary<string, Task<BotInfo>> _bots = new ConcurrentDictionary<string, Task<BotInfo>>();
         private readonly ConcurrentValue<Task<IReadOnlyList<User>>> _allUsers = new ConcurrentValue<Task<IReadOnlyList<User>>>();
-        
+
         private readonly SyncedSubject<IMessage> _incomingMessages = new SyncedSubject<IMessage>();
         private readonly SyncedSubject<BotMessage> _outgoingMessages = new SyncedSubject<BotMessage>();
         private IObservable<PostedMessage> _sentMessages;
@@ -301,7 +301,7 @@ namespace SlackNet.Bot
         private async Task<User> GetMessageUser(MessageEvent message)
         {
             var userId = message.User;
-            
+
             if (userId == null && message is Events.BotMessage b)
             {
                 var botInfo = await GetBotUserById(b.BotId).ConfigureAwait(false);
@@ -319,7 +319,7 @@ namespace SlackNet.Bot
                 .ForEach(h => h.HandleMessage(message));
             _incomingMessages.OnNext(message);
         }
-        
+
         /// <summary>
         /// Retrieve information about a conversation.
         /// </summary>
@@ -339,7 +339,7 @@ namespace SlackNet.Bot
             conversationName.FirstOrDefault() == '@'
                 ? await GetConversationByUserId((await GetUserByName(conversationName).ConfigureAwait(false)).Id).ConfigureAwait(false)
                 : await FindConversation(c => c.Name == conversationName.TrimStart('#')).ConfigureAwait(false);
-        
+
         /// <summary>
         /// Get and open Im by user ID.
         /// </summary>
@@ -379,7 +379,7 @@ namespace SlackNet.Bot
         private async Task FetchConversations()
         {
             string cursor = null;
-            
+
             do
             {
                 var response = await _api.Conversations.List(
@@ -391,8 +391,8 @@ namespace SlackNet.Bot
                             ConversationType.Im,
                             ConversationType.Mpim
                         }).ConfigureAwait(false);
-                
-                foreach (var conversation in response.Channels) 
+
+                foreach (var conversation in response.Channels)
                     _conversations[conversation.Id] = Task.FromResult(conversation);
 
                 cursor = response.ResponseMetadata.NextCursor;
@@ -452,7 +452,7 @@ namespace SlackNet.Bot
         public async Task Send(BotMessage message, CancellationToken? cancellationToken = null)
         {
             var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
-                message.CancellationToken ?? CancellationToken.None, 
+                message.CancellationToken ?? CancellationToken.None,
                 cancellationToken ?? CancellationToken.None);
             message.CancellationToken = linkedTokenSource.Token;
 
@@ -465,8 +465,12 @@ namespace SlackNet.Bot
             await sent.ConfigureAwait(false);
         }
 
-        private async Task<PostMessageResponse> PostMessage(BotMessage message) =>
-            await _api.Chat.PostMessage(new Message
+        private async Task<PostMessageResponse> PostMessage(BotMessage message)
+        {
+            if (message.Ephemeral && message.ReplyTo?.User?.Id == null)
+                throw new ArgumentException("Can't send ephemeral message: missing reply-to user ID", nameof(message));
+
+            var slackMessage = new Message
                 {
                     Channel = message.Conversation != null
                         ? await message.Conversation.ConversationId(this).ConfigureAwait(false)
@@ -484,10 +488,15 @@ namespace SlackNet.Bot
                     UnfurlLinks = message.UnfurlLinks,
                     UnfurlMedia = message.UnfurlMedia,
                     AsUser = true
-                }, message.CancellationToken).ConfigureAwait(false);
+                };
 
-        private async Task<bool> ReplyingInDifferentHub(BotMessage message) => 
-            message.Conversation != null 
+            return message.Ephemeral
+                ? await _api.Chat.PostEphemeral(message.ReplyTo.User.Id, slackMessage, message.CancellationToken).ConfigureAwait(false)
+                : await _api.Chat.PostMessage(slackMessage, message.CancellationToken).ConfigureAwait(false);
+        }
+
+        private async Task<bool> ReplyingInDifferentHub(BotMessage message) =>
+            message.Conversation != null
             && await message.Conversation.ConversationId(this).ConfigureAwait(false) != message.ReplyTo?.Conversation.Id;
 
         /// <summary>
@@ -508,7 +517,7 @@ namespace SlackNet.Bot
             _conversations.Clear();
             _users.Clear();
             _allUsers.Clear();
-            
+
             _hubs.Clear();
             _channels.Clear();
             _groups.Clear();
@@ -528,7 +537,7 @@ namespace SlackNet.Bot
             _incomingSubscription?.Dispose();
             _outgoingSubscription?.Dispose();
         }
-        
+
         #region Hubs
 
         private readonly ConcurrentDictionary<string, Task<Hub>> _hubs = new ConcurrentDictionary<string, Task<Hub>>();
@@ -548,7 +557,7 @@ namespace SlackNet.Bot
 
         private async Task<Hub> FetchHub(string hubId) =>
             (await GetConversationById(hubId).ConfigureAwait(false))?.ToHub();
-            
+
         /// <summary>
         /// Find hub with matching name.
         /// </summary>
@@ -597,7 +606,7 @@ namespace SlackNet.Bot
                     ?? await OpenAndCacheIm(userId).ConfigureAwait(false);
 
         private Task<T> FindCachedHub<T>(Func<T, bool> predicate) where T : Hub => _hubs.Values.FirstOrDefaultAsync(predicate);
-        
+
         private async Task<Im> OpenAndCacheIm(string userId)
         {
             var im = await OpenIm(userId).ConfigureAwait(false);
@@ -605,8 +614,8 @@ namespace SlackNet.Bot
                 _hubs[im.Id] = Task.FromResult((Hub)im);
             return im;
         }
-        
-        private async Task<Im> OpenIm(string userId) => 
+
+        private async Task<Im> OpenIm(string userId) =>
             (await OpenImConversation(userId).ConfigureAwait(false))?.ToIm();
 
         /// <summary>
@@ -626,7 +635,7 @@ namespace SlackNet.Bot
         /// </summary>
         [Obsolete("Use GetConversations instead")]
         public Task<IReadOnlyList<Channel>> GetGroups() => _groups.GetOrCreateValue(FetchGroups);
-        
+
         private async Task<IReadOnlyList<Channel>> FetchGroups() => CacheHubs(
             (await GetConversations().ConfigureAwait(false))
             .Where(c => c.IsGroup)
@@ -639,7 +648,7 @@ namespace SlackNet.Bot
         /// <returns></returns>
         [Obsolete("Use GetConversations instead")]
         public Task<IReadOnlyList<Channel>> GetMpIms() => _mpims.GetOrCreateValue(FetchMpims);
-        
+
         private async Task<IReadOnlyList<Channel>> FetchMpims() => CacheHubs(
             (await GetConversations().ConfigureAwait(false))
             .Where(c => c.IsMpim)
@@ -664,7 +673,7 @@ namespace SlackNet.Bot
             .Where(c => c.IsIm)
             .Select(ConversationConversion.ToIm)
             .ToList();
-        
+
         #endregion
     }
 

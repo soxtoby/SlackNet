@@ -79,6 +79,11 @@ namespace SlackNet.Bot
         /// </summary>
         public bool CreateThread { get; set; }
         /// <summary>
+        /// Set to True to make this an ephemeral message, which is visible only to the assigned user in a specific public channel, private channel, or private conversation.
+        /// Note that not all message properties are supported by ephemeral messages.
+        /// </summary>
+        public bool Ephemeral { get; set; }
+        /// <summary>
         /// Allows message sending to be cancelled, if it hasn't already been sent.
         /// </summary>
         public CancellationToken? CancellationToken { get; set; }
