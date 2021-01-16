@@ -15,6 +15,7 @@ namespace SlackNet
     public interface ISlackApiClient
     {
         IApiApi Api { get; }
+        IAppsConnectionsApi AppsConnectionsApi { get; }
         IAppsEventsAuthorizationsApi AppsEventsAuthorizations { get; }
         IAuthApi Auth { get; }
         IBotsApi Bots { get; }
@@ -153,6 +154,7 @@ namespace SlackNet
         public ISlackApiClient WithAccessToken(string accessToken) => new SlackApiClient(_http, _urlBuilder, _jsonSettings, accessToken);
 
         public IApiApi Api => new ApiApi(this);
+        public IAppsConnectionsApi AppsConnectionsApi => new AppsConnectionsApi(this);
         public IAppsEventsAuthorizationsApi AppsEventsAuthorizations => new AppsEventsAuthorizationsApi(this);
         public IAuthApi Auth => new AuthApi(this);
         public IBotsApi Bots => new BotsApi(this);
@@ -185,7 +187,6 @@ namespace SlackNet
         public IUserProfileApi UserProfile => new UserProfileApi(this);
         public IViewsApi Views => new ViewsApi(this);
         public IWorkflowsApi Workflows => new WorkflowsApi(this);
-
 
         /// <summary>
         /// Calls a Slack API method.
