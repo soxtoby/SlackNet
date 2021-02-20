@@ -14,23 +14,23 @@ namespace SlackNet
 
     class Http : IHttp
     {
-        private readonly HttpClient _client;
+        private readonly Func<HttpClient> _getHttpClient;
         private readonly SlackJsonSettings _jsonSettings;
 
-        public Http(HttpClient client, SlackJsonSettings jsonSettings)
+        public Http(Func<HttpClient> getHttpClient, SlackJsonSettings jsonSettings)
         {
-            _client = client;
+            _getHttpClient = getHttpClient;
             _jsonSettings = jsonSettings;
         }
 
         public async Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null)
         {
-            var response = await _client.SendAsync(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+            var response = await _getHttpClient().SendAsync(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
 
             if ((int)response.StatusCode == 429) // TODO use the enum when TooManyRequests becomes available
                 throw new SlackRateLimitException(response.Headers.RetryAfter.Delta);
             response.EnsureSuccessStatusCode();
-            
+
             return response.Content.Headers.ContentType.MediaType == "application/json"
                 ? await Deserialize<T>(response).ConfigureAwait(false)
                 : default;
@@ -43,7 +43,7 @@ namespace SlackNet
     public class SlackRateLimitException : Exception
     {
         public TimeSpan? RetryAfter { get; }
-        
+
         public SlackRateLimitException(TimeSpan? retryAfter) => RetryAfter = retryAfter;
     }
 }

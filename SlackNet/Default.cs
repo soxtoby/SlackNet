@@ -8,7 +8,13 @@ namespace SlackNet
 {
     public static class Default
     {
-        public static IHttp Http(SlackJsonSettings jsonSettings = null, HttpClient httpClient = null) => new Http(httpClient ?? new HttpClient(), jsonSettings ?? JsonSettings());
+        public static IHttp Http(SlackJsonSettings jsonSettings = null, Func<HttpClient> getHttpClient = null) => new Http(getHttpClient ?? HttpClientFactory(), jsonSettings ?? JsonSettings());
+
+        private static Func<HttpClient> HttpClientFactory()
+        {
+            var httpClient = new HttpClient();
+            return () => httpClient;
+        }
 
         public static ISlackUrlBuilder UrlBuilder(SlackJsonSettings jsonSettings = null) => new SlackUrlBuilder(jsonSettings ?? JsonSettings());
 
