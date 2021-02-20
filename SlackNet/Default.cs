@@ -48,6 +48,8 @@ namespace SlackNet
 
         public static IWebSocketFactory WebSocketFactory => new WebSocketFactory();
 
+        public static ISlackRequestListener RequestListener => NullRequestListener.Instance;
+
         public static void RegisterServices(Action<Type, Func<Func<Type, object>, object>> registerService)
         {
             registerService(typeof(IHttp), resolve => Http((SlackJsonSettings)resolve(typeof(SlackJsonSettings))));

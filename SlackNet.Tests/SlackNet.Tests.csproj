@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="EasyAssertions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="Microsoft.Reactive.Testing" Version="4.3.2" />
     <PackageReference Include="NSubstitute" Version="3.1.0" />
@@ -17,7 +18,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SlackNet.AspNetCore\SlackNet.AspNetCore.csproj" />
+    <ProjectReference Include="..\SlackNet.Autofac\SlackNet.Autofac.csproj" />
     <ProjectReference Include="..\SlackNet.Bot\SlackNet.Bot.csproj" />
+    <ProjectReference Include="..\SlackNet.Extensions.DependencyInjection\SlackNet.Extensions.DependencyInjection.csproj" />
+    <ProjectReference Include="..\SlackNet.SimpleInjector\SlackNet.SimpleInjector.csproj" />
     <ProjectReference Include="..\SlackNet\SlackNet.csproj" />
   </ItemGroup>
 

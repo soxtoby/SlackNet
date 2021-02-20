@@ -16,6 +16,7 @@ namespace SlackNet.Handlers
         public abstract TConfig UseTypeResolver(Func<ISlackTypeResolver> slackTypeResolverProvider);
         public abstract TConfig UseUrlBuilder(Func<ISlackUrlBuilder> urlBuilderProvider);
         public abstract TConfig UseWebSocketFactory(Func<IWebSocketFactory> webSocketFactoryProvider);
+        public abstract TConfig UseRequestListener(Func<ISlackRequestListener> requestListenerProvider);
         public abstract TConfig UseHandlerFactory(Func<ISlackHandlerFactory> handlerFactoryProvider);
         public abstract TConfig UseApiClient(Func<ISlackApiClient> apiClientProvider);
 
