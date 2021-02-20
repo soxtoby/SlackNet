@@ -16,7 +16,7 @@ namespace SlackNet.EventsExample
         public static readonly string Add5 = ActionPrefix + "5";
         public static readonly string Add10 = ActionPrefix + "10";
 
-        private static readonly Regex _counterPattern = new Regex("Counter: (\\d+)");
+        private static readonly Regex CounterPattern = new("Counter: (\\d+)");
 
         public BlockCounter(ISlackApiClient slack)
         {
@@ -28,7 +28,7 @@ namespace SlackNet.EventsExample
             var counter = SectionBeforeAddButtons(button, request);
             if (counter != null)
             {
-                var counterText = _counterPattern.Match(counter.Text.Text ?? string.Empty);
+                var counterText = CounterPattern.Match(counter.Text.Text ?? string.Empty);
                 if (counterText.Success)
                 {
                     var count = int.Parse(counterText.Groups[1].Value);

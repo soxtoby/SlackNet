@@ -50,7 +50,7 @@ namespace SlackNet.EventsExample
                                     Element = new PlainTextInput
                                         {
                                             ActionId = MessageTextAction,
-                                            InitialValue = workflowStepEdit.WorkflowStep.Inputs.TryGetValue(MessageTextInput, out var input) ? input.Value as string : string.Empty
+                                            InitialValue = workflowStepEdit.WorkflowStep.Inputs.TryGetValue(MessageTextInput, out var input) ? input.Value : string.Empty
                                         }
                                 }
                         }
@@ -68,8 +68,8 @@ namespace SlackNet.EventsExample
                     },
                 new List<WorkflowOutput>
                     {
-                        new WorkflowOutput { Label = "Test Recipient", Name = MessageUserOutput, Type = WorkflowOutputType.User },
-                        new WorkflowOutput { Label = "Test Message", Name = MessageTextOutput, Type = WorkflowOutputType.Text }
+                        new() { Label = "Test Recipient", Name = MessageUserOutput, Type = WorkflowOutputType.User },
+                        new() { Label = "Test Message", Name = MessageTextOutput, Type = WorkflowOutputType.Text }
                     });
             return ViewSubmissionResponse.Null;
         }

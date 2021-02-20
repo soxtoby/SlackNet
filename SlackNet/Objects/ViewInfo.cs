@@ -29,7 +29,7 @@ namespace SlackNet
         /// of the child <see cref="IInputBlockElement"/> of the input block.
         /// This final child object will contain the type and submitted value of the input block element.
         /// </summary>
-        public Dictionary<string, Dictionary<string, ElementValue>> Values { get; set; } = new Dictionary<string, Dictionary<string, ElementValue>>();
+        public Dictionary<string, Dictionary<string, ElementValue>> Values { get; set; } = new();
 
         /// <summary>
         /// Get an element value by the <see cref="Block.BlockId"/> of the block it is in, and its <see cref="IInputBlockElement.ActionId"/>.

@@ -498,7 +498,7 @@ namespace SlackNet.Tests
             _api.Conversations.Info(channelId).Returns(expectedChannel);
 
             var result = await _sut.GetHubById(channelId);
-                
+
             result.ShouldBeA<Channel>()
                 .And.Name.ShouldBe(expectedChannel.Name);
             _sut.GetHubById(channelId)
@@ -613,7 +613,7 @@ namespace SlackNet.Tests
             _api.Conversations.OpenAndReturnInfo(UserIds(matchingUser.Id)).Returns(new ConversationOpenResponse { Channel = expectedIm });
 
             var result = await _sut.GetImByName("@foo");
-                
+
             result.ShouldBeA<Im>()
                 .And(im =>
                     {
@@ -635,7 +635,7 @@ namespace SlackNet.Tests
             _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(otherGroup, expectedGroup));
 
             var result = await _sut.GetGroupByName("foo");
-            
+
             result.ShouldBeA<Channel>()
                 .And.Name.ShouldBe(expectedGroup.Name);
             _sut.GetGroupByName("foo")
@@ -651,7 +651,7 @@ namespace SlackNet.Tests
             _api.Conversations.OpenAndReturnInfo(UserIds(expectedIm.User)).Returns(new ConversationOpenResponse { Channel = expectedIm });
 
             var result = await _sut.GetImByUserId(expectedIm.User);
-                
+
             result.ShouldBeA<Im>()
                 .And.Id.ShouldBe(expectedIm.Id);
             _sut.GetImByUserId(expectedIm.User)
@@ -687,7 +687,7 @@ namespace SlackNet.Tests
             _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(group1, group2, notAGroup));
 
             var results = await _sut.GetGroups();
-                
+
             results.ShouldAllBeA<Channel>()
                 .And.ShouldOnlyContain(new[] { group1, group2 }, (ch, co) => ch.Id == co.Id);
             _sut.GetGroups()
@@ -723,7 +723,7 @@ namespace SlackNet.Tests
             _api.Conversations.List(types: IsOfAllConversationTypes()).Returns(ConversationList(im1, im2, notAnIm));
 
             var results = await _sut.GetIms();
-                
+
             results.ShouldAllBeA<Im>()
                 .And.ShouldOnlyContain(new[] { im1, im2 }, (im, co) => im.Id == co.Id);
             _sut.GetIms()
@@ -747,10 +747,10 @@ namespace SlackNet.Tests
             return observer;
         }
 
-        private static ConversationListResponse ConversationList(params Conversation[] conversations) => 
-            new ConversationListResponse { Channels = conversations, ResponseMetadata = new ResponseMetadata() };
+        private static ConversationListResponse ConversationList(params Conversation[] conversations) =>
+            new() { Channels = conversations, ResponseMetadata = new ResponseMetadata() };
 
-        private static string[] UserIds(params string[] userIds) => 
+        private static string[] UserIds(params string[] userIds) =>
             Arg.Is<string[]>(us => us.SequenceEqual(userIds));
 
         private static IEnumerable<ConversationType> IsOfAllConversationTypes(params ConversationType[] conversationTypes)

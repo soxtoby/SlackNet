@@ -27,7 +27,7 @@ namespace SlackNet.EventsExample
             }).ConfigureAwait(false);
         }
 
-        public async Task<BlockOptionsResponse> GetOptions(BlockOptionsRequest request) => new BlockOptionsResponse { Options = GetBlockOptions(request.Value) };
+        public async Task<BlockOptionsResponse> GetOptions(BlockOptionsRequest request) => new() { Options = GetBlockOptions(request.Value) };
 
         private static List<Blocks.Option> GetBlockOptions(string search) =>
             FindColors(search)

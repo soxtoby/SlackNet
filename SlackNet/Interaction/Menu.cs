@@ -20,7 +20,7 @@ namespace SlackNet.Interaction
         {
             get => SelectedOptions.FirstOrDefault()?.Value;
             set => SelectedOptions = Options?.Where(o => o.Value == value).ToList()
-                ?? new List<Option> { new Option { Value = value } };
+                ?? new List<Option> { new() { Value = value } };
         }
     }
 }

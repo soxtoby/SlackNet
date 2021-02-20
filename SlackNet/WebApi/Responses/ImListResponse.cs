@@ -4,6 +4,6 @@ namespace SlackNet.WebApi
 {
     class ImListResponse
     {
-        public List<Im> Ims { get; set; } = new List<Im>();
+        public List<Im> Ims { get; set; } = new();
     }
 }

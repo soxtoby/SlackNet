@@ -29,9 +29,9 @@ namespace SlackNet.AspNetCore
             serviceCollection.TryAddSingleton<IAsyncSlashCommandHandler, SwitchingSlashCommandHandler>();
             serviceCollection.TryAddSingleton<IInteractiveMessageHandler, SwitchingInteractiveMessageHandler>();
             serviceCollection.TryAddSingleton<IDialogSubmissionHandler, SwitchingDialogSubmissionHandler>();
-            serviceCollection.TryAddSingleton<IAsyncWorkflowStepEditHandler, CompositeWorkflowStepEditEditHandler>();
+            serviceCollection.TryAddSingleton<IAsyncWorkflowStepEditHandler, CompositeWorkflowStepEditHandler>();
             serviceCollection.AddTransient<ISlackApiClient>(c => new SlackApiClient(c.GetService<IHttp>(), c.GetService<ISlackUrlBuilder>(), c.GetService<SlackJsonSettings>(), configuration.ApiToken));
-            
+
             return serviceCollection;
         }
 

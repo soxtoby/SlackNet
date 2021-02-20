@@ -11,6 +11,7 @@
     <PackageTags>Slack API RTM Events AspNetCore</PackageTags>
     <UserSecretsId>841b14b1-9d6a-4ab7-9e1f-c1b2c227bb5f</UserSecretsId>
     <NoWarn>0618;1701;1702</NoWarn>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

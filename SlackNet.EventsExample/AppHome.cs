@@ -135,15 +135,13 @@ namespace SlackNet.EventsExample
                     }).ConfigureAwait(false);
         }
 
-        private IList<Blocks.Option> ExampleOptions()
-        {
-            return new List<Blocks.Option>
+        private static IList<Blocks.Option> ExampleOptions() =>
+            new List<Blocks.Option>
                 {
-                    new Blocks.Option { Text = "One", Value = "1" },
-                    new Blocks.Option { Text = "Two", Value = "2" },
-                    new Blocks.Option { Text = "Three", Value = "3" }
+                    new() { Text = "One", Value = "1" },
+                    new() { Text = "Two", Value = "2" },
+                    new() { Text = "Three", Value = "3" }
                 };
-        }
 
         public async Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission)
         {

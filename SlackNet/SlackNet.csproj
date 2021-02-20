@@ -10,6 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>Slack API RTM Events</PackageTags>
     <NoWarn>0618;1701;1702;1812</NoWarn>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

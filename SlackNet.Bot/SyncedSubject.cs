@@ -5,7 +5,7 @@ namespace SlackNet.Bot
 {
     class SyncedSubject<T> : ISubject<T>, IDisposable
     {
-        private readonly Subject<T> _inner = new Subject<T>();
+        private readonly Subject<T> _inner = new();
         private readonly ISubject<T> _synced;
         public SyncedSubject() => _synced = Subject.Synchronize(_inner);
 

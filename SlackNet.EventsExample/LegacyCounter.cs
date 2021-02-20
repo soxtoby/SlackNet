@@ -11,11 +11,11 @@ namespace SlackNet.EventsExample
     {
         public static readonly string ActionName = "add";
 
-        private static readonly Regex _counterPattern = new Regex("Counter: (\\d+)");
+        private static readonly Regex CounterPattern = new("Counter: (\\d+)");
 
         public async Task<MessageResponse> Handle(InteractiveMessage message)
         {
-            var counterText = _counterPattern.Match(message.OriginalAttachment.Text);
+            var counterText = CounterPattern.Match(message.OriginalAttachment.Text);
             if (counterText.Success)
             {
                 var count = int.Parse(counterText.Groups[1].Value);

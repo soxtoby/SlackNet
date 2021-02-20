@@ -13,7 +13,7 @@ namespace SlackNet
     class SlackTypeResolver : ISlackTypeResolver
     {
         private readonly Assembly[] _assemblies;
-        private readonly Dictionary<Type, Dictionary<string, Type>> _typeLookups = new Dictionary<Type, Dictionary<string, Type>>();
+        private readonly Dictionary<Type, Dictionary<string, Type>> _typeLookups = new();
 
         public SlackTypeResolver(params Assembly[] assemblies) => _assemblies = assemblies;
 

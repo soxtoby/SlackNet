@@ -32,7 +32,7 @@ namespace SlackNet.Bot
         private readonly Func<T, CancellationToken> _getCancellationToken;
         private readonly IScheduler _scheduler;
         private readonly IDisposable _subscription;
-        private readonly Queue<T> _buffered = new Queue<T>();
+        private readonly Queue<T> _buffered = new();
         private bool _done;
         private DateTimeOffset _lastEmitted = DateTimeOffset.MinValue;
 
@@ -54,7 +54,7 @@ namespace SlackNet.Bot
             else
             {
                 _buffered.Enqueue(value);
-                if (_buffered.Count == 1) 
+                if (_buffered.Count == 1)
                     ScheduleNextEmit();
             }
         }
@@ -62,7 +62,7 @@ namespace SlackNet.Bot
         private void ScheduleNextEmit()
         {
             var timeSpan = _lastEmitted + _minFrequency - _scheduler.Now;
-            _scheduler.Schedule(0, timeSpan, (_, __) =>
+            _scheduler.Schedule(0, timeSpan, (_, _) =>
                 {
                     T value;
                     do

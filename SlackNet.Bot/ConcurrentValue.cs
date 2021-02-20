@@ -4,7 +4,7 @@ namespace SlackNet.Bot
 {
     class ConcurrentValue<T>
     {
-        private readonly object _gate = new object();
+        private readonly object _gate = new();
         public bool HasValue { get; private set; }
         private T _value;
 

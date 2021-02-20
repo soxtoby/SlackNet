@@ -12,7 +12,7 @@ namespace SlackNet
 
         public static ISlackUrlBuilder UrlBuilder(SlackJsonSettings jsonSettings = null) => new SlackUrlBuilder(jsonSettings ?? JsonSettings());
 
-        public static SlackJsonSettings JsonSettings(ISlackTypeResolver slackTypeResolver = null) => new SlackJsonSettings(SerializerSettings(slackTypeResolver ?? SlackTypeResolver()));
+        public static SlackJsonSettings JsonSettings(ISlackTypeResolver slackTypeResolver = null) => new(SerializerSettings(slackTypeResolver ?? SlackTypeResolver()));
 
         private static JsonSerializerSettings SerializerSettings(ISlackTypeResolver slackTypeResolver)
         {

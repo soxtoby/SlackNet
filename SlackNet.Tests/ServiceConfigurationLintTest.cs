@@ -136,7 +136,7 @@ namespace SlackNet.Tests
 
         class GenericTypeComparer : IEqualityComparer<Type>
         {
-            public static readonly GenericTypeComparer Instance = new GenericTypeComparer();
+            public static readonly GenericTypeComparer Instance = new();
 
             public bool Equals(Type genericArgumentType, Type typeConstraint)
             {

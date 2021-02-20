@@ -17,10 +17,10 @@ namespace SlackNet
             ? $"<{Id}>"
             : $"<{Id}|{Caption}>";
 
-        public static Link Url(string url, string caption = null) => new Link(url, caption);
-        public static Link User(string userId) => new Link('@' + userId, null);
+        public static Link Url(string url, string caption = null) => new(url, caption);
+        public static Link User(string userId) => new('@' + userId, null);
         [Obsolete("Use Conversation instead")]
-        public static Link Hub(string hubId) => new Link('#' + hubId, null);
-        public static Link Conversation(string conversationId) => new Link('#' + conversationId, null);
+        public static Link Hub(string hubId) => new('#' + hubId, null);
+        public static Link Conversation(string conversationId) => new('#' + conversationId, null);
     }
 }

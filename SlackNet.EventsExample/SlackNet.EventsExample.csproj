@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <UserSecretsId>d16228d2-83e4-4518-9dc4-93d0ef09b21a</UserSecretsId>
     <NoWarn>1701;1702;1998</NoWarn>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

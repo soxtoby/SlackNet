@@ -6,10 +6,10 @@ using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.AspNetCore
 {
-    class CompositeWorkflowStepEditEditHandler : IAsyncWorkflowStepEditHandler
+    class CompositeWorkflowStepEditHandler : IAsyncWorkflowStepEditHandler
     {
         private readonly List<CompositeItem<IAsyncWorkflowStepEditHandler>> _handlers;
-        public CompositeWorkflowStepEditEditHandler(IEnumerable<CompositeItem<IAsyncWorkflowStepEditHandler>> handlers) => _handlers = handlers.ToList();
+        public CompositeWorkflowStepEditHandler(IEnumerable<CompositeItem<IAsyncWorkflowStepEditHandler>> handlers) => _handlers = handlers.ToList();
 
         public Task Handle(WorkflowStepEdit workflowStepEdit, Responder respond) => Task.WhenAll(_handlers.Select(h => h.Item.Handle(workflowStepEdit, respond)));
     }

@@ -30,21 +30,21 @@ namespace SlackNet.Blocks
     public class RichTextText : RichTextSectionElement
     {
         public string Text { get; set; }
-        public RichTextStyle Style { get; set; } = new RichTextStyle();
+        public RichTextStyle Style { get; set; } = new();
     }
 
     [SlackType("channel")]
     public class RichTextChannel : RichTextSectionElement
     {
         public string ChannelId { get; set; }
-        public RichTextStyle Style { get; set; } = new RichTextStyle();
+        public RichTextStyle Style { get; set; } = new();
     }
 
     [SlackType("user")]
     public class RichTextUser : RichTextSectionElement
     {
         public string UserId { get; set; }
-        public RichTextStyle Style { get; set; } = new RichTextStyle();
+        public RichTextStyle Style { get; set; } = new();
     }
 
     [SlackType("emoji")]
@@ -58,14 +58,14 @@ namespace SlackNet.Blocks
     {
         public string Url { get; set; }
         public string Text { get; set; }
-        public RichTextStyle Style { get; set; } = new RichTextStyle();
+        public RichTextStyle Style { get; set; } = new();
     }
 
     [SlackType("team")]
     public class RichTextTeam : RichTextSectionElement
     {
         public string TeamId { get; set; }
-        public RichTextStyle Style { get; set; } = new RichTextStyle();
+        public RichTextStyle Style { get; set; } = new();
     }
 
     [SlackType("usergroup")]
@@ -73,7 +73,7 @@ namespace SlackNet.Blocks
     {
         [JsonProperty("usergroup_id")]
         public string UserGroupId { get; set; }
-        public RichTextStyle Style { get; set; } = new RichTextStyle();
+        public RichTextStyle Style { get; set; } = new();
     }
 
     [SlackType("date")]
@@ -81,14 +81,14 @@ namespace SlackNet.Blocks
     {
         public string Text { get; set; }
         public string Timestamp { get; set; }
-        public RichTextStyle Style { get; set; } = new RichTextStyle();
+        public RichTextStyle Style { get; set; } = new();
     }
 
     [SlackType("broadcast")]
     public class RichTextBroadcast : RichTextSectionElement
     {
         public string Range { get; set; }
-        public RichTextStyle Style { get; set; } = new RichTextStyle();
+        public RichTextStyle Style { get; set; } = new();
     }
 
     public class RichTextList : RichTextElement

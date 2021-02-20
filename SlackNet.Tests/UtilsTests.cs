@@ -144,8 +144,8 @@ namespace SlackNet.Tests
             _scheduler.Start(() => source.RetryWithDelay(TimeSpan.FromTicks(1), TimeSpan.FromTicks(0), TimeSpan.FromTicks(1), _scheduler), 0, 0, 10000);
         }
 
-        private static Recorded<Notification<T>> OnNext<T>(long time, T value) => new Recorded<Notification<T>>(time, Notification.CreateOnNext(value));
-        private static Recorded<Notification<T>> OnError<T>(long time) => new Recorded<Notification<T>>(time, Notification.CreateOnError<T>(new Exception()));
-        private static Recorded<Notification<T>> OnCompleted<T>(long time) => new Recorded<Notification<T>>(time, Notification.CreateOnCompleted<T>());
+        private static Recorded<Notification<T>> OnNext<T>(long time, T value) => new(time, Notification.CreateOnNext(value));
+        private static Recorded<Notification<T>> OnError<T>(long time) => new(time, Notification.CreateOnError<T>(new Exception()));
+        private static Recorded<Notification<T>> OnCompleted<T>(long time) => new(time, Notification.CreateOnCompleted<T>());
     }
 }

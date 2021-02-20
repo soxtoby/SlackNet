@@ -29,7 +29,7 @@ namespace SlackNet.EventsExample
                 };
         }
 
-        public async Task<OptionsResponse> GetOptions(OptionsRequest request) => new OptionsResponse { Options = GetOptions(request.Value) };
+        public async Task<OptionsResponse> GetOptions(OptionsRequest request) => new() { Options = GetOptions(request.Value) };
 
         private static List<Option> GetOptions(string search) =>
             FindColors(search)

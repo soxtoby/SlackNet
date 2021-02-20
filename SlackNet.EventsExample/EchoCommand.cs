@@ -8,7 +8,7 @@ namespace SlackNet.EventsExample
     {
         public async Task<SlashCommandResponse> Handle(SlashCommand command)
         {
-            return new SlashCommandResponse
+            return new()
                 {
                     Message = new Message
                         {

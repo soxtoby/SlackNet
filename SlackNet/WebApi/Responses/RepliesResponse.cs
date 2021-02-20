@@ -5,6 +5,6 @@ namespace SlackNet.WebApi
 {
     class RepliesResponse
     {
-        public List<MessageEvent> Messages { get; set; } = new List<MessageEvent>();
+        public List<MessageEvent> Messages { get; set; } = new();
     }
 }

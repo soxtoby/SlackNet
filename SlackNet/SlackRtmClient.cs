@@ -58,7 +58,7 @@ namespace SlackNet
         /// <summary>
         /// Ask Slack's message server to subscribe you to presence events for the specified list of users.
         /// Calling again with fewer users will unsubscribe from the users no longer specified.
-        /// </summary
+        /// </summary>
         void SetUserPresenceSubscription(IEnumerable<string> userIds);
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace SlackNet
         private readonly IScheduler _scheduler;
         private readonly ISlackApiClient _client;
         private readonly IWebSocketFactory _webSocketFactory;
-        private readonly Subject<Event> _eventSubject = new Subject<Event>();
+        private readonly Subject<Event> _eventSubject = new();
         private readonly ISubject<Event> _rawEvents;
         private IWebSocket _webSocket;
         private IDisposable _reconnection;
@@ -186,7 +186,7 @@ namespace SlackNet
         /// <summary>
         /// Ask Slack's message server to subscribe you to presence events for the specified list of users.
         /// Calling again with fewer users will unsubscribe from the users no longer specified.
-        /// </summary
+        /// </summary>
         public void SetUserPresenceSubscription(IEnumerable<string> userIds) =>
             Send(new PresenceSub { Ids = userIds.ToList() });
 

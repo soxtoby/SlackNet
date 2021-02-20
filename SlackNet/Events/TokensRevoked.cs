@@ -10,6 +10,6 @@ namespace SlackNet.Events
         /// <summary>
         /// Type of revoked token -> list of user IDs.
         /// </summary>
-        public Dictionary<string, IList<string>> Tokens { get; set; } = new Dictionary<string, IList<string>>();
+        public Dictionary<string, IList<string>> Tokens { get; set; } = new();
     }
 }

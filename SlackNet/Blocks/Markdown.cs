@@ -16,6 +16,6 @@
 
         public override string ToString() => Text;
 
-        public static implicit operator Markdown(string text) => new Markdown(text);
+        public static implicit operator Markdown(string text) => new(text);
     }
 }

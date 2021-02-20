@@ -15,6 +15,6 @@
 
         public override string ToString() => Text;
 
-        public static implicit operator PlainText(string text) => new PlainText(text);
+        public static implicit operator PlainText(string text) => new(text);
     }
 }

@@ -13,7 +13,7 @@ namespace SlackNet.AspNetCore
 
     class EventsObservables : IEventsObservables, IDisposable
     {
-        private readonly SyncedSubject<EventCallback> _incomingEvents = new SyncedSubject<EventCallback>();
+        private readonly SyncedSubject<EventCallback> _incomingEvents = new();
 
         public Task Handle(EventCallback eventCallback)
         {

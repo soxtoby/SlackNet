@@ -181,17 +181,17 @@ namespace SlackNet.Bot
         private readonly ISlackRtmClient _rtm;
         private readonly ISlackApiClient _api;
         private readonly IScheduler _scheduler;
-        private readonly ConcurrentQueue<IMessageHandler> _handlers = new ConcurrentQueue<IMessageHandler>();
+        private readonly ConcurrentQueue<IMessageHandler> _handlers = new();
 
-        private readonly ConcurrentValue<Task> _conversationsFetched = new ConcurrentValue<Task>();
-        private readonly ConcurrentDictionary<string, Task<Conversation>> _conversations = new ConcurrentDictionary<string, Task<Conversation>>();
+        private readonly ConcurrentValue<Task> _conversationsFetched = new();
+        private readonly ConcurrentDictionary<string, Task<Conversation>> _conversations = new();
 
-        private readonly ConcurrentDictionary<string, Task<User>> _users = new ConcurrentDictionary<string, Task<User>>();
-        private readonly ConcurrentDictionary<string, Task<BotInfo>> _bots = new ConcurrentDictionary<string, Task<BotInfo>>();
-        private readonly ConcurrentValue<Task<IReadOnlyList<User>>> _allUsers = new ConcurrentValue<Task<IReadOnlyList<User>>>();
+        private readonly ConcurrentDictionary<string, Task<User>> _users = new();
+        private readonly ConcurrentDictionary<string, Task<BotInfo>> _bots = new();
+        private readonly ConcurrentValue<Task<IReadOnlyList<User>>> _allUsers = new();
 
-        private readonly SyncedSubject<IMessage> _incomingMessages = new SyncedSubject<IMessage>();
-        private readonly SyncedSubject<BotMessage> _outgoingMessages = new SyncedSubject<BotMessage>();
+        private readonly SyncedSubject<IMessage> _incomingMessages = new();
+        private readonly SyncedSubject<BotMessage> _outgoingMessages = new();
         private IObservable<PostedMessage> _sentMessages;
         private IObservable<IMessage> _incomingWithMiddlewareApplied;
         private IObservable<BotMessage> _outgoingWithMiddlewareApplied;
@@ -540,11 +540,11 @@ namespace SlackNet.Bot
 
         #region Hubs
 
-        private readonly ConcurrentDictionary<string, Task<Hub>> _hubs = new ConcurrentDictionary<string, Task<Hub>>();
-        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _channels = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
-        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _groups = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
-        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _mpims = new ConcurrentValue<Task<IReadOnlyList<Channel>>>();
-        private readonly ConcurrentValue<Task<IReadOnlyList<Im>>> _ims = new ConcurrentValue<Task<IReadOnlyList<Im>>>();
+        private readonly ConcurrentDictionary<string, Task<Hub>> _hubs = new();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _channels = new();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _groups = new();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Channel>>> _mpims = new();
+        private readonly ConcurrentValue<Task<IReadOnlyList<Im>>> _ims = new();
 
         /// <summary>
         /// Get information on a public or private channel, IM, or multi-person IM.

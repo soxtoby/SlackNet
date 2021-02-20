@@ -4,6 +4,6 @@ namespace SlackNet.WebApi
 {
     class ReminderListResponse
     {
-        public List<Reminder> Reminders { get; set; } = new List<Reminder>();
+        public List<Reminder> Reminders { get; set; } = new();
     }
 }
