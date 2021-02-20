@@ -13,6 +13,7 @@ namespace SlackNet.Handlers
         public override TConfig UseTypeResolver(Func<ISlackTypeResolver> slackTypeResolverProvider) => Chain(() => ReplaceClientService(slackTypeResolverProvider));
         public override TConfig UseUrlBuilder(Func<ISlackUrlBuilder> urlBuilderProvider) => Chain(() => ReplaceClientService(urlBuilderProvider));
         public override TConfig UseWebSocketFactory(Func<IWebSocketFactory> webSocketFactoryProvider) => Chain(() => ReplaceClientService(webSocketFactoryProvider));
+        public override TConfig UseRequestListener(Func<ISlackRequestListener> requestListenerProvider) => Chain(() => ReplaceClientService(requestListenerProvider));
         public override TConfig UseHandlerFactory(Func<ISlackHandlerFactory> handlerFactoryProvider) => Chain(() => ReplaceClientService(handlerFactoryProvider));
         public override TConfig UseApiClient(Func<ISlackApiClient> apiClientProvider) => Chain(() => ReplaceClientService(apiClientProvider));
 
@@ -21,6 +22,7 @@ namespace SlackNet.Handlers
         public virtual TConfig UseTypeResolver<TService>() where TService : class, ISlackTypeResolver => Chain(ReplaceClientService<ISlackTypeResolver, TService>);
         public virtual TConfig UseUrlBuilder<TService>() where TService : class, ISlackUrlBuilder => Chain(ReplaceClientService<ISlackUrlBuilder, TService>);
         public virtual TConfig UseWebSocketFactory<TService>() where TService : class, IWebSocketFactory => Chain(ReplaceClientService<IWebSocketFactory, TService>);
+        public virtual TConfig UseRequestListener<TService>() where TService : class, ISlackRequestListener => Chain(ReplaceClientService<ISlackRequestListener, TService>);
         public virtual TConfig UseHandlerFactory<TService>() where TService : class, ISlackHandlerFactory => Chain(ReplaceClientService<ISlackHandlerFactory, TService>);
         public virtual TConfig UseApiClient<TService>() where TService : class, ISlackApiClient => Chain(ReplaceClientService<ISlackApiClient, TService>);
 
