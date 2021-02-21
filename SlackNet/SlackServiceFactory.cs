@@ -7,6 +7,10 @@ using SlackNet.SocketMode;
 
 namespace SlackNet
 {
+    /// <summary>
+    /// A basic factory for SlackNet services, with some configuration.
+    /// If you're using a dependency injection library, you're probably better off integrating with that instead of using this.
+    /// </summary>
     public class SlackServiceFactory : SlackHandlerConfigurationBase<SlackServiceFactory>, ISlackServiceFactory
     {
         private Lazy<IHttp> _http;
