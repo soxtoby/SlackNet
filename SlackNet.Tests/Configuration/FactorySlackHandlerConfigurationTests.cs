@@ -88,6 +88,14 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
+        public void UseSocketModeClientType()
+        {
+            UseService<ISlackSocketModeClient, TestSocketModeClient>(
+                c => c.UseSocketModeClient<TestSocketModeClient>(),
+                s => s.GetSocketModeClient());
+        }
+
+        [Test]
         public void ReplaceEventHandling_WithType()
         {
             ReplaceCollectionHandling<IEventHandler, TestEventHandler>(
@@ -989,6 +997,13 @@ namespace SlackNet.Tests.Configuration
             public Task<T> Post<T>(string apiMethod, Dictionary<string, object> args, HttpContent content, CancellationToken? cancellationToken) where T : class => throw new NotImplementedException();
             public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken) => throw new NotImplementedException();
             public ISlackApiClient WithAccessToken(string accessToken) => throw new NotImplementedException();
+        }
+
+        protected class TestSocketModeClient : ISlackSocketModeClient
+        {
+            public void Dispose() => throw new NotImplementedException();
+            public Task Connect(CancellationToken? cancellationToken = null) => throw new NotImplementedException();
+            public bool Connected { get; }
         }
 
         protected class TestHandler<THandler> : TrackedClass where THandler : class

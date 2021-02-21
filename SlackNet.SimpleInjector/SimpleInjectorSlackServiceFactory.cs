@@ -16,5 +16,6 @@ namespace SlackNet.SimpleInjector
         public ISlackRequestListener GetRequestListener() => _container.GetInstance<ISlackRequestListener>();
         public ISlackHandlerFactory GetHandlerFactory() => _container.GetInstance<ISlackHandlerFactory>();
         public ISlackApiClient GetApiClient() => _container.GetInstance<ISlackApiClient>();
+        public ISlackSocketModeClient GetSocketModeClient() => _container.GetInstance<ISlackSocketModeClient>();
     }
 }

@@ -17,5 +17,6 @@ namespace SlackNet.Extensions.DependencyInjection
         public ISlackRequestListener GetRequestListener() => _serviceProvider.GetRequiredService<ISlackRequestListener>();
         public ISlackHandlerFactory GetHandlerFactory() => _serviceProvider.GetRequiredService<ISlackHandlerFactory>();
         public ISlackApiClient GetApiClient() => _serviceProvider.GetRequiredService<ISlackApiClient>();
+        public ISlackSocketModeClient GetSocketModeClient() => _serviceProvider.GetRequiredService<ISlackSocketModeClient>();
     }
 }

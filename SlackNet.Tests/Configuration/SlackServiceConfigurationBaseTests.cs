@@ -22,6 +22,7 @@ namespace SlackNet.Tests.Configuration
             ShouldBeSingleInstance(sut, f => f.GetRequestListener(), sut.GetRequestListener());
             ShouldBeSingleInstance(sut, f => f.GetHandlerFactory(), sut.GetHandlerFactory());
             ShouldBeSingleInstance(sut, f => f.GetApiClient(), sut.GetApiClient());
+            ShouldBeSingleInstance(sut, f => f.GetSocketModeClient(), sut.GetSocketModeClient());
         }
 
         [Test]
@@ -95,6 +96,15 @@ namespace SlackNet.Tests.Configuration
                 Substitute.For<ISlackApiClient>(),
                 (c, f) => c.UseApiClient(f),
                 s => s.GetApiClient());
+        }
+
+        [Test]
+        public void UseSocketModeClient()
+        {
+            UseService(
+                Substitute.For<ISlackSocketModeClient>(),
+                (c, f) => c.UseSocketModeClient(f),
+                s => s.GetSocketModeClient());
         }
 
         private void UseService<TService>(TService service, Action<TConfig, Func<TService>> registerFactory, Func<ISlackServiceFactory, TService> getService) where TService : class

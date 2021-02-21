@@ -16,5 +16,6 @@ namespace SlackNet.Autofac
         public ISlackRequestListener GetRequestListener() => _scope.Resolve<ISlackRequestListener>();
         public ISlackHandlerFactory GetHandlerFactory() => _scope.Resolve<ISlackHandlerFactory>();
         public ISlackApiClient GetApiClient() => _scope.Resolve<ISlackApiClient>();
+        public ISlackSocketModeClient GetSocketModeClient() => _scope.Resolve<ISlackSocketModeClient>();
     }
 }

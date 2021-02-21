@@ -17,6 +17,7 @@ namespace SlackNet.Handlers
         public TConfig UseRequestListener(Func<TDependencyResolver, ISlackRequestListener> requestListenerProvider) => Chain(() => ReplaceClientService(requestListenerProvider));
         public TConfig UseHandlerFactory(Func<TDependencyResolver, ISlackHandlerFactory> handlerFactoryProvider) => Chain(() => ReplaceClientService(handlerFactoryProvider));
         public TConfig UseApiClient(Func<TDependencyResolver, ISlackApiClient> apiClientProvider) => Chain(() => ReplaceClientService(apiClientProvider));
+        public TConfig UseSocketModeClient(Func<TDependencyResolver, ISlackSocketModeClient> socketModeClientProvider) => Chain(() => ReplaceClientService(socketModeClientProvider));
 
         public TConfig ReplaceEventHandling(CollectionHandlerFactory<TDependencyResolver, IEventHandler> handlerFactory) => Chain(() => ReplaceCollectionHandling(handlerFactory));
         public TConfig ReplaceBlockActionHandling(CollectionHandlerFactory<TDependencyResolver, IAsyncBlockActionHandler> handlerFactory) => Chain(() => ReplaceCollectionHandling(handlerFactory));

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
+using SlackNet.SocketMode;
 
 namespace SlackNet
 {
@@ -16,6 +17,7 @@ namespace SlackNet
         private Lazy<ISlackRequestListener> _requestListener;
         private Lazy<ISlackHandlerFactory> _handlerFactory;
         private Lazy<ISlackApiClient> _slackApiClient;
+        private Lazy<ISlackSocketModeClient> _socketModeClient;
 
         private CollectionHandlerFactory<IEventHandler> _eventHandlerFactory;
         private CollectionHandlerFactory<IAsyncBlockActionHandler> _blockActionHandlerFactory;
@@ -78,6 +80,16 @@ namespace SlackNet
              _legacyDialogSubmissionHandlerFactory = hs => new SwitchingDialogSubmissionHandler(hs);
 
             _slackApiClient = new Lazy<ISlackApiClient>(() => new SlackApiClient(GetHttp(), GetUrlBuilder(), GetJsonSettings(), ApiToken));
+            _socketModeClient = new Lazy<ISlackSocketModeClient>(() =>
+                new SlackSocketModeClient(
+                    new CoreSocketModeClient(
+                        GetApiClient().WithAccessToken(AppLevelToken),
+                        GetWebSocketFactory(),
+                        GetJsonSettings(),
+                        Default.Scheduler),
+                    GetJsonSettings(),
+                    GetRequestListener(),
+                    GetHandlerFactory()));
         }
 
         public override SlackServiceFactory UseHttp(Func<IHttp> httpProvider) => Chain(() => _http = new Lazy<IHttp>(httpProvider));
@@ -88,6 +100,7 @@ namespace SlackNet
         public override SlackServiceFactory UseRequestListener(Func<ISlackRequestListener> requestListenerProvider) => Chain(() => _requestListener = new Lazy<ISlackRequestListener>(requestListenerProvider));
         public override SlackServiceFactory UseHandlerFactory(Func<ISlackHandlerFactory> handlerFactoryProvider) => Chain(() => _handlerFactory = new Lazy<ISlackHandlerFactory>(handlerFactoryProvider));
         public override SlackServiceFactory UseApiClient(Func<ISlackApiClient> apiClientProvider) => Chain(() => _slackApiClient = new Lazy<ISlackApiClient>(apiClientProvider));
+        public override SlackServiceFactory UseSocketModeClient(Func<ISlackSocketModeClient> socketModeClientProvider) => Chain(() => _socketModeClient = new Lazy<ISlackSocketModeClient>(socketModeClientProvider));
 
         public override SlackServiceFactory ReplaceEventHandling(CollectionHandlerFactory<IEventHandler> handlerFactory) => Chain(() => _eventHandlerFactory = handlerFactory);
         public override SlackServiceFactory ReplaceBlockActionHandling(CollectionHandlerFactory<IAsyncBlockActionHandler> handlerFactory) => Chain(() => _blockActionHandlerFactory = handlerFactory);
@@ -122,5 +135,6 @@ namespace SlackNet
         public ISlackRequestListener GetRequestListener() => _requestListener.Value;
         public ISlackHandlerFactory GetHandlerFactory() => _handlerFactory.Value;
         public ISlackApiClient GetApiClient() => _slackApiClient.Value;
+        public ISlackSocketModeClient GetSocketModeClient() => _socketModeClient.Value;
     }
 }
