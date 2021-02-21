@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Reactive.Concurrency;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -49,6 +50,8 @@ namespace SlackNet
         public static IWebSocketFactory WebSocketFactory => new WebSocketFactory();
 
         public static ISlackRequestListener RequestListener => NullRequestListener.Instance;
+
+        public static IScheduler Scheduler => System.Reactive.Concurrency.Scheduler.Default;
 
         public static void RegisterServices(Action<Type, Func<Func<Type, object>, object>> registerService)
         {

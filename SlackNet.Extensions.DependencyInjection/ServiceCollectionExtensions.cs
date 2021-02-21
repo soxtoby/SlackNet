@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
+using SlackNet.SocketMode;
 
 namespace SlackNet.Extensions.DependencyInjection
 {
@@ -25,6 +26,7 @@ namespace SlackNet.Extensions.DependencyInjection
             serviceCollection.TryAddSingleton(sp => Default.JsonSettings(sp.GetRequiredService<ISlackTypeResolver>()));
             serviceCollection.TryAddSingleton(sp => Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
             serviceCollection.TryAddSingleton(sp => Default.WebSocketFactory);
+            serviceCollection.TryAddSingleton(sp => Default.Scheduler);
 
             serviceCollection.TryAddSingleton<ISlackRequestListener, ServiceProviderSlackRequestListener>();
             serviceCollection.TryAddScoped<ISlackHandlerFactory, ServiceProviderSlackHandlerFactory>();
@@ -43,6 +45,12 @@ namespace SlackNet.Extensions.DependencyInjection
             serviceCollection.TryAddScoped<IAsyncWorkflowStepEditHandler>(sp => new CompositeWorkflowStepEditHandler(sp.GetRequiredService<IEnumerable<CollectionItem<IAsyncWorkflowStepEditHandler>>>().Select(c => c.Item)));
 
             serviceCollection.TryAddSingleton<ISlackApiClient>(sp => new SlackApiClient(sp.GetRequiredService<IHttp>(), sp.GetRequiredService<ISlackUrlBuilder>(), sp.GetRequiredService<SlackJsonSettings>(), config.ApiToken));
+            serviceCollection.TryAddSingleton<ICoreSocketModeClient>(sp => new CoreSocketModeClient(
+                sp.GetRequiredService<ISlackApiClient>().WithAccessToken(config.AppLevelToken),
+                sp.GetRequiredService<IWebSocketFactory>(),
+                sp.GetRequiredService<SlackJsonSettings>(),
+                sp.GetRequiredService<IScheduler>()));
+            serviceCollection.TryAddSingleton<ISlackSocketModeClient, SlackSocketModeClient>();
 
             return serviceCollection;
         }

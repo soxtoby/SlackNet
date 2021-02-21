@@ -74,6 +74,14 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
+        public void UseSocketModeClientFactory()
+        {
+            UseService<ISlackSocketModeClient, TestSocketModeClient>(
+                c => c.UseSocketModeClient(r => new TestSocketModeClient()),
+                s => s.GetSocketModeClient());
+        }
+
+        [Test]
         public void ReplaceEventHandling_WithFactory()
         {
             ReplaceCollectionHandling<IEventHandler, TestEventHandler>(

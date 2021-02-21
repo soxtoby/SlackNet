@@ -7,6 +7,7 @@ using SimpleInjector;
 using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
+using SlackNet.SocketMode;
 using Container = SimpleInjector.Container;
 
 namespace SlackNet.SimpleInjector
@@ -25,6 +26,7 @@ namespace SlackNet.SimpleInjector
             container.RegisterFallback(() => Default.JsonSettings(container.GetInstance<ISlackTypeResolver>()), Lifestyle.Singleton);
             container.RegisterFallback(() => Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes), Lifestyle.Singleton);
             container.RegisterFallback(() => Default.WebSocketFactory, Lifestyle.Singleton);
+            container.RegisterFallback(() => Default.Scheduler, Lifestyle.Singleton);
 
             container.RegisterFallbackType<ISlackRequestListener, SimpleInjectorSlackRequestListener>(Lifestyle.Singleton);
             container.RegisterFallbackType<ISlackHandlerFactory, SimpleInjectorSlackHandlerFactory>(Lifestyle.Singleton);
@@ -56,6 +58,13 @@ namespace SlackNet.SimpleInjector
             container.RegisterFallbackType<IAsyncWorkflowStepEditHandler, CompositeWorkflowStepEditHandler>(Lifestyle.Scoped);
 
             container.RegisterFallback<ISlackApiClient>(() => new SlackApiClient(container.GetInstance<IHttp>(), container.GetInstance<ISlackUrlBuilder>(), container.GetInstance<SlackJsonSettings>(), config.ApiToken), Lifestyle.Singleton);
+            container.RegisterFallback<ICoreSocketModeClient>(() => new CoreSocketModeClient(
+                    container.GetInstance<ISlackApiClient>().WithAccessToken(config.AppLevelToken),
+                    container.GetInstance<IWebSocketFactory>(),
+                    container.GetInstance<SlackJsonSettings>(),
+                    container.GetInstance<IScheduler>()),
+                Lifestyle.Singleton);
+            container.RegisterFallbackType<ISlackSocketModeClient, SlackSocketModeClient>(Lifestyle.Singleton);
         }
 
         internal static void RegisterFallbackType<TService, TImplementation>(this Container container, Lifestyle lifestyle) where TService : class where TImplementation : class, TService =>

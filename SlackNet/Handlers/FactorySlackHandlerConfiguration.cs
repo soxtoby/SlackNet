@@ -16,6 +16,7 @@ namespace SlackNet.Handlers
         public override TConfig UseRequestListener(Func<ISlackRequestListener> requestListenerProvider) => Chain(() => ReplaceClientService(requestListenerProvider));
         public override TConfig UseHandlerFactory(Func<ISlackHandlerFactory> handlerFactoryProvider) => Chain(() => ReplaceClientService(handlerFactoryProvider));
         public override TConfig UseApiClient(Func<ISlackApiClient> apiClientProvider) => Chain(() => ReplaceClientService(apiClientProvider));
+        public override TConfig UseSocketModeClient(Func<ISlackSocketModeClient> socketModeClientProvider) => Chain(() => ReplaceClientService(socketModeClientProvider));
 
         public virtual TConfig UseHttp<TService>() where TService : class, IHttp => Chain(ReplaceClientService<IHttp, TService>);
         public virtual TConfig UseJsonSettings<TService>() where TService : SlackJsonSettings => Chain(ReplaceClientService<SlackJsonSettings, TService>);
@@ -25,6 +26,7 @@ namespace SlackNet.Handlers
         public virtual TConfig UseRequestListener<TService>() where TService : class, ISlackRequestListener => Chain(ReplaceClientService<ISlackRequestListener, TService>);
         public virtual TConfig UseHandlerFactory<TService>() where TService : class, ISlackHandlerFactory => Chain(ReplaceClientService<ISlackHandlerFactory, TService>);
         public virtual TConfig UseApiClient<TService>() where TService : class, ISlackApiClient => Chain(ReplaceClientService<ISlackApiClient, TService>);
+        public virtual TConfig UseSocketModeClient<TService>() where TService : class, ISlackSocketModeClient => Chain(ReplaceClientService<ISlackSocketModeClient, TService>);
 
         public override TConfig ReplaceEventHandling(CollectionHandlerFactory<IEventHandler> handlerFactory) => Chain(() => ReplaceCollectionHandling(handlerFactory));
         public override TConfig ReplaceBlockActionHandling(CollectionHandlerFactory<IAsyncBlockActionHandler> handlerFactory) => Chain(() => ReplaceCollectionHandling(handlerFactory));

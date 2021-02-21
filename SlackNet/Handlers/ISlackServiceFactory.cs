@@ -10,5 +10,6 @@
         ISlackRequestListener GetRequestListener();
         ISlackHandlerFactory GetHandlerFactory();
         ISlackApiClient GetApiClient();
+        ISlackSocketModeClient GetSocketModeClient();
     }
 }
