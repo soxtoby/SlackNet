@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet.BotExample", "Slac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackNet.AzureFunctionExample", "SlackNet.AzureFunctionExample\SlackNet.AzureFunctionExample.csproj", "{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackNet.SocketModeExample", "SlackNet.SocketModeExample\SlackNet.SocketModeExample.csproj", "{FABAA558-C69F-4F39-9A25-C9A5843D11F2}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackNet.Autofac", "SlackNet.Autofac\SlackNet.Autofac.csproj", "{F104F95D-DA02-4FEC-B396-6E7ACBD9CBEC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackNet.Extensions.DependencyInjection", "SlackNet.Extensions.DependencyInjection\SlackNet.Extensions.DependencyInjection.csproj", "{E89C1FD1-CCE2-4F3B-9519-764F0E543507}"
@@ -74,6 +76,10 @@ Global
 		{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC46F8E3-F021-40EB-94B9-5AEBE69D77F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FABAA558-C69F-4F39-9A25-C9A5843D11F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FABAA558-C69F-4F39-9A25-C9A5843D11F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FABAA558-C69F-4F39-9A25-C9A5843D11F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FABAA558-C69F-4F39-9A25-C9A5843D11F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F104F95D-DA02-4FEC-B396-6E7ACBD9CBEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F104F95D-DA02-4FEC-B396-6E7ACBD9CBEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F104F95D-DA02-4FEC-B396-6E7ACBD9CBEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
