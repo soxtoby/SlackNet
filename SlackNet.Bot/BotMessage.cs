@@ -67,11 +67,11 @@ namespace SlackNet.Bot
         /// </summary>
         public bool UnfurlMedia { get; set; } = true;
         /// <summary>
-        /// Message being replied to. Reply will be in same channel & thread by default.
+        /// Message being replied to. Reply will be in same channel &amp; thread by default.
         /// </summary>
         public SlackMessage ReplyTo { get; set; }
         /// <summary>
-        /// Indicates whether message in a thread should be made visible to everyone in the channel or conversation. 
+        /// Indicates whether message in a thread should be made visible to everyone in the channel or conversation.
         /// </summary>
         public bool ReplyBroadcast { get; set; }
         /// <summary>

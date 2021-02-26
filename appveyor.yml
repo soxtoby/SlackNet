@@ -1,7 +1,7 @@
 image: Visual Studio 2019
 configuration: Release
 build_script:
-- ps: .\build.ps1 -target=Pack
+- cmd: build test pack
 test: off
 artifacts:
-- path: '**\bin\Release\*.nupkg'
+- path: 'output\*.nupkg'
