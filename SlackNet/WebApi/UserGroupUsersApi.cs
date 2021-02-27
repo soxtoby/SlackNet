@@ -17,7 +17,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// Updates the list of users that belong to a User Group.
-        /// This method replaces all users in a User Group with the list of users provided in the <see cref="userIds"/> parameter.
+        /// This method replaces all users in a User Group with the list of users provided in the <paramref name="userIds"/> parameter.
         /// </summary>
         /// <param name="userGroupId">ID of the User Group to update.</param>
         /// <param name="userIds">User IDs that represent the entire list of users for the User Group.</param>
@@ -47,7 +47,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// Updates the list of users that belong to a User Group.
-        /// This method replaces all users in a User Group with the list of users provided in the <see cref="userIds"/> parameter.
+        /// This method replaces all users in a User Group with the list of users provided in the <paramref name="userIds"/> parameter.
         /// </summary>
         /// <param name="userGroupId">ID of the User Group to update.</param>
         /// <param name="userIds">User IDs that represent the entire list of users for the User Group.</param>

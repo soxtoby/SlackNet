@@ -26,7 +26,7 @@ namespace SlackNet.WebApi
         /// <param name="mpimAware">Returns MPIMs to the client in the API response.</param>
         /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
         /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
-        /// <param name="noLatest">Exclude latest timestamps for channels, groups, mpims, and ims. Automatically sets <see cref="noUnreads"/> to False.</param>
+        /// <param name="noLatest">Exclude latest timestamps for channels, groups, mpims, and ims. Automatically sets <paramref name="noUnreads"/> to False.</param>
         /// <param name="cancellationToken"></param>
         Task<StartResponse> Start(
             bool simpleLatest = false,
@@ -64,7 +64,7 @@ namespace SlackNet.WebApi
         /// <param name="mpimAware">Returns MPIMs to the client in the API response.</param>
         /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
         /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
-        /// <param name="noLatest">Exclude latest timestamps for channels, groups, mpims, and ims. Automatically sets <see cref="noUnreads"/> to False.</param>
+        /// <param name="noLatest">Exclude latest timestamps for channels, groups, mpims, and ims. Automatically sets <paramref name="noUnreads"/> to False.</param>
         /// <param name="cancellationToken"></param>
         public Task<StartResponse> Start(
             bool simpleLatest = false,

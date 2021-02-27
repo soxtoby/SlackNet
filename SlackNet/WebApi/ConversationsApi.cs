@@ -41,7 +41,7 @@ namespace SlackNet.WebApi
         /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
         /// <param name="cursor">
         /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
-        /// returned by a previous request's <see cref="ConversationHistoryResponse.ResponseMetadata"/>.
+        /// returned by a previous request's <see cref="ConversationMessagesResponse.ResponseMetadata"/>.
         /// Default value fetches the first "page" of the collection.
         /// </param>
         /// <param name="cancellationToken"></param>
@@ -251,7 +251,7 @@ namespace SlackNet.WebApi
         /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
         /// <param name="cursor">
         /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
-        /// returned by a previous request's <see cref="ConversationHistoryResponse.ResponseMetadata"/>.
+        /// returned by a previous request's <see cref="ConversationMessagesResponse.ResponseMetadata"/>.
         /// Default value fetches the first "page" of the collection.
         /// </param>
         /// <param name="cancellationToken"></param>
@@ -385,7 +385,7 @@ namespace SlackNet.WebApi
         /// <param name="channelId">Resume a conversation by supplying an im or mpim's ID.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>The opened channel's ID</returns>
-        public async Task<string> Open(string channelId, CancellationToken? cancellationToken = null) => 
+        public async Task<string> Open(string channelId, CancellationToken? cancellationToken = null) =>
             (await Open<ConversationIdResponse>(false, channelId, null, cancellationToken).ConfigureAwait(false)).Channel.Id;
 
         /// <summary>
@@ -395,7 +395,7 @@ namespace SlackNet.WebApi
         /// <param name="userIds">List of users. If only one user is included, this creates a 1:1 DM. The ordering of the users is preserved whenever a multi-person direct message is returned.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>The opened channel's ID</returns>
-        public async Task<string> Open(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) => 
+        public async Task<string> Open(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) =>
             (await Open<ConversationIdResponse>(false, null, userIds, cancellationToken).ConfigureAwait(false)).Channel.Id;
 
         /// <summary>
@@ -404,7 +404,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="channelId">Resume a conversation by supplying an im or mpim's ID.</param>
         /// <param name="cancellationToken"></param>
-        public Task<ConversationOpenResponse> OpenAndReturnInfo(string channelId, CancellationToken? cancellationToken = null) => 
+        public Task<ConversationOpenResponse> OpenAndReturnInfo(string channelId, CancellationToken? cancellationToken = null) =>
             Open<ConversationOpenResponse>(true, channelId, null, cancellationToken);
 
         /// <summary>
@@ -413,7 +413,7 @@ namespace SlackNet.WebApi
         /// </summary>
         /// <param name="userIds">List of users. If only one user is included, this creates a 1:1 DM. The ordering of the users is preserved whenever a multi-person direct message is returned.</param>
         /// <param name="cancellationToken"></param>
-        public Task<ConversationOpenResponse> OpenAndReturnInfo(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) => 
+        public Task<ConversationOpenResponse> OpenAndReturnInfo(IEnumerable<string> userIds, CancellationToken? cancellationToken = null) =>
             Open<ConversationOpenResponse>(true, null, userIds, cancellationToken);
 
         private Task<T> Open<T>(bool returnIm, string channelId = null, IEnumerable<string> userIds = null, CancellationToken? cancellationToken = null) where T : class =>

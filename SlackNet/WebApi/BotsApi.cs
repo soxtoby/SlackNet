@@ -9,7 +9,7 @@ namespace SlackNet.WebApi
     {
         /// <summary>
         /// Returns information about a bot user.
-        /// <see cref="botId"/> is returned from <see cref="BotMessage"/> events and in the response of methods like <see cref="ChannelsApi.History"/>.
+        /// <paramref name="botId"/> is returned from <see cref="BotMessage"/> events and in the response of methods like <see cref="ChannelsApi.History"/>.
         /// </summary>
         /// <param name="botId">Bot user to get info on.</param>
         /// <param name="cancellationToken"></param>
@@ -23,7 +23,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// Returns information about a bot user.
-        /// <see cref="botId"/> is returned from <see cref="BotMessage"/> events and in the response of methods like <see cref="ChannelsApi.History"/>.
+        /// <paramref name="botId"/> is returned from <see cref="BotMessage"/> events and in the response of methods like <see cref="ChannelsApi.History"/>.
         /// </summary>
         /// <param name="botId">Bot user to get info on.</param>
         /// <param name="cancellationToken"></param>

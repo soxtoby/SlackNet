@@ -32,7 +32,7 @@ namespace SlackNet
         public Dictionary<string, Dictionary<string, ElementValue>> Values { get; set; } = new();
 
         /// <summary>
-        /// Get an element value by the <see cref="Block.BlockId"/> of the block it is in, and its <see cref="IInputBlockElement.ActionId"/>.
+        /// Get an element value by the <see cref="Block.BlockId"/> of the block it is in, and its <see cref="IActionElement.ActionId"/>.
         /// </summary>
         /// <returns>Element value if it can be found and is the specified type, otherwise null.</returns>
         public TValue GetValue<TValue>(string blockId, string actionId) where TValue : ElementValue
@@ -44,7 +44,7 @@ namespace SlackNet
         }
 
         /// <summary>
-        /// Get an element value by its <see cref="IInputBlockElement.ActionId"/>. Assumes action ID is unique in the view.
+        /// Get an element value by its <see cref="IActionElement.ActionId"/>. Assumes action ID is unique in the view.
         /// </summary>
         /// <returns>Element value if it can be found and is the specified type, otherwise null.</returns>
         public TValue GetValue<TValue>(string actionId) where TValue : ElementValue

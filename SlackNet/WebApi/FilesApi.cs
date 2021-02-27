@@ -175,6 +175,10 @@ namespace SlackNet.WebApi
         /// <param name="fileId">Specify a file by providing its ID.</param>
         /// <param name="count">Number of comments to return per page.</param>
         /// <param name="page">Page number of comments to return.</param>
+        /// <param name="cursor">
+        /// Parameter for pagination. File comments are paginated for a single file.
+        /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="FileAndCommentsResponse.ResponseMetadata"/>.
+        /// </param>
         /// <param name="cancellationToken"></param>
         public Task<FileAndCommentsResponse> Info(string fileId, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null) =>
             _client.Get<FileAndCommentsResponse>("files.info", new Args

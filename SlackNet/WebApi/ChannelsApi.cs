@@ -95,7 +95,7 @@ namespace SlackNet.WebApi
         /// To retrieve a list of private channels, use groups.list.
         /// </summary>
         /// <param name="excludeArchived">Exclude archived channels from the list.</param>
-        /// <param name="excludeMembers">Exclude the <see cref="Channel.Members"/> collection from each channel</param>
+        /// <param name="excludeMembers">Exclude the <see cref="Hub.Members"/> collection from each channel</param>
         /// <param name="cancellationToken"></param>
         Task<IReadOnlyList<Channel>> List(bool excludeArchived = false, bool excludeMembers = false, CancellationToken? cancellationToken = null);
 
@@ -278,7 +278,7 @@ namespace SlackNet.WebApi
         /// To retrieve a list of private channels, use groups.list.
         /// </summary>
         /// <param name="excludeArchived">Exclude archived channels from the list.</param>
-        /// <param name="excludeMembers">Exclude the <see cref="Channel.Members"/> collection from each channel</param>
+        /// <param name="excludeMembers">Exclude the <see cref="Hub.Members"/> collection from each channel</param>
         /// <param name="cancellationToken"></param>
         public async Task<IReadOnlyList<Channel>> List(bool excludeArchived = false, bool excludeMembers = false, CancellationToken? cancellationToken = null) =>
             (await _client.Get<ChannelListResponse>("channels.list", new Args

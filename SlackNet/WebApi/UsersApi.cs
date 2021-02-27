@@ -76,7 +76,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// This method allows the user to set their profile image.
-        /// Providing a "crop box" with <see cref="cropX"/>, <see cref="cropY"/>, and <see cref="cropW"/> is optional. Otherwise, the whole image will be used.
+        /// Providing a "crop box" with <paramref name="cropX"/>, <paramref name="cropY"/>, and <paramref name="cropW"/> is optional. Otherwise, the whole image will be used.
         /// If cropping instructions are not specified and the source image is not square, the image will be letterboxed, just like your favorite old laserdiscs.
         /// Please limit your images to a maximum size of 1024 by 1024 pixels. 512x512 pixels is the minimum.
         /// To remove a profile image, use the companion method <see cref="UsersApi.DeletePhoto"/>.
@@ -92,7 +92,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// This method allows the user to set their profile image.
-        /// Providing a "crop box" with <see cref="cropX"/>, <see cref="cropY"/>, and <see cref="cropW"/> is optional. Otherwise, the whole image will be used.
+        /// Providing a "crop box" with <paramref name="cropX"/>, <paramref name="cropY"/>, and <paramref name="cropW"/> is optional. Otherwise, the whole image will be used.
         /// If cropping instructions are not specified and the source image is not square, the image will be letterboxed, just like your favorite old laserdiscs.
         /// Please limit your images to a maximum size of 1024 by 1024 pixels. 512x512 pixels is the minimum.
         /// To remove a profile image, use the companion method <see cref="UsersApi.DeletePhoto"/>.
@@ -203,7 +203,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// This method allows the user to set their profile image.
-        /// Providing a "crop box" with <see cref="cropX"/>, <see cref="cropY"/>, and <see cref="cropW"/> is optional. Otherwise, the whole image will be used.
+        /// Providing a "crop box" with <paramref name="cropX"/>, <paramref name="cropY"/>, and <paramref name="cropW"/> is optional. Otherwise, the whole image will be used.
         /// If cropping instructions are not specified and the source image is not square, the image will be letterboxed, just like your favorite old laserdiscs.
         /// Please limit your images to a maximum size of 1024 by 1024 pixels. 512x512 pixels is the minimum.
         /// To remove a profile image, use the companion method <see cref="DeletePhoto"/>.
@@ -234,7 +234,7 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// This method allows the user to set their profile image.
-        /// Providing a "crop box" with <see cref="cropX"/>, <see cref="cropY"/>, and <see cref="cropW"/> is optional. Otherwise, the whole image will be used.
+        /// Providing a "crop box" with <paramref name="cropX"/>, <paramref name="cropY"/>, and <paramref name="cropW"/> is optional. Otherwise, the whole image will be used.
         /// If cropping instructions are not specified and the source image is not square, the image will be letterboxed, just like your favorite old laserdiscs.
         /// Please limit your images to a maximum size of 1024 by 1024 pixels. 512x512 pixels is the minimum.
         /// To remove a profile image, use the companion method <see cref="DeletePhoto"/>.
