@@ -257,23 +257,13 @@ namespace SlackNet
             Post<object>(responseUrl, message, cancellationToken);
 
         private Task<T> Post<T>(string requestUri, object body, CancellationToken? cancellationToken) where T : class =>
-            WebApiRequest<T>(() =>
+            WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, requestUri)
                 {
-                    var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-                    requestMessage.Content = new StringContent(JsonConvert.SerializeObject(body, _jsonSettings.SerializerSettings), Encoding.UTF8, "application/json");
-                    return requestMessage;
+                    Content = new StringContent(JsonConvert.SerializeObject(body, _jsonSettings.SerializerSettings), Encoding.UTF8, "application/json")
                 }, cancellationToken);
 
-        private string Url(string apiMethod) =>
-            _urlBuilder.Url(apiMethod, new Args());
-
-        private string Url(string apiMethod, Args args)
-        {
-            if (!args.ContainsKey("token"))
-                args["token"] = _token;
-            return _urlBuilder.Url(apiMethod, args);
-        }
+        private string Url(string apiMethod, Args args = null) =>
+            _urlBuilder.Url(apiMethod, args ?? new Args());
 
         private async Task<T> WebApiRequest<T>(Func<HttpRequestMessage> createRequest, CancellationToken? cancellationToken) where T : class
         {
@@ -281,7 +271,9 @@ namespace SlackNet
             {
                 try
                 {
-                    var response = await _http.Execute<WebApiResponse>(createRequest(), cancellationToken ?? CancellationToken.None).ConfigureAwait(false)
+                    var request = createRequest();
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+                    var response = await _http.Execute<WebApiResponse>(request, cancellationToken ?? CancellationToken.None).ConfigureAwait(false)
                         ?? new WebApiResponse { Ok = true };
                     return Deserialize<T>(response);
                 }
