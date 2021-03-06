@@ -19,8 +19,6 @@ namespace SlackNet
         IAppsEventsAuthorizationsApi AppsEventsAuthorizations { get; }
         IAuthApi Auth { get; }
         IBotsApi Bots { get; }
-        [Obsolete("Use Conversations instead")]
-        IChannelsApi Channels { get; }
         IChatApi Chat { get; }
         IConversationsApi Conversations { get; }
         IDialogApi Dialog { get; }
@@ -28,13 +26,7 @@ namespace SlackNet
         IEmojiApi Emoji { get; }
         IFileCommentsApi FileComments { get; }
         IFilesApi Files { get; }
-        [Obsolete("Use Conversations instead")]
-        IGroupsApi Groups { get; }
-        [Obsolete("Use Conversations instead")]
-        IImApi Im { get; }
         IMigrationApi Migration { get; }
-        [Obsolete("Use Conversations instead")]
-        IMpimApi Mpim { get; }
         IOAuthApi OAuth { get; }
         IPinsApi Pins { get; }
         IReactionsApi Reactions { get; }
@@ -158,7 +150,6 @@ namespace SlackNet
         public IAppsEventsAuthorizationsApi AppsEventsAuthorizations => new AppsEventsAuthorizationsApi(this);
         public IAuthApi Auth => new AuthApi(this);
         public IBotsApi Bots => new BotsApi(this);
-        public IChannelsApi Channels => new ChannelsApi(this);
         public IChatApi Chat => new ChatApi(this);
         public IConversationsApi Conversations => new ConversationsApi(this);
         public IDialogApi Dialog => new DialogApi(this);
@@ -166,10 +157,7 @@ namespace SlackNet
         public IEmojiApi Emoji => new EmojiApi(this);
         public IFileCommentsApi FileComments => new FileCommentsApi(this);
         public IFilesApi Files => new FilesApi(this);
-        public IGroupsApi Groups => new GroupsApi(this);
-        public IImApi Im => new ImApi(this);
         public IMigrationApi Migration => new MigrationApi(this);
-        public IMpimApi Mpim => new MpimApi(this);
         public IOAuthApi OAuth => new OAuthApi(this);
         public IPinsApi Pins => new PinsApi(this);
         public IReactionsApi Reactions => new ReactionsApi(this);

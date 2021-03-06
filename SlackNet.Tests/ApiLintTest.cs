@@ -194,7 +194,6 @@ namespace SlackNet.Tests
             public IAppsEventsAuthorizationsApi AppsEventsAuthorizations { get; }
             public IAuthApi Auth { get; }
             public IBotsApi Bots { get; }
-            public IChannelsApi Channels { get; }
             public IChatApi Chat { get; }
             public IConversationsApi Conversations { get; }
             public IDialogApi Dialog { get; }
@@ -202,10 +201,7 @@ namespace SlackNet.Tests
             public IEmojiApi Emoji { get; }
             public IFileCommentsApi FileComments { get; }
             public IFilesApi Files { get; }
-            public IGroupsApi Groups { get; }
-            public IImApi Im { get; }
             public IMigrationApi Migration { get; }
-            public IMpimApi Mpim { get; }
             public IOAuthApi OAuth { get; }
             public IPinsApi Pins { get; }
             public IReactionsApi Reactions { get; }
