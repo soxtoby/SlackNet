@@ -11,12 +11,12 @@ namespace SlackNet.Handlers
         public SwitchingDialogSubmissionHandler(IHandlerIndex<IDialogSubmissionHandler> handlers) => _handlers = handlers;
 
         public Task<IEnumerable<DialogError>> Handle(DialogSubmission dialog) =>
-            _handlers.TryGetValue(dialog.CallbackId, out var handler)
+            _handlers.TryGetHandler(dialog.CallbackId, out var handler)
                 ? handler.Handle(dialog)
                 : Task.FromResult(Enumerable.Empty<DialogError>());
 
         public Task HandleCancel(DialogCancellation cancellation) =>
-            _handlers.TryGetValue(cancellation.CallbackId, out var handler)
+            _handlers.TryGetHandler(cancellation.CallbackId, out var handler)
                 ? handler.HandleCancel(cancellation)
                 : Task.CompletedTask;
     }

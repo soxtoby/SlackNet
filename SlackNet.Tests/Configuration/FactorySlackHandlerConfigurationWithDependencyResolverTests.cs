@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using NSubstitute;
+using NUnit.Framework;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Handlers;
@@ -50,6 +51,14 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
+        public void UseRequestContextFactoryFactory()
+        {
+            UseService<ISlackRequestContextFactory, TestRequestContextFactory>(
+                c => c.UseRequestContextFactory(r => new TestRequestContextFactory()),
+                s => s.GetRequestContextFactory());
+        }
+
+        [Test]
         public void UseRequestListenerFactory()
         {
             UseService<ISlackRequestListener, TestRequestListener>(
@@ -84,88 +93,88 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceEventHandling_WithFactory()
         {
-            ReplaceCollectionHandling<IEventHandler, TestEventHandler>(
-                c => c.ReplaceEventHandling((r, hs) => new TestEventHandler(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IEventHandler, TestEventHandler>(
+                c => c.ReplaceEventHandling(r => new TestEventHandler(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateEventHandler(ctx));
         }
 
         [Test]
         public void ReplaceBlockActionHandling_WithFactory()
         {
-            ReplaceCollectionHandling<IAsyncBlockActionHandler, TestAsyncBlockActionHandler>(
-                c => c.ReplaceBlockActionHandling((r, hs) => new TestAsyncBlockActionHandler(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IAsyncBlockActionHandler, TestAsyncBlockActionHandler>(
+                c => c.ReplaceBlockActionHandling(r => new TestAsyncBlockActionHandler(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateBlockActionHandler(ctx));
         }
 
         [Test]
         public void ReplaceBlockOptionProvider_WithFactory()
         {
-            ReplaceKeyedHandling<IBlockOptionProvider, TestBlockOptionProvider>(
-                c => c.ReplaceBlockOptionProviding((r, hs) => new TestBlockOptionProvider(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IBlockOptionProvider, TestBlockOptionProvider>(
+                c => c.ReplaceBlockOptionProviding(r => new TestBlockOptionProvider(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateBlockOptionProvider(ctx));
         }
 
         [Test]
         public void ReplaceMessageShortcutHandling_WithFactory()
         {
-            ReplaceCollectionHandling<IAsyncMessageShortcutHandler, TestAsyncMessageShortcutHandler>(
-                c => c.ReplaceMessageShortcutHandling((r, hs) => new TestAsyncMessageShortcutHandler(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IAsyncMessageShortcutHandler, TestAsyncMessageShortcutHandler>(
+                c => c.ReplaceMessageShortcutHandling(r => new TestAsyncMessageShortcutHandler(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateMessageShortcutHandler(ctx));
         }
 
         [Test]
         public void ReplaceGlobalShortcutHandling_WithFactory()
         {
-            ReplaceCollectionHandling<IAsyncGlobalShortcutHandler, TestAsyncGlobalShortcutHandler>(
-                c => c.ReplaceGlobalShortcutHandling((r, hs) => new TestAsyncGlobalShortcutHandler(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IAsyncGlobalShortcutHandler, TestAsyncGlobalShortcutHandler>(
+                c => c.ReplaceGlobalShortcutHandling(r => new TestAsyncGlobalShortcutHandler(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateGlobalShortcutHandler(ctx));
         }
 
         [Test]
         public void ReplaceViewSubmissionHandling_WithFactory()
         {
-            ReplaceKeyedHandling<IAsyncViewSubmissionHandler, TestAsyncViewSubmissionHandler>(
-                c => c.ReplaceViewSubmissionHandling((r, hs) => new TestAsyncViewSubmissionHandler(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IAsyncViewSubmissionHandler, TestAsyncViewSubmissionHandler>(
+                c => c.ReplaceViewSubmissionHandling(r => new TestAsyncViewSubmissionHandler(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateViewSubmissionHandler(ctx));
         }
 
         [Test]
         public void ReplaceSlashCommandHandling_WithFactory()
         {
-            ReplaceKeyedHandling<IAsyncSlashCommandHandler, TestAsyncSlashCommandHandler>(
-                c => c.ReplaceSlashCommandHandling((r, hs) => new TestAsyncSlashCommandHandler(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IAsyncSlashCommandHandler, TestAsyncSlashCommandHandler>(
+                c => c.ReplaceSlashCommandHandling(r => new TestAsyncSlashCommandHandler(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateSlashCommandHandler(ctx));
         }
 
         [Test]
         public void ReplaceWorkflowStepEditHandling_WithFactory()
         {
-            ReplaceCollectionHandling<IAsyncWorkflowStepEditHandler, TestAsyncWorkflowStepEditHandler>(
-                c => c.ReplaceWorkflowStepEditHandling((r, hs) => new TestAsyncWorkflowStepEditHandler(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IAsyncWorkflowStepEditHandler, TestAsyncWorkflowStepEditHandler>(
+                c => c.ReplaceWorkflowStepEditHandling(r => new TestAsyncWorkflowStepEditHandler(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateWorkflowStepEditHandler(ctx));
         }
 
         [Test]
         public void ReplaceLegacyInteractiveMessageHandling_WithFactory()
         {
-            ReplaceKeyedHandling<IInteractiveMessageHandler, TestInteractiveMessageHandler>(
-                c => c.ReplaceLegacyInteractiveMessageHandling((r, hs) => new TestInteractiveMessageHandler(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IInteractiveMessageHandler, TestInteractiveMessageHandler>(
+                c => c.ReplaceLegacyInteractiveMessageHandling(r => new TestInteractiveMessageHandler(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateLegacyInteractiveMessageHandler(ctx));
         }
 
         [Test]
         public void ReplaceLegacyOptionProviding_WithFactory()
         {
-            ReplaceKeyedHandling<IOptionProvider, TestOptionProvider>(
-                c => c.ReplaceLegacyOptionProviding((r, hs) => new TestOptionProvider(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IOptionProvider, TestOptionProvider>(
+                c => c.ReplaceLegacyOptionProviding(r => new TestOptionProvider(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateLegacyOptionProvider(ctx));
         }
 
         [Test]
         public void ReplaceLegacyDialogSubmissionHandling_WithFactory()
         {
-            ReplaceKeyedHandling<IDialogSubmissionHandler, TestDialogSubmissionHandler>(
-                c => c.ReplaceLegacyDialogSubmissionHandling((r, hs) => new TestDialogSubmissionHandler(ResolveDependency<InstanceTracker>(r))),
+            ReplaceRequestHandling<IDialogSubmissionHandler, TestDialogSubmissionHandler>(
+                c => c.ReplaceLegacyDialogSubmissionHandling(r => new TestDialogSubmissionHandler(ResolveDependency<InstanceTracker>(r))),
                 (hf, ctx) => hf.CreateLegacyDialogSubmissionHandler(ctx));
         }
 
@@ -242,6 +251,14 @@ namespace SlackNet.Tests.Configuration
             RegisterViewSubmissionHandler_HandleCloses(
                 registerHandler: (c, key) => c.RegisterViewSubmissionHandler(key, r => new TestViewSubmissionHandler(ResolveDependency<InstanceTracker>(r))),
                 registerAsyncHandler: (c, key) => c.RegisterAsyncViewSubmissionHandler(key, r => new TestAsyncViewSubmissionHandler(ResolveDependency<InstanceTracker>(r))));
+        }
+
+        [Test]
+        public void RegisterSlashCommandHandlerFactory_InvalidCommandName_Throws()
+        {
+            RegisterSlashCommandHandlerWithInvalidCommandName(
+                c => c.RegisterSlashCommandHandler("foo", r => Substitute.For<ISlashCommandHandler>()),
+                c => c.RegisterAsyncSlashCommandHandler("foo", r => Substitute.For<IAsyncSlashCommandHandler>()));
         }
 
         [Test]

@@ -12,7 +12,7 @@ namespace SlackNet
     class NullRequestListener : ISlackRequestListener
     {
         private NullRequestListener() { }
-        public static ISlackRequestListener Instance = new NullRequestListener();
+        public static readonly ISlackRequestListener Instance = new NullRequestListener();
 
         public Task OnRequestBegin(SlackRequestContext context) => Task.CompletedTask;
         public Task OnRequestEnd(SlackRequestContext context) => Task.CompletedTask;

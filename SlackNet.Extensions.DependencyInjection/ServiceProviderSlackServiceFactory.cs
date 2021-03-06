@@ -6,17 +6,26 @@ namespace SlackNet.Extensions.DependencyInjection
 {
     class ServiceProviderSlackServiceFactory : ISlackServiceFactory
     {
+        private readonly ISlackServiceFactory _baseFactory;
         private readonly IServiceProvider _serviceProvider;
-        public ServiceProviderSlackServiceFactory(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
-        public IHttp GetHttp() => _serviceProvider.GetRequiredService<IHttp>();
-        public SlackJsonSettings GetJsonSettings() => _serviceProvider.GetRequiredService<SlackJsonSettings>();
-        public ISlackTypeResolver GetTypeResolver() => _serviceProvider.GetRequiredService<ISlackTypeResolver>();
-        public ISlackUrlBuilder GetUrlBuilder() => _serviceProvider.GetRequiredService<ISlackUrlBuilder>();
-        public IWebSocketFactory GetWebSocketFactory() => _serviceProvider.GetRequiredService<IWebSocketFactory>();
-        public ISlackRequestListener GetRequestListener() => _serviceProvider.GetRequiredService<ISlackRequestListener>();
-        public ISlackHandlerFactory GetHandlerFactory() => _serviceProvider.GetRequiredService<ISlackHandlerFactory>();
-        public ISlackApiClient GetApiClient() => _serviceProvider.GetRequiredService<ISlackApiClient>();
-        public ISlackSocketModeClient GetSocketModeClient() => _serviceProvider.GetRequiredService<ISlackSocketModeClient>();
+        public ServiceProviderSlackServiceFactory(Func<ISlackServiceFactory, ISlackServiceFactory> createBaseFactory, IServiceProvider serviceProvider)
+        {
+            _baseFactory = createBaseFactory(this);
+            _serviceProvider = serviceProvider;
+        }
+
+        public TService GetRequiredService<TService>() where TService : class => _serviceProvider.GetRequiredService<TService>();
+
+        public IHttp GetHttp() => _baseFactory.GetHttp();
+        public SlackJsonSettings GetJsonSettings() => _baseFactory.GetJsonSettings();
+        public ISlackTypeResolver GetTypeResolver() => _baseFactory.GetTypeResolver();
+        public ISlackUrlBuilder GetUrlBuilder() => _baseFactory.GetUrlBuilder();
+        public IWebSocketFactory GetWebSocketFactory() => _baseFactory.GetWebSocketFactory();
+        public ISlackRequestContextFactory GetRequestContextFactory() => _baseFactory.GetRequestContextFactory();
+        public ISlackRequestListener GetRequestListener() => _baseFactory.GetRequestListener();
+        public ISlackHandlerFactory GetHandlerFactory() => _baseFactory.GetHandlerFactory();
+        public ISlackApiClient GetApiClient() => _baseFactory.GetApiClient();
+        public ISlackSocketModeClient GetSocketModeClient() => _baseFactory.GetSocketModeClient();
     }
 }

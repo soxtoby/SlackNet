@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -15,7 +12,6 @@ using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 using SlackNet.SocketMode;
-using WebSocket4Net;
 
 namespace SlackNet
 {
@@ -34,6 +30,7 @@ namespace SlackNet
         private readonly ICoreSocketModeClient _socket;
         private readonly SlackJsonSettings _jsonSettings;
         private readonly ISlackRequestListener _requestListener;
+        private readonly ISlackRequestContextFactory _requestContextFactory;
         private readonly ISlackHandlerFactory _handlerFactory;
         private readonly IDisposable _requestSubscription;
 
@@ -41,11 +38,13 @@ namespace SlackNet
             ICoreSocketModeClient socket,
             SlackJsonSettings jsonSettings,
             ISlackRequestListener requestListener,
+            ISlackRequestContextFactory requestContextFactory,
             ISlackHandlerFactory handlerFactory)
         {
             _socket = socket;
             _jsonSettings = jsonSettings;
             _requestListener = requestListener;
+            _requestContextFactory = requestContextFactory;
             _handlerFactory = handlerFactory;
 
             _requestSubscription = _socket.Messages
@@ -65,7 +64,7 @@ namespace SlackNet
         {
             try
             {
-                var requestContext = new SlackRequestContext();
+                var requestContext = _requestContextFactory.CreateRequestContext();
                 await _requestListener.OnRequestBegin(requestContext).ConfigureAwait(false);
                 var responded = false;
 

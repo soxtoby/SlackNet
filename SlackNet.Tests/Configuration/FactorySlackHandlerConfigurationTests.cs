@@ -17,7 +17,7 @@ using SlackNet.WebApi;
 
 namespace SlackNet.Tests.Configuration
 {
-    public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackHandlerConfigurationBaseTests<TConfig> where TConfig : FactorySlackHandlerConfiguration<TConfig>
+    public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServiceConfigurationBaseTests<TConfig> where TConfig : FactorySlackHandlerConfiguration<TConfig>
     {
         protected abstract InstanceTracker InstanceTracker { get; }
         private const string SameInstanceForSameRequest = "Should be same instance within request";
@@ -64,6 +64,14 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
+        public void UseRequestContextFactoryType()
+        {
+            UseService<ISlackRequestContextFactory, TestRequestContextFactory>(
+                c => c.UseRequestContextFactory<TestRequestContextFactory>(),
+                s => s.GetRequestContextFactory());
+        }
+
+        [Test]
         public void UseRequestListenerType()
         {
             UseService<ISlackRequestListener, TestRequestListener>(
@@ -98,7 +106,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceEventHandling_WithType()
         {
-            ReplaceCollectionHandling<IEventHandler, TestEventHandler>(
+            ReplaceRequestHandling<IEventHandler, TestEventHandler>(
                 c => c.ReplaceEventHandling<TestEventHandler>(),
                 (hf, ctx) => hf.CreateEventHandler(ctx));
         }
@@ -106,7 +114,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceBlockActionHandling_WithType()
         {
-            ReplaceCollectionHandling<IAsyncBlockActionHandler, TestAsyncBlockActionHandler>(
+            ReplaceRequestHandling<IAsyncBlockActionHandler, TestAsyncBlockActionHandler>(
                 c => c.ReplaceBlockActionHandling<TestAsyncBlockActionHandler>(),
                 (hf, ctx) => hf.CreateBlockActionHandler(ctx));
         }
@@ -114,7 +122,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceBlockOptionProvider_WithType()
         {
-            ReplaceKeyedHandling<IBlockOptionProvider, TestBlockOptionProvider>(
+            ReplaceRequestHandling<IBlockOptionProvider, TestBlockOptionProvider>(
                 c => c.ReplaceBlockOptionProviding<TestBlockOptionProvider>(),
                 (hf, ctx) => hf.CreateBlockOptionProvider(ctx));
         }
@@ -122,7 +130,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceMessageShortcutHandling_WithType()
         {
-            ReplaceCollectionHandling<IAsyncMessageShortcutHandler, TestAsyncMessageShortcutHandler>(
+            ReplaceRequestHandling<IAsyncMessageShortcutHandler, TestAsyncMessageShortcutHandler>(
                 c => c.ReplaceMessageShortcutHandling<TestAsyncMessageShortcutHandler>(),
                 (hf, ctx) => hf.CreateMessageShortcutHandler(ctx));
         }
@@ -130,7 +138,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceGlobalShortcutHandling_WithType()
         {
-            ReplaceCollectionHandling<IAsyncGlobalShortcutHandler, TestAsyncGlobalShortcutHandler>(
+            ReplaceRequestHandling<IAsyncGlobalShortcutHandler, TestAsyncGlobalShortcutHandler>(
                 c => c.ReplaceGlobalShortcutHandling<TestAsyncGlobalShortcutHandler>(),
                 (hf, ctx) => hf.CreateGlobalShortcutHandler(ctx));
         }
@@ -138,7 +146,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceViewSubmissionHandling_WithType()
         {
-            ReplaceKeyedHandling<IAsyncViewSubmissionHandler, TestAsyncViewSubmissionHandler>(
+            ReplaceRequestHandling<IAsyncViewSubmissionHandler, TestAsyncViewSubmissionHandler>(
                 c => c.ReplaceViewSubmissionHandling<TestAsyncViewSubmissionHandler>(),
                 (hf, ctx) => hf.CreateViewSubmissionHandler(ctx));
         }
@@ -146,7 +154,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceSlashCommandHandling_WithType()
         {
-            ReplaceKeyedHandling<IAsyncSlashCommandHandler, TestAsyncSlashCommandHandler>(
+            ReplaceRequestHandling<IAsyncSlashCommandHandler, TestAsyncSlashCommandHandler>(
                 c => c.ReplaceSlashCommandHandling<TestAsyncSlashCommandHandler>(),
                 (hf, ctx) => hf.CreateSlashCommandHandler(ctx));
         }
@@ -154,7 +162,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceWorkflowStepEditHandling_WithType()
         {
-            ReplaceCollectionHandling<IAsyncWorkflowStepEditHandler, TestAsyncWorkflowStepEditHandler>(
+            ReplaceRequestHandling<IAsyncWorkflowStepEditHandler, TestAsyncWorkflowStepEditHandler>(
                 c => c.ReplaceWorkflowStepEditHandling<TestAsyncWorkflowStepEditHandler>(),
                 (hf, ctx) => hf.CreateWorkflowStepEditHandler(ctx));
         }
@@ -162,7 +170,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceLegacyInteractiveMessageHandling_WithType()
         {
-            ReplaceKeyedHandling<IInteractiveMessageHandler, TestInteractiveMessageHandler>(
+            ReplaceRequestHandling<IInteractiveMessageHandler, TestInteractiveMessageHandler>(
                 c => c.ReplaceLegacyInteractiveMessageHandling<TestInteractiveMessageHandler>(),
                 (hf, ctx) => hf.CreateLegacyInteractiveMessageHandler(ctx));
         }
@@ -170,7 +178,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceLegacyOptionProviding_WithType()
         {
-            ReplaceKeyedHandling<IOptionProvider, TestOptionProvider>(
+            ReplaceRequestHandling<IOptionProvider, TestOptionProvider>(
                 c => c.ReplaceLegacyOptionProviding<TestOptionProvider>(),
                 (hf, ctx) => hf.CreateLegacyOptionProvider(ctx));
         }
@@ -178,7 +186,7 @@ namespace SlackNet.Tests.Configuration
         [Test]
         public void ReplaceLegacyDialogSubmissionHandling_WithType()
         {
-            ReplaceKeyedHandling<IDialogSubmissionHandler, TestDialogSubmissionHandler>(
+            ReplaceRequestHandling<IDialogSubmissionHandler, TestDialogSubmissionHandler>(
                 c => c.ReplaceLegacyDialogSubmissionHandling<TestDialogSubmissionHandler>(),
                 (hf, ctx) => hf.CreateLegacyDialogSubmissionHandler(ctx));
         }
@@ -601,6 +609,14 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
+        public void RegisterSlashCommandHandlerType_InvalidCommandName_Throws()
+        {
+            RegisterSlashCommandHandlerWithInvalidCommandName(
+                c => c.RegisterSlashCommandHandler<TestSlashCommandHandler>("foo"),
+                c => c.RegisterAsyncSlashCommandHandler<TestAsyncSlashCommandHandler>("foo"));
+        }
+
+        [Test]
         public void RegisterSlashCommandHandlerType()
         {
             RegisterSlashCommandHandler(
@@ -845,7 +861,7 @@ namespace SlackNet.Tests.Configuration
             DuringRequest(realFactory, _ => getService(sut).ShouldReferTo(service, "Should be same instance during request"));
         }
 
-        protected void ReplaceCollectionHandling<THandler, TImplementation>(
+        protected void ReplaceRequestHandling<THandler, TImplementation>(
             Action<TConfig> replaceHandling,
             Func<ISlackHandlerFactory, SlackRequestContext, THandler> getHandler)
             where THandler : class
@@ -859,36 +875,7 @@ namespace SlackNet.Tests.Configuration
                 c =>
                     {
                         firstRequestHandler = getHandler(sut.GetHandlerFactory(), c);
-                        firstRequestHandler
-                            .ShouldReferTo(getHandler(sut.GetHandlerFactory(), c), SameInstanceForSameRequest)
-                            .And.ShouldBeA<TImplementation>();
-                    });
-
-            DuringRequest(sut,
-                c =>
-                    {
-                        getHandler(sut.GetHandlerFactory(), c)
-                            .ShouldNotReferTo(firstRequestHandler, DifferentInstanceForDifferentRequest)
-                            .And.ShouldBeA<TImplementation>();
-                    });
-        }
-
-        protected void ReplaceKeyedHandling<THandler, TImplementation>(
-            Action<TConfig> replaceHandling,
-            Func<ISlackHandlerFactory, SlackRequestContext, THandler> getHandler)
-            where THandler : class
-        {
-            var sut = Configure(replaceHandling);
-
-            THandler firstRequestHandler = default;
-
-            DuringRequest(sut,
-                c =>
-                    {
-                        firstRequestHandler = getHandler(sut.GetHandlerFactory(), c);
-                        firstRequestHandler
-                            .ShouldReferTo(getHandler(sut.GetHandlerFactory(), c), SameInstanceForSameRequest)
-                            .And.ShouldBeA<TImplementation>();
+                        firstRequestHandler.ShouldBeA<TImplementation>();
                     });
 
             DuringRequest(sut,
@@ -930,6 +917,11 @@ namespace SlackNet.Tests.Configuration
         protected class TestWebSocketFactory : IWebSocketFactory
         {
             public IWebSocket Create(string uri) => throw new NotImplementedException();
+        }
+
+        protected class TestRequestContextFactory : ISlackRequestContextFactory
+        {
+            public SlackRequestContext CreateRequestContext() => throw new NotImplementedException();
         }
 
         protected class TestRequestListener : ISlackRequestListener

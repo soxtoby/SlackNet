@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 
@@ -7,31 +6,31 @@ namespace SlackNet.Handlers
 {
     class SlackHandlerFactory : ISlackHandlerFactory
     {
-        private const string RequestHandlers = "RequestHandlerInstances";
-        private readonly Func<IEventHandler> _eventHandler;
-        private readonly Func<IAsyncBlockActionHandler> _blockActionHandler;
-        private readonly Func<IBlockOptionProvider> _blockOptionProvider;
-        private readonly Func<IAsyncMessageShortcutHandler> _messageShortcutHandler;
-        private readonly Func<IAsyncGlobalShortcutHandler> _globalShortcutHandler;
-        private readonly Func<IAsyncViewSubmissionHandler> _viewSubmissionHandler;
-        private readonly Func<IAsyncSlashCommandHandler> _slashCommandHandler;
-        private readonly Func<IAsyncWorkflowStepEditHandler> _workflowStepEditHandler;
-        private readonly Func<IInteractiveMessageHandler> _legacyInteractiveMessageHandler;
-        private readonly Func<IOptionProvider> _legacyOptionProvider;
-        private readonly Func<IDialogSubmissionHandler> _legacyDialogSubmissionHandler;
+        private const string RequestHandler = nameof(RequestHandler);
+        private readonly Func<SlackRequestContext, IEventHandler> _eventHandler;
+        private readonly Func<SlackRequestContext, IAsyncBlockActionHandler> _blockActionHandler;
+        private readonly Func<SlackRequestContext, IBlockOptionProvider> _blockOptionProvider;
+        private readonly Func<SlackRequestContext, IAsyncMessageShortcutHandler> _messageShortcutHandler;
+        private readonly Func<SlackRequestContext, IAsyncGlobalShortcutHandler> _globalShortcutHandler;
+        private readonly Func<SlackRequestContext, IAsyncViewSubmissionHandler> _viewSubmissionHandler;
+        private readonly Func<SlackRequestContext, IAsyncSlashCommandHandler> _slashCommandHandler;
+        private readonly Func<SlackRequestContext, IAsyncWorkflowStepEditHandler> _workflowStepEditHandler;
+        private readonly Func<SlackRequestContext, IInteractiveMessageHandler> _legacyInteractiveMessageHandler;
+        private readonly Func<SlackRequestContext, IOptionProvider> _legacyOptionProvider;
+        private readonly Func<SlackRequestContext, IDialogSubmissionHandler> _legacyDialogSubmissionHandler;
 
         public SlackHandlerFactory(
-            Func<IEventHandler> eventHandler,
-            Func<IAsyncBlockActionHandler> blockActionHandler,
-            Func<IBlockOptionProvider> blockOptionProvider,
-            Func<IAsyncMessageShortcutHandler> messageShortcutHandler,
-            Func<IAsyncGlobalShortcutHandler> globalShortcutHandler,
-            Func<IAsyncViewSubmissionHandler> viewSubmissionHandler,
-            Func<IAsyncSlashCommandHandler> slashCommandHandler,
-            Func<IAsyncWorkflowStepEditHandler> workflowStepEditHandler,
-            Func<IInteractiveMessageHandler> legacyInteractiveMessageHandler,
-            Func<IOptionProvider> legacyOptionProvider,
-            Func<IDialogSubmissionHandler> legacyDialogSubmissionHandler)
+            Func<SlackRequestContext, IEventHandler> eventHandler,
+            Func<SlackRequestContext, IAsyncBlockActionHandler> blockActionHandler,
+            Func<SlackRequestContext, IBlockOptionProvider> blockOptionProvider,
+            Func<SlackRequestContext, IAsyncMessageShortcutHandler> messageShortcutHandler,
+            Func<SlackRequestContext, IAsyncGlobalShortcutHandler> globalShortcutHandler,
+            Func<SlackRequestContext, IAsyncViewSubmissionHandler> viewSubmissionHandler,
+            Func<SlackRequestContext, IAsyncSlashCommandHandler> slashCommandHandler,
+            Func<SlackRequestContext, IAsyncWorkflowStepEditHandler> workflowStepEditHandler,
+            Func<SlackRequestContext, IInteractiveMessageHandler> legacyInteractiveMessageHandler,
+            Func<SlackRequestContext, IOptionProvider> legacyOptionProvider,
+            Func<SlackRequestContext, IDialogSubmissionHandler> legacyDialogSubmissionHandler)
         {
             _eventHandler = eventHandler;
             _blockActionHandler = blockActionHandler;
@@ -46,27 +45,26 @@ namespace SlackNet.Handlers
             _legacyDialogSubmissionHandler = legacyDialogSubmissionHandler;
         }
 
-        public IEventHandler CreateEventHandler(SlackRequestContext context) => GetOrCreateHandler(context, _eventHandler);
-        public IAsyncBlockActionHandler CreateBlockActionHandler(SlackRequestContext context) => GetOrCreateHandler(context, _blockActionHandler);
-        public IBlockOptionProvider CreateBlockOptionProvider(SlackRequestContext context) => GetOrCreateHandler(context, _blockOptionProvider);
-        public IAsyncMessageShortcutHandler CreateMessageShortcutHandler(SlackRequestContext context) => GetOrCreateHandler(context, _messageShortcutHandler);
-        public IAsyncGlobalShortcutHandler CreateGlobalShortcutHandler(SlackRequestContext context) => GetOrCreateHandler(context, _globalShortcutHandler);
-        public IAsyncViewSubmissionHandler CreateViewSubmissionHandler(SlackRequestContext context) => GetOrCreateHandler(context, _viewSubmissionHandler);
-        public IAsyncSlashCommandHandler CreateSlashCommandHandler(SlackRequestContext context) => GetOrCreateHandler(context, _slashCommandHandler);
-        public IAsyncWorkflowStepEditHandler CreateWorkflowStepEditHandler(SlackRequestContext context) => GetOrCreateHandler(context, _workflowStepEditHandler);
-        public IInteractiveMessageHandler CreateLegacyInteractiveMessageHandler(SlackRequestContext context) => GetOrCreateHandler(context, _legacyInteractiveMessageHandler);
-        public IOptionProvider CreateLegacyOptionProvider(SlackRequestContext context) => GetOrCreateHandler(context, _legacyOptionProvider);
-        public IDialogSubmissionHandler CreateLegacyDialogSubmissionHandler(SlackRequestContext context) => GetOrCreateHandler(context, _legacyDialogSubmissionHandler);
+        public IEventHandler CreateEventHandler(SlackRequestContext context) => CreateHandler(context, _eventHandler);
+        public IAsyncBlockActionHandler CreateBlockActionHandler(SlackRequestContext context) => CreateHandler(context, _blockActionHandler);
+        public IBlockOptionProvider CreateBlockOptionProvider(SlackRequestContext context) => CreateHandler(context, _blockOptionProvider);
+        public IAsyncMessageShortcutHandler CreateMessageShortcutHandler(SlackRequestContext context) => CreateHandler(context, _messageShortcutHandler);
+        public IAsyncGlobalShortcutHandler CreateGlobalShortcutHandler(SlackRequestContext context) => CreateHandler(context, _globalShortcutHandler);
+        public IAsyncViewSubmissionHandler CreateViewSubmissionHandler(SlackRequestContext context) => CreateHandler(context, _viewSubmissionHandler);
+        public IAsyncSlashCommandHandler CreateSlashCommandHandler(SlackRequestContext context) => CreateHandler(context, _slashCommandHandler);
+        public IAsyncWorkflowStepEditHandler CreateWorkflowStepEditHandler(SlackRequestContext context) => CreateHandler(context, _workflowStepEditHandler);
+        public IInteractiveMessageHandler CreateLegacyInteractiveMessageHandler(SlackRequestContext context) => CreateHandler(context, _legacyInteractiveMessageHandler);
+        public IOptionProvider CreateLegacyOptionProvider(SlackRequestContext context) => CreateHandler(context, _legacyOptionProvider);
+        public IDialogSubmissionHandler CreateLegacyDialogSubmissionHandler(SlackRequestContext context) => CreateHandler(context, _legacyDialogSubmissionHandler);
 
-        private static T GetOrCreateHandler<T>(SlackRequestContext context, Func<T> handlerFactory)
+        private static T CreateHandler<T>(SlackRequestContext context, Func<SlackRequestContext, T> handlerFactory)
         {
-            if (!(context[RequestHandlers] is Dictionary<Type, object> instances))
-                context[RequestHandlers] = instances = new Dictionary<Type, object>();
+            if (context.ContainsKey(RequestHandler))
+                throw new InvalidOperationException("Handler already created for this request");
 
-            if (!instances.TryGetValue(typeof(T), out var handler))
-                instances[typeof(T)] = handler = handlerFactory();
-
-            return (T)handler;
+            var handler = handlerFactory(context);
+            context[RequestHandler] = handler;
+            return handler;
         }
     }
 }

@@ -5,7 +5,7 @@ using SlackNet.Handlers;
 namespace SlackNet.Tests.Configuration
 {
     [TestFixture]
-    public class SlackServiceConfigurationTests : SlackHandlerConfigurationBaseTests<SlackServiceFactory>
+    public class SlackServiceConfigurationTests : SlackServiceConfigurationBaseTests<SlackServiceFactory>
     {
         protected override ISlackServiceFactory Configure(Action<SlackServiceFactory> configure)
         {

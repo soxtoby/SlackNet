@@ -10,7 +10,7 @@ namespace SlackNet.Handlers
         public SwitchingSlashCommandHandler(IHandlerIndex<IAsyncSlashCommandHandler> handlers) => _handlers = handlers;
 
         public Task Handle(SlashCommand command, Responder<SlashCommandResponse> respond) =>
-            _handlers.TryGetValue(command.Command, out var handler)
+            _handlers.TryGetHandler(command.Command, out var handler)
                 ? handler.Handle(command, respond)
                 : Task.FromResult((SlashCommandResponse) null);
     }

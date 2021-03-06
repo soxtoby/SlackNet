@@ -10,12 +10,12 @@ namespace SlackNet.Handlers
         public SwitchingViewSubmissionHandler(IHandlerIndex<IAsyncViewSubmissionHandler> handlers) => _handlers = handlers;
 
         public Task Handle(ViewSubmission viewSubmission, Responder<ViewSubmissionResponse> respond) =>
-            _handlers.TryGetValue(viewSubmission.View.CallbackId, out var handler)
+            _handlers.TryGetHandler(viewSubmission.View.CallbackId, out var handler)
                 ? handler.Handle(viewSubmission, respond)
                 : Task.CompletedTask;
 
         public Task HandleClose(ViewClosed viewClosed, Responder respond) =>
-            _handlers.TryGetValue(viewClosed.View.CallbackId, out var handler)
+            _handlers.TryGetHandler(viewClosed.View.CallbackId, out var handler)
                 ? handler.HandleClose(viewClosed, respond)
                 : Task.CompletedTask;
     }
