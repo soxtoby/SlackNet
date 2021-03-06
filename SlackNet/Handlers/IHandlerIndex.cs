@@ -1,17 +1,38 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SlackNet.Handlers
 {
     public interface IHandlerIndex<THandler>
     {
-        bool TryGetValue(string key, out THandler handler);
+        bool HasHandler(string key);
+        bool TryGetHandler(string key, out THandler handler);
     }
 
     public class HandlerDictionary<THandler> : IHandlerIndex<THandler>
     {
-        private readonly IReadOnlyDictionary<string, THandler> _handlers;
-        public HandlerDictionary(IReadOnlyDictionary<string, THandler> handlers) => _handlers = handlers;
+        private readonly Dictionary<string, Lazy<THandler>> _handlers;
 
-        public bool TryGetValue(string key, out THandler handler) => _handlers.TryGetValue(key, out handler);
+        public HandlerDictionary(SlackRequestContext requestContext, IReadOnlyDictionary<string, Func<SlackRequestContext, THandler>> handlers) =>
+            _handlers = handlers.ToDictionary(
+                kv => kv.Key,
+                kv => new Lazy<THandler>(() => kv.Value(requestContext)));
+
+        public bool HasHandler(string key) => _handlers.ContainsKey(key);
+
+        public bool TryGetHandler(string key, out THandler handler)
+        {
+            if (_handlers.TryGetValue(key, out var lazyHandler))
+            {
+                handler = lazyHandler.Value;
+                return true;
+            }
+            else
+            {
+                handler = default;
+                return false;
+            }
+        }
     }
 }

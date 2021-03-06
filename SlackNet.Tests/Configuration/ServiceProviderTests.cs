@@ -7,7 +7,7 @@ using SlackNet.Handlers;
 namespace SlackNet.Tests.Configuration
 {
     [TestFixture]
-    public class ServiceProviderTests : FactorySlackHandlerConfigurationWithDependencyResolverTests<SlackHandlerServiceConfiguration, IServiceProvider>
+    public class ServiceProviderTests : FactorySlackHandlerConfigurationWithDependencyResolverTests<ServiceCollectionSlackHandlerConfiguration, IServiceProvider>
     {
         private InstanceTracker _instanceTracker;
 
@@ -17,7 +17,7 @@ namespace SlackNet.Tests.Configuration
             _instanceTracker = new InstanceTracker();
         }
 
-        protected override ISlackServiceFactory Configure(Action<SlackHandlerServiceConfiguration> configure)
+        protected override ISlackServiceFactory Configure(Action<ServiceCollectionSlackHandlerConfiguration> configure)
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton(InstanceTracker);

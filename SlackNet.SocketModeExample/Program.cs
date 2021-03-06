@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using SlackNet.Handlers;
 
 namespace SlackNet.SocketModeExample
 {
@@ -13,9 +12,8 @@ namespace SlackNet.SocketModeExample
 
             var slackServices = new SlackServiceFactory()
                 .UseApiToken(settings.ApiToken)
-                .UseAppLevelToken(settings.AppLevelToken);
-
-            slackServices.RegisterEventHandler(new PingHandler(slackServices.GetApiClient()));
+                .UseAppLevelToken(settings.AppLevelToken)
+                .RegisterEventHandler(ctx => new PingHandler(ctx.ServiceFactory.GetApiClient()));
 
             using var socketModeClient = slackServices.GetSocketModeClient();
 

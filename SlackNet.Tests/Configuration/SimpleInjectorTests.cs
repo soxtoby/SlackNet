@@ -12,29 +12,11 @@ namespace SlackNet.Tests.Configuration
     {
         private Container _container;
 
-        [SetUp]
-        public void SetUp()
-        {
-            _container = DefaultContainer();
-        }
-
-        protected override void ReplaceCollectionHandling<THandler>(Action<SimpleInjectorSlackHandlerConfiguration, CollectionHandlerFactory<THandler>> replaceHandling, Action<SimpleInjectorSlackHandlerConfiguration, THandler> registerHandler, Func<ISlackHandlerFactory, SlackRequestContext, THandler> getHandler)
-        {
-            _container.Options.EnableAutoVerification = false;
-            base.ReplaceCollectionHandling(replaceHandling, registerHandler, getHandler);
-        }
-
-        protected override void ReplaceKeyedHandling<THandler>(Action<SimpleInjectorSlackHandlerConfiguration, KeyedHandlerFactory<THandler>> replaceHandling, Action<SimpleInjectorSlackHandlerConfiguration, string, THandler> registerHandler, Func<ISlackHandlerFactory, SlackRequestContext, THandler> getHandler)
-        {
-            _container.Options.EnableAutoVerification = false;
-            base.ReplaceKeyedHandling(replaceHandling, registerHandler, getHandler);
-        }
-
         protected override ISlackServiceFactory DefaultServiceFactory() =>
             Configure(DefaultContainer(), _ => { });
 
         protected override ISlackServiceFactory Configure(Action<SimpleInjectorSlackHandlerConfiguration> configure) =>
-            Configure(_container, configure);
+            Configure(_container = DefaultContainer(), configure);
 
         private static Container DefaultContainer() =>
             new() { Options = { DefaultScopedLifestyle = new AsyncScopedLifestyle() } };

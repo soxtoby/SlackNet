@@ -1,92 +1,75 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using SimpleInjector;
 using SlackNet.Handlers;
-using SlackNet.Interaction;
-using SlackNet.Interaction.Experimental;
-using Container = SimpleInjector.Container;
 
 namespace SlackNet.SimpleInjector
 {
+    [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
     public class SimpleInjectorSlackHandlerConfiguration : FactorySlackHandlerConfigurationWithExternalDependencyResolver<SimpleInjectorSlackHandlerConfiguration>
     {
         private readonly Container _container;
-        private readonly Dictionary<Type, IDictionary> _keyedHandlerProviders;
+        private SimpleInjectorSlackHandlerConfiguration(Container container) => _container = container;
 
-        private readonly Dictionary<string, Func<IBlockOptionProvider>> _blockOptionProviders = new();
-        private readonly Dictionary<string, Func<IAsyncViewSubmissionHandler>> _viewSubmissionHandlers = new();
-        private readonly Dictionary<string, Func<IAsyncSlashCommandHandler>> _slashCommandHandlers = new();
-
-        private readonly Dictionary<string, Func<IInteractiveMessageHandler>> _legacyInteractiveMessageHandlers = new();
-        private readonly Dictionary<string, Func<IOptionProvider>> _legacyOptionProviders = new();
-        private readonly Dictionary<string, Func<IDialogSubmissionHandler>> _legacyDialogSubmissionHandlers = new();
-
-        public SimpleInjectorSlackHandlerConfiguration(Container container)
+        internal static void Configure(Container container, Action<SimpleInjectorSlackHandlerConfiguration> configure = null)
         {
-            _container = container;
+            var config = new SimpleInjectorSlackHandlerConfiguration(container);
+            config.UseRequestListener<SimpleInjectorSlackRequestListener>();
+            configure?.Invoke(config);
 
-            _keyedHandlerProviders = new Dictionary<Type, IDictionary>
+            RegisterFallback<ISlackServiceFactory>(container, () => new SimpleInjectorSlackServiceFactory(config.CreateServiceFactory, container), Lifestyle.Singleton);
+            RegisterFallback<IHttp>(container, () => container.GetInstance<ISlackServiceFactory>().GetHttp(), Lifestyle.Singleton);
+            RegisterFallback<SlackJsonSettings>(container, () => container.GetInstance<ISlackServiceFactory>().GetJsonSettings(), Lifestyle.Singleton);
+            RegisterFallback<ISlackTypeResolver>(container, () => container.GetInstance<ISlackServiceFactory>().GetTypeResolver(), Lifestyle.Singleton);
+            RegisterFallback<ISlackUrlBuilder>(container, () => container.GetInstance<ISlackServiceFactory>().GetUrlBuilder(), Lifestyle.Singleton);
+            RegisterFallback<IWebSocketFactory>(container, () => container.GetInstance<ISlackServiceFactory>().GetWebSocketFactory(), Lifestyle.Singleton);
+            RegisterFallback<ISlackRequestListener>(container, () => container.GetInstance<ISlackServiceFactory>().GetRequestListener(), Lifestyle.Singleton);
+            RegisterFallback<ISlackHandlerFactory>(container, () => container.GetInstance<ISlackServiceFactory>().GetHandlerFactory(), Lifestyle.Singleton);
+            RegisterFallback<ISlackApiClient>(container, () => container.GetInstance<ISlackServiceFactory>().GetApiClient(), Lifestyle.Singleton);
+            RegisterFallback<ISlackSocketModeClient>(container, () => container.GetInstance<ISlackServiceFactory>().GetSocketModeClient(), Lifestyle.Singleton);
+        }
+
+        protected override Func<ISlackServiceFactory, TService> GetServiceFactory<TService, TImplementation>()
+        {
+            RegisterFallbackType<TImplementation>(Lifestyle.Singleton);
+            return serviceFactory => ((SimpleInjectorSlackServiceFactory)serviceFactory).GetInstance<TImplementation>();
+        }
+
+        protected override Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler, TImplementation>()
+        {
+            RegisterFallbackType<TImplementation>(Lifestyle.Scoped);
+            return requestContext => requestContext.ContainerScope().GetInstance<TImplementation>();
+        }
+
+        protected override Func<SlackRequestContext, THandler> GetRegisteredHandlerFactory<THandler>()
+        {
+            RegisterFallbackType<THandler>(Lifestyle.Scoped);
+            return requestContext => requestContext.ContainerScope().GetInstance<THandler>();
+        }
+
+        protected override Func<ISlackServiceFactory, TService> GetServiceFactory<TService>(Func<TService> getService)
+        {
+            var instanceProducer = Lifestyle.Singleton.CreateProducer(getService, _container);
+            return _ => instanceProducer.GetInstance();
+        }
+
+        protected override Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler>(Func<THandler> getHandler)
+        {
+            var instanceProducer = Lifestyle.Scoped.CreateProducer(getHandler, _container);
+            return _ => instanceProducer.GetInstance();
+        }
+
+        private void RegisterFallbackType<TImplementation>(Lifestyle lifestyle) where TImplementation : class =>
+            RegisterFallback<TImplementation>(_container, a => a.Register(lifestyle.CreateProducer<TImplementation, TImplementation>(_container).Registration));
+
+        private static void RegisterFallback<TService>(Container container, Func<TService> factory, Lifestyle lifestyle) where TService : class =>
+            RegisterFallback<TService>(container, a => a.Register(lifestyle.CreateRegistration(factory, container)));
+
+        private static void RegisterFallback<TService>(Container container, Action<UnregisteredTypeEventArgs> register) =>
+            container.ResolveUnregisteredType += (_, args) =>
                 {
-                    { typeof(IBlockOptionProvider), _blockOptionProviders },
-                    { typeof(IAsyncViewSubmissionHandler), _viewSubmissionHandlers },
-                    { typeof(IAsyncSlashCommandHandler), _slashCommandHandlers },
-                    { typeof(IInteractiveMessageHandler), _legacyInteractiveMessageHandlers },
-                    { typeof(IOptionProvider), _legacyOptionProviders },
-                    { typeof(IDialogSubmissionHandler), _legacyDialogSubmissionHandlers }
+                    if (!args.Handled && args.UnregisteredServiceType == typeof(TService))
+                        register(args);
                 };
-        }
-
-        protected override void ReplaceClientService<TService>(Func<TService> serviceFactory) =>
-            _container.RegisterSingleton(serviceFactory);
-
-        protected override void ReplaceClientService<TService, TImplementation>() =>
-            _container.RegisterSingleton<TService, TImplementation>();
-
-        protected override void ReplaceCollectionHandling<THandler>(CollectionHandlerFactory<THandler> handlerFactory) =>
-            _container.Register(() => handlerFactory(_container.GetAllInstances<THandler>()), Lifestyle.Scoped);
-
-        protected override void ReplaceKeyedHandling<THandler>(KeyedHandlerFactory<THandler> handlerFactory) =>
-            _container.Register(() => handlerFactory(_container.GetInstance<IHandlerIndex<THandler>>()), Lifestyle.Scoped);
-
-        protected override void ReplaceCollectionHandling<THandler, TImplementation>() =>
-            _container.Register<THandler, TImplementation>(Lifestyle.Scoped);
-
-        protected override void ReplaceKeyedHandler<THandler, TImplementation>() =>
-            _container.Register<THandler, TImplementation>(Lifestyle.Scoped);
-
-        protected override void AddCollectionHandler<THandler>(THandler handler) =>
-            _container.Collection.AppendInstance(handler);
-
-        protected override void AddKeyedHandler<THandler>(string key, THandler handler) =>
-            HandlerProviders<THandler>().Add(key, () => handler);
-
-        protected override void AddCollectionHandler<TInnerHandler, TOuterHandler>(Func<TInnerHandler, TOuterHandler> adaptor)
-        {
-            _container.RegisterFallbackType<TInnerHandler, TInnerHandler>(Lifestyle.Scoped);
-            _container.Collection.Append(() => adaptor(_container.GetInstance<TInnerHandler>()), Lifestyle.Scoped);
-        }
-
-        protected override void AddKeyedHandler<TInnerHandler, TOuterHandler>(string key, Func<TInnerHandler, TOuterHandler> adaptor)
-        {
-            _container.RegisterFallbackType<TInnerHandler, TInnerHandler>(Lifestyle.Scoped);
-            HandlerProviders<TOuterHandler>().Add(key, () => adaptor(_container.GetInstance<TInnerHandler>()));
-        }
-
-        protected override void AddCollectionHandler<THandler>(Func<THandler> handlerFactory)
-        {
-            _container.Collection.Append(handlerFactory, Lifestyle.Scoped);
-        }
-
-        protected override void AddKeyedHandler<THandler>(string key, Func<THandler> handlerFactory)
-        {
-            var instanceProducer = Lifestyle.Scoped.CreateProducer(handlerFactory, _container);
-            HandlerProviders<THandler>().Add(key, () => instanceProducer.GetInstance());
-        }
-
-        internal IHandlerIndex<THandler> HandlerIndex<THandler>() =>
-            new SimpleInjectorHandlerIndex<THandler>(HandlerProviders<THandler>());
-
-        private Dictionary<string, Func<THandler>> HandlerProviders<THandler>() => (Dictionary<string, Func<THandler>>)_keyedHandlerProviders[typeof(THandler)];
     }
 }

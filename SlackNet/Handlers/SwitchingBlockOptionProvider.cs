@@ -9,7 +9,7 @@ namespace SlackNet.Handlers
         public SwitchingBlockOptionProvider(IHandlerIndex<IBlockOptionProvider> providers) => _providers = providers;
 
         public Task<BlockOptionsResponse> GetOptions(BlockOptionsRequest request) =>
-            _providers.TryGetValue(request.ActionId, out var provider)
+            _providers.TryGetHandler(request.ActionId, out var provider)
                 ? provider.GetOptions(request)
                 : Task.FromResult(new BlockOptionsResponse());
     }

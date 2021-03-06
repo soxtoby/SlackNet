@@ -9,7 +9,7 @@ namespace SlackNet.Handlers
         public SwitchingInteractiveMessageHandler(IHandlerIndex<IInteractiveMessageHandler> handlers) => _handlers = handlers;
 
         public Task<MessageResponse> Handle(InteractiveMessage message) =>
-            _handlers.TryGetValue(message.Actions[0].Name, out var handler)
+            _handlers.TryGetHandler(message.Actions[0].Name, out var handler)
                 ? handler.Handle(message)
                 : Task.FromResult<MessageResponse>(null);
     }

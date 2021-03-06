@@ -7,6 +7,7 @@
         ISlackTypeResolver GetTypeResolver();
         ISlackUrlBuilder GetUrlBuilder();
         IWebSocketFactory GetWebSocketFactory();
+        ISlackRequestContextFactory GetRequestContextFactory();
         ISlackRequestListener GetRequestListener();
         ISlackHandlerFactory GetHandlerFactory();
         ISlackApiClient GetApiClient();

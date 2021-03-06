@@ -6,275 +6,226 @@ using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.Handlers
 {
-    public abstract class FactorySlackHandlerConfiguration<TConfig> : SlackHandlerConfigurationBase<TConfig> where TConfig : FactorySlackHandlerConfiguration<TConfig>
+    public abstract class FactorySlackHandlerConfiguration<TConfig> : SlackServiceConfigurationBase<TConfig> where TConfig : FactorySlackHandlerConfiguration<TConfig>
     {
-        public override TConfig UseHttp(Func<IHttp> httpProvider) => Chain(() => ReplaceClientService(httpProvider));
-        public override TConfig UseJsonSettings(Func<SlackJsonSettings> jsonSettingsProvider) => Chain(() => ReplaceClientService(jsonSettingsProvider));
-        public override TConfig UseTypeResolver(Func<ISlackTypeResolver> slackTypeResolverProvider) => Chain(() => ReplaceClientService(slackTypeResolverProvider));
-        public override TConfig UseUrlBuilder(Func<ISlackUrlBuilder> urlBuilderProvider) => Chain(() => ReplaceClientService(urlBuilderProvider));
-        public override TConfig UseWebSocketFactory(Func<IWebSocketFactory> webSocketFactoryProvider) => Chain(() => ReplaceClientService(webSocketFactoryProvider));
-        public override TConfig UseRequestListener(Func<ISlackRequestListener> requestListenerProvider) => Chain(() => ReplaceClientService(requestListenerProvider));
-        public override TConfig UseHandlerFactory(Func<ISlackHandlerFactory> handlerFactoryProvider) => Chain(() => ReplaceClientService(handlerFactoryProvider));
-        public override TConfig UseApiClient(Func<ISlackApiClient> apiClientProvider) => Chain(() => ReplaceClientService(apiClientProvider));
-        public override TConfig UseSocketModeClient(Func<ISlackSocketModeClient> socketModeClientProvider) => Chain(() => ReplaceClientService(socketModeClientProvider));
-
-        public virtual TConfig UseHttp<TService>() where TService : class, IHttp => Chain(ReplaceClientService<IHttp, TService>);
-        public virtual TConfig UseJsonSettings<TService>() where TService : SlackJsonSettings => Chain(ReplaceClientService<SlackJsonSettings, TService>);
-        public virtual TConfig UseTypeResolver<TService>() where TService : class, ISlackTypeResolver => Chain(ReplaceClientService<ISlackTypeResolver, TService>);
-        public virtual TConfig UseUrlBuilder<TService>() where TService : class, ISlackUrlBuilder => Chain(ReplaceClientService<ISlackUrlBuilder, TService>);
-        public virtual TConfig UseWebSocketFactory<TService>() where TService : class, IWebSocketFactory => Chain(ReplaceClientService<IWebSocketFactory, TService>);
-        public virtual TConfig UseRequestListener<TService>() where TService : class, ISlackRequestListener => Chain(ReplaceClientService<ISlackRequestListener, TService>);
-        public virtual TConfig UseHandlerFactory<TService>() where TService : class, ISlackHandlerFactory => Chain(ReplaceClientService<ISlackHandlerFactory, TService>);
-        public virtual TConfig UseApiClient<TService>() where TService : class, ISlackApiClient => Chain(ReplaceClientService<ISlackApiClient, TService>);
-        public virtual TConfig UseSocketModeClient<TService>() where TService : class, ISlackSocketModeClient => Chain(ReplaceClientService<ISlackSocketModeClient, TService>);
-
-        public override TConfig ReplaceEventHandling(CollectionHandlerFactory<IEventHandler> handlerFactory) => Chain(() => ReplaceCollectionHandling(handlerFactory));
-        public override TConfig ReplaceBlockActionHandling(CollectionHandlerFactory<IAsyncBlockActionHandler> handlerFactory) => Chain(() => ReplaceCollectionHandling(handlerFactory));
-        public override TConfig ReplaceBlockOptionProviding(KeyedHandlerFactory<IBlockOptionProvider> providerFactory) => Chain(() => ReplaceKeyedHandling(providerFactory));
-        public override TConfig ReplaceMessageShortcutHandling(CollectionHandlerFactory<IAsyncMessageShortcutHandler> handlerFactory) => Chain(() => ReplaceCollectionHandling(handlerFactory));
-        public override TConfig ReplaceGlobalShortcutHandling(CollectionHandlerFactory<IAsyncGlobalShortcutHandler> handlerFactory) => Chain(() => ReplaceCollectionHandling(handlerFactory));
-        public override TConfig ReplaceViewSubmissionHandling(KeyedHandlerFactory<IAsyncViewSubmissionHandler> handlerFactory) => Chain(() => ReplaceKeyedHandling(handlerFactory));
-        public override TConfig ReplaceSlashCommandHandling(KeyedHandlerFactory<IAsyncSlashCommandHandler> handlerFactory) => Chain(() => ReplaceKeyedHandling(handlerFactory));
-        public override TConfig ReplaceWorkflowStepEditHandling(CollectionHandlerFactory<IAsyncWorkflowStepEditHandler> handlerFactory) => Chain(() => ReplaceCollectionHandling(handlerFactory));
-        public override TConfig ReplaceLegacyInteractiveMessageHandling(KeyedHandlerFactory<IInteractiveMessageHandler> handlerFactory) => Chain(() => ReplaceKeyedHandling(handlerFactory));
-        public override TConfig ReplaceLegacyOptionProviding(KeyedHandlerFactory<IOptionProvider> providerFactory) => Chain(() => ReplaceKeyedHandling(providerFactory));
-        public override TConfig ReplaceLegacyDialogSubmissionHandling(KeyedHandlerFactory<IDialogSubmissionHandler> handlerFactory) => Chain(() => ReplaceKeyedHandling(handlerFactory));
+        public TConfig UseHttp<TService>() where TService : class, IHttp => UseHttp(GetServiceFactory<IHttp, TService>());
+        public TConfig UseJsonSettings<TService>() where TService : SlackJsonSettings => UseJsonSettings(GetServiceFactory<SlackJsonSettings, TService>());
+        public TConfig UseTypeResolver<TService>() where TService : class, ISlackTypeResolver => UseTypeResolver(GetServiceFactory<ISlackTypeResolver, TService>());
+        public TConfig UseUrlBuilder<TService>() where TService : class, ISlackUrlBuilder => UseUrlBuilder(GetServiceFactory<ISlackUrlBuilder, TService>());
+        public TConfig UseWebSocketFactory<TService>() where TService : class, IWebSocketFactory => UseWebSocketFactory(GetServiceFactory<IWebSocketFactory, TService>());
+        public TConfig UseRequestContextFactory<TService>() where TService : class, ISlackRequestContextFactory => UseRequestContextFactory(GetServiceFactory<ISlackRequestContextFactory, TService>());
+        public TConfig UseRequestListener<TService>() where TService : class, ISlackRequestListener => UseRequestListener(GetServiceFactory<ISlackRequestListener, TService>());
+        public TConfig UseHandlerFactory<TService>() where TService : class, ISlackHandlerFactory => UseHandlerFactory(GetServiceFactory<ISlackHandlerFactory, TService>());
+        public TConfig UseApiClient<TService>() where TService : class, ISlackApiClient => UseApiClient(GetServiceFactory<ISlackApiClient, TService>());
+        public TConfig UseSocketModeClient<TService>() where TService : class, ISlackSocketModeClient => UseSocketModeClient(GetServiceFactory<ISlackSocketModeClient, TService>());
 
         /// <summary>
         /// Take over all event handling with your own handler type.
         /// </summary>
-        public virtual TConfig ReplaceEventHandling<THandler>() where THandler : class, IEventHandler =>
-            Chain(ReplaceCollectionHandling<IEventHandler, THandler>);
+        public TConfig ReplaceEventHandling<THandler>() where THandler : class, IEventHandler =>
+            ReplaceEventHandling(GetRequestHandlerFactory<IEventHandler, THandler>());
 
         /// <summary>
         /// Take over all block action handling with your own handler type.
         /// </summary>
-        public virtual TConfig ReplaceBlockActionHandling<THandler>() where THandler : class, IAsyncBlockActionHandler =>
-            Chain(ReplaceCollectionHandling<IAsyncBlockActionHandler, THandler>);
+        public TConfig ReplaceBlockActionHandling<THandler>() where THandler : class, IAsyncBlockActionHandler =>
+            ReplaceBlockActionHandling(GetRequestHandlerFactory<IAsyncBlockActionHandler, THandler>());
 
         /// <summary>
         /// Take over all block option providing with your own provider type.
         /// </summary>
-        public virtual TConfig ReplaceBlockOptionProviding<TProvider>() where TProvider : class, IBlockOptionProvider =>
-            Chain(ReplaceKeyedHandler<IBlockOptionProvider, TProvider>);
+        public TConfig ReplaceBlockOptionProviding<TProvider>() where TProvider : class, IBlockOptionProvider =>
+            ReplaceBlockOptionProviding(GetRequestHandlerFactory<IBlockOptionProvider, TProvider>());
 
         /// <summary>
         /// Take over all message shortcut handling with your own handler type.
         /// </summary>
-        public virtual TConfig ReplaceMessageShortcutHandling<THandler>() where THandler : class, IAsyncMessageShortcutHandler =>
-            Chain(ReplaceCollectionHandling<IAsyncMessageShortcutHandler, THandler>);
+        public TConfig ReplaceMessageShortcutHandling<THandler>() where THandler : class, IAsyncMessageShortcutHandler =>
+            ReplaceMessageShortcutHandling(GetRequestHandlerFactory<IAsyncMessageShortcutHandler, THandler>());
 
         /// <summary>
         /// Take over all global shortcut handling with your own handler type.
         /// </summary>
-        public virtual TConfig ReplaceGlobalShortcutHandling<THandler>() where THandler : class, IAsyncGlobalShortcutHandler =>
-            Chain(ReplaceCollectionHandling<IAsyncGlobalShortcutHandler, THandler>);
+        public TConfig ReplaceGlobalShortcutHandling<THandler>() where THandler : class, IAsyncGlobalShortcutHandler =>
+            ReplaceGlobalShortcutHandling(GetRequestHandlerFactory<IAsyncGlobalShortcutHandler, THandler>());
 
         /// <summary>
         /// Take over all view submission handling with your own handler type.
         /// </summary>
-        public virtual TConfig ReplaceViewSubmissionHandling<THandler>() where THandler : class, IAsyncViewSubmissionHandler =>
-            Chain(ReplaceKeyedHandler<IAsyncViewSubmissionHandler, THandler>);
+        public TConfig ReplaceViewSubmissionHandling<THandler>() where THandler : class, IAsyncViewSubmissionHandler =>
+            ReplaceViewSubmissionHandling(GetRequestHandlerFactory<IAsyncViewSubmissionHandler, THandler>());
 
         /// <summary>
         /// Take over all slash command handling with your own handler type.
         /// </summary>
-        public virtual TConfig ReplaceSlashCommandHandling<THandler>() where THandler : class, IAsyncSlashCommandHandler =>
-            Chain(ReplaceKeyedHandler<IAsyncSlashCommandHandler, THandler>);
+        public TConfig ReplaceSlashCommandHandling<THandler>() where THandler : class, IAsyncSlashCommandHandler =>
+            ReplaceSlashCommandHandling(GetRequestHandlerFactory<IAsyncSlashCommandHandler, THandler>());
 
         /// <summary>
         /// Take over all workflow Step Edit handling with your own handler type.
         /// </summary>
-        public virtual TConfig ReplaceWorkflowStepEditHandling<THandler>() where THandler : class, IAsyncWorkflowStepEditHandler =>
-            Chain(ReplaceCollectionHandling<IAsyncWorkflowStepEditHandler, THandler>);
+        public TConfig ReplaceWorkflowStepEditHandling<THandler>() where THandler : class, IAsyncWorkflowStepEditHandler =>
+            ReplaceWorkflowStepEditHandling(GetRequestHandlerFactory<IAsyncWorkflowStepEditHandler, THandler>());
 
         /// <summary>
         /// Take over all interactive message handling with your own handler type.
         /// </summary>
-        public virtual TConfig ReplaceLegacyInteractiveMessageHandling<THandler>() where THandler : class, IInteractiveMessageHandler =>
-            Chain(ReplaceKeyedHandler<IInteractiveMessageHandler, THandler>);
+        public TConfig ReplaceLegacyInteractiveMessageHandling<THandler>() where THandler : class, IInteractiveMessageHandler =>
+            ReplaceLegacyInteractiveMessageHandling(GetRequestHandlerFactory<IInteractiveMessageHandler, THandler>());
 
         /// <summary>
         /// Take over all legacy option providing with your own provider type.
         /// </summary>
-        public virtual TConfig ReplaceLegacyOptionProviding<TProvider>() where TProvider : class, IOptionProvider =>
-            Chain(ReplaceKeyedHandler<IOptionProvider, TProvider>);
+        public TConfig ReplaceLegacyOptionProviding<TProvider>() where TProvider : class, IOptionProvider =>
+            ReplaceLegacyOptionProviding(GetRequestHandlerFactory<IOptionProvider, TProvider>());
 
         /// <summary>
         /// Take over all legacy dialog submission handling with your own handler type.
         /// </summary>
-        public virtual TConfig ReplaceLegacyDialogSubmissionHandling<THandler>() where THandler : class, IDialogSubmissionHandler =>
-            Chain(ReplaceKeyedHandler<IDialogSubmissionHandler, THandler>);
+        public TConfig ReplaceLegacyDialogSubmissionHandling<THandler>() where THandler : class, IDialogSubmissionHandler =>
+            ReplaceLegacyDialogSubmissionHandling(GetRequestHandlerFactory<IDialogSubmissionHandler, THandler>());
 
         public TConfig RegisterEventHandler<THandler>()
             where THandler : class, IEventHandler =>
-            Chain(() => AddEventHandler<THandler>(h => h));
+            RegisterEventHandler(GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterEventHandler<TEvent, THandler>()
             where TEvent : Event
             where THandler : class, IEventHandler<TEvent> =>
-            Chain(() => AddEventHandler<THandler>(h => h.ToEventHandler()));
+            RegisterEventHandler(GetRegisteredHandlerFactory<THandler>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncBlockActionHandler<THandler>()
             where THandler : class, IAsyncBlockActionHandler =>
-            Chain(() => AddBlockActionHandler<THandler>(h => h));
+            RegisterAsyncBlockActionHandler(GetRegisteredHandlerFactory<THandler>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncBlockActionHandler<TAction, THandler>()
             where TAction : BlockAction
             where THandler : class, IAsyncBlockActionHandler<TAction> =>
-            Chain(() => AddBlockActionHandler<THandler>(h => h.ToBlockActionHandler()));
+            RegisterAsyncBlockActionHandler(GetRegisteredHandlerFactory<THandler>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncBlockActionHandler<TAction, THandler>(string actionId)
             where TAction : BlockAction
             where THandler : class, IAsyncBlockActionHandler<TAction> =>
-            Chain(() => AddBlockActionHandler<THandler>(h => h.ToBlockActionHandler(actionId)));
+            RegisterAsyncBlockActionHandler(actionId, GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterBlockActionHandler<THandler>()
             where THandler : class, IBlockActionHandler =>
-            Chain(() => AddBlockActionHandler<THandler>(h => h.ToBlockActionHandler()));
+            RegisterBlockActionHandler(GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterBlockActionHandler<TAction, THandler>()
             where TAction : BlockAction
             where THandler : class, IBlockActionHandler<TAction> =>
-            Chain(() => AddBlockActionHandler<THandler>(h => h.ToBlockActionHandler()));
+            RegisterBlockActionHandler(GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterBlockActionHandler<TAction, THandler>(string actionId)
             where TAction : BlockAction
             where THandler : class, IBlockActionHandler<TAction> =>
-            Chain(() => AddBlockActionHandler<THandler>(h => h.ToBlockActionHandler(actionId)));
+            RegisterBlockActionHandler(actionId, GetRegisteredHandlerFactory<THandler>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncMessageShortcutHandler<THandler>()
             where THandler : class, IAsyncMessageShortcutHandler =>
-            Chain(() => AddMessageShortcutHandler<THandler>(h => h));
+            RegisterAsyncMessageShortcutHandler(GetRegisteredHandlerFactory<THandler>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncMessageShortcutHandler<THandler>(string callbackId)
             where THandler : class, IAsyncMessageShortcutHandler =>
-            Chain(() => AddMessageShortcutHandler<THandler>(h => h.ToMessageShortcutHandler(callbackId)));
+            RegisterAsyncMessageShortcutHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterMessageShortcutHandler<THandler>()
             where THandler : class, IMessageShortcutHandler =>
-            Chain(() => AddMessageShortcutHandler<THandler>(h => h.ToMessageShortcutHandler()));
+            RegisterMessageShortcutHandler(GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterMessageShortcutHandler<THandler>(string callbackId)
             where THandler : class, IMessageShortcutHandler =>
-            Chain(() => AddMessageShortcutHandler<THandler>(h => h.ToMessageShortcutHandler(callbackId)));
+            RegisterMessageShortcutHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncGlobalShortcutHandler<THandler>()
             where THandler : class, IAsyncGlobalShortcutHandler =>
-            Chain(() => AddGlobalShortcutHandler<THandler>(h => h));
+            RegisterAsyncGlobalShortcutHandler(GetRegisteredHandlerFactory<THandler>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncGlobalShortcutHandler<THandler>(string callbackId)
             where THandler : class, IAsyncGlobalShortcutHandler =>
-            Chain(() => AddGlobalShortcutHandler<THandler>(h => h.ToGlobalShortcutHandler(callbackId)));
+            RegisterAsyncGlobalShortcutHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterGlobalShortcutHandler<THandler>()
             where THandler : class, IGlobalShortcutHandler =>
-            Chain(() => AddGlobalShortcutHandler<THandler>(h => h.ToGlobalShortcutHandler()));
+            RegisterGlobalShortcutHandler(GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterGlobalShortcutHandler<THandler>(string callbackId)
             where THandler : class, IGlobalShortcutHandler =>
-            Chain(() => AddGlobalShortcutHandler<THandler>(h => h.ToGlobalShortcutHandler(callbackId)));
+            RegisterGlobalShortcutHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterBlockOptionProvider<TProvider>(string actionId)
             where TProvider : class, IBlockOptionProvider =>
-            Chain(() => AddBlockOptionProvider<TProvider>(actionId));
+            RegisterBlockOptionProvider(actionId, GetRegisteredHandlerFactory<TProvider>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncViewSubmissionHandler<THandler>(string callbackId)
             where THandler : class, IAsyncViewSubmissionHandler =>
-            Chain(() => AddViewSubmissionHandler<THandler>(callbackId, h => h));
+            RegisterAsyncViewSubmissionHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterViewSubmissionHandler<THandler>(string callbackId)
             where THandler : class, IViewSubmissionHandler =>
-            Chain(() => AddViewSubmissionHandler<THandler>(callbackId, h => h.ToViewSubmissionHandler()));
+            RegisterViewSubmissionHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncSlashCommandHandler<THandler>(string command)
-            where THandler : class, IAsyncSlashCommandHandler
-        {
-            ValidateCommandName(command);
-            return Chain(() => AddSlashCommandHandler<THandler>(command, h => h));
-        }
+            where THandler : class, IAsyncSlashCommandHandler =>
+            RegisterAsyncSlashCommandHandler(command, GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterSlashCommandHandler<THandler>(string command)
-            where THandler : class, ISlashCommandHandler
-        {
-            ValidateCommandName(command);
-            return Chain(() => AddSlashCommandHandler<THandler>(command, h => h.ToSlashCommandHandler()));
-        }
+            where THandler : class, ISlashCommandHandler =>
+            RegisterSlashCommandHandler(command, GetRegisteredHandlerFactory<THandler>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncWorkflowStepEditHandler<THandler>()
             where THandler : class, IAsyncWorkflowStepEditHandler =>
-            Chain(() => AddWorkflowStepEditHandler<THandler>(h => h));
+            RegisterAsyncWorkflowStepEditHandler(GetRegisteredHandlerFactory<THandler>());
 
         [Obsolete(Warning.Experimental)]
         public TConfig RegisterAsyncWorkflowStepEditHandler<THandler>(string callbackId)
             where THandler : class, IAsyncWorkflowStepEditHandler =>
-            Chain(() => AddWorkflowStepEditHandler<THandler>(h => h.ToWorkflowStepEditHandler(callbackId)));
+            RegisterAsyncWorkflowStepEditHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterWorkflowStepEditHandler<THandler>()
             where THandler : class, IWorkflowStepEditHandler =>
-            Chain(() => AddWorkflowStepEditHandler<THandler>(h => h.ToWorkflowStepEditHandler()));
+            RegisterWorkflowStepEditHandler(GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterWorkflowStepEditHandler<THandler>(string callbackId)
             where THandler : class, IWorkflowStepEditHandler =>
-            Chain(() => AddWorkflowStepEditHandler<THandler>(h => h.ToWorkflowStepEditHandler(callbackId)));
+            RegisterWorkflowStepEditHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterInteractiveMessageHandler<THandler>(string actionName)
             where THandler : class, IInteractiveMessageHandler =>
-            Chain(() => AddLegacyInteractiveMessageHandler<THandler>(actionName));
+            RegisterInteractiveMessageHandler(actionName, GetRegisteredHandlerFactory<THandler>());
 
         public TConfig RegisterOptionProvider<TProvider>(string actionName)
             where TProvider : class, IOptionProvider =>
-            Chain(() => AddLegacyOptionProvider<TProvider>(actionName));
+            RegisterOptionProvider(actionName, GetRegisteredHandlerFactory<TProvider>());
 
         public TConfig RegisterDialogSubmissionHandler<THandler>(string callbackId)
             where THandler : class, IDialogSubmissionHandler =>
-            Chain(() => AddLegacyDialogSubmissionHandler<THandler>(callbackId));
+            RegisterDialogSubmissionHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
 
-        protected override void AddEventHandler(IEventHandler handler) => AddCollectionHandler(handler);
-        protected override void AddBlockActionHandler(IAsyncBlockActionHandler handler) => AddCollectionHandler(handler);
-        protected override void AddBlockOptionProvider(string actionId, IBlockOptionProvider provider) => AddKeyedHandler(actionId, provider);
-        protected override void AddMessageShortcutHandler(IAsyncMessageShortcutHandler handler) => AddCollectionHandler(handler);
-        protected override void AddGlobalShortcutHandler(IAsyncGlobalShortcutHandler handler) => AddCollectionHandler(handler);
-        protected override void AddViewSubmissionHandler(string callbackId, IAsyncViewSubmissionHandler handler) => AddKeyedHandler(callbackId, handler);
-        protected override void AddSlashCommandHandler(string command, IAsyncSlashCommandHandler handler) => AddKeyedHandler(command, handler);
-        protected override void AddWorkflowStepEditHandler(IAsyncWorkflowStepEditHandler handler) => AddCollectionHandler(handler);
+        /// <summary>
+        /// Get a service factory for the given service type. Should provide the service as a singleton.
+        /// </summary>
+        protected abstract Func<ISlackServiceFactory, TService> GetServiceFactory<TService, TImplementation>() where TService : class where TImplementation : class, TService;
 
-        protected override void AddLegacyInteractiveMessageHandler(string actionName, IInteractiveMessageHandler handler) => AddKeyedHandler(actionName, handler);
-        protected override void AddLegacyOptionProvider(string actionName, IOptionProvider provider) => AddKeyedHandler(actionName, provider);
-        protected override void AddLegacyDialogSubmissionHandler(string callbackId, IDialogSubmissionHandler handler) => AddKeyedHandler(callbackId, handler);
+        /// <summary>
+        /// Get a factory for creating a top-level handler for a request. Should scope the handler to the request.
+        /// </summary>
+        protected abstract Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler, TImplementation>() where THandler : class where TImplementation : class, THandler;
 
-        protected virtual void AddEventHandler<THandler>(Func<THandler, IEventHandler> adaptor) where THandler : class => AddCollectionHandler(adaptor);
-        protected virtual void AddBlockActionHandler<THandler>(Func<THandler, IAsyncBlockActionHandler> adaptor) where THandler : class => AddCollectionHandler(adaptor);
-        protected virtual void AddBlockOptionProvider<THandler>(string actionId) where THandler: class, IBlockOptionProvider => AddKeyedHandler<THandler, IBlockOptionProvider>(actionId, h => h);
-        protected virtual void AddMessageShortcutHandler<THandler>(Func<THandler, IAsyncMessageShortcutHandler> adaptor) where THandler : class => AddCollectionHandler(adaptor);
-        protected virtual void AddGlobalShortcutHandler<THandler>(Func<THandler, IAsyncGlobalShortcutHandler> adaptor) where THandler : class => AddCollectionHandler(adaptor);
-        protected virtual void AddViewSubmissionHandler<THandler>(string callbackId, Func<THandler, IAsyncViewSubmissionHandler> adaptor) where THandler : class => AddKeyedHandler(callbackId, adaptor);
-        protected virtual void AddSlashCommandHandler<THandler>(string command, Func<THandler, IAsyncSlashCommandHandler> adaptor) where THandler : class => AddKeyedHandler(command, adaptor);
-        protected virtual void AddWorkflowStepEditHandler<THandler>(Func<THandler, IAsyncWorkflowStepEditHandler> adaptor) where THandler : class => AddCollectionHandler(adaptor);
-
-        protected virtual void AddLegacyInteractiveMessageHandler<THandler>(string actionName) where THandler : class, IInteractiveMessageHandler => AddKeyedHandler<THandler, IInteractiveMessageHandler>(actionName, h => h);
-        protected virtual void AddLegacyOptionProvider<THandler>(string actionName) where THandler : class, IOptionProvider => AddKeyedHandler<THandler, IOptionProvider>(actionName, h => h);
-        protected virtual void AddLegacyDialogSubmissionHandler<THandler>(string callbackId) where THandler : class, IDialogSubmissionHandler => AddKeyedHandler<THandler, IDialogSubmissionHandler>(callbackId, h => h);
-
-        protected abstract void ReplaceClientService<TService>(Func<TService> serviceFactory) where TService : class;
-        protected abstract void ReplaceClientService<TService, TImplementation>() where TService : class where TImplementation : class, TService;
-        protected abstract void ReplaceCollectionHandling<THandler>(CollectionHandlerFactory<THandler> handlerFactory) where THandler : class;
-        protected abstract void ReplaceKeyedHandling<THandler>(KeyedHandlerFactory<THandler> handlerFactory) where THandler : class;
-        protected abstract void ReplaceCollectionHandling<THandler, TImplementation>() where THandler : class where TImplementation : class, THandler;
-        protected abstract void ReplaceKeyedHandler<THandler, TImplementation>() where THandler : class where TImplementation : class, THandler;
-        protected abstract void AddCollectionHandler<THandler>(THandler handler) where THandler : class;
-        protected abstract void AddKeyedHandler<THandler>(string key, THandler handler) where THandler : class;
-        protected abstract void AddCollectionHandler<TInnerHandler, TOuterHandler>(Func<TInnerHandler, TOuterHandler> adaptor) where TInnerHandler : class where TOuterHandler : class;
-        protected abstract void AddKeyedHandler<TInnerHandler, TOuterHandler>(string key, Func<TInnerHandler, TOuterHandler> adaptor) where TInnerHandler : class where TOuterHandler : class;
+        /// <summary>
+        /// Get a factory for creating an individual registered handler, to be provided to the top-level handler for the request. Should scope the handler to the request.
+        /// </summary>
+        protected abstract Func<SlackRequestContext, THandler> GetRegisteredHandlerFactory<THandler>() where THandler : class;
     }
 }
