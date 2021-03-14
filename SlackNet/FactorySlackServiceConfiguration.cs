@@ -1,12 +1,13 @@
 ﻿using System;
 using SlackNet.Blocks;
 using SlackNet.Events;
+using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 
-namespace SlackNet.Handlers
+namespace SlackNet
 {
-    public abstract class FactorySlackHandlerConfiguration<TConfig> : SlackServiceConfigurationBase<TConfig> where TConfig : FactorySlackHandlerConfiguration<TConfig>
+    public abstract class FactorySlackServiceConfiguration<TConfig> : SlackServiceConfigurationBase<TConfig> where TConfig : FactorySlackServiceConfiguration<TConfig>
     {
         public TConfig UseHttp<TService>() where TService : class, IHttp => UseHttp(GetServiceFactory<IHttp, TService>());
         public TConfig UseJsonSettings<TService>() where TService : SlackJsonSettings => UseJsonSettings(GetServiceFactory<SlackJsonSettings, TService>());
@@ -216,7 +217,7 @@ namespace SlackNet.Handlers
         /// <summary>
         /// Get a service factory for the given service type. Should provide the service as a singleton.
         /// </summary>
-        protected abstract Func<ISlackServiceFactory, TService> GetServiceFactory<TService, TImplementation>() where TService : class where TImplementation : class, TService;
+        protected abstract Func<ISlackServiceProvider, TService> GetServiceFactory<TService, TImplementation>() where TService : class where TImplementation : class, TService;
 
         /// <summary>
         /// Get a factory for creating a top-level handler for a request. Should scope the handler to the request.

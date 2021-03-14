@@ -2,27 +2,28 @@
 using System.Collections.Generic;
 using SlackNet.Blocks;
 using SlackNet.Events;
+using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 using SlackNet.SocketMode;
 
-namespace SlackNet.Handlers
+namespace SlackNet
 {
     public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : SlackServiceConfigurationBase<TConfig>
     {
         private string _apiToken;
         private string _appLevelToken;
 
-        private Func<ISlackServiceFactory, IHttp> _httpProvider = f => Default.Http(f.GetJsonSettings());
-        private Func<ISlackServiceFactory, SlackJsonSettings> _jsonSettingsProvider = f => Default.JsonSettings(f.GetTypeResolver());
-        private Func<ISlackServiceFactory, ISlackTypeResolver> _slackTypeResolverProvider = f => Default.SlackTypeResolver();
-        private Func<ISlackServiceFactory, ISlackUrlBuilder> _urlBuilderProvider = f => Default.UrlBuilder(f.GetJsonSettings());
-        private Func<ISlackServiceFactory, IWebSocketFactory> _webSocketFactoryProvider = f => Default.WebSocketFactory;
-        private Func<ISlackServiceFactory, ISlackRequestContextFactory> _requestContextFactoryProvider;
-        private Func<ISlackServiceFactory, ISlackRequestListener> _requestListenerProvider = f => Default.RequestListener;
-        private Func<ISlackServiceFactory, ISlackHandlerFactory> _handlerFactoryProvider;
-        private Func<ISlackServiceFactory, ISlackApiClient> _apiClientProvider;
-        private Func<ISlackServiceFactory, ISlackSocketModeClient> _socketModeClientProvider;
+        private Func<ISlackServiceProvider, IHttp> _httpProvider = sp => Default.Http(sp.GetJsonSettings());
+        private Func<ISlackServiceProvider, SlackJsonSettings> _jsonSettingsProvider = sp => Default.JsonSettings(sp.GetTypeResolver());
+        private Func<ISlackServiceProvider, ISlackTypeResolver> _slackTypeResolverProvider = sp => Default.SlackTypeResolver();
+        private Func<ISlackServiceProvider, ISlackUrlBuilder> _urlBuilderProvider = sp => Default.UrlBuilder(sp.GetJsonSettings());
+        private Func<ISlackServiceProvider, IWebSocketFactory> _webSocketFactoryProvider = sp => Default.WebSocketFactory;
+        private Func<ISlackServiceProvider, ISlackRequestContextFactory> _requestContextFactoryProvider;
+        private Func<ISlackServiceProvider, ISlackRequestListener> _requestListenerProvider = sp => Default.RequestListener;
+        private Func<ISlackServiceProvider, ISlackHandlerFactory> _handlerFactoryProvider;
+        private Func<ISlackServiceProvider, ISlackApiClient> _apiClientProvider;
+        private Func<ISlackServiceProvider, ISlackSocketModeClient> _socketModeClientProvider;
 
         private readonly List<Func<SlackRequestContext, IEventHandler>> _eventHandlers = new();
         private readonly List<Func<SlackRequestContext, IAsyncBlockActionHandler>> _blockActionHandlers = new();
@@ -68,19 +69,19 @@ namespace SlackNet.Handlers
         /// </summary>
         public TConfig UseAppLevelToken(string token) => Chain(() => _appLevelToken = token);
 
-        public TConfig UseHttp(Func<ISlackServiceFactory, IHttp> httpProvider) => Chain(() => _httpProvider = httpProvider);
-        public TConfig UseJsonSettings(Func<ISlackServiceFactory, SlackJsonSettings> jsonSettingsProvider) => Chain(() => _jsonSettingsProvider = jsonSettingsProvider);
-        public TConfig UseTypeResolver(Func<ISlackServiceFactory, ISlackTypeResolver> slackTypeResolverProvider) => Chain(() => _slackTypeResolverProvider = slackTypeResolverProvider);
-        public TConfig UseUrlBuilder(Func<ISlackServiceFactory, ISlackUrlBuilder> urlBuilderProvider) => Chain(() => _urlBuilderProvider = urlBuilderProvider);
-        public TConfig UseWebSocketFactory(Func<ISlackServiceFactory, IWebSocketFactory> webSocketFactoryProvider) => Chain(() => _webSocketFactoryProvider = webSocketFactoryProvider);
-        public TConfig UseRequestContextFactory(Func<ISlackServiceFactory, ISlackRequestContextFactory> requestContextFactoryProvider) => Chain(() => _requestContextFactoryProvider = requestContextFactoryProvider);
-        public TConfig UseRequestListener(Func<ISlackServiceFactory, ISlackRequestListener> requestListenerProvider) => Chain(() => _requestListenerProvider = requestListenerProvider);
-        public TConfig UseHandlerFactory(Func<ISlackServiceFactory, ISlackHandlerFactory> handlerFactoryProvider) => Chain(() => _handlerFactoryProvider = handlerFactoryProvider);
-        public TConfig UseApiClient(Func<ISlackServiceFactory, ISlackApiClient> apiClientProvider) => Chain(() => _apiClientProvider = apiClientProvider);
-        public TConfig UseSocketModeClient(Func<ISlackServiceFactory, ISlackSocketModeClient> socketModeClientProvider) => Chain(() => _socketModeClientProvider = socketModeClientProvider);
+        public TConfig UseHttp(Func<ISlackServiceProvider, IHttp> httpProvider) => Chain(() => _httpProvider = httpProvider);
+        public TConfig UseJsonSettings(Func<ISlackServiceProvider, SlackJsonSettings> jsonSettingsProvider) => Chain(() => _jsonSettingsProvider = jsonSettingsProvider);
+        public TConfig UseTypeResolver(Func<ISlackServiceProvider, ISlackTypeResolver> slackTypeResolverProvider) => Chain(() => _slackTypeResolverProvider = slackTypeResolverProvider);
+        public TConfig UseUrlBuilder(Func<ISlackServiceProvider, ISlackUrlBuilder> urlBuilderProvider) => Chain(() => _urlBuilderProvider = urlBuilderProvider);
+        public TConfig UseWebSocketFactory(Func<ISlackServiceProvider, IWebSocketFactory> webSocketFactoryProvider) => Chain(() => _webSocketFactoryProvider = webSocketFactoryProvider);
+        public TConfig UseRequestContextFactory(Func<ISlackServiceProvider, ISlackRequestContextFactory> requestContextFactoryProvider) => Chain(() => _requestContextFactoryProvider = requestContextFactoryProvider);
+        public TConfig UseRequestListener(Func<ISlackServiceProvider, ISlackRequestListener> requestListenerProvider) => Chain(() => _requestListenerProvider = requestListenerProvider);
+        public TConfig UseHandlerFactory(Func<ISlackServiceProvider, ISlackHandlerFactory> handlerFactoryProvider) => Chain(() => _handlerFactoryProvider = handlerFactoryProvider);
+        public TConfig UseApiClient(Func<ISlackServiceProvider, ISlackApiClient> apiClientProvider) => Chain(() => _apiClientProvider = apiClientProvider);
+        public TConfig UseSocketModeClient(Func<ISlackServiceProvider, ISlackSocketModeClient> socketModeClientProvider) => Chain(() => _socketModeClientProvider = socketModeClientProvider);
 
-        protected ISlackServiceFactory CreateServiceFactory(ISlackServiceFactory dependencyFactory = null) =>
-            new SlackServiceFactoryBase(
+        protected ISlackServiceProvider CreateServiceFactory(ISlackServiceProvider dependencyProvider = null) =>
+            new SlackServiceProvider(
                 _httpProvider,
                 _jsonSettingsProvider,
                 _slackTypeResolverProvider,
@@ -90,9 +91,9 @@ namespace SlackNet.Handlers
                 _requestListenerProvider,
                 _handlerFactoryProvider,
                 _apiClientProvider,
-                _socketModeClientProvider, dependencyFactory);
+                _socketModeClientProvider, dependencyProvider);
 
-        ISlackHandlerFactory CreateHandlerFactory(ISlackServiceFactory serviceFactory) =>
+        ISlackHandlerFactory CreateHandlerFactory(ISlackServiceProvider serviceProvider) =>
             new SlackHandlerFactory(
                 _eventHandlerFactory,
                 _blockActionHandlerFactory,
@@ -106,28 +107,28 @@ namespace SlackNet.Handlers
                 _legacyOptionProviderFactory,
                 _legacyDialogSubmissionHandlerFactory);
 
-        ISlackApiClient CreateApiClient(ISlackServiceFactory serviceFactory) =>
+        ISlackApiClient CreateApiClient(ISlackServiceProvider serviceProvider) =>
             new SlackApiClient(
-                serviceFactory.GetHttp(),
-                serviceFactory.GetUrlBuilder(),
-                serviceFactory.GetJsonSettings(),
+                serviceProvider.GetHttp(),
+                serviceProvider.GetUrlBuilder(),
+                serviceProvider.GetJsonSettings(),
                 _apiToken);
 
-        ISlackSocketModeClient CreateSocketModeClient(ISlackServiceFactory serviceFactory) =>
+        ISlackSocketModeClient CreateSocketModeClient(ISlackServiceProvider serviceProvider) =>
             new SlackSocketModeClient(
                 new CoreSocketModeClient(
-                    serviceFactory.GetApiClient().WithAccessToken(_appLevelToken),
-                    serviceFactory.GetWebSocketFactory(),
-                    serviceFactory.GetJsonSettings(),
+                    serviceProvider.GetApiClient().WithAccessToken(_appLevelToken),
+                    serviceProvider.GetWebSocketFactory(),
+                    serviceProvider.GetJsonSettings(),
                     Default.Scheduler),
-                serviceFactory.GetJsonSettings(),
-                serviceFactory.GetRequestListener(),
-                serviceFactory.GetRequestContextFactory(),
-                serviceFactory.GetHandlerFactory());
+                serviceProvider.GetJsonSettings(),
+                serviceProvider.GetRequestListener(),
+                serviceProvider.GetRequestContextFactory(),
+                serviceProvider.GetHandlerFactory());
 
-        private ISlackRequestContextFactory CreateRequestContextFactory(ISlackServiceFactory serviceFactory) =>
+        private ISlackRequestContextFactory CreateRequestContextFactory(ISlackServiceProvider serviceProvider) =>
             new SlackRequestContextFactory(
-                serviceFactory,
+                serviceProvider,
                 _eventHandlers,
                 _blockActionHandlers,
                 _blockOptionProviders,

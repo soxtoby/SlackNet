@@ -18,15 +18,15 @@ namespace SlackNet.Tests.Configuration
         {
             var sut = Configure(_ => { });
 
-            ShouldBeSingleInstance(sut, f => f.GetHttp(), sut.GetHttp());
-            ShouldBeSingleInstance(sut, f => f.GetJsonSettings(), sut.GetJsonSettings());
-            ShouldBeSingleInstance(sut, f => f.GetTypeResolver(), sut.GetTypeResolver());
-            ShouldBeSingleInstance(sut, f => f.GetUrlBuilder(), sut.GetUrlBuilder());
-            ShouldBeSingleInstance(sut, f => f.GetWebSocketFactory(), sut.GetWebSocketFactory());
-            ShouldBeSingleInstance(sut, f => f.GetRequestListener(), sut.GetRequestListener());
-            ShouldBeSingleInstance(sut, f => f.GetHandlerFactory(), sut.GetHandlerFactory());
-            ShouldBeSingleInstance(sut, f => f.GetApiClient(), sut.GetApiClient());
-            ShouldBeSingleInstance(sut, f => f.GetSocketModeClient(), sut.GetSocketModeClient());
+            ShouldBeSingleInstance(sut, sp => sp.GetHttp(), sut.GetHttp());
+            ShouldBeSingleInstance(sut, sp => sp.GetJsonSettings(), sut.GetJsonSettings());
+            ShouldBeSingleInstance(sut, sp => sp.GetTypeResolver(), sut.GetTypeResolver());
+            ShouldBeSingleInstance(sut, sp => sp.GetUrlBuilder(), sut.GetUrlBuilder());
+            ShouldBeSingleInstance(sut, sp => sp.GetWebSocketFactory(), sut.GetWebSocketFactory());
+            ShouldBeSingleInstance(sut, sp => sp.GetRequestListener(), sut.GetRequestListener());
+            ShouldBeSingleInstance(sut, sp => sp.GetHandlerFactory(), sut.GetHandlerFactory());
+            ShouldBeSingleInstance(sut, sp => sp.GetApiClient(), sut.GetApiClient());
+            ShouldBeSingleInstance(sut, sp => sp.GetSocketModeClient(), sut.GetSocketModeClient());
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace SlackNet.Tests.Configuration
         {
             UseService(
                 Substitute.For<IHttp>(),
-                (c, f) => c.UseHttp(f),
+                (c, sp) => c.UseHttp(sp),
                 s => s.GetHttp());
         }
 
@@ -43,7 +43,7 @@ namespace SlackNet.Tests.Configuration
         {
             UseService(
                 new SlackJsonSettings(new JsonSerializerSettings()),
-                (c, f) => c.UseJsonSettings(f),
+                (c, sp) => c.UseJsonSettings(sp),
                 s => s.GetJsonSettings());
         }
 
@@ -52,7 +52,7 @@ namespace SlackNet.Tests.Configuration
         {
             UseService(
                 Substitute.For<ISlackTypeResolver>(),
-                (c, f) => c.UseTypeResolver(f),
+                (c, sp) => c.UseTypeResolver(sp),
                 s => s.GetTypeResolver());
         }
 
@@ -61,7 +61,7 @@ namespace SlackNet.Tests.Configuration
         {
             UseService(
                 Substitute.For<ISlackUrlBuilder>(),
-                (c, f) => c.UseUrlBuilder(f),
+                (c, sp) => c.UseUrlBuilder(sp),
                 s => s.GetUrlBuilder());
         }
 
@@ -70,7 +70,7 @@ namespace SlackNet.Tests.Configuration
         {
             UseService(
                 Substitute.For<IWebSocketFactory>(),
-                (c, f) => c.UseWebSocketFactory(f),
+                (c, sp) => c.UseWebSocketFactory(sp),
                 s => s.GetWebSocketFactory());
         }
 
@@ -82,7 +82,7 @@ namespace SlackNet.Tests.Configuration
 
             UseService(
                 requestContextFactory,
-                (c, f) => c.UseRequestContextFactory(f),
+                (c, sp) => c.UseRequestContextFactory(sp),
                 s => s.GetRequestContextFactory());
         }
 
@@ -91,7 +91,7 @@ namespace SlackNet.Tests.Configuration
         {
             UseService(
                 Substitute.For<ISlackRequestListener>(),
-                (c, f) => c.UseRequestListener(f),
+                (c, sp) => c.UseRequestListener(sp),
                 s => s.GetRequestListener());
         }
 
@@ -100,7 +100,7 @@ namespace SlackNet.Tests.Configuration
         {
             UseService(
                 Substitute.For<ISlackHandlerFactory>(),
-                (c, f) => c.UseHandlerFactory(f),
+                (c, sp) => c.UseHandlerFactory(sp),
                 s => s.GetHandlerFactory());
         }
 
@@ -109,7 +109,7 @@ namespace SlackNet.Tests.Configuration
         {
             UseService(
                 Substitute.For<ISlackApiClient>(),
-                (c, f) => c.UseApiClient(f),
+                (c, sp) => c.UseApiClient(sp),
                 s => s.GetApiClient());
         }
 
@@ -118,7 +118,7 @@ namespace SlackNet.Tests.Configuration
         {
             UseService(
                 Substitute.For<ISlackSocketModeClient>(),
-                (c, f) => c.UseSocketModeClient(f),
+                (c, sp) => c.UseSocketModeClient(sp),
                 s => s.GetSocketModeClient());
         }
 
@@ -126,7 +126,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceEventHandling()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceEventHandling(f),
+                (c, sp) => c.ReplaceEventHandling(sp),
                 (hf, ctx) => hf.CreateEventHandler(ctx));
         }
 
@@ -134,7 +134,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceBlockActionHandling()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceBlockActionHandling(f),
+                (c, sp) => c.ReplaceBlockActionHandling(sp),
                 (hf, ctx) => hf.CreateBlockActionHandler(ctx));
         }
 
@@ -142,7 +142,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceBlockOptionProvider()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceBlockOptionProviding(f),
+                (c, sp) => c.ReplaceBlockOptionProviding(sp),
                 (hf, ctx) => hf.CreateBlockOptionProvider(ctx));
         }
 
@@ -150,7 +150,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceMessageShortcutHandling()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceMessageShortcutHandling(f),
+                (c, sp) => c.ReplaceMessageShortcutHandling(sp),
                 (hf, ctx) => hf.CreateMessageShortcutHandler(ctx));
         }
 
@@ -158,7 +158,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceGlobalShortcutHandling()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceGlobalShortcutHandling(f),
+                (c, sp) => c.ReplaceGlobalShortcutHandling(sp),
                 (hf, ctx) => hf.CreateGlobalShortcutHandler(ctx));
         }
 
@@ -166,7 +166,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceViewSubmissionHandling()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceViewSubmissionHandling(f),
+                (c, sp) => c.ReplaceViewSubmissionHandling(sp),
                 (hf, ctx) => hf.CreateViewSubmissionHandler(ctx));
         }
 
@@ -174,7 +174,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceSlashCommandHandling()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceSlashCommandHandling(f),
+                (c, sp) => c.ReplaceSlashCommandHandling(sp),
                 (hf, ctx) => hf.CreateSlashCommandHandler(ctx));
         }
 
@@ -182,7 +182,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceWorkflowStepEditHandling()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceWorkflowStepEditHandling(f),
+                (c, sp) => c.ReplaceWorkflowStepEditHandling(sp),
                 (hf, ctx) => hf.CreateWorkflowStepEditHandler(ctx));
         }
 
@@ -190,7 +190,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceLegacyInteractiveMessageHandling()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceLegacyInteractiveMessageHandling(f),
+                (c, sp) => c.ReplaceLegacyInteractiveMessageHandling(sp),
                 (hf, ctx) => hf.CreateLegacyInteractiveMessageHandler(ctx));
         }
 
@@ -198,7 +198,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceLegacyOptionProviding()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceLegacyOptionProviding(f),
+                (c, sp) => c.ReplaceLegacyOptionProviding(sp),
                 (hf, ctx) => hf.CreateLegacyOptionProvider(ctx));
         }
 
@@ -206,7 +206,7 @@ namespace SlackNet.Tests.Configuration
         public void ReplaceLegacyDialogSubmissionHandling()
         {
             ReplaceRequestHandling(
-                (c, f) => c.ReplaceLegacyDialogSubmissionHandling(f),
+                (c, sp) => c.ReplaceLegacyDialogSubmissionHandling(sp),
                 (hf, ctx) => hf.CreateLegacyDialogSubmissionHandler(ctx));
         }
 
@@ -582,10 +582,10 @@ namespace SlackNet.Tests.Configuration
             handler.Received().HandleCancel(dialogCancel);
         }
 
-        private void UseService<TService>(TService service, Action<TConfig, Func<ISlackServiceFactory, TService>> registerFactory, Func<ISlackServiceFactory, TService> getService) where TService : class
+        private void UseService<TService>(TService service, Action<TConfig, Func<ISlackServiceProvider, TService>> registerFactory, Func<ISlackServiceProvider, TService> getService) where TService : class
         {
-            var serviceFactory = Substitute.For<Func<ISlackServiceFactory, TService>>();
-            serviceFactory(Arg.Any<ISlackServiceFactory>()).Returns(service);
+            var serviceFactory = Substitute.For<Func<ISlackServiceProvider, TService>>();
+            serviceFactory(Arg.Any<ISlackServiceProvider>()).Returns(service);
 
             var sut = Configure(c => registerFactory(c, serviceFactory));
 
@@ -594,7 +594,7 @@ namespace SlackNet.Tests.Configuration
             serviceFactory.Received(1)(sut); // Service should only be created once
         }
 
-        private static void ShouldBeSingleInstance<TService>(ISlackServiceFactory sut, Func<ISlackServiceFactory, TService> getService, TService service) where TService : class
+        private static void ShouldBeSingleInstance<TService>(ISlackServiceProvider sut, Func<ISlackServiceProvider, TService> getService, TService service) where TService : class
         {
             getService(sut).ShouldBe(service);
             getService(sut).ShouldBe(service, "Should be same instance");
@@ -602,46 +602,46 @@ namespace SlackNet.Tests.Configuration
             DuringRequest(sut, _ => getService(sut).ShouldBe(service, "Should be same instance during request"));
         }
 
-        protected void HandleEvents(ISlackServiceFactory services, EventCallback[] eventCallbacks) =>
+        protected void HandleEvents(ISlackServiceProvider services, EventCallback[] eventCallbacks) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateEventHandler(ctx), (h, e) => h.Handle(e), eventCallbacks);
 
-        protected void HandleBlockActions(ISlackServiceFactory services, Responder responder, BlockActionRequest[] requests) =>
+        protected void HandleBlockActions(ISlackServiceProvider services, Responder responder, BlockActionRequest[] requests) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateBlockActionHandler(ctx), (h, r) => h.Handle(r, responder), requests);
 
-        protected void HandleBlockOptionRequests(ISlackServiceFactory services, BlockOptionsRequest[] requests) =>
+        protected void HandleBlockOptionRequests(ISlackServiceProvider services, BlockOptionsRequest[] requests) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateBlockOptionProvider(ctx), (h, r) => h.GetOptions(r), requests);
 
-        protected void HandleMessageShortcuts(ISlackServiceFactory services, Responder responder, MessageShortcut[] shortcuts) =>
+        protected void HandleMessageShortcuts(ISlackServiceProvider services, Responder responder, MessageShortcut[] shortcuts) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateMessageShortcutHandler(ctx), (h, s) => h.Handle(s, responder), shortcuts);
 
-        protected void HandleGlobalShortcuts(ISlackServiceFactory services, Responder responder, GlobalShortcut[] shortcuts) =>
+        protected void HandleGlobalShortcuts(ISlackServiceProvider services, Responder responder, GlobalShortcut[] shortcuts) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateGlobalShortcutHandler(ctx), (h, s) => h.Handle(s, responder), shortcuts);
 
-        protected void HandleViewSubmissions(ISlackServiceFactory services, Responder<ViewSubmissionResponse> responder, ViewSubmission[] submissions) =>
+        protected void HandleViewSubmissions(ISlackServiceProvider services, Responder<ViewSubmissionResponse> responder, ViewSubmission[] submissions) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateViewSubmissionHandler(ctx), (h, s) => h.Handle(s, responder), submissions);
 
-        protected void HandleViewCloses(ISlackServiceFactory services, Responder responder, ViewClosed[] closes) =>
+        protected void HandleViewCloses(ISlackServiceProvider services, Responder responder, ViewClosed[] closes) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateViewSubmissionHandler(ctx), (h, c) => h.HandleClose(c, responder), closes);
 
-        protected void HandleSlashCommands(ISlackServiceFactory services, Responder<SlashCommandResponse> responder, SlashCommand[] commands) =>
+        protected void HandleSlashCommands(ISlackServiceProvider services, Responder<SlashCommandResponse> responder, SlashCommand[] commands) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateSlashCommandHandler(ctx), (h, c) => h.Handle(c, responder), commands);
 
-        protected void HandleWorkflowStepEdits(ISlackServiceFactory services, Responder responder, WorkflowStepEdit[] edits) =>
+        protected void HandleWorkflowStepEdits(ISlackServiceProvider services, Responder responder, WorkflowStepEdit[] edits) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateWorkflowStepEditHandler(ctx), (h, e) => h.Handle(e, responder), edits);
 
-        protected void HandleLegacyInteractiveMessages(ISlackServiceFactory services, InteractiveMessage[] messages) =>
+        protected void HandleLegacyInteractiveMessages(ISlackServiceProvider services, InteractiveMessage[] messages) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateLegacyInteractiveMessageHandler(ctx), (h, m) => h.Handle(m), messages);
 
-        protected void HandleLegacyOptionsRequest(ISlackServiceFactory services, OptionsRequest[] requests) =>
+        protected void HandleLegacyOptionsRequest(ISlackServiceProvider services, OptionsRequest[] requests) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateLegacyOptionProvider(ctx), (h, r) => h.GetOptions(r), requests);
 
-        protected void HandleLegacyDialogSubmissions(ISlackServiceFactory services, DialogSubmission[] submissions) =>
+        protected void HandleLegacyDialogSubmissions(ISlackServiceProvider services, DialogSubmission[] submissions) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateLegacyDialogSubmissionHandler(ctx), (h, s) => h.Handle(s), submissions);
 
-        protected void HandleLegacyDialogCancellations(ISlackServiceFactory services, DialogCancellation[] cancellations) =>
+        protected void HandleLegacyDialogCancellations(ISlackServiceProvider services, DialogCancellation[] cancellations) =>
             HandleInRequest(services, (hf, ctx) => hf.CreateLegacyDialogSubmissionHandler(ctx), (h, c) => h.HandleCancel(c), cancellations);
 
-        private void HandleInRequest<THandler, TInput>(ISlackServiceFactory services, Func<ISlackHandlerFactory, SlackRequestContext, THandler> createHandler, Action<THandler, TInput> handle, TInput[] inputs)
+        private void HandleInRequest<THandler, TInput>(ISlackServiceProvider services, Func<ISlackHandlerFactory, SlackRequestContext, THandler> createHandler, Action<THandler, TInput> handle, TInput[] inputs)
         {
             DuringRequest(services, ctx =>
                 {
@@ -668,7 +668,7 @@ namespace SlackNet.Tests.Configuration
             DuringRequest(sut, ctx => getHandler(sut.GetHandlerFactory(), ctx).ShouldBe(replacementHandler2, "Should be different instance for different request"));
         }
 
-        protected static void DuringRequest(ISlackServiceFactory services, Action<SlackRequestContext> duringRequest)
+        protected static void DuringRequest(ISlackServiceProvider services, Action<SlackRequestContext> duringRequest)
         {
             var requestContext = services.GetRequestContextFactory().CreateRequestContext();
             var requestListener = services.GetRequestListener();
@@ -679,8 +679,8 @@ namespace SlackNet.Tests.Configuration
             requestListener.OnRequestEnd(requestContext);
         }
 
-        protected virtual ISlackServiceFactory DefaultServiceFactory() => Configure(_ => { });
+        protected virtual ISlackServiceProvider DefaultServiceFactory() => Configure(_ => { });
 
-        protected abstract ISlackServiceFactory Configure(Action<TConfig> configure);
+        protected abstract ISlackServiceProvider Configure(Action<TConfig> configure);
     }
 }

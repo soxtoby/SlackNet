@@ -7,7 +7,7 @@ using SlackNet.Handlers;
 namespace SlackNet.Tests.Configuration
 {
     [TestFixture]
-    public class AutofacTests : FactorySlackHandlerConfigurationWithDependencyResolverTests<AutofacSlackHandlerConfiguration, IComponentContext>
+    public class AutofacTests : FactorySlackHandlerConfigurationWithDependencyResolverTests<AutofacSlackServiceConfiguration, IComponentContext>
     {
         private InstanceTracker _instanceTracker;
 
@@ -17,13 +17,13 @@ namespace SlackNet.Tests.Configuration
             _instanceTracker = new InstanceTracker();
         }
 
-        protected override ISlackServiceFactory Configure(Action<AutofacSlackHandlerConfiguration> configure)
+        protected override ISlackServiceProvider Configure(Action<AutofacSlackServiceConfiguration> configure)
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterInstance(InstanceTracker);
             containerBuilder.AddSlackNet(configure);
             var container = containerBuilder.Build();
-            return container.Resolve<ISlackServiceFactory>();
+            return container.Resolve<ISlackServiceProvider>();
         }
 
         protected override T ResolveDependency<T>(IComponentContext resolver) => resolver.Resolve<T>();

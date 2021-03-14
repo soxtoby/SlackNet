@@ -5,11 +5,11 @@ using SlackNet.Handlers;
 namespace SlackNet.Tests.Configuration
 {
     [TestFixture]
-    public class SlackServiceConfigurationTests : SlackServiceConfigurationBaseTests<SlackServiceFactory>
+    public class SlackServiceConfigurationTests : SlackServiceConfigurationBaseTests<SlackServiceBuilder>
     {
-        protected override ISlackServiceFactory Configure(Action<SlackServiceFactory> configure)
+        protected override ISlackServiceProvider Configure(Action<SlackServiceBuilder> configure)
         {
-            var config = new SlackServiceFactory();
+            var config = new SlackServiceBuilder();
             configure(config);
             return config;
         }

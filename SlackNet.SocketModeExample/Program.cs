@@ -10,10 +10,10 @@ namespace SlackNet.SocketModeExample
         {
             var settings = ReadSettings();
 
-            var slackServices = new SlackServiceFactory()
+            var slackServices = new SlackServiceBuilder()
                 .UseApiToken(settings.ApiToken)
                 .UseAppLevelToken(settings.AppLevelToken)
-                .RegisterEventHandler(ctx => new PingHandler(ctx.ServiceFactory.GetApiClient()));
+                .RegisterEventHandler(ctx => new PingHandler(ctx.ServiceProvider.GetApiClient()));
 
             using var socketModeClient = slackServices.GetSocketModeClient();
 

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 
-namespace SlackNet.Handlers
+namespace SlackNet
 {
     public class SlackRequestContext
     {
@@ -22,7 +23,7 @@ namespace SlackNet.Handlers
         public bool ContainsKey(string key) => _items.ContainsKey(key);
         public bool TryGetValue(string key, out object value) => _items.TryGetValue(key, out value);
 
-        public ISlackServiceFactory ServiceFactory => (ISlackServiceFactory)_items[nameof(ServiceFactory)];
+        public ISlackServiceProvider ServiceProvider => (ISlackServiceProvider)_items[nameof(ServiceProvider)];
         public IEnumerable<IEventHandler> EventHandlers => (IEnumerable<IEventHandler>)_items[nameof(EventHandlers)];
         public IEnumerable<IAsyncBlockActionHandler> BlockActionHandlers => (IEnumerable<IAsyncBlockActionHandler>)_items[nameof(BlockActionHandlers)];
         public IHandlerIndex<IBlockOptionProvider> BlockOptionProviders => (IHandlerIndex<IBlockOptionProvider>)_items[nameof(BlockOptionProviders)];

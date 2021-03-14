@@ -5,7 +5,7 @@ namespace SlackNet.SimpleInjector
 {
     public static class ContainerExtensions
     {
-        public static void AddSlackNet(this Container container, Action<SimpleInjectorSlackHandlerConfiguration> configure = null) =>
-            SimpleInjectorSlackHandlerConfiguration.Configure(container, configure);
+        public static void AddSlackNet(this Container container, Action<SimpleInjectorSlackServiceConfiguration> configure = null) =>
+            SimpleInjectorSlackServiceConfiguration.Configure(container, configure);
     }
 }

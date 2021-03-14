@@ -8,24 +8,24 @@ using SlackNet.SimpleInjector;
 namespace SlackNet.Tests.Configuration
 {
     [TestFixture]
-    public class SimpleInjectorTests : FactorySlackHandlerConfigurationWithExternalDependencyResolverTests<SimpleInjectorSlackHandlerConfiguration>
+    public class SimpleInjectorTests : FactorySlackHandlerConfigurationWithExternalDependencyResolverTests<SimpleInjectorSlackServiceConfiguration>
     {
         private Container _container;
 
-        protected override ISlackServiceFactory DefaultServiceFactory() =>
+        protected override ISlackServiceProvider DefaultServiceFactory() =>
             Configure(DefaultContainer(), _ => { });
 
-        protected override ISlackServiceFactory Configure(Action<SimpleInjectorSlackHandlerConfiguration> configure) =>
+        protected override ISlackServiceProvider Configure(Action<SimpleInjectorSlackServiceConfiguration> configure) =>
             Configure(_container = DefaultContainer(), configure);
 
         private static Container DefaultContainer() =>
             new() { Options = { DefaultScopedLifestyle = new AsyncScopedLifestyle() } };
 
-        private static ISlackServiceFactory Configure(Container container, Action<SimpleInjectorSlackHandlerConfiguration> configure)
+        private static ISlackServiceProvider Configure(Container container, Action<SimpleInjectorSlackServiceConfiguration> configure)
         {
             container.Register<InstanceTracker, SimpleInjectorInstanceTracker>(Lifestyle.Singleton);
             container.AddSlackNet(configure);
-            return container.GetInstance<ISlackServiceFactory>();
+            return container.GetInstance<ISlackServiceProvider>();
         }
 
         protected override T ResolveDependency<T>() => _container.GetInstance<T>();

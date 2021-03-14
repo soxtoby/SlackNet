@@ -10,11 +10,11 @@ namespace SlackNet.Handlers
         bool TryGetHandler(string key, out THandler handler);
     }
 
-    public class HandlerDictionary<THandler> : IHandlerIndex<THandler>
+    class HandlerIndex<THandler> : IHandlerIndex<THandler>
     {
         private readonly Dictionary<string, Lazy<THandler>> _handlers;
 
-        public HandlerDictionary(SlackRequestContext requestContext, IReadOnlyDictionary<string, Func<SlackRequestContext, THandler>> handlers) =>
+        public HandlerIndex(SlackRequestContext requestContext, IReadOnlyDictionary<string, Func<SlackRequestContext, THandler>> handlers) =>
             _handlers = handlers.ToDictionary(
                 kv => kv.Key,
                 kv => new Lazy<THandler>(() => kv.Value(requestContext)));
