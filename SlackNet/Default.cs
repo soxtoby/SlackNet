@@ -52,14 +52,5 @@ namespace SlackNet
         public static ISlackRequestListener RequestListener => NullRequestListener.Instance;
 
         public static IScheduler Scheduler => System.Reactive.Concurrency.Scheduler.Default;
-
-        public static void RegisterServices(Action<Type, Func<Func<Type, object>, object>> registerService)
-        {
-            registerService(typeof(IHttp), resolve => Http((SlackJsonSettings)resolve(typeof(SlackJsonSettings))));
-            registerService(typeof(ISlackUrlBuilder), resolve => UrlBuilder((SlackJsonSettings)resolve(typeof(SlackJsonSettings))));
-            registerService(typeof(SlackJsonSettings), resolve => JsonSettings((ISlackTypeResolver)resolve(typeof(ISlackTypeResolver))));
-            registerService(typeof(ISlackTypeResolver), resolve => SlackTypeResolver(AssembliesContainingSlackTypes));
-            registerService(typeof(IWebSocketFactory), resolve => WebSocketFactory);
-        }
     }
 }
