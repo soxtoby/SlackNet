@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
-using SlackNet.Handlers;
 
 namespace SlackNet.SimpleInjector
 {

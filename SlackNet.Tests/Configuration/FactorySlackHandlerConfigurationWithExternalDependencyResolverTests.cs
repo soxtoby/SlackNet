@@ -8,7 +8,7 @@ using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.Tests.Configuration
 {
-    public abstract class FactorySlackHandlerConfigurationWithExternalDependencyResolverTests<TConfig> : FactorySlackHandlerConfigurationTests<TConfig> where TConfig : FactorySlackHandlerConfigurationWithExternalDependencyResolver<TConfig>
+    public abstract class FactorySlackHandlerConfigurationWithExternalDependencyResolverTests<TConfig> : FactorySlackHandlerConfigurationTests<TConfig> where TConfig : FactorySlackServiceConfigurationWithExternalDependencyResolver<TConfig>
     {
         [Test]
         public void UseHttpFactory()

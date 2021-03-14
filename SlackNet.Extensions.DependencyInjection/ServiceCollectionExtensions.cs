@@ -14,9 +14,9 @@ namespace SlackNet.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSlackNet(this IServiceCollection serviceCollection, Action<ServiceCollectionSlackHandlerConfiguration> configure = null)
+        public static IServiceCollection AddSlackNet(this IServiceCollection serviceCollection, Action<ServiceCollectionSlackServiceConfiguration> configure = null)
         {
-            ServiceCollectionSlackHandlerConfiguration.Configure(serviceCollection, configure);
+            ServiceCollectionSlackServiceConfiguration.Configure(serviceCollection, configure);
             return serviceCollection;
         }
     }

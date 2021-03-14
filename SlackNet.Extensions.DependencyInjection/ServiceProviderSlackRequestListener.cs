@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using SlackNet.Handlers;
 
 namespace SlackNet.Extensions.DependencyInjection
 {

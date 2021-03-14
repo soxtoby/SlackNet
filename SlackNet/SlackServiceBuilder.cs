@@ -7,11 +7,11 @@ namespace SlackNet
     /// A basic factory for SlackNet services, with some configuration.
     /// If you're using a dependency injection library, you're probably better off integrating with that instead of using this.
     /// </summary>
-    public class SlackServiceFactory : SlackServiceConfigurationBase<SlackServiceFactory>, ISlackServiceFactory
+    public class SlackServiceBuilder : SlackServiceConfigurationBase<SlackServiceBuilder>, ISlackServiceProvider
     {
-        private readonly Lazy<ISlackServiceFactory> _factory;
+        private readonly Lazy<ISlackServiceProvider> _factory;
 
-        public SlackServiceFactory() => _factory = new Lazy<ISlackServiceFactory>(() => CreateServiceFactory(this));
+        public SlackServiceBuilder() => _factory = new Lazy<ISlackServiceProvider>(() => CreateServiceFactory(this));
 
         public IHttp GetHttp() => _factory.Value.GetHttp();
         public SlackJsonSettings GetJsonSettings() => _factory.Value.GetJsonSettings();

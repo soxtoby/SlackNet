@@ -6,33 +6,33 @@ using SlackNet.Handlers;
 namespace SlackNet.SimpleInjector
 {
     [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
-    public class SimpleInjectorSlackHandlerConfiguration : FactorySlackHandlerConfigurationWithExternalDependencyResolver<SimpleInjectorSlackHandlerConfiguration>
+    public class SimpleInjectorSlackServiceConfiguration : FactorySlackServiceConfigurationWithExternalDependencyResolver<SimpleInjectorSlackServiceConfiguration>
     {
         private readonly Container _container;
-        private SimpleInjectorSlackHandlerConfiguration(Container container) => _container = container;
+        private SimpleInjectorSlackServiceConfiguration(Container container) => _container = container;
 
-        internal static void Configure(Container container, Action<SimpleInjectorSlackHandlerConfiguration> configure = null)
+        internal static void Configure(Container container, Action<SimpleInjectorSlackServiceConfiguration> configure = null)
         {
-            var config = new SimpleInjectorSlackHandlerConfiguration(container);
+            var config = new SimpleInjectorSlackServiceConfiguration(container);
             config.UseRequestListener<SimpleInjectorSlackRequestListener>();
             configure?.Invoke(config);
 
-            RegisterFallback<ISlackServiceFactory>(container, () => new SimpleInjectorSlackServiceFactory(config.CreateServiceFactory, container), Lifestyle.Singleton);
-            RegisterFallback<IHttp>(container, () => container.GetInstance<ISlackServiceFactory>().GetHttp(), Lifestyle.Singleton);
-            RegisterFallback<SlackJsonSettings>(container, () => container.GetInstance<ISlackServiceFactory>().GetJsonSettings(), Lifestyle.Singleton);
-            RegisterFallback<ISlackTypeResolver>(container, () => container.GetInstance<ISlackServiceFactory>().GetTypeResolver(), Lifestyle.Singleton);
-            RegisterFallback<ISlackUrlBuilder>(container, () => container.GetInstance<ISlackServiceFactory>().GetUrlBuilder(), Lifestyle.Singleton);
-            RegisterFallback<IWebSocketFactory>(container, () => container.GetInstance<ISlackServiceFactory>().GetWebSocketFactory(), Lifestyle.Singleton);
-            RegisterFallback<ISlackRequestListener>(container, () => container.GetInstance<ISlackServiceFactory>().GetRequestListener(), Lifestyle.Singleton);
-            RegisterFallback<ISlackHandlerFactory>(container, () => container.GetInstance<ISlackServiceFactory>().GetHandlerFactory(), Lifestyle.Singleton);
-            RegisterFallback<ISlackApiClient>(container, () => container.GetInstance<ISlackServiceFactory>().GetApiClient(), Lifestyle.Singleton);
-            RegisterFallback<ISlackSocketModeClient>(container, () => container.GetInstance<ISlackServiceFactory>().GetSocketModeClient(), Lifestyle.Singleton);
+            RegisterFallback<ISlackServiceProvider>(container, () => new SimpleInjectorSlackServiceProvider(config.CreateServiceFactory, container), Lifestyle.Singleton);
+            RegisterFallback<IHttp>(container, () => container.GetInstance<ISlackServiceProvider>().GetHttp(), Lifestyle.Singleton);
+            RegisterFallback<SlackJsonSettings>(container, () => container.GetInstance<ISlackServiceProvider>().GetJsonSettings(), Lifestyle.Singleton);
+            RegisterFallback<ISlackTypeResolver>(container, () => container.GetInstance<ISlackServiceProvider>().GetTypeResolver(), Lifestyle.Singleton);
+            RegisterFallback<ISlackUrlBuilder>(container, () => container.GetInstance<ISlackServiceProvider>().GetUrlBuilder(), Lifestyle.Singleton);
+            RegisterFallback<IWebSocketFactory>(container, () => container.GetInstance<ISlackServiceProvider>().GetWebSocketFactory(), Lifestyle.Singleton);
+            RegisterFallback<ISlackRequestListener>(container, () => container.GetInstance<ISlackServiceProvider>().GetRequestListener(), Lifestyle.Singleton);
+            RegisterFallback<ISlackHandlerFactory>(container, () => container.GetInstance<ISlackServiceProvider>().GetHandlerFactory(), Lifestyle.Singleton);
+            RegisterFallback<ISlackApiClient>(container, () => container.GetInstance<ISlackServiceProvider>().GetApiClient(), Lifestyle.Singleton);
+            RegisterFallback<ISlackSocketModeClient>(container, () => container.GetInstance<ISlackServiceProvider>().GetSocketModeClient(), Lifestyle.Singleton);
         }
 
-        protected override Func<ISlackServiceFactory, TService> GetServiceFactory<TService, TImplementation>()
+        protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService, TImplementation>()
         {
             RegisterFallbackType<TImplementation>(Lifestyle.Singleton);
-            return serviceFactory => ((SimpleInjectorSlackServiceFactory)serviceFactory).GetInstance<TImplementation>();
+            return serviceFactory => ((SimpleInjectorSlackServiceProvider)serviceFactory).GetInstance<TImplementation>();
         }
 
         protected override Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler, TImplementation>()
@@ -47,7 +47,7 @@ namespace SlackNet.SimpleInjector
             return requestContext => requestContext.ContainerScope().GetInstance<THandler>();
         }
 
-        protected override Func<ISlackServiceFactory, TService> GetServiceFactory<TService>(Func<TService> getService)
+        protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService>(Func<TService> getService)
         {
             var instanceProducer = Lifestyle.Singleton.CreateProducer(getService, _container);
             return _ => instanceProducer.GetInstance();

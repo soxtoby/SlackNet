@@ -5,7 +5,7 @@ namespace SlackNet.Autofac
 {
     public static class ContainerBuilderExtensions
     {
-        public static void AddSlackNet(this ContainerBuilder containerBuilder, Action<AutofacSlackHandlerConfiguration> configure = null) =>
-            AutofacSlackHandlerConfiguration.Configure(containerBuilder, configure);
+        public static void AddSlackNet(this ContainerBuilder containerBuilder, Action<AutofacSlackServiceConfiguration> configure = null) =>
+            AutofacSlackServiceConfiguration.Configure(containerBuilder, configure);
     }
 }

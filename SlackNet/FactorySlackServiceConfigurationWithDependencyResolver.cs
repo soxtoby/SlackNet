@@ -1,12 +1,13 @@
 ﻿using System;
 using SlackNet.Blocks;
 using SlackNet.Events;
+using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 
-namespace SlackNet.Handlers
+namespace SlackNet
 {
-    public abstract class FactorySlackHandlerConfigurationWithDependencyResolver<TConfig, TDependencyResolver> : FactorySlackHandlerConfiguration<TConfig> where TConfig : FactorySlackHandlerConfigurationWithDependencyResolver<TConfig, TDependencyResolver>
+    public abstract class FactorySlackServiceConfigurationWithDependencyResolver<TConfig, TDependencyResolver> : FactorySlackServiceConfiguration<TConfig> where TConfig : FactorySlackServiceConfigurationWithDependencyResolver<TConfig, TDependencyResolver>
     {
         public TConfig UseHttp(Func<TDependencyResolver, IHttp> httpProvider) => UseHttp(GetServiceFactory(httpProvider));
         public TConfig UseJsonSettings(Func<TDependencyResolver, SlackJsonSettings> jsonSettingsProvider) => UseJsonSettings(GetServiceFactory(jsonSettingsProvider));
@@ -129,7 +130,7 @@ namespace SlackNet.Handlers
         /// <summary>
         /// Get a service factory for the given service callback. The service will be created once.
         /// </summary>
-        protected abstract Func<ISlackServiceFactory, TService> GetServiceFactory<TService>(Func<TDependencyResolver, TService> getService) where TService : class;
+        protected abstract Func<ISlackServiceProvider, TService> GetServiceFactory<TService>(Func<TDependencyResolver, TService> getService) where TService : class;
 
         /// <summary>
         /// Get a factory for creating a handler for a request. The handler will be created once per request.

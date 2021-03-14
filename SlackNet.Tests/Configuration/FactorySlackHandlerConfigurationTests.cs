@@ -17,7 +17,7 @@ using SlackNet.WebApi;
 
 namespace SlackNet.Tests.Configuration
 {
-    public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServiceConfigurationBaseTests<TConfig> where TConfig : FactorySlackHandlerConfiguration<TConfig>
+    public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServiceConfigurationBaseTests<TConfig> where TConfig : FactorySlackServiceConfiguration<TConfig>
     {
         protected abstract InstanceTracker InstanceTracker { get; }
         private const string SameInstanceForSameRequest = "Should be same instance within request";
@@ -848,7 +848,7 @@ namespace SlackNet.Tests.Configuration
             SecondRequestInstance<TestDialogSubmissionHandler>().Received().HandleCancel(dialogCancel2);
         }
 
-        protected void UseService<TService, TImplementation>(Action<TConfig> registerService, Func<ISlackServiceFactory, TService> getService) where TService : class where TImplementation : TService
+        protected void UseService<TService, TImplementation>(Action<TConfig> registerService, Func<ISlackServiceProvider, TService> getService) where TService : class where TImplementation : TService
         {
             var sut = Configure(registerService);
 
