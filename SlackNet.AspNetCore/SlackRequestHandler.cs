@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SlackNet.Events;
+using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 
@@ -26,168 +27,206 @@ namespace SlackNet.AspNetCore
 
     class SlackRequestHandler : ISlackRequestHandler
     {
-        private readonly IEventHandler _eventHandler;
-        private readonly IAsyncBlockActionHandler _blockActionHandler;
-        private readonly IBlockOptionProvider _blockOptionProvider;
-        private readonly IInteractiveMessageHandler _interactiveMessageHandler;
-        private readonly IAsyncMessageShortcutHandler _messageShortcutHandler;
-        private readonly IAsyncGlobalShortcutHandler _globalShortcutHandler;
-        private readonly IOptionProvider _optionProvider;
-        private readonly IDialogSubmissionHandler _dialogSubmissionHandler;
-        private readonly IAsyncViewSubmissionHandler _viewSubmissionHandler;
-        private readonly IAsyncSlashCommandHandler _slashCommandHandler;
-        private readonly IAsyncWorkflowStepEditHandler _workflowStepEditHandler;
+        private readonly ISlackRequestContextFactory _requestContextFactory;
+        private readonly ISlackRequestListener _requestListener;
+        private readonly ISlackHandlerFactory _handlerFactory;
         private readonly SlackJsonSettings _jsonSettings;
 
         public SlackRequestHandler(
-            IEventHandler eventHandler,
-            IAsyncBlockActionHandler blockActionHandler,
-            IBlockOptionProvider blockOptionProvider,
-            IInteractiveMessageHandler interactiveMessageHandler,
-            IAsyncMessageShortcutHandler messageShortcutHandler,
-            IAsyncGlobalShortcutHandler globalShortcutHandler,
-            IOptionProvider optionProvider,
-            IDialogSubmissionHandler dialogSubmissionHandler,
-            IAsyncViewSubmissionHandler viewSubmissionHandler,
-            IAsyncSlashCommandHandler slashCommandHandler,
-            IAsyncWorkflowStepEditHandler workflowStepEditHandler,
+            ISlackRequestContextFactory requestContextFactory,
+            ISlackRequestListener requestListener,
+            ISlackHandlerFactory handlerFactory,
             SlackJsonSettings jsonSettings)
         {
-            _eventHandler = eventHandler;
-            _blockActionHandler = blockActionHandler;
-            _blockOptionProvider = blockOptionProvider;
-            _interactiveMessageHandler = interactiveMessageHandler;
-            _messageShortcutHandler = messageShortcutHandler;
-            _globalShortcutHandler = globalShortcutHandler;
-            _optionProvider = optionProvider;
-            _dialogSubmissionHandler = dialogSubmissionHandler;
-            _viewSubmissionHandler = viewSubmissionHandler;
-            _slashCommandHandler = slashCommandHandler;
-            _workflowStepEditHandler = workflowStepEditHandler;
+            _requestContextFactory = requestContextFactory;
+            _requestListener = requestListener;
+            _handlerFactory = handlerFactory;
             _jsonSettings = jsonSettings;
         }
 
         public async Task<SlackResult> HandleEventRequest(HttpRequest request, SlackEndpointConfiguration config)
         {
+            var requestContext = await BeginRequestContext().ConfigureAwait(false);
+
             if (request.Method != "POST")
-                return new EmptyResult(HttpStatusCode.MethodNotAllowed);
+                return EmptyResult(requestContext, HttpStatusCode.MethodNotAllowed);
 
             if (request.ContentType != "application/json")
-                return new EmptyResult(HttpStatusCode.UnsupportedMediaType);
+                return EmptyResult(requestContext, HttpStatusCode.UnsupportedMediaType);
 
             var requestBody = await ReadString(request).ConfigureAwait(false);
             var eventRequest = DeserializeEventRequest(requestBody);
 
             var shouldSkipVerification = eventRequest is UrlVerification && !config.VerifyEventUrl;
             var isRequestVerified = shouldSkipVerification || VerifyRequest(requestBody, request.Headers, eventRequest.Token, config);
-            
+
             if (!isRequestVerified)
-                return new StringResult(HttpStatusCode.BadRequest, "Invalid signature/token");
+                return StringResult(requestContext, HttpStatusCode.BadRequest, "Invalid signature/token");
 
-            switch (eventRequest)
-            {
-                case UrlVerification urlVerification:
-                    return new StringResult(HttpStatusCode.OK, urlVerification.Challenge);
+            return eventRequest switch
+                {
+                    EventCallback eventCallback => HandleEvent(requestContext, eventCallback),
+                    UrlVerification urlVerification => StringResult(requestContext, HttpStatusCode.OK, urlVerification.Challenge),
+                    _ => StringResult(requestContext, HttpStatusCode.BadRequest, "Unrecognized content")
+                };
+        }
 
-                case EventCallback eventCallback:
-                    return new EmptyResult(HttpStatusCode.OK)
-                        .OnCompleted(() => _eventHandler.Handle(eventCallback));
-
-                default:
-                    return new StringResult(HttpStatusCode.BadRequest, "Unrecognized content");
-            }
+        private SlackResult HandleEvent(SlackRequestContext requestContext, EventCallback eventCallback)
+        {
+            return EmptyResult(requestContext, HttpStatusCode.OK)
+                .OnCompleted(() => _handlerFactory.CreateEventHandler(requestContext).Handle(eventCallback));
         }
 
         public async Task<SlackResult> HandleActionRequest(HttpRequest request, SlackEndpointConfiguration config)
         {
+            var requestContext = await BeginRequestContext().ConfigureAwait(false);
+
             if (request.Method != "POST")
-                return new EmptyResult(HttpStatusCode.MethodNotAllowed);
+                return EmptyResult(requestContext, HttpStatusCode.MethodNotAllowed);
 
             await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
 
             var interactionRequest = await DeserializePayload<InteractionRequest>(request).ConfigureAwait(false);
 
-            if (interactionRequest != null && VerifyRequest(await ReadString(request).ConfigureAwait(false), request.Headers, interactionRequest.Token, config))
-            {
-                switch (interactionRequest)
-                {
-                    case BlockActionRequest blockActions:
-                        return await HandleBlockActions(blockActions).ConfigureAwait(false);
-                    case InteractiveMessage interactiveMessage:
-                        return await HandleInteractiveMessage(interactiveMessage).ConfigureAwait(false);
-                    case DialogSubmission dialogSubmission:
-                        return await HandleDialogSubmission(dialogSubmission).ConfigureAwait(false);
-                    case DialogCancellation dialogCancellation:
-                        return await HandleDialogCancellation(dialogCancellation).ConfigureAwait(false);
-                    case MessageShortcut messageShortcut:
-                        return await HandleMessageShortcut(messageShortcut).ConfigureAwait(false);
-                    case GlobalShortcut globalShortcut:
-                        return await HandleGlobalShortcut(globalShortcut).ConfigureAwait(false);
-                    case ViewSubmission viewSubmission:
-                        return await HandleViewSubmission(viewSubmission).ConfigureAwait(false);
-                    case ViewClosed viewClosed:
-                        return await HandleViewClosed(viewClosed).ConfigureAwait(false);
-                    case WorkflowStepEdit workflowStepEdit:
-                        return await HandleWorkflowStepEdit(workflowStepEdit).ConfigureAwait(false);
-                }
-            }
+            if (interactionRequest == null)
+                return StringResult(requestContext, HttpStatusCode.BadRequest, "Unrecognized content");
 
-            return new StringResult(HttpStatusCode.BadRequest, "Invalid token or unrecognized content");
+            if (!VerifyRequest(await ReadString(request).ConfigureAwait(false), request.Headers, interactionRequest.Token, config))
+                return StringResult(requestContext, HttpStatusCode.BadRequest, "Invalid token or signing secret");
+
+            return await HandleAction(requestContext, interactionRequest).ConfigureAwait(false);
         }
 
-        private Task<SlackResult> HandleBlockActions(BlockActionRequest blockActionRequest) =>
-            RespondAsync(r => _blockActionHandler.Handle(blockActionRequest, r));
+        private Task<SlackResult> HandleAction(SlackRequestContext requestContext, InteractionRequest interactionRequest) =>
+            interactionRequest switch
+                {
+                    BlockActionRequest blockActions => HandleBlockActions(requestContext, blockActions),
+                    InteractiveMessage interactiveMessage => HandleInteractiveMessage(requestContext, interactiveMessage),
+                    DialogSubmission dialogSubmission => HandleDialogSubmission(requestContext, dialogSubmission),
+                    DialogCancellation dialogCancellation => HandleDialogCancellation(requestContext, dialogCancellation),
+                    MessageShortcut messageShortcut => HandleMessageShortcut(requestContext, messageShortcut),
+                    GlobalShortcut globalShortcut => HandleGlobalShortcut(requestContext, globalShortcut),
+                    ViewSubmission viewSubmission => HandleViewSubmission(requestContext, viewSubmission),
+                    ViewClosed viewClosed => HandleViewClosed(requestContext, viewClosed),
+                    WorkflowStepEdit workflowStepEdit => HandleWorkflowStepEdit(requestContext, workflowStepEdit),
+                    _ => Task.FromResult(StringResult(requestContext, HttpStatusCode.BadRequest, "Unrecognized content"))
+                };
 
-        private async Task<SlackResult> HandleInteractiveMessage(InteractiveMessage interactiveMessage)
+        private Task<SlackResult> HandleBlockActions(SlackRequestContext requestContext, BlockActionRequest blockActionRequest) =>
+            RespondAsync(requestContext, r => _handlerFactory.CreateBlockActionHandler(requestContext).Handle(blockActionRequest, r));
+
+        private async Task<SlackResult> HandleInteractiveMessage(SlackRequestContext requestContext, InteractiveMessage interactiveMessage)
         {
-            var response = await _interactiveMessageHandler.Handle(interactiveMessage).ConfigureAwait(false);
+            var handler = _handlerFactory.CreateLegacyInteractiveMessageHandler(requestContext);
+            var response = await handler.Handle(interactiveMessage).ConfigureAwait(false);
 
             var responseObject = response == null ? null
                 : interactiveMessage.IsAppUnfurl ? (object)new AttachmentUpdateResponse(response)
                 : new MessageUpdateResponse(response);
 
-            return new JsonResult(_jsonSettings, HttpStatusCode.OK, responseObject);
+            return JsonResult(requestContext, HttpStatusCode.OK, responseObject);
         }
 
-        private async Task<SlackResult> HandleDialogSubmission(DialogSubmission dialog)
+        private async Task<SlackResult> HandleDialogSubmission(SlackRequestContext requestContext, DialogSubmission dialog)
         {
-            var errors = (await _dialogSubmissionHandler.Handle(dialog).ConfigureAwait(false))?.ToList()
+            var handler = _handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
+            var errors = (await handler.Handle(dialog).ConfigureAwait(false))?.ToList()
                 ?? new List<DialogError>();
 
             var body = new DialogErrorResponse { Errors = errors };
             return errors.Any()
-                ? (SlackResult)new JsonResult(_jsonSettings, HttpStatusCode.OK, body)
-                : new EmptyResult(HttpStatusCode.OK);
+                ? JsonResult(requestContext, HttpStatusCode.OK, body)
+                : EmptyResult(requestContext, HttpStatusCode.OK);
         }
 
-        private async Task<SlackResult> HandleDialogCancellation(DialogCancellation dialogCancellation)
+        private async Task<SlackResult> HandleDialogCancellation(SlackRequestContext requestContext, DialogCancellation dialogCancellation)
         {
-            await _dialogSubmissionHandler.HandleCancel(dialogCancellation).ConfigureAwait(false);
-            return new EmptyResult(HttpStatusCode.OK);
+            var handler = _handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
+            await handler.HandleCancel(dialogCancellation).ConfigureAwait(false);
+            return EmptyResult(requestContext, HttpStatusCode.OK);
         }
 
-        private Task<SlackResult> HandleMessageShortcut(MessageShortcut messageShortcut) =>
-            RespondAsync(r => _messageShortcutHandler.Handle(messageShortcut, r));
+        private Task<SlackResult> HandleMessageShortcut(SlackRequestContext requestContext, MessageShortcut messageShortcut) =>
+            RespondAsync(requestContext, r => _handlerFactory.CreateMessageShortcutHandler(requestContext).Handle(messageShortcut, r));
 
-        private Task<SlackResult> HandleGlobalShortcut(GlobalShortcut globalShortcut) =>
-            RespondAsync(r => _globalShortcutHandler.Handle(globalShortcut, r));
+        private Task<SlackResult> HandleGlobalShortcut(SlackRequestContext requestContext, GlobalShortcut globalShortcut) =>
+            RespondAsync(requestContext, r => _handlerFactory.CreateGlobalShortcutHandler(requestContext).Handle(globalShortcut, r));
 
-        private Task<SlackResult> HandleViewSubmission(ViewSubmission viewSubmission) =>
-            RespondAsync<ViewSubmissionResponse>(
-                respond => _viewSubmissionHandler.Handle(viewSubmission, respond),
+        private Task<SlackResult> HandleViewSubmission(SlackRequestContext requestContext, ViewSubmission viewSubmission) =>
+            RespondAsync<ViewSubmissionResponse>(respond => _handlerFactory.CreateViewSubmissionHandler(requestContext).Handle(viewSubmission, respond),
                 response => response?.ResponseAction == null
-                    ? (SlackResult)new EmptyResult(HttpStatusCode.OK)
-                    : new JsonResult(_jsonSettings, HttpStatusCode.OK, response),
-                () => new EmptyResult(HttpStatusCode.OK));
+                    ? EmptyResult(requestContext, HttpStatusCode.OK)
+                    : JsonResult(requestContext, HttpStatusCode.OK, response),
+                () => EmptyResult(requestContext, HttpStatusCode.OK));
 
-        private Task<SlackResult> HandleViewClosed(ViewClosed viewClosed) =>
-            RespondAsync(r => _viewSubmissionHandler.HandleClose(viewClosed, r));
-        
-        private Task<SlackResult> HandleWorkflowStepEdit(WorkflowStepEdit workflowStepEdit) =>
-            RespondAsync(r => _workflowStepEditHandler.Handle(workflowStepEdit, r));
+        private Task<SlackResult> HandleViewClosed(SlackRequestContext requestContext, ViewClosed viewClosed) =>
+            RespondAsync(requestContext, r => _handlerFactory.CreateViewSubmissionHandler(requestContext).HandleClose(viewClosed, r));
 
-        private static Task<SlackResult> RespondAsync(Func<Responder, Task> handle) => 
-            RespondAsync<int>(r => handle(() => r(0)), _ => new EmptyResult(HttpStatusCode.OK), () => new EmptyResult(HttpStatusCode.OK));
+        private Task<SlackResult> HandleWorkflowStepEdit(SlackRequestContext requestContext, WorkflowStepEdit workflowStepEdit) =>
+            RespondAsync(requestContext, r => _handlerFactory.CreateWorkflowStepEditHandler(requestContext).Handle(workflowStepEdit, r));
+
+        public async Task<SlackResult> HandleOptionsRequest(HttpRequest request, SlackEndpointConfiguration config)
+        {
+            var requestContext = await BeginRequestContext().ConfigureAwait(false);
+
+            if (request.Method != "POST")
+                return EmptyResult(requestContext, HttpStatusCode.MethodNotAllowed);
+
+            await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
+
+            var optionsRequest = await DeserializePayload<OptionsRequestBase>(request).ConfigureAwait(false);
+
+            if (optionsRequest != null && VerifyRequest(await ReadString(request).ConfigureAwait(false), request.Headers, optionsRequest.Token, config))
+            {
+                switch (optionsRequest)
+                {
+                    case OptionsRequest legacyOptionsRequest:
+                        return await HandleLegacyOptionsRequest(requestContext, legacyOptionsRequest).ConfigureAwait(false);
+                    case BlockOptionsRequest blockOptionsRequest:
+                        return await HandleBlockOptionsRequest(requestContext, blockOptionsRequest).ConfigureAwait(false);
+                }
+            }
+
+            return StringResult(requestContext, HttpStatusCode.BadRequest, "Invalid token or unrecognized content");
+        }
+
+        public async Task<SlackResult> HandleSlashCommandRequest(HttpRequest request, SlackEndpointConfiguration config)
+        {
+            var requestContext = await BeginRequestContext().ConfigureAwait(false);
+
+            if (request.Method != "POST")
+                return EmptyResult(requestContext, HttpStatusCode.MethodNotAllowed);
+
+            await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
+
+            var command = await DeserializeForm<SlashCommand>(request).ConfigureAwait(false);
+
+            if (!VerifyRequest(await ReadString(request).ConfigureAwait(false), request.Headers, command.Token, config))
+                return StringResult(requestContext, HttpStatusCode.BadRequest, "Invalid signature/token");
+
+            return await RespondAsync<SlashCommandResponse>(r => _handlerFactory.CreateSlashCommandHandler(requestContext).Handle(command, r),
+                response => response == null
+                    ? EmptyResult(requestContext, HttpStatusCode.OK)
+                    : JsonResult(requestContext, HttpStatusCode.OK, new SlashCommandMessageResponse(response)),
+                () => EmptyResult(requestContext, HttpStatusCode.OK)).ConfigureAwait(false);
+        }
+
+        private async Task<SlackResult> HandleLegacyOptionsRequest(SlackRequestContext requestContext, OptionsRequest optionsRequest)
+        {
+            var handler = _handlerFactory.CreateLegacyOptionProvider(requestContext);
+            var response = await handler.GetOptions(optionsRequest).ConfigureAwait(false);
+            return JsonResult(requestContext, HttpStatusCode.OK, response);
+        }
+
+        private async Task<SlackResult> HandleBlockOptionsRequest(SlackRequestContext requestContext, BlockOptionsRequest blockOptionsRequest)
+        {
+            var handler = _handlerFactory.CreateBlockOptionProvider(requestContext);
+            var response = await handler.GetOptions(blockOptionsRequest).ConfigureAwait(false);
+            return JsonResult(requestContext, HttpStatusCode.OK, response);
+        }
+
+        private Task<SlackResult> RespondAsync(SlackRequestContext requestContext, Func<Responder, Task> handle) =>
+            RespondAsync<int>(r => handle(() => r(0)), _ => EmptyResult(requestContext, HttpStatusCode.OK), () => EmptyResult(requestContext, HttpStatusCode.OK));
 
         private static async Task<SlackResult> RespondAsync<T>(Func<Responder<T>, Task> handle, Func<T, SlackResult> buildResult, Func<SlackResult> defaultResult)
         {
@@ -217,60 +256,21 @@ namespace SlackNet.AspNetCore
             }
         }
 
-        public async Task<SlackResult> HandleOptionsRequest(HttpRequest request, SlackEndpointConfiguration config)
+        private async Task<SlackRequestContext> BeginRequestContext()
         {
-            if (request.Method != "POST")
-                return new EmptyResult(HttpStatusCode.MethodNotAllowed);
-
-            await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
-
-            var optionsRequest = await DeserializePayload<OptionsRequestBase>(request).ConfigureAwait(false);
-
-            if (optionsRequest != null && VerifyRequest(await ReadString(request).ConfigureAwait(false), request.Headers, optionsRequest.Token, config))
-            {
-                switch (optionsRequest)
-                {
-                    case OptionsRequest legacyOptionsRequest:
-                        return await HandleLegacyOptionsRequest(legacyOptionsRequest).ConfigureAwait(false);
-                    case BlockOptionsRequest blockOptionsRequest:
-                        return await HandleBlockOptionsRequest(blockOptionsRequest).ConfigureAwait(false);
-                }
-            }
-
-            return new StringResult(HttpStatusCode.BadRequest, "Invalid token or unrecognized content");
+            var requestContext = _requestContextFactory.CreateRequestContext();
+            await _requestListener.OnRequestBegin(requestContext).ConfigureAwait(false);
+            return requestContext;
         }
 
-        public async Task<SlackResult> HandleSlashCommandRequest(HttpRequest request, SlackEndpointConfiguration config)
-        {
-            if (request.Method != "POST")
-                return new EmptyResult(HttpStatusCode.MethodNotAllowed);
+        private SlackResult EmptyResult(SlackRequestContext context, HttpStatusCode status) =>
+            new EmptyResult(_requestListener, context, status);
 
-            await ReplaceRequestStreamWithMemoryStream(request).ConfigureAwait(false);
+        private SlackResult StringResult(SlackRequestContext context, HttpStatusCode status, string body) =>
+            new StringResult(_requestListener, context, status, body);
 
-            var command = await DeserializeForm<SlashCommand>(request).ConfigureAwait(false);
-
-            if (!VerifyRequest(await ReadString(request).ConfigureAwait(false), request.Headers, command.Token, config))
-                return new StringResult(HttpStatusCode.BadRequest, "Invalid signature/token");
-
-            return await RespondAsync<SlashCommandResponse>(
-                r => _slashCommandHandler.Handle(command, r),
-                response => response == null
-                    ? (SlackResult)new EmptyResult(HttpStatusCode.OK)
-                    : new JsonResult(_jsonSettings, HttpStatusCode.OK, new SlashCommandMessageResponse(response)),
-                () => new EmptyResult(HttpStatusCode.OK)).ConfigureAwait(false);
-        }
-
-        private async Task<SlackResult> HandleLegacyOptionsRequest(OptionsRequest optionsRequest)
-        {
-            var response = await _optionProvider.GetOptions(optionsRequest).ConfigureAwait(false);
-            return new JsonResult(_jsonSettings, HttpStatusCode.OK, response);
-        }
-
-        private async Task<SlackResult> HandleBlockOptionsRequest(BlockOptionsRequest blockOptionsRequest)
-        {
-            var response = await _blockOptionProvider.GetOptions(blockOptionsRequest).ConfigureAwait(false);
-            return new JsonResult(_jsonSettings, HttpStatusCode.OK, response);
-        }
+        private SlackResult JsonResult(SlackRequestContext context, HttpStatusCode status, object data) =>
+            new JsonResult(_requestListener, context, _jsonSettings, status, data);
 
         private static async Task ReplaceRequestStreamWithMemoryStream(HttpRequest request)
         {
@@ -305,23 +305,22 @@ namespace SlackNet.AspNetCore
             new StreamReader(request.Body).ReadToEndAsync();
 
         private static bool VerifyRequest(string requestBody, IHeaderDictionary headers, string token, SlackEndpointConfiguration config) =>
-            !string.IsNullOrEmpty(config.SigningSecret) 
-                ? IsValidSignature(requestBody, headers, config.SigningSecret) 
+            !string.IsNullOrEmpty(config.SigningSecret)
+                ? IsValidSignature(requestBody, headers, config.SigningSecret)
                 : IsValidToken(token, config.VerificationToken);
 
         private static bool IsValidSignature(string requestBody, IHeaderDictionary headers, string signingSecret)
         {
             var encoding = new UTF8Encoding();
-            using (var hmac = new HMACSHA256(encoding.GetBytes(signingSecret)))
-            {
-                var hash = hmac.ComputeHash(encoding.GetBytes($"v0:{headers["X-Slack-Request-Timestamp"]}:{requestBody}"));
-                var hashString = $"v0={BitConverter.ToString(hash).Replace("-", "").ToLower(CultureInfo.InvariantCulture)}";
+            using var hmac = new HMACSHA256(encoding.GetBytes(signingSecret));
 
-                return hashString.Equals(headers["X-Slack-Signature"]);
-            }
+            var hash = hmac.ComputeHash(encoding.GetBytes($"v0:{headers["X-Slack-Request-Timestamp"]}:{requestBody}"));
+            var hashString = $"v0={BitConverter.ToString(hash).Replace("-", "").ToLower(CultureInfo.InvariantCulture)}";
+
+            return hashString.Equals(headers["X-Slack-Signature"]);
         }
 
-        private static bool IsValidToken(string requestToken, string verificationToken) => 
+        private static bool IsValidToken(string requestToken, string verificationToken) =>
             string.IsNullOrEmpty(verificationToken)
             || requestToken == verificationToken;
 

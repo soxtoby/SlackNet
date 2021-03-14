@@ -30,10 +30,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SlackNet.Extensions.DependencyInjection\SlackNet.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\SlackNet\SlackNet.csproj" />
   </ItemGroup>
 
