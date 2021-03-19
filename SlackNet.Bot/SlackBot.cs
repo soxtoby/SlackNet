@@ -294,7 +294,9 @@ namespace SlackNet.Bot
                     User = await user.ConfigureAwait(false),
                     Conversation = await conversation.ConfigureAwait(false),
                     Hub = await hub.ConfigureAwait(false),
-                    Attachments = message.Attachments
+                    Attachments = message.Attachments,
+                    Files = message.Files,
+                    Blocks = message.Blocks
                 };
         }
 

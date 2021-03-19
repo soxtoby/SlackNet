@@ -24,6 +24,9 @@ namespace SlackNet.Bot
         [JsonIgnore]
         public DateTime ThreadTimestamp => Ts.ToDateTime().GetValueOrDefault();
         public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
+
+        public IList<File> Files { get; set; } = new List<File>();
+
         public IList<Block> Blocks { get; set; } = new List<Block>();
         public bool IsInThread => ThreadTs != null;
 
@@ -32,7 +35,7 @@ namespace SlackNet.Bot
             || Text.IndexOf(_bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
             || Conversation?.IsIm == true;
 
-        public Task ReplyWith(string text, bool createThread = false, CancellationToken? cancellationToken = null) => 
+        public Task ReplyWith(string text, bool createThread = false, CancellationToken? cancellationToken = null) =>
             ReplyWith(new BotMessage { Text = text }, createThread, cancellationToken);
 
         public async Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false, CancellationToken? cancellationToken = null)
