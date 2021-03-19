@@ -81,33 +81,32 @@ namespace SlackNet
     public class SlackRtmClient : ISlackRtmClient
     {
         private readonly SlackJsonSettings _jsonSettings;
-        private readonly IScheduler _scheduler;
         private readonly ISlackApiClient _client;
-        private readonly IWebSocketFactory _webSocketFactory;
-        private readonly Subject<Event> _eventSubject = new();
-        private readonly ISubject<Event> _rawEvents;
-        private IWebSocket _webSocket;
-        private IDisposable _reconnection;
-        private IDisposable _eventSubscription;
+        private readonly ReconnectingWebSocket _webSocket;
+        private readonly IObservable<Event> _rawEvents;
         private uint _nextEventId;
 
         public SlackRtmClient(string token)
         {
-            _rawEvents = Subject.Synchronize(_eventSubject);
-            _webSocketFactory = Default.WebSocketFactory;
             _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
-            _scheduler = Scheduler.Default;
             _client = new SlackApiClient(Default.Http(_jsonSettings), Default.UrlBuilder(_jsonSettings), _jsonSettings, token);
+            _webSocket = new ReconnectingWebSocket(Default.WebSocketFactory, Scheduler.Default);
+            _rawEvents = DeserializeEvents(_webSocket, _jsonSettings);
         }
 
         public SlackRtmClient(ISlackApiClient client, IWebSocketFactory webSocketFactory, SlackJsonSettings jsonSettings, IScheduler scheduler)
         {
-            _rawEvents = Subject.Synchronize(_eventSubject);
             _client = client;
-            _webSocketFactory = webSocketFactory;
             _jsonSettings = jsonSettings;
-            _scheduler = scheduler;
+            _webSocket = new ReconnectingWebSocket(webSocketFactory, scheduler);
+            _rawEvents = DeserializeEvents(_webSocket, _jsonSettings);
         }
+
+        private static IObservable<Event> DeserializeEvents(ReconnectingWebSocket webSocket, SlackJsonSettings jsonSettings) =>
+            webSocket.Messages
+                .Select(m => JsonConvert.DeserializeObject<Event>(m, jsonSettings.SerializerSettings))
+                .Publish()
+                .RefCount();
 
         /// <summary>
         /// Messages coming from Slack.
@@ -131,28 +130,15 @@ namespace SlackNet
             if (Connected)
                 throw new InvalidOperationException("Already connecting or connected");
 
-            var connectResponse = await _client.Rtm.Connect(manualPresenceSubscription, batchPresenceAware, cancellationToken).ConfigureAwait(false);
+            ConnectResponse connectResponse = null;
 
-            _webSocket?.Dispose();
-            _webSocket = _webSocketFactory.Create(connectResponse.Url);
-
-            var openedTask = _webSocket.Opened
-                .Merge(_webSocket.Errors.SelectMany(Observable.Throw<Unit>))
-                .FirstAsync()
-                .ToTask(cancellationToken);
-            _webSocket.Open();
-            await openedTask.ConfigureAwait(false);
-
-            _eventSubscription?.Dispose();
-            _eventSubscription = _webSocket.Messages
-                .Select(m => JsonConvert.DeserializeObject<Event>(m, _jsonSettings.SerializerSettings))
-                .Subscribe(_rawEvents);
-
-            _reconnection?.Dispose();
-            _reconnection = _webSocket.Closed
-                .SelectMany(_ => Observable.FromAsync(() => Connect(batchPresenceAware, manualPresenceSubscription, cancellationToken), _scheduler)
-                    .RetryWithDelay(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromMinutes(5), _scheduler))
-                .Subscribe();
+            await _webSocket.Connect(
+                async () =>
+                    {
+                        connectResponse = await _client.Rtm.Connect(manualPresenceSubscription, batchPresenceAware, cancellationToken).ConfigureAwait(false);
+                        return connectResponse.Url;
+                    },
+                cancellationToken).ConfigureAwait(false);
 
             return connectResponse;
         }
@@ -228,10 +214,7 @@ namespace SlackNet
 
         public void Dispose()
         {
-            _eventSubject.Dispose();
-            _eventSubscription.Dispose();
             _webSocket?.Dispose();
-            _reconnection?.Dispose();
         }
     }
 }

@@ -27,6 +27,7 @@ namespace SlackNet
 
     public class SlackSocketModeClient : ISlackSocketModeClient
     {
+        private const string Envelope = "Envelope";
         private readonly ICoreSocketModeClient _socket;
         private readonly SlackJsonSettings _jsonSettings;
         private readonly ISlackRequestListener _requestListener;
@@ -37,14 +38,14 @@ namespace SlackNet
         public SlackSocketModeClient(
             ICoreSocketModeClient socket,
             SlackJsonSettings jsonSettings,
-            ISlackRequestListener requestListener,
             ISlackRequestContextFactory requestContextFactory,
+            ISlackRequestListener requestListener,
             ISlackHandlerFactory handlerFactory)
         {
             _socket = socket;
             _jsonSettings = jsonSettings;
-            _requestListener = requestListener;
             _requestContextFactory = requestContextFactory;
+            _requestListener = requestListener;
             _handlerFactory = handlerFactory;
 
             _requestSubscription = _socket.Messages
@@ -65,6 +66,7 @@ namespace SlackNet
             try
             {
                 var requestContext = _requestContextFactory.CreateRequestContext();
+                requestContext[Envelope] = envelope;
                 await _requestListener.OnRequestBegin(requestContext).ConfigureAwait(false);
                 var responded = false;
 
@@ -75,7 +77,7 @@ namespace SlackNet
                 finally
                 {
                     if (!responded)
-                        Respond(new Acknowledgement { EnvelopeId = envelope.EnvelopeId });
+                        Respond(null);
                     await _requestListener.OnRequestEnd(requestContext).ConfigureAwait(false);
                 }
 
@@ -84,7 +86,7 @@ namespace SlackNet
                     responded = true;
                     var ack = payload == null ? new Acknowledgement() : new Acknowledgement<object> { Payload = payload };
                     ack.EnvelopeId = envelope.EnvelopeId;
-                    Send(ack);
+                    Send(envelope.SocketId, ack);
                 }
             }
             catch
@@ -241,8 +243,8 @@ namespace SlackNet
                 return Task.CompletedTask;
             };
 
-        private void Send(Acknowledgement acknowledgement) =>
-            _socket.Send(acknowledgement);
+        private void Send(int socketId, Acknowledgement acknowledgement) =>
+            _socket.Send(socketId, acknowledgement);
 
         public void Dispose()
         {

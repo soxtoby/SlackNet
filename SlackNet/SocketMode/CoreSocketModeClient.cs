@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Reactive;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -20,9 +20,22 @@ namespace SlackNet.SocketMode
         /// </summary>
         bool Connected { get; }
 
-        IObservable<string> RawSocketMessages { get; }
+        IObservable<RawSocketMessage> RawSocketMessages { get; }
+
         IObservable<SocketMessage> Messages { get; }
-        void Send(Acknowledgement acknowledgement);
+
+        /// <summary>
+        /// Sends an acknowledgement response, with an optional payload, back to Slack.
+        /// </summary>
+        /// <param name="socketId">
+        /// The ID of the web socket to send the acknowledgement on.
+        /// Must be the same as the web socket that received the message being acknowledged.
+        /// </param>
+        /// <param name="acknowledgement">
+        /// The response to send to Slack.
+        /// Should contain the <see cref="SocketEnvelope.EnvelopeId"/> of the message being responded to.
+        /// </param>
+        void Send(int socketId, Acknowledgement acknowledgement);
     }
 
     public class CoreSocketModeClient : ICoreSocketModeClient
@@ -31,11 +44,12 @@ namespace SlackNet.SocketMode
         private readonly IWebSocketFactory _webSocketFactory;
         private readonly SlackJsonSettings _jsonSettings;
         private readonly IScheduler _scheduler;
-        private readonly Subject<string> _socketStringsSubject = new();
-        private readonly ISubject<string> _rawSocketStrings;
-        private IWebSocket _webSocket;
-        private IDisposable _socketStringsSubscription;
-        private IDisposable _reconnection;
+        private readonly Subject<RawSocketMessage> _rawSocketMessagesSubject = new();
+        private readonly ISubject<RawSocketMessage> _rawSocketMessages;
+        private List<ReconnectingWebSocket> _webSockets = new();
+        private int _numConnections = 2;
+        private TimeSpan _connectionDelay = TimeSpan.FromSeconds(10);
+        private IDisposable _rawSocketStringsSubscription;
 
         public CoreSocketModeClient(string appLevelToken)
             : this(
@@ -56,59 +70,117 @@ namespace SlackNet.SocketMode
             _jsonSettings = jsonSettings;
             _scheduler = scheduler;
 
-            _rawSocketStrings = Subject.Synchronize(_socketStringsSubject);
-            Messages = _rawSocketStrings
-                .Select(m => JsonConvert.DeserializeObject<SocketMessage>(m, _jsonSettings.SerializerSettings))
+            _rawSocketMessages = Subject.Synchronize(_rawSocketMessagesSubject);
+
+            Messages = _rawSocketMessages
+                .Select(DeserializeMessage)
                 .Publish()
                 .RefCount();
         }
 
+        private SocketMessage DeserializeMessage(RawSocketMessage rawMessage)
+        {
+            var message = JsonConvert.DeserializeObject<SocketMessage>(rawMessage.Message, _jsonSettings.SerializerSettings);
+            message.SocketId = rawMessage.SocketId;
+            return message;
+        }
+
+        /// <summary>
+        /// Number of connections to create.
+        /// If the client is already connected, changing this has no effect.
+        /// </summary>
+        public int NumConnections
+        {
+            get => _numConnections;
+            set
+            {
+                if (value <= 0) throw new ArgumentOutOfRangeException(nameof(NumConnections), "Must have at least 1 connection");
+                _numConnections = value;
+            }
+        }
+
+        /// <summary>
+        /// Delay between creating connections, to avoid connections expiring at the same time.
+        /// If the client is already connected, changing this has no effect.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public TimeSpan ConnectionDelay
+        {
+            get => _connectionDelay;
+            set
+            {
+                if (value < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(ConnectionDelay), "Delay cannot be negative");
+                _connectionDelay = value;
+            }
+        }
+
         public async Task Connect(CancellationToken? cancellationToken = null)
         {
-            var openResponse = await _client.AppsConnectionsApi.Open(cancellationToken).ConfigureAwait(false);
+            if (Connected)
+                throw new InvalidOperationException("Already connecting or connected");
 
-            _webSocket?.Dispose();
-            _webSocket = _webSocketFactory.Create(openResponse.Url);
+            _rawSocketStringsSubscription?.Dispose();
+            foreach (var webSocket in _webSockets)
+                webSocket.Dispose();
 
-            var openedTask = _webSocket.Opened
-                .Merge(_webSocket.Errors.SelectMany(Observable.Throw<Unit>))
-                .FirstAsync()
-                .ToTask(cancellationToken);
+            _webSockets = Enumerable.Range(0, NumConnections)
+                .Select(_ => new ReconnectingWebSocket(_webSocketFactory, _scheduler))
+                .ToList();
 
-            _socketStringsSubscription = _webSocket.Messages
-                .Subscribe(_rawSocketStrings);
+            _rawSocketStringsSubscription = _webSockets
+                .Select((ws, i) => ws.Messages.Select(m => new RawSocketMessage { SocketId = i, Message = m }))
+                .Merge()
+                .Subscribe(_rawSocketMessages);
 
-            _reconnection?.Dispose();
-            _reconnection = _webSocket.Closed
-                .SelectMany(_ => Observable.FromAsync(() => Connect(cancellationToken), _scheduler)
-                    .RetryWithDelay(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromMinutes(5), _scheduler))
-                .TakeUntil(_rawSocketStrings.OfType<Disconnect>().Where(d => d.Reason == DisconnectReason.SocketModeDisabled))
+            var firstConnection = _webSockets.First().Connect(GetWebSocketUrl, cancellationToken);
+
+            // Stagger remaining connections so they don't all expire at the same time
+            _webSockets.Skip(1).ToObservable()
+                .Zip(Observable.Interval(ConnectionDelay, _scheduler).Take(_webSockets.Count - 1), (ws, _) => ws)
+                .Select(ws => ws.Connect(GetWebSocketUrl, cancellationToken))
                 .Subscribe();
 
-            _webSocket.Open();
-            await openedTask.ConfigureAwait(false);
+            await firstConnection.ConfigureAwait(false);
+
+            async Task<string> GetWebSocketUrl()
+            {
+                var openResponse = await _client.AppsConnectionsApi.Open(cancellationToken).ConfigureAwait(false);
+                return openResponse.Url;
+            }
         }
 
         /// <summary>
         /// Is the client connecting or has it connected.
         /// </summary>
         public bool Connected =>
-            _webSocket?.State == WebSocketState.Connecting
-            || _webSocket?.State == WebSocketState.Open;
+            _webSockets.Any(ws =>
+                ws.State == WebSocketState.Connecting
+                || ws.State == WebSocketState.Open);
 
-        public IObservable<string> RawSocketMessages => _rawSocketStrings.AsObservable();
+        public IObservable<RawSocketMessage> RawSocketMessages => _rawSocketMessages.AsObservable();
 
         public IObservable<SocketMessage> Messages { get; }
 
-        public void Send(Acknowledgement acknowledgement) =>
-            _webSocket.Send(JsonConvert.SerializeObject(acknowledgement, _jsonSettings.SerializerSettings));
+        /// <summary>
+        /// Sends an acknowledgement response, with an optional payload, back to Slack.
+        /// </summary>
+        /// <param name="socketId">
+        /// The ID of the web socket to send the acknowledgement on.
+        /// Must be the same as the web socket that received the message being acknowledged.
+        /// </param>
+        /// <param name="acknowledgement">
+        /// The response to send to Slack.
+        /// Should contain the <see cref="SocketEnvelope.EnvelopeId"/> of the message being responded to.
+        /// </param>
+        public void Send(int socketId, Acknowledgement acknowledgement) =>
+            _webSockets.ElementAtOrDefault(socketId)?.Send(JsonConvert.SerializeObject(acknowledgement, _jsonSettings.SerializerSettings));
 
         public void Dispose()
         {
-            _socketStringsSubject?.Dispose();
-            _socketStringsSubscription?.Dispose();
-            _webSocket?.Dispose();
-            _reconnection?.Dispose();
+            _rawSocketStringsSubscription.Dispose();
+            _rawSocketMessagesSubject.Dispose();
+            foreach (var webSocket in _webSockets)
+                webSocket.Dispose();
         }
     }
 }
