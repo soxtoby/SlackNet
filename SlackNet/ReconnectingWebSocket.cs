@@ -1,0 +1,75 @@
+﻿using System;
+using System.Reactive;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Reactive.Threading.Tasks;
+using System.Threading;
+using System.Threading.Tasks;
+using WebSocket4Net;
+
+namespace SlackNet
+{
+    class ReconnectingWebSocket : IDisposable
+    {
+        private readonly IWebSocketFactory _webSocketFactory;
+        private readonly IScheduler _scheduler;
+        private readonly Subject<string> _messagesSubject = new();
+        private readonly ISubject<string> _messages;
+        private readonly Subject<Unit> _disposed = new();
+        private IWebSocket _webSocket;
+        private IDisposable _messagesSubscription;
+        private IDisposable _reconnection;
+
+        public ReconnectingWebSocket(IWebSocketFactory webSocketFactory, IScheduler scheduler)
+        {
+            _webSocketFactory = webSocketFactory;
+            _scheduler = scheduler;
+
+            _messages = Subject.Synchronize(_messagesSubject);
+        }
+
+        public async Task Connect(Func<Task<string>> getWebSocketUrl, CancellationToken? cancellationToken = null)
+        {
+            var url = await getWebSocketUrl().ConfigureAwait(false);
+
+            _webSocket?.Dispose();
+            _webSocket = _webSocketFactory.Create(url);
+
+            var openedTask = _webSocket.Opened
+                .Merge(_webSocket.Errors.SelectMany(Observable.Throw<Unit>))
+                .FirstAsync()
+                .ToTask(cancellationToken);
+
+            _messagesSubscription?.Dispose();
+            _messagesSubscription = _webSocket.Messages
+                .Subscribe(_messages);
+
+            _webSocket.Open();
+            await openedTask.ConfigureAwait(false);
+
+            _reconnection?.Dispose();
+            _reconnection = _webSocket.Closed
+                .SelectMany(_ => Observable.FromAsync(() => Connect(getWebSocketUrl, cancellationToken), _scheduler)
+                    .RetryWithDelay(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromMinutes(5), _scheduler))
+                .TakeUntil(_disposed)
+                .Subscribe();
+        }
+
+        public WebSocketState State => _webSocket?.State ?? WebSocketState.None;
+
+        public IObservable<string> Messages => _messages.AsObservable();
+
+        public void Send(string message) => _webSocket.Send(message);
+
+        public void Dispose()
+        {
+            _disposed.OnNext(Unit.Default);
+            _disposed.Dispose();
+            _webSocket?.Dispose();
+            _messagesSubject?.Dispose();
+            _messagesSubscription?.Dispose();
+            _reconnection?.Dispose();
+        }
+    }
+}

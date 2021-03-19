@@ -122,8 +122,8 @@ namespace SlackNet
                     serviceProvider.GetJsonSettings(),
                     Default.Scheduler),
                 serviceProvider.GetJsonSettings(),
-                serviceProvider.GetRequestListener(),
                 serviceProvider.GetRequestContextFactory(),
+                serviceProvider.GetRequestListener(),
                 serviceProvider.GetHandlerFactory());
 
         private ISlackRequestContextFactory CreateRequestContextFactory(ISlackServiceProvider serviceProvider) =>

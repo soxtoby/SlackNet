@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.SocketMode
 {
-    public abstract class SocketMessage
+    public class RawSocketMessage
     {
         /// <summary>
         /// SlackNet-specific property identifying which web socket the message came from.
@@ -8,6 +8,6 @@
         /// </summary>
         public int SocketId { get; set; }
 
-        public string Type { get; set; }
+        public string Message { get; set; }
     }
 }
