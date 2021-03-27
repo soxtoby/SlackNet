@@ -37,7 +37,7 @@
         }
 
         /// <summary>
-        /// Verify the signing secret or token of Slack's URL verification requests. Enabled by default. 
+        /// Verify the signing secret or token of Slack's URL verification requests. Enabled by default.
         /// </summary>
         /// <remarks>
         /// You should only disable this temporarily and in certain circumstances (see <a href="https://github.com/soxtoby/SlackNet/pull/57">SlackNet pull request #57</a> for more information).
@@ -48,9 +48,20 @@
             return this;
         }
 
+        /// <summary>
+        /// Use a <a href="https://api.slack.com/apis/connections/socket">socket mode</a> client instead of ASP.NET middleware.
+        /// Use this for testing your app without needing to host it publicly.
+        /// </summary>
+        public SlackEndpointConfiguration UseSocketMode(bool useSocketMode = true)
+        {
+            SocketMode = useSocketMode;
+            return this;
+        }
+
         public string RoutePrefix { get; private set; } = "slack";
         public string VerificationToken { get; private set; }
         public string SigningSecret { get; private set; }
         public bool VerifyEventUrl { get; private set; } = true;
+        public bool SocketMode { get; private set; }
     }
 }
