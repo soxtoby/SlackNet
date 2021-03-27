@@ -19,6 +19,7 @@ namespace SlackNet.EventsExample
         {
             services.AddSlackNet(c => c
                 .UseApiToken(Configuration["Slack:ApiToken"])
+                .UseAppLevelToken(Configuration["Slack:AppLevelToken"])
                 .RegisterEventHandler<MessageEvent, MessageHandler>()
 
                 .RegisterBlockActionHandler<ButtonAction, BlockCounter>(BlockCounter.Add1)
@@ -57,7 +58,9 @@ namespace SlackNet.EventsExample
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
-            app.UseSlackNet(c => c.UseSigningSecret(Configuration["Slack:SigningSecret"]));
+            app.UseSlackNet(c => c
+                .UseSigningSecret(Configuration["Slack:SigningSecret"])
+                .UseSocketMode(false));
 
             app.UseMvc();
         }

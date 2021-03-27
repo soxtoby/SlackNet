@@ -14,7 +14,7 @@ namespace SlackNet.EventsExample
 
         public async Task Handle(MessageEvent message)
         {
-            if (message.Text.Contains("test interactivity"))
+            if (message.Text?.Contains("test interactivity") ?? false)
                 await _slack.Chat.PostMessage(new Message
                     {
                         Text = "No interactivity for you",
