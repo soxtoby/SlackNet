@@ -18,6 +18,9 @@ namespace SlackNet.Bot
         string ThreadTs { get; set; }
         DateTime ThreadTimestamp { get; }
         IList<Attachment> Attachments { get; set; }
+
+        IList<File> Files { get; set; }
+
         IList<Block> Blocks { get; set; }
         bool IsInThread { get; }
         bool MentionsBot { get; }

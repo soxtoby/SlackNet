@@ -19,8 +19,6 @@ namespace SlackNet
         IAppsEventsAuthorizationsApi AppsEventsAuthorizations { get; }
         IAuthApi Auth { get; }
         IBotsApi Bots { get; }
-        [Obsolete("Use Conversations instead")]
-        IChannelsApi Channels { get; }
         IChatApi Chat { get; }
         IConversationsApi Conversations { get; }
         IDialogApi Dialog { get; }
@@ -28,13 +26,7 @@ namespace SlackNet
         IEmojiApi Emoji { get; }
         IFileCommentsApi FileComments { get; }
         IFilesApi Files { get; }
-        [Obsolete("Use Conversations instead")]
-        IGroupsApi Groups { get; }
-        [Obsolete("Use Conversations instead")]
-        IImApi Im { get; }
         IMigrationApi Migration { get; }
-        [Obsolete("Use Conversations instead")]
-        IMpimApi Mpim { get; }
         IOAuthApi OAuth { get; }
         IPinsApi Pins { get; }
         IReactionsApi Reactions { get; }
@@ -158,7 +150,6 @@ namespace SlackNet
         public IAppsEventsAuthorizationsApi AppsEventsAuthorizations => new AppsEventsAuthorizationsApi(this);
         public IAuthApi Auth => new AuthApi(this);
         public IBotsApi Bots => new BotsApi(this);
-        public IChannelsApi Channels => new ChannelsApi(this);
         public IChatApi Chat => new ChatApi(this);
         public IConversationsApi Conversations => new ConversationsApi(this);
         public IDialogApi Dialog => new DialogApi(this);
@@ -166,10 +157,7 @@ namespace SlackNet
         public IEmojiApi Emoji => new EmojiApi(this);
         public IFileCommentsApi FileComments => new FileCommentsApi(this);
         public IFilesApi Files => new FilesApi(this);
-        public IGroupsApi Groups => new GroupsApi(this);
-        public IImApi Im => new ImApi(this);
         public IMigrationApi Migration => new MigrationApi(this);
-        public IMpimApi Mpim => new MpimApi(this);
         public IOAuthApi OAuth => new OAuthApi(this);
         public IPinsApi Pins => new PinsApi(this);
         public IReactionsApi Reactions => new ReactionsApi(this);
@@ -257,23 +245,13 @@ namespace SlackNet
             Post<object>(responseUrl, message, cancellationToken);
 
         private Task<T> Post<T>(string requestUri, object body, CancellationToken? cancellationToken) where T : class =>
-            WebApiRequest<T>(() =>
+            WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, requestUri)
                 {
-                    var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-                    requestMessage.Content = new StringContent(JsonConvert.SerializeObject(body, _jsonSettings.SerializerSettings), Encoding.UTF8, "application/json");
-                    return requestMessage;
+                    Content = new StringContent(JsonConvert.SerializeObject(body, _jsonSettings.SerializerSettings), Encoding.UTF8, "application/json")
                 }, cancellationToken);
 
-        private string Url(string apiMethod) =>
-            _urlBuilder.Url(apiMethod, new Args());
-
-        private string Url(string apiMethod, Args args)
-        {
-            if (!args.ContainsKey("token"))
-                args["token"] = _token;
-            return _urlBuilder.Url(apiMethod, args);
-        }
+        private string Url(string apiMethod, Args args = null) =>
+            _urlBuilder.Url(apiMethod, args ?? new Args());
 
         private async Task<T> WebApiRequest<T>(Func<HttpRequestMessage> createRequest, CancellationToken? cancellationToken) where T : class
         {
@@ -281,7 +259,9 @@ namespace SlackNet
             {
                 try
                 {
-                    var response = await _http.Execute<WebApiResponse>(createRequest(), cancellationToken ?? CancellationToken.None).ConfigureAwait(false)
+                    var request = createRequest();
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+                    var response = await _http.Execute<WebApiResponse>(request, cancellationToken ?? CancellationToken.None).ConfigureAwait(false)
                         ?? new WebApiResponse { Ok = true };
                     return Deserialize<T>(response);
                 }
