@@ -102,7 +102,7 @@ namespace SlackNet
                 {
                     EventEnvelope eventEnvelope => HandleEvent(requestContext, eventEnvelope.Payload, respond),
                     // The "type" properties are identical for InteractiveMessage and OptionsRequest requests, so we need to check for a unique property
-                    InteractionEnvelope interaction => interaction.Payload.TryGetValue("action_ts", out _)
+                    InteractionEnvelope interaction => interaction.Payload.TryGetValue("response_url", out _)
                         ? HandleInteraction(requestContext, DeserializePayload<InteractionRequest>(interaction.Payload), respond)
                         : HandleOptionsRequest(requestContext, DeserializePayload<OptionsRequestBase>(interaction.Payload), respond),
                     SlashCommandEnvelope slashCommand => HandleSlashCommand(requestContext, slashCommand.Payload, respond),
