@@ -991,6 +991,7 @@ namespace SlackNet.Tests.Configuration
         {
             public void Dispose() => throw new NotImplementedException();
             public Task Connect(CancellationToken? cancellationToken = null) => throw new NotImplementedException();
+            public void Disconnect() { throw new NotImplementedException(); }
             public bool Connected { get; }
         }
 

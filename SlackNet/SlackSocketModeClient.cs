@@ -20,6 +20,8 @@ namespace SlackNet
     {
         Task Connect(CancellationToken? cancellationToken = null);
 
+        void Disconnect();
+
         /// <summary>
         /// Is the client connecting or has it connected.
         /// </summary>
@@ -56,6 +58,8 @@ namespace SlackNet
         }
 
         public Task Connect(CancellationToken? cancellationToken = null) => _socket.Connect();
+
+        public void Disconnect() => _socket.Disconnect();
 
         /// <summary>
         /// Is the client connecting or has it connected.
