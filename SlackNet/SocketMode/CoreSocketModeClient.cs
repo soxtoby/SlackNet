@@ -13,7 +13,7 @@ namespace SlackNet.SocketMode
 {
     public interface ICoreSocketModeClient : IDisposable
     {
-        Task Connect(CancellationToken? cancellationToken = null);
+        Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken? cancellationToken = null);
         void Disconnect();
 
         /// <summary>
@@ -48,8 +48,6 @@ namespace SlackNet.SocketMode
         private readonly Subject<RawSocketMessage> _rawSocketMessagesSubject = new();
         private readonly ISubject<RawSocketMessage> _rawSocketMessages;
         private List<ReconnectingWebSocket> _webSockets = new();
-        private int _numConnections = 2;
-        private TimeSpan _connectionDelay = TimeSpan.FromSeconds(10);
         private IDisposable _rawSocketStringsSubscription;
         private CancellationTokenSource _disconnectCancellation;
         private CancellationTokenSource _connectionCancelled;
@@ -93,39 +91,12 @@ namespace SlackNet.SocketMode
             return message;
         }
 
-        /// <summary>
-        /// Number of connections to create.
-        /// If the client is already connected, changing this has no effect.
-        /// </summary>
-        public int NumConnections
-        {
-            get => _numConnections;
-            set
-            {
-                if (value <= 0) throw new ArgumentOutOfRangeException(nameof(NumConnections), "Must have at least 1 connection");
-                _numConnections = value;
-            }
-        }
-
-        /// <summary>
-        /// Delay between creating connections, to avoid connections expiring at the same time.
-        /// If the client is already connected, changing this has no effect.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public TimeSpan ConnectionDelay
-        {
-            get => _connectionDelay;
-            set
-            {
-                if (value < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(ConnectionDelay), "Delay cannot be negative");
-                _connectionDelay = value;
-            }
-        }
-
-        public async Task Connect(CancellationToken? cancellationToken = null)
+        public async Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken? cancellationToken = null)
         {
             if (Connected)
                 throw new InvalidOperationException("Already connecting or connected");
+
+            connectionOptions ??= Default.SocketModeConnectionOptions;
 
             _rawSocketStringsSubscription?.Dispose();
             Disconnect();
@@ -133,7 +104,7 @@ namespace SlackNet.SocketMode
             _disconnectCancellation = new CancellationTokenSource();
             _connectionCancelled = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken ?? CancellationToken.None, _disconnectCancellation.Token);
 
-            _webSockets = Enumerable.Range(0, NumConnections)
+            _webSockets = Enumerable.Range(0, connectionOptions.NumberOfConnections)
                 .Select(_ => new ReconnectingWebSocket(_webSocketFactory, _scheduler))
                 .ToList();
 
@@ -146,7 +117,7 @@ namespace SlackNet.SocketMode
 
             // Stagger remaining connections so they don't all expire at the same time
             _webSockets.Skip(1).ToObservable()
-                .Zip(Observable.Interval(ConnectionDelay, _scheduler).Take(_webSockets.Count - 1), (ws, _) => ws)
+                .Zip(Observable.Interval(connectionOptions.ConnectionDelay, _scheduler).Take(_webSockets.Count - 1), (ws, _) => ws)
                 .Select(ws => ws.Connect(GetWebSocketUrl, _connectionCancelled.Token))
                 .Subscribe();
 
@@ -155,7 +126,9 @@ namespace SlackNet.SocketMode
             async Task<string> GetWebSocketUrl()
             {
                 var openResponse = await _client.AppsConnectionsApi.Open(_connectionCancelled.Token).ConfigureAwait(false);
-                return openResponse.Url;
+                return connectionOptions.DebugReconnects
+                    ? openResponse.Url + "&debug_reconnects=true"
+                    : openResponse.Url;
             }
         }
 
