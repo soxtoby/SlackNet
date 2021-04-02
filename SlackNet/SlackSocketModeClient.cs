@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -101,13 +102,20 @@ namespace SlackNet
             envelope switch
                 {
                     EventEnvelope eventEnvelope => HandleEvent(requestContext, eventEnvelope.Payload, respond),
-                    // The "type" properties are identical for InteractiveMessage and OptionsRequest requests, so we need to check for a unique property
-                    InteractionEnvelope interaction => interaction.Payload.TryGetValue("response_url", out _)
-                        ? HandleInteraction(requestContext, DeserializePayload<InteractionRequest>(interaction.Payload), respond)
-                        : HandleOptionsRequest(requestContext, DeserializePayload<OptionsRequestBase>(interaction.Payload), respond),
                     SlashCommandEnvelope slashCommand => HandleSlashCommand(requestContext, slashCommand.Payload, respond),
+                    InteractionEnvelope interaction when IsBlockOptionsRequest(interaction) => HandleBlockOptionsRequest(requestContext, DeserializePayload<BlockOptionsRequest>(interaction.Payload), respond),
+                    InteractionEnvelope interaction when IsLegacyOptionsRequest(interaction) => HandleLegacyOptionsRequest(requestContext, DeserializePayload<OptionsRequest>(interaction.Payload), respond),
+                    InteractionEnvelope interaction => HandleInteraction(requestContext, DeserializePayload<InteractionRequest>(interaction.Payload), respond),
                     _ => Task.CompletedTask
                 };
+
+        private static bool IsBlockOptionsRequest(InteractionEnvelope interaction) =>
+            interaction.Payload.Value<string>("type") == typeof(BlockOptionsRequest).GetTypeInfo().SlackType();
+
+        // The "type" properties are identical for InteractiveMessage and OptionsRequest requests, so we need to check for a unique property
+        private static bool IsLegacyOptionsRequest(InteractionEnvelope interaction) =>
+            interaction.Payload.Value<string>("type") == typeof(InteractiveMessage).GetTypeInfo().SlackType()
+            && !interaction.Payload.TryGetValue("response_url", out _);
 
         private T DeserializePayload<T>(JObject payload) =>
             payload.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings));
@@ -203,14 +211,6 @@ namespace SlackNet
             var handler = _handlerFactory.CreateWorkflowStepEditHandler(requestContext);
             await handler.Handle(workflowStepEdit, Responder(respond)).ConfigureAwait(false);
         }
-
-        private Task HandleOptionsRequest(SlackRequestContext requestContext, OptionsRequestBase optionsRequest, Action<object> respond) =>
-            optionsRequest switch
-                {
-                    BlockOptionsRequest blockOptionsRequest => HandleBlockOptionsRequest(requestContext, blockOptionsRequest, respond),
-                    OptionsRequest legacyOptionsRequest => HandleLegacyOptionsRequest(requestContext, legacyOptionsRequest, respond),
-                    _ => Task.CompletedTask
-                };
 
         private async Task HandleBlockOptionsRequest(SlackRequestContext requestContext, BlockOptionsRequest blockOptionsRequest, Action<object> respond)
         {
