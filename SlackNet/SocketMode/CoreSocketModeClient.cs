@@ -14,6 +14,7 @@ namespace SlackNet.SocketMode
     public interface ICoreSocketModeClient : IDisposable
     {
         Task Connect(CancellationToken? cancellationToken = null);
+        void Disconnect();
 
         /// <summary>
         /// Is the client connecting or has it connected.
@@ -50,6 +51,8 @@ namespace SlackNet.SocketMode
         private int _numConnections = 2;
         private TimeSpan _connectionDelay = TimeSpan.FromSeconds(10);
         private IDisposable _rawSocketStringsSubscription;
+        private CancellationTokenSource _disconnectCancellation;
+        private CancellationTokenSource _connectionCancelled;
 
         public CoreSocketModeClient(string appLevelToken)
             : this(
@@ -76,6 +79,11 @@ namespace SlackNet.SocketMode
                 .Select(DeserializeMessage)
                 .Publish()
                 .RefCount();
+
+            Messages
+                .OfType<Disconnect>()
+                .Where(d => d.Reason == DisconnectReason.SocketModeDisabled)
+                .Subscribe(_ => Disconnect());
         }
 
         private SocketMessage DeserializeMessage(RawSocketMessage rawMessage)
@@ -120,8 +128,10 @@ namespace SlackNet.SocketMode
                 throw new InvalidOperationException("Already connecting or connected");
 
             _rawSocketStringsSubscription?.Dispose();
-            foreach (var webSocket in _webSockets)
-                webSocket.Dispose();
+            Disconnect();
+
+            _disconnectCancellation = new CancellationTokenSource();
+            _connectionCancelled = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken ?? CancellationToken.None, _disconnectCancellation.Token);
 
             _webSockets = Enumerable.Range(0, NumConnections)
                 .Select(_ => new ReconnectingWebSocket(_webSocketFactory, _scheduler))
@@ -132,21 +142,28 @@ namespace SlackNet.SocketMode
                 .Merge()
                 .Subscribe(_rawSocketMessages);
 
-            var firstConnection = _webSockets.First().Connect(GetWebSocketUrl, cancellationToken);
+            var firstConnection = _webSockets.First().Connect(GetWebSocketUrl, _connectionCancelled.Token);
 
             // Stagger remaining connections so they don't all expire at the same time
             _webSockets.Skip(1).ToObservable()
                 .Zip(Observable.Interval(ConnectionDelay, _scheduler).Take(_webSockets.Count - 1), (ws, _) => ws)
-                .Select(ws => ws.Connect(GetWebSocketUrl, cancellationToken))
+                .Select(ws => ws.Connect(GetWebSocketUrl, _connectionCancelled.Token))
                 .Subscribe();
 
             await firstConnection.ConfigureAwait(false);
 
             async Task<string> GetWebSocketUrl()
             {
-                var openResponse = await _client.AppsConnectionsApi.Open(cancellationToken).ConfigureAwait(false);
+                var openResponse = await _client.AppsConnectionsApi.Open(_connectionCancelled.Token).ConfigureAwait(false);
                 return openResponse.Url;
             }
+        }
+
+        public void Disconnect()
+        {
+            _disconnectCancellation?.Cancel();
+            foreach (var webSocket in _webSockets)
+                webSocket.Dispose();
         }
 
         /// <summary>
@@ -177,6 +194,8 @@ namespace SlackNet.SocketMode
 
         public void Dispose()
         {
+            _connectionCancelled?.Dispose();
+            _disconnectCancellation?.Dispose();
             _rawSocketStringsSubscription.Dispose();
             _rawSocketMessagesSubject.Dispose();
             foreach (var webSocket in _webSockets)
