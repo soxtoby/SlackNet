@@ -13,7 +13,9 @@ using SlackNet.Events;
 using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
+using SlackNet.SocketMode;
 using SlackNet.WebApi;
+using Hello = SlackNet.Events.Hello;
 
 namespace SlackNet.Tests.Configuration
 {
@@ -990,7 +992,7 @@ namespace SlackNet.Tests.Configuration
         protected class TestSocketModeClient : ISlackSocketModeClient
         {
             public void Dispose() => throw new NotImplementedException();
-            public Task Connect(CancellationToken? cancellationToken = null) => throw new NotImplementedException();
+            public Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken? cancellationToken = null) => throw new NotImplementedException();
             public void Disconnect() { throw new NotImplementedException(); }
             public bool Connected { get; }
         }

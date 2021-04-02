@@ -1,4 +1,6 @@
-﻿namespace SlackNet.AspNetCore
+﻿using SlackNet.SocketMode;
+
+namespace SlackNet.AspNetCore
 {
     public class SlackEndpointConfiguration
     {
@@ -52,9 +54,16 @@
         /// Use a <a href="https://api.slack.com/apis/connections/socket">socket mode</a> client instead of ASP.NET middleware.
         /// Use this for testing your app without needing to host it publicly.
         /// </summary>
-        public SlackEndpointConfiguration UseSocketMode(bool useSocketMode = true)
+        public SlackEndpointConfiguration UseSocketMode(SocketModeConnectionOptions connectionOptions = null) => UseSocketMode(true, connectionOptions);
+
+        /// <summary>
+        /// Use a <a href="https://api.slack.com/apis/connections/socket">socket mode</a> client instead of ASP.NET middleware.
+        /// Use this for testing your app without needing to host it publicly.
+        /// </summary>
+        public SlackEndpointConfiguration UseSocketMode(bool useSocketMode = true, SocketModeConnectionOptions connectionOptions = null)
         {
             SocketMode = useSocketMode;
+            SocketModeConnectionOptions = connectionOptions;
             return this;
         }
 
@@ -63,5 +72,6 @@
         public string SigningSecret { get; private set; }
         public bool VerifyEventUrl { get; private set; } = true;
         public bool SocketMode { get; private set; }
+        public SocketModeConnectionOptions SocketModeConnectionOptions { get; set; }
     }
 }

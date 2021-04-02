@@ -4,6 +4,7 @@ using System.Reactive.Concurrency;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SlackNet.SocketMode;
 
 namespace SlackNet
 {
@@ -52,5 +53,7 @@ namespace SlackNet
         public static ISlackRequestListener RequestListener => NullRequestListener.Instance;
 
         public static IScheduler Scheduler => System.Reactive.Concurrency.Scheduler.Default;
+
+        public static SocketModeConnectionOptions SocketModeConnectionOptions => new();
     }
 }
