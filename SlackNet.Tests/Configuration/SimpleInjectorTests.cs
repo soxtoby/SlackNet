@@ -1,8 +1,8 @@
 ﻿using System;
+using EasyAssertions;
 using NUnit.Framework;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
-using SlackNet.Handlers;
 using SlackNet.SimpleInjector;
 
 namespace SlackNet.Tests.Configuration
@@ -11,6 +11,15 @@ namespace SlackNet.Tests.Configuration
     public class SimpleInjectorTests : FactorySlackHandlerConfigurationWithExternalDependencyResolverTests<SimpleInjectorSlackServiceConfiguration>
     {
         private Container _container;
+
+        protected override void ResolvedServiceShouldReferToProviderService<TService>(Func<ISlackServiceProvider, TService> getServiceFromProvider)
+        {
+            var container = DefaultContainer();
+            var slackServiceProvider = Configure(container, _ => { });
+
+            container.GetInstance<TService>()
+                .ShouldReferTo(getServiceFromProvider(slackServiceProvider));
+        }
 
         protected override ISlackServiceProvider DefaultServiceFactory() =>
             Configure(DefaultContainer(), _ => { });

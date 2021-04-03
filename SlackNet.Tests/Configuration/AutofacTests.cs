@@ -1,8 +1,8 @@
 ﻿using System;
 using Autofac;
+using EasyAssertions;
 using NUnit.Framework;
 using SlackNet.Autofac;
-using SlackNet.Handlers;
 
 namespace SlackNet.Tests.Configuration
 {
@@ -17,13 +17,24 @@ namespace SlackNet.Tests.Configuration
             _instanceTracker = new InstanceTracker();
         }
 
-        protected override ISlackServiceProvider Configure(Action<AutofacSlackServiceConfiguration> configure)
+        protected override void ResolvedServiceShouldReferToProviderService<TService>(Func<ISlackServiceProvider, TService> getServiceFromProvider)
+        {
+            var container = ConfigureContainer(_ => { });
+            var slackServiceProvider = container.Resolve<ISlackServiceProvider>();
+
+            container.Resolve<TService>()
+                .ShouldReferTo(getServiceFromProvider(slackServiceProvider));
+        }
+
+        protected override ISlackServiceProvider Configure(Action<AutofacSlackServiceConfiguration> configure) =>
+            ConfigureContainer(configure).Resolve<ISlackServiceProvider>();
+
+        private IContainer ConfigureContainer(Action<AutofacSlackServiceConfiguration> configure)
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterInstance(InstanceTracker);
             containerBuilder.AddSlackNet(configure);
-            var container = containerBuilder.Build();
-            return container.Resolve<ISlackServiceProvider>();
+            return containerBuilder.Build();
         }
 
         protected override T ResolveDependency<T>(IComponentContext resolver) => resolver.Resolve<T>();

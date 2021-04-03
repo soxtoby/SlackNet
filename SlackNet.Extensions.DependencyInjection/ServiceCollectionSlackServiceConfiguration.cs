@@ -26,6 +26,7 @@ namespace SlackNet.Extensions.DependencyInjection
             serviceCollection.TryAddSingleton<ISlackTypeResolver>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetTypeResolver());
             serviceCollection.TryAddSingleton<ISlackUrlBuilder>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetUrlBuilder());
             serviceCollection.TryAddSingleton<IWebSocketFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetWebSocketFactory());
+            serviceCollection.TryAddSingleton<ISlackRequestContextFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetRequestContextFactory());
             serviceCollection.TryAddSingleton<ISlackRequestListener>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetRequestListener());
             serviceCollection.TryAddSingleton<ISlackHandlerFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetHandlerFactory());
             serviceCollection.TryAddSingleton<ISlackApiClient>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetApiClient());

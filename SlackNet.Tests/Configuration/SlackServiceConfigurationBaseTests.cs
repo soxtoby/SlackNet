@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using EasyAssertions;
 using Newtonsoft.Json;
 using NSubstitute;
@@ -13,21 +16,17 @@ namespace SlackNet.Tests.Configuration
 {
     public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig : SlackServiceConfigurationBase<TConfig>
     {
-        [Test]
-        public void DefaultServices()
+        [TestCaseSource(nameof(SlackServiceProviderMethods))]
+        public void DefaultServices(MethodInfo providerMethod)
         {
             var sut = Configure(_ => { });
 
-            ShouldBeSingleInstance(sut, sp => sp.GetHttp(), sut.GetHttp());
-            ShouldBeSingleInstance(sut, sp => sp.GetJsonSettings(), sut.GetJsonSettings());
-            ShouldBeSingleInstance(sut, sp => sp.GetTypeResolver(), sut.GetTypeResolver());
-            ShouldBeSingleInstance(sut, sp => sp.GetUrlBuilder(), sut.GetUrlBuilder());
-            ShouldBeSingleInstance(sut, sp => sp.GetWebSocketFactory(), sut.GetWebSocketFactory());
-            ShouldBeSingleInstance(sut, sp => sp.GetRequestListener(), sut.GetRequestListener());
-            ShouldBeSingleInstance(sut, sp => sp.GetHandlerFactory(), sut.GetHandlerFactory());
-            ShouldBeSingleInstance(sut, sp => sp.GetApiClient(), sut.GetApiClient());
-            ShouldBeSingleInstance(sut, sp => sp.GetSocketModeClient(), sut.GetSocketModeClient());
+            ShouldBeSingleInstance(sut, sp => providerMethod.Invoke(sp, new object[0]), providerMethod.Invoke(sut, new object[0]));
         }
+
+        protected static IEnumerable<TestCaseData> SlackServiceProviderMethods =>
+            typeof(ISlackServiceProvider).GetMethods()
+                .Select(m => new TestCaseData(m).SetName(m.ReturnType.Name));
 
         [Test]
         public void UseHttp()
