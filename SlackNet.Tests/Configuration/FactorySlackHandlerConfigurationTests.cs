@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyAssertions;
@@ -24,6 +25,18 @@ namespace SlackNet.Tests.Configuration
         protected abstract InstanceTracker InstanceTracker { get; }
         private const string SameInstanceForSameRequest = "Should be same instance within request";
         private const string DifferentInstanceForDifferentRequest = "Should be different instance for different request";
+
+        [TestCaseSource(nameof(SlackServiceProviderMethods))]
+        public void SlackNetServicesAreRegistered(MethodInfo providerMethod)
+        {
+            var assertion = GetType()
+                .GetMethod(nameof(ResolvedServiceShouldReferToProviderService), BindingFlags.Instance | BindingFlags.NonPublic)!
+                .MakeGenericMethod(providerMethod.ReturnType);
+            var getServiceFromProvider = providerMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(typeof(ISlackServiceProvider), providerMethod.ReturnType));
+            assertion.Invoke(this, new object[] { getServiceFromProvider });
+        }
+
+        protected abstract void ResolvedServiceShouldReferToProviderService<TService>(Func<ISlackServiceProvider, TService> getServiceFromProvider) where TService : class;
 
         [Test]
         public void UseHttpType()
