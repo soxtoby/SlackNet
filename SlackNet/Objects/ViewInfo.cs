@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using SlackNet.Blocks;
 
 namespace SlackNet
@@ -29,6 +30,7 @@ namespace SlackNet
         /// of the child <see cref="IInputBlockElement"/> of the input block.
         /// This final child object will contain the type and submitted value of the input block element.
         /// </summary>
+        [JsonConverter(typeof(IgnoreArrayConverter))] // Slack returns an empty array instead of an object if no values have been filled in
         public Dictionary<string, Dictionary<string, ElementValue>> Values { get; set; } = new();
 
         /// <summary>
