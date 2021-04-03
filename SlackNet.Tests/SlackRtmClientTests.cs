@@ -32,7 +32,7 @@ namespace SlackNet.Tests
             _webSocketFactory = Substitute.For<IWebSocketFactory>();
             _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
             _testScheduler = new TestScheduler();
-            _sut = new SlackRtmClient(_slackApiClient, _webSocketFactory, _jsonSettings, _testScheduler);
+            _sut = new SlackRtmClient(_slackApiClient, _webSocketFactory, _jsonSettings, _testScheduler, Default.Logger);
 
             _opened = new Subject<Unit>();
             _closed = new Subject<Unit>();
@@ -86,7 +86,7 @@ namespace SlackNet.Tests
             ConnectSuccessfully();
 
             _closed.OnNext(Unit.Default);
-            
+
             _webSocket.Received(2).Open();
         }
 

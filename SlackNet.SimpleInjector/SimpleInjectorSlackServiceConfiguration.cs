@@ -23,6 +23,7 @@ namespace SlackNet.SimpleInjector
             RegisterFallback<SlackJsonSettings>(container, () => container.GetInstance<ISlackServiceProvider>().GetJsonSettings(), Lifestyle.Singleton);
             RegisterFallback<ISlackTypeResolver>(container, () => container.GetInstance<ISlackServiceProvider>().GetTypeResolver(), Lifestyle.Singleton);
             RegisterFallback<ISlackUrlBuilder>(container, () => container.GetInstance<ISlackServiceProvider>().GetUrlBuilder(), Lifestyle.Singleton);
+            RegisterFallback<ILogger>(container, () => container.GetInstance<ISlackServiceProvider>().GetLogger(), Lifestyle.Singleton);
             RegisterFallback<IWebSocketFactory>(container, () => container.GetInstance<ISlackServiceProvider>().GetWebSocketFactory(), Lifestyle.Singleton);
             RegisterFallback<IEnumerable<ISlackRequestListener>>(container, () => container.GetInstance<ISlackServiceProvider>().GetRequestListeners(), Lifestyle.Singleton);
             RegisterFallback<ISlackHandlerFactory>(container, () => container.GetInstance<ISlackServiceProvider>().GetHandlerFactory(), Lifestyle.Singleton);

@@ -87,12 +87,13 @@ namespace SlackNet
         /// <paramref name="delayIncrease"/> each time, up to <paramref name="maxDelay"/>.
         /// Resets back to <paramref name="initialDelay"/> on next value.
         /// </summary>
-        public static IObservable<T> RetryWithDelay<T>(this IObservable<T> source, TimeSpan initialDelay, TimeSpan delayIncrease, TimeSpan maxDelay, IScheduler scheduler = null)
+        public static IObservable<T> RetryWithDelay<T>(this IObservable<T> source, TimeSpan initialDelay, TimeSpan delayIncrease, TimeSpan maxDelay, IScheduler scheduler = null, Action<Exception, TimeSpan> onError = null)
         {
             var currentDelay = initialDelay;
             return source
                 .Catch((Exception e) =>
                     {
+                        onError?.Invoke(e, currentDelay);
                         var delay = Observable.Timer(currentDelay, scheduler ?? Scheduler.Default).SelectMany(Observable.Throw<T>(e));
                         currentDelay += delayIncrease;
                         if (currentDelay > maxDelay)

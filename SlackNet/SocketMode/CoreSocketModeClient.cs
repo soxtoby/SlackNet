@@ -45,6 +45,7 @@ namespace SlackNet.SocketMode
         private readonly IWebSocketFactory _webSocketFactory;
         private readonly SlackJsonSettings _jsonSettings;
         private readonly IScheduler _scheduler;
+        private readonly ILogger _log;
         private readonly Subject<RawSocketMessage> _rawSocketMessagesSubject = new();
         private readonly ISubject<RawSocketMessage> _rawSocketMessages;
         private List<ReconnectingWebSocket> _webSockets = new();
@@ -57,19 +58,22 @@ namespace SlackNet.SocketMode
                 new SlackApiClient(appLevelToken),
                 Default.WebSocketFactory,
                 Default.JsonSettings(),
-                Default.Scheduler
+                Default.Scheduler,
+                Default.Logger
             ) { }
 
         public CoreSocketModeClient(
             ISlackApiClient client,
             IWebSocketFactory webSocketFactory,
             SlackJsonSettings jsonSettings,
-            IScheduler scheduler)
+            IScheduler scheduler,
+            ILogger logger)
         {
             _client = client;
             _webSocketFactory = webSocketFactory;
             _jsonSettings = jsonSettings;
             _scheduler = scheduler;
+            _log = logger.ForSource<CoreSocketModeClient>();
 
             _rawSocketMessages = Subject.Synchronize(_rawSocketMessagesSubject);
 
@@ -80,6 +84,7 @@ namespace SlackNet.SocketMode
 
             Messages
                 .OfType<Disconnect>()
+                .Do(m => _log.Internal("Socket {SocketId} disconnecting because {Reason}", m.SocketId, m.Reason))
                 .Where(d => d.Reason == DisconnectReason.SocketModeDisabled)
                 .Subscribe(_ => Disconnect());
         }
@@ -88,6 +93,7 @@ namespace SlackNet.SocketMode
         {
             var message = JsonConvert.DeserializeObject<SocketMessage>(rawMessage.Message, _jsonSettings.SerializerSettings);
             message.SocketId = rawMessage.SocketId;
+            message.RequestId = rawMessage.RequestId;
             return message;
         }
 
@@ -98,6 +104,8 @@ namespace SlackNet.SocketMode
 
             connectionOptions ??= Default.SocketModeConnectionOptions;
 
+            _log.Internal("Opening {NumberOfConnections} socket mode connections, with delay of {ConnectionDelay}", connectionOptions.NumberOfConnections, connectionOptions.ConnectionDelay);
+
             _rawSocketStringsSubscription?.Dispose();
             Disconnect();
 
@@ -105,11 +113,11 @@ namespace SlackNet.SocketMode
             _connectionCancelled = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken ?? CancellationToken.None, _disconnectCancellation.Token);
 
             _webSockets = Enumerable.Range(0, connectionOptions.NumberOfConnections)
-                .Select(_ => new ReconnectingWebSocket(_webSocketFactory, _scheduler))
+                .Select(i => new ReconnectingWebSocket(_webSocketFactory, _scheduler, _log, i))
                 .ToList();
 
             _rawSocketStringsSubscription = _webSockets
-                .Select((ws, i) => ws.Messages.Select(m => new RawSocketMessage { SocketId = i, Message = m }))
+                .Select(ws => ws.Messages)
                 .Merge()
                 .Subscribe(_rawSocketMessages);
 
@@ -134,6 +142,7 @@ namespace SlackNet.SocketMode
 
         public void Disconnect()
         {
+            _log.Internal("Disconnecting socket mode connections");
             _disconnectCancellation?.Cancel();
             foreach (var webSocket in _webSockets)
                 webSocket.Dispose();

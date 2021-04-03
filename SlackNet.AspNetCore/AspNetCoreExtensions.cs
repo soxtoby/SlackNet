@@ -14,7 +14,11 @@ namespace SlackNet.AspNetCore
             serviceCollection.TryAddSingleton<ISlackRequestHandler, SlackRequestHandler>();
             serviceCollection.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             serviceCollection.TryAddSingleton<IServiceProviderSlackRequestListener, AspNetCoreServiceProviderSlackRequestListener>();
-            return ServiceCollectionExtensions.AddSlackNet(serviceCollection, configure);
+            return ServiceCollectionExtensions.AddSlackNet(serviceCollection, c =>
+                {
+                    c.UseLogger<MicrosoftLoggerAdaptor>();
+                    configure?.Invoke(c);
+                });
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using SlackNet.Handlers;
 using SlackNet.Interaction;
@@ -9,8 +10,24 @@ namespace SlackNet
 {
     public class SlackRequestContext
     {
+        private static readonly AsyncLocal<SlackRequestContext> CurrentContext = new();
         private readonly Dictionary<string, object> _items = new();
         private readonly Stack<Func<Task>> _onCompleteCallbacks = new();
+
+        /// <summary>
+        /// Returns true if there is a current request context available.
+        /// </summary>
+        public static bool IsAvailable => CurrentContext.Value is not null;
+
+        /// <summary>
+        /// Context for the current Slack request.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Not inside a request context</exception>
+        public static SlackRequestContext Current
+        {
+            get => CurrentContext.Value ?? throw new InvalidOperationException("Not inside a request context");
+            set => CurrentContext.Value = value;
+        }
 
         /// <summary>
         /// Gets or sets the value with the associated key.
@@ -26,6 +43,7 @@ namespace SlackNet
         public bool ContainsKey(string key) => _items.ContainsKey(key);
         public bool TryGetValue(string key, out object value) => _items.TryGetValue(key, out value);
 
+        public string RequestId => (string)_items[nameof(RequestId)];
         public ISlackServiceProvider ServiceProvider => (ISlackServiceProvider)_items[nameof(ServiceProvider)];
         public IEnumerable<IEventHandler> EventHandlers => (IEnumerable<IEventHandler>)_items[nameof(EventHandlers)];
         public IEnumerable<IAsyncBlockActionHandler> BlockActionHandlers => (IEnumerable<IAsyncBlockActionHandler>)_items[nameof(BlockActionHandlers)];

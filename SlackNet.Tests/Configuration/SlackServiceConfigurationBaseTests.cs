@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using EasyAssertions;
 using Newtonsoft.Json;
 using NSubstitute;
@@ -64,6 +63,15 @@ namespace SlackNet.Tests.Configuration
                 Substitute.For<ISlackUrlBuilder>(),
                 (c, sp) => c.UseUrlBuilder(sp),
                 s => s.GetUrlBuilder());
+        }
+
+        [Test]
+        public void UseLogger()
+        {
+            UseService(
+                Substitute.For<ILogger>(),
+                (c, sp) => c.UseLogger(sp),
+                s => s.GetLogger());
         }
 
         [Test]

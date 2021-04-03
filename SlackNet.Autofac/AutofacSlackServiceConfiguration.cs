@@ -21,6 +21,7 @@ namespace SlackNet.Autofac
             containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetJsonSettings()).As<SlackJsonSettings>().SingleInstance();
             containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetTypeResolver()).As<ISlackTypeResolver>().SingleInstance();
             containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetUrlBuilder()).As<ISlackUrlBuilder>().SingleInstance();
+            containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetLogger()).As<ILogger>().SingleInstance();
             containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetWebSocketFactory()).As<IWebSocketFactory>().SingleInstance();
             containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetRequestListeners()).As<IEnumerable<ISlackRequestListener>>().SingleInstance();
             containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetHandlerFactory()).As<ISlackHandlerFactory>().SingleInstance();

@@ -90,21 +90,21 @@ namespace SlackNet
         {
             _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
             _client = new SlackApiClient(Default.Http(_jsonSettings), Default.UrlBuilder(_jsonSettings), _jsonSettings, token);
-            _webSocket = new ReconnectingWebSocket(Default.WebSocketFactory, Scheduler.Default);
+            _webSocket = new ReconnectingWebSocket(Default.WebSocketFactory, Scheduler.Default, Default.Logger, 0);
             _rawEvents = DeserializeEvents(_webSocket, _jsonSettings);
         }
 
-        public SlackRtmClient(ISlackApiClient client, IWebSocketFactory webSocketFactory, SlackJsonSettings jsonSettings, IScheduler scheduler)
+        public SlackRtmClient(ISlackApiClient client, IWebSocketFactory webSocketFactory, SlackJsonSettings jsonSettings, IScheduler scheduler, ILogger logger)
         {
             _client = client;
             _jsonSettings = jsonSettings;
-            _webSocket = new ReconnectingWebSocket(webSocketFactory, scheduler);
+            _webSocket = new ReconnectingWebSocket(webSocketFactory, scheduler, logger, 0);
             _rawEvents = DeserializeEvents(_webSocket, _jsonSettings);
         }
 
         private static IObservable<Event> DeserializeEvents(ReconnectingWebSocket webSocket, SlackJsonSettings jsonSettings) =>
             webSocket.Messages
-                .Select(m => JsonConvert.DeserializeObject<Event>(m, jsonSettings.SerializerSettings))
+                .Select(m => JsonConvert.DeserializeObject<Event>(m.Message, jsonSettings.SerializerSettings))
                 .Publish()
                 .RefCount();
 

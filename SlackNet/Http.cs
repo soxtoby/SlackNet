@@ -16,16 +16,36 @@ namespace SlackNet
     {
         private readonly Func<HttpClient> _getHttpClient;
         private readonly SlackJsonSettings _jsonSettings;
+        private readonly ILogger _log;
 
-        public Http(Func<HttpClient> getHttpClient, SlackJsonSettings jsonSettings)
+        public Http(Func<HttpClient> getHttpClient, SlackJsonSettings jsonSettings, ILogger logger)
         {
             _getHttpClient = getHttpClient;
             _jsonSettings = jsonSettings;
+            _log = logger.ForSource<Http>();
         }
 
         public async Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null)
         {
-            var response = await _getHttpClient().SendAsync(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+            HttpResponseMessage response;
+
+            var requestLog = _log.WithContext("RequestBody", await requestMessage.Content.ReadAsStringAsync().ConfigureAwait(false));
+
+            try
+            {
+                response = await _getHttpClient().SendAsync(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+                requestLog
+                    .WithContext("ResponseStatus", response.StatusCode)
+                    .WithContext("ResponseReason", response.ReasonPhrase)
+                    .WithContext("ResponseHeaders", response.Headers)
+                    .WithContext("ResponseBody", await response.Content.ReadAsStringAsync().ConfigureAwait(false))
+                    .Data("Sent {RequestMethod} request to {RequestUrl}", requestMessage.Method, requestMessage.RequestUri);
+            }
+            catch (Exception e)
+            {
+                requestLog.Error(e, "Error sending {RequestMethod} request to {RequestUrl}", requestMessage.Method, requestMessage.RequestUri);
+                throw;
+            }
 
             if ((int)response.StatusCode == 429) // TODO use the enum when TooManyRequests becomes available
                 throw new SlackRateLimitException(response.Headers.RetryAfter.Delta);

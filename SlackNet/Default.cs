@@ -10,7 +10,8 @@ namespace SlackNet
 {
     public static class Default
     {
-        public static IHttp Http(SlackJsonSettings jsonSettings = null, Func<HttpClient> getHttpClient = null) => new Http(getHttpClient ?? HttpClientFactory(), jsonSettings ?? JsonSettings());
+        public static IHttp Http(SlackJsonSettings jsonSettings = null, Func<HttpClient> getHttpClient = null, ILogger logger = null) =>
+            new Http(getHttpClient ?? HttpClientFactory(), jsonSettings ?? JsonSettings(), logger ?? Logger);
 
         private static Func<HttpClient> HttpClientFactory()
         {
@@ -53,5 +54,7 @@ namespace SlackNet
         public static IScheduler Scheduler => System.Reactive.Concurrency.Scheduler.Default;
 
         public static SocketModeConnectionOptions SocketModeConnectionOptions => new();
+
+        public static ILogger Logger => new NullLogger();
     }
 }

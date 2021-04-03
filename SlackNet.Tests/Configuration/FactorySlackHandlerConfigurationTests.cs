@@ -71,6 +71,14 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
+        public void UseLoggerType()
+        {
+            UseService<ILogger, TestLogger>(
+                c => c.UseLogger<TestLogger>(),
+                s => s.GetLogger());
+        }
+
+        [Test]
         public void UseWebSocketFactoryType()
         {
             UseService<IWebSocketFactory, TestWebSocketFactory>(
@@ -930,6 +938,11 @@ namespace SlackNet.Tests.Configuration
         protected class TestUrlBuilder : ISlackUrlBuilder
         {
             public string Url(string apiMethod, Dictionary<string, object> args) => throw new NotImplementedException();
+        }
+
+        protected class TestLogger : ILogger
+        {
+            public void Log(ILogEvent logEvent) => throw new NotImplementedException();
         }
 
         protected class TestWebSocketFactory : IWebSocketFactory

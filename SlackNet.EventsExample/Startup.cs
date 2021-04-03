@@ -49,7 +49,10 @@ namespace SlackNet.EventsExample
                 .RegisterViewSubmissionHandler<WorkflowExample>(WorkflowExample.ConfigCallback)
                 .RegisterEventHandler<WorkflowStepExecute, WorkflowExample>()
             );
+
             services.AddMvc();
+
+            services.AddLogging();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

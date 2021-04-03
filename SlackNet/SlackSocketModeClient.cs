@@ -35,18 +35,21 @@ namespace SlackNet
         private readonly SlackJsonSettings _jsonSettings;
         private readonly IEnumerable<ISlackRequestListener> _requestListeners;
         private readonly ISlackHandlerFactory _handlerFactory;
+        private readonly ILogger _log;
         private readonly IDisposable _requestSubscription;
 
         public SlackSocketModeClient(
             ICoreSocketModeClient socket,
             SlackJsonSettings jsonSettings,
             IEnumerable<ISlackRequestListener> requestListeners,
-            ISlackHandlerFactory handlerFactory)
+            ISlackHandlerFactory handlerFactory,
+            ILogger logger)
         {
             _socket = socket;
             _jsonSettings = jsonSettings;
             _requestListeners = requestListeners;
             _handlerFactory = handlerFactory;
+            _log = logger.ForSource<SlackSocketModeClient>();
 
             _requestSubscription = _socket.Messages
                 .OfType<SocketEnvelope>()
@@ -68,7 +71,12 @@ namespace SlackNet
         {
             try
             {
-                var requestContext = new SlackRequestContext { [Envelope] = envelope };
+                var requestContext = SlackRequestContext.Current = new SlackRequestContext
+                    {
+                        [Envelope] = envelope,
+                        [nameof(SlackRequestContext.RequestId)] = envelope.RequestId
+                    };
+
                 await using (requestContext.BeginRequest(_requestListeners).ConfigureAwait(false))
                 {
                     var responded = false;
@@ -86,15 +94,26 @@ namespace SlackNet
                     void Respond(object payload)
                     {
                         responded = true;
-                        var ack = payload == null ? new Acknowledgement() : new Acknowledgement<object> { Payload = payload };
+                        Acknowledgement ack;
+                        if (payload == null)
+                        {
+                            ack = new Acknowledgement();
+                            _log.Request("Acknowledging request");
+                        }
+                        else
+                        {
+                            ack = new Acknowledgement<object> { Payload = payload };
+                            _log.WithContext("Payload", payload)
+                                .Request("Responding with {PayloadType}", payload.GetType());
+                        }
                         ack.EnvelopeId = envelope.EnvelopeId;
                         Send(envelope.SocketId, ack);
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
-                // ignored
+                _log.Error(e, "Error handling request");
             }
 
             return Unit.Default;
@@ -126,6 +145,7 @@ namespace SlackNet
         {
             respond(null);
             var handler = _handlerFactory.CreateEventHandler(requestContext);
+            _log.RequestHandler(handler, eventCallback, "Handling {EventType} event", eventCallback.Event.Type);
             await handler.Handle(eventCallback).ConfigureAwait(false);
         }
 
@@ -147,12 +167,14 @@ namespace SlackNet
         private async Task HandleBlockActions(SlackRequestContext requestContext, BlockActionRequest blockActions, Action<object> respond)
         {
             var handler = _handlerFactory.CreateBlockActionHandler(requestContext);
+            _log.RequestHandler(handler, blockActions, "Handling {BlockActionType} block action", blockActions.Action.Type);
             await handler.Handle(blockActions, Responder(respond)).ConfigureAwait(false);
         }
 
         private async Task HandleInteractiveMessage(SlackRequestContext requestContext, InteractiveMessage interactiveMessage, Action<object> respond)
         {
             var handler = _handlerFactory.CreateLegacyInteractiveMessageHandler(requestContext);
+            _log.RequestHandler(handler, interactiveMessage, "Handling {InteractiveMessageName} interactive message", interactiveMessage.Action.Name);
             var response = await handler.Handle(interactiveMessage).ConfigureAwait(false);
 
             if (response == null)
@@ -166,6 +188,7 @@ namespace SlackNet
         private async Task HandleDialogSubmission(SlackRequestContext requestContext, DialogSubmission dialogSubmission, Action<object> respond)
         {
             var handler = _handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
+            _log.RequestHandler(handler, dialogSubmission, "Handling dialog submission for {CallbackId}", dialogSubmission.CallbackId);
             var errors = (await handler.Handle(dialogSubmission).ConfigureAwait(false))?.ToList()
                 ?? new List<DialogError>();
 
@@ -176,24 +199,28 @@ namespace SlackNet
         private async Task HandleDialogCancellation(SlackRequestContext requestContext, DialogCancellation dialogCancellation)
         {
             var handler = _handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
+            _log.RequestHandler(handler, dialogCancellation, "Handling dialog cancellation for {CallbackId}", dialogCancellation.CallbackId);
             await handler.HandleCancel(dialogCancellation).ConfigureAwait(false);
         }
 
         private async Task HandleMessageShortcut(SlackRequestContext requestContext, MessageShortcut messageShortcut, Action<object> respond)
         {
             var handler = _handlerFactory.CreateMessageShortcutHandler(requestContext);
+            _log.RequestHandler(handler, messageShortcut, "Handling message shortcut for {CallbackId}", messageShortcut.CallbackId);
             await handler.Handle(messageShortcut, Responder(respond)).ConfigureAwait(false);
         }
 
         private async Task HandleGlobalShortcut(SlackRequestContext requestContext, GlobalShortcut globalShortcut, Action<object> respond)
         {
             var handler = _handlerFactory.CreateGlobalShortcutHandler(requestContext);
+            _log.RequestHandler(handler, globalShortcut, "Handling global shortcut for {CallbackId}", globalShortcut.CallbackId);
             await handler.Handle(globalShortcut, Responder(respond)).ConfigureAwait(false);
         }
 
         private async Task HandleViewSubmission(SlackRequestContext requestContext, ViewSubmission viewSubmission, Action<object> respond)
         {
             var handler = _handlerFactory.CreateViewSubmissionHandler(requestContext);
+            _log.RequestHandler(handler, viewSubmission, "Handling view submission for {CallbackId}", viewSubmission.View.CallbackId);
             await handler.Handle(viewSubmission,
                 response =>
                     {
@@ -205,18 +232,21 @@ namespace SlackNet
         private async Task HandleViewClosed(SlackRequestContext requestContext, ViewClosed viewClosed, Action<object> respond)
         {
             var handler = _handlerFactory.CreateViewSubmissionHandler(requestContext);
+            _log.RequestHandler(handler, viewClosed, "Handling view close for {CallbackId}", viewClosed.View.CallbackId);
             await handler.HandleClose(viewClosed, Responder(respond)).ConfigureAwait(false);
         }
 
         private async Task HandleWorkflowStepEdit(SlackRequestContext requestContext, WorkflowStepEdit workflowStepEdit, Action<object> respond)
         {
             var handler = _handlerFactory.CreateWorkflowStepEditHandler(requestContext);
+            _log.RequestHandler(handler, workflowStepEdit, "Handling workflow step edit for {CallbackId}", workflowStepEdit.CallbackId);
             await handler.Handle(workflowStepEdit, Responder(respond)).ConfigureAwait(false);
         }
 
         private async Task HandleBlockOptionsRequest(SlackRequestContext requestContext, BlockOptionsRequest blockOptionsRequest, Action<object> respond)
         {
             var handler = _handlerFactory.CreateBlockOptionProvider(requestContext);
+            _log.RequestHandler(handler, blockOptionsRequest, "Handling block options request for {ActionId}", blockOptionsRequest.ActionId);
             var blockOptionsResponse = await handler.GetOptions(blockOptionsRequest).ConfigureAwait(false);
             respond(blockOptionsResponse);
         }
@@ -224,6 +254,7 @@ namespace SlackNet
         private async Task HandleLegacyOptionsRequest(SlackRequestContext requestContext, OptionsRequest optionsRequest, Action<object> respond)
         {
             var handler = _handlerFactory.CreateLegacyOptionProvider(requestContext);
+            _log.RequestHandler(handler, optionsRequest, "Handling options request for {RequestName}", optionsRequest.Name);
             var optionsResponse = await handler.GetOptions(optionsRequest).ConfigureAwait(false);
             respond(optionsResponse);
         }
@@ -231,6 +262,7 @@ namespace SlackNet
         private async Task HandleSlashCommand(SlackRequestContext requestContext, SlashCommand slashCommand, Action<object> respond)
         {
             var handler = _handlerFactory.CreateSlashCommandHandler(requestContext);
+            _log.RequestHandler(handler, slashCommand, "Handling slash command {SlashCommand}", slashCommand.Command);
             await handler.Handle(slashCommand,
                 response =>
                     {

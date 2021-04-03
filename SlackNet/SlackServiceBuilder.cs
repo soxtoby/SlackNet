@@ -18,6 +18,7 @@ namespace SlackNet
         public SlackJsonSettings GetJsonSettings() => _factory.Value.GetJsonSettings();
         public ISlackTypeResolver GetTypeResolver() => _factory.Value.GetTypeResolver();
         public ISlackUrlBuilder GetUrlBuilder() => _factory.Value.GetUrlBuilder();
+        public ILogger GetLogger() => _factory.Value.GetLogger();
         public IWebSocketFactory GetWebSocketFactory() => _factory.Value.GetWebSocketFactory();
         public IEnumerable<ISlackRequestListener> GetRequestListeners() => _factory.Value.GetRequestListeners();
         public ISlackHandlerFactory GetHandlerFactory() => _factory.Value.GetHandlerFactory();

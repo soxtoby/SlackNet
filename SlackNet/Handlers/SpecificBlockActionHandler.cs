@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.Handlers
 {
-    class SpecificBlockActionHandler : IAsyncBlockActionHandler
+    class SpecificBlockActionHandler : IAsyncBlockActionHandler, IComposedHandler<BlockActionRequest>
     {
         private readonly string _actionId;
         private readonly IAsyncBlockActionHandler _handler;
@@ -20,5 +22,10 @@ namespace SlackNet.Handlers
             if (request.Action.ActionId == _actionId)
                 await _handler.Handle(request, respond).ConfigureAwait(false);
         }
+
+        IEnumerable<object> IComposedHandler<BlockActionRequest>.InnerHandlers(BlockActionRequest request) =>
+            request.Action.ActionId == _actionId
+                ? _handler.InnerHandlers(request)
+                : Enumerable.Empty<object>();
     }
 }

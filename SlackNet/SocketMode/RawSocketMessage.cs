@@ -8,6 +8,11 @@
         /// </summary>
         public int SocketId { get; set; }
 
+        /// <summary>
+        /// SlackNet-specific property identifying the request from Slack, for correlating log events.
+        /// </summary>
+        public string RequestId { get; set; }
+
         public string Message { get; set; }
     }
 }

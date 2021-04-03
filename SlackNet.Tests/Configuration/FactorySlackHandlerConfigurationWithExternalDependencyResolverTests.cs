@@ -43,6 +43,14 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
+        public void UseLoggerFactory()
+        {
+            UseService<ILogger, TestLogger>(
+                c => c.UseLogger(() => new TestLogger()),
+                s => s.GetLogger());
+        }
+
+        [Test]
         public void UseWebSocketFactoryFactory()
         {
             UseService<IWebSocketFactory, TestWebSocketFactory>(

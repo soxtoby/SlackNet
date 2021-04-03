@@ -5,7 +5,7 @@ using SlackNet.Interaction;
 
 namespace SlackNet.Handlers
 {
-    public class SwitchingDialogSubmissionHandler : IDialogSubmissionHandler
+    public class SwitchingDialogSubmissionHandler : IDialogSubmissionHandler, IComposedHandler<DialogSubmission>, IComposedHandler<DialogCancellation>
     {
         private readonly IHandlerIndex<IDialogSubmissionHandler> _handlers;
         public SwitchingDialogSubmissionHandler(IHandlerIndex<IDialogSubmissionHandler> handlers) => _handlers = handlers;
@@ -19,5 +19,15 @@ namespace SlackNet.Handlers
             _handlers.TryGetHandler(cancellation.CallbackId, out var handler)
                 ? handler.HandleCancel(cancellation)
                 : Task.CompletedTask;
+
+        IEnumerable<object> IComposedHandler<DialogSubmission>.InnerHandlers(DialogSubmission request) =>
+            _handlers.TryGetHandler(request.CallbackId, out var handler)
+                ? handler.InnerHandlers(request)
+                : Enumerable.Empty<object>();
+
+        IEnumerable<object> IComposedHandler<DialogCancellation>.InnerHandlers(DialogCancellation request) =>
+            _handlers.TryGetHandler(request.CallbackId, out var handler)
+                ? handler.InnerHandlers(request)
+                : Enumerable.Empty<object>();
     }
 }
