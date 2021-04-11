@@ -45,8 +45,6 @@ class Build : NukeBuild
         .DependsOn(Restore)
         .Executes(() =>
         {
-            AppVeyor.Instance?.UpdateBuildVersion(GitVersion.FullSemVer);
-
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
