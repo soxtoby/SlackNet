@@ -16,10 +16,6 @@ namespace SlackNet.Handlers
                 await respond(result).ConfigureAwait(false);
         }
 
-        public async Task HandleClose(ViewClosed viewClosed, Responder respond)
-        {
-            await _syncHandler.HandleClose(viewClosed).ConfigureAwait(false);
-            await respond().ConfigureAwait(false);
-        }
+        public Task HandleClose(ViewClosed viewClosed, Responder respond) => _syncHandler.HandleClose(viewClosed);
     }
 }

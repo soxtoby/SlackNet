@@ -9,10 +9,6 @@ namespace SlackNet.Handlers
         private readonly IGlobalShortcutHandler _syncHandler;
         public GlobalShortcutHandlerAsyncWrapper(IGlobalShortcutHandler syncHandler) => _syncHandler = syncHandler;
 
-        public async Task Handle(GlobalShortcut shortcut, Responder respond)
-        {
-            await _syncHandler.Handle(shortcut).ConfigureAwait(false);
-            await respond().ConfigureAwait(false);
-        }
+        public Task Handle(GlobalShortcut shortcut, Responder respond) => _syncHandler.Handle(shortcut);
     }
 }
