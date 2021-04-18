@@ -14,7 +14,7 @@ namespace SlackNet.Extensions.DependencyInjection
         public void OnRequestBegin(SlackRequestContext context)
         {
             var scope = _serviceProvider.CreateScope();
-            context.SetServiceScope(scope);
+            context.SetServiceProvider(scope.ServiceProvider);
             context.OnComplete(() =>
                 {
                     scope.Dispose();

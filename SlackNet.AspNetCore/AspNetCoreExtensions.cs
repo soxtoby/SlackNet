@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using SlackNet.Extensions.DependencyInjection;
 
 namespace SlackNet.AspNetCore
@@ -9,7 +11,9 @@ namespace SlackNet.AspNetCore
     {
         public static IServiceCollection AddSlackNet(this IServiceCollection serviceCollection, Action<ServiceCollectionSlackServiceConfiguration> configure = null)
         {
-            serviceCollection.AddSingleton<ISlackRequestHandler, SlackRequestHandler>();
+            serviceCollection.TryAddSingleton<ISlackRequestHandler, SlackRequestHandler>();
+            serviceCollection.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            serviceCollection.TryAddSingleton<IServiceProviderSlackRequestListener, AspNetCoreServiceProviderSlackRequestListener>();
             return ServiceCollectionExtensions.AddSlackNet(serviceCollection, configure);
         }
 
