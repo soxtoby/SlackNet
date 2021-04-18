@@ -8,12 +8,13 @@ namespace SlackNet.Tests.Configuration
     {
         private readonly Dictionary<Type, List<object>> _instances = new();
 
-        public virtual void AddInstance(TrackedClass instance)
+        public int AddInstance(TrackedClass instance)
         {
             var type = instance.GetType();
             if (!_instances.ContainsKey(type))
                 _instances[type] = new List<object>();
             _instances[type].Add(instance);
+            return _instances[type].Count;
         }
 
         public IEnumerable<T> GetInstances<T>() where T : TrackedClass =>
@@ -24,6 +25,10 @@ namespace SlackNet.Tests.Configuration
 
     public abstract class TrackedClass
     {
-        protected TrackedClass(InstanceTracker tracker) => tracker.AddInstance(this);
+        private readonly int _id;
+
+        protected TrackedClass(InstanceTracker tracker) => _id = tracker.AddInstance(this);
+
+        public override string ToString() => $"{GetType().Name}{_id}";
     }
 }

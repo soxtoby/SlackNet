@@ -19,8 +19,7 @@ namespace SlackNet
         private Func<ISlackServiceProvider, ISlackTypeResolver> _slackTypeResolverProvider = sp => Default.SlackTypeResolver();
         private Func<ISlackServiceProvider, ISlackUrlBuilder> _urlBuilderProvider = sp => Default.UrlBuilder(sp.GetJsonSettings());
         private Func<ISlackServiceProvider, IWebSocketFactory> _webSocketFactoryProvider = sp => Default.WebSocketFactory;
-        private Func<ISlackServiceProvider, ISlackRequestContextFactory> _requestContextFactoryProvider;
-        private Func<ISlackServiceProvider, ISlackRequestListener> _requestListenerProvider = sp => Default.RequestListener;
+        private readonly List<Func<ISlackServiceProvider, ISlackRequestListener>> _requestListenerProviders = new();
         private Func<ISlackServiceProvider, ISlackHandlerFactory> _handlerFactoryProvider;
         private Func<ISlackServiceProvider, ISlackApiClient> _apiClientProvider;
         private Func<ISlackServiceProvider, ISlackSocketModeClient> _socketModeClientProvider;
@@ -53,7 +52,7 @@ namespace SlackNet
 
         protected SlackServiceConfigurationBase()
         {
-            _requestContextFactoryProvider = CreateRequestContextFactory;
+            _requestListenerProviders.Add(CreateRequestContextPopulator);
             _handlerFactoryProvider = CreateHandlerFactory;
             _apiClientProvider = CreateApiClient;
             _socketModeClientProvider = CreateSocketModeClient;
@@ -74,8 +73,7 @@ namespace SlackNet
         public TConfig UseTypeResolver(Func<ISlackServiceProvider, ISlackTypeResolver> slackTypeResolverProvider) => Chain(() => _slackTypeResolverProvider = slackTypeResolverProvider);
         public TConfig UseUrlBuilder(Func<ISlackServiceProvider, ISlackUrlBuilder> urlBuilderProvider) => Chain(() => _urlBuilderProvider = urlBuilderProvider);
         public TConfig UseWebSocketFactory(Func<ISlackServiceProvider, IWebSocketFactory> webSocketFactoryProvider) => Chain(() => _webSocketFactoryProvider = webSocketFactoryProvider);
-        public TConfig UseRequestContextFactory(Func<ISlackServiceProvider, ISlackRequestContextFactory> requestContextFactoryProvider) => Chain(() => _requestContextFactoryProvider = requestContextFactoryProvider);
-        public TConfig UseRequestListener(Func<ISlackServiceProvider, ISlackRequestListener> requestListenerProvider) => Chain(() => _requestListenerProvider = requestListenerProvider);
+        public TConfig UseRequestListener(Func<ISlackServiceProvider, ISlackRequestListener> requestListenerProvider) => Chain(() => _requestListenerProviders.Add(requestListenerProvider));
         public TConfig UseHandlerFactory(Func<ISlackServiceProvider, ISlackHandlerFactory> handlerFactoryProvider) => Chain(() => _handlerFactoryProvider = handlerFactoryProvider);
         public TConfig UseApiClient(Func<ISlackServiceProvider, ISlackApiClient> apiClientProvider) => Chain(() => _apiClientProvider = apiClientProvider);
         public TConfig UseSocketModeClient(Func<ISlackServiceProvider, ISlackSocketModeClient> socketModeClientProvider) => Chain(() => _socketModeClientProvider = socketModeClientProvider);
@@ -87,11 +85,11 @@ namespace SlackNet
                 _slackTypeResolverProvider,
                 _urlBuilderProvider,
                 _webSocketFactoryProvider,
-                _requestContextFactoryProvider,
-                _requestListenerProvider,
+                _requestListenerProviders,
                 _handlerFactoryProvider,
                 _apiClientProvider,
-                _socketModeClientProvider, dependencyProvider);
+                _socketModeClientProvider,
+                dependencyProvider);
 
         ISlackHandlerFactory CreateHandlerFactory(ISlackServiceProvider serviceProvider) =>
             new SlackHandlerFactory(
@@ -122,12 +120,11 @@ namespace SlackNet
                     serviceProvider.GetJsonSettings(),
                     Default.Scheduler),
                 serviceProvider.GetJsonSettings(),
-                serviceProvider.GetRequestContextFactory(),
-                serviceProvider.GetRequestListener(),
+                serviceProvider.GetRequestListeners(),
                 serviceProvider.GetHandlerFactory());
 
-        private ISlackRequestContextFactory CreateRequestContextFactory(ISlackServiceProvider serviceProvider) =>
-            new SlackRequestContextFactory(
+        private ISlackRequestListener CreateRequestContextPopulator(ISlackServiceProvider serviceProvider) =>
+            new SlackRequestContextPopulator(
                 serviceProvider,
                 _eventHandlers,
                 _blockActionHandlers,

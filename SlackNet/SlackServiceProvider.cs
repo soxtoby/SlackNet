@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using SlackNet.Handlers;
 
 namespace SlackNet
@@ -10,8 +12,7 @@ namespace SlackNet
         ISlackTypeResolver GetTypeResolver();
         ISlackUrlBuilder GetUrlBuilder();
         IWebSocketFactory GetWebSocketFactory();
-        ISlackRequestContextFactory GetRequestContextFactory();
-        ISlackRequestListener GetRequestListener();
+        IEnumerable<ISlackRequestListener> GetRequestListeners();
         ISlackHandlerFactory GetHandlerFactory();
         ISlackApiClient GetApiClient();
         ISlackSocketModeClient GetSocketModeClient();
@@ -24,8 +25,7 @@ namespace SlackNet
         private readonly Lazy<ISlackTypeResolver> _slackTypeResolver;
         private readonly Lazy<ISlackUrlBuilder> _urlBuilder;
         private readonly Lazy<IWebSocketFactory> _webSocketFactory;
-        private readonly Lazy<ISlackRequestContextFactory> _requestContextFactory;
-        private readonly Lazy<ISlackRequestListener> _requestListener;
+        private readonly IEnumerable<ISlackRequestListener> _requestListeners;
         private readonly Lazy<ISlackHandlerFactory> _handlerFactory;
         private readonly Lazy<ISlackApiClient> _apiClient;
         private readonly Lazy<ISlackSocketModeClient> _socketModeClient;
@@ -36,8 +36,7 @@ namespace SlackNet
             Func<ISlackServiceProvider, ISlackTypeResolver> slackTypeResolverProvider,
             Func<ISlackServiceProvider, ISlackUrlBuilder> urlBuilderProvider,
             Func<ISlackServiceProvider, IWebSocketFactory> webSocketFactoryProvider,
-            Func<ISlackServiceProvider, ISlackRequestContextFactory> requestContextFactoryProvider,
-            Func<ISlackServiceProvider, ISlackRequestListener> requestListenerProvider,
+            IReadOnlyCollection<Func<ISlackServiceProvider, ISlackRequestListener>> requestListenerProviders,
             Func<ISlackServiceProvider, ISlackHandlerFactory> handlerFactoryProvider,
             Func<ISlackServiceProvider, ISlackApiClient> apiClientProvider,
             Func<ISlackServiceProvider, ISlackSocketModeClient> socketModeClientProvider,
@@ -49,8 +48,7 @@ namespace SlackNet
             _slackTypeResolver = new Lazy<ISlackTypeResolver>(() => slackTypeResolverProvider(dependencyProvider));
             _urlBuilder = new Lazy<ISlackUrlBuilder>(() => urlBuilderProvider(dependencyProvider));
             _webSocketFactory = new Lazy<IWebSocketFactory>(() => webSocketFactoryProvider(dependencyProvider));
-            _requestContextFactory = new Lazy<ISlackRequestContextFactory>(() => requestContextFactoryProvider(dependencyProvider));
-            _requestListener = new Lazy<ISlackRequestListener>(() => requestListenerProvider(dependencyProvider));
+            _requestListeners = requestListenerProviders.Select(p => p(dependencyProvider));
             _handlerFactory = new Lazy<ISlackHandlerFactory>(() => handlerFactoryProvider(dependencyProvider));
             _apiClient = new Lazy<ISlackApiClient>(() => apiClientProvider(dependencyProvider));
             _socketModeClient = new Lazy<ISlackSocketModeClient>(() => socketModeClientProvider(dependencyProvider));
@@ -61,15 +59,9 @@ namespace SlackNet
         public ISlackTypeResolver GetTypeResolver() => _slackTypeResolver.Value;
         public ISlackUrlBuilder GetUrlBuilder() => _urlBuilder.Value;
         public IWebSocketFactory GetWebSocketFactory() => _webSocketFactory.Value;
-        public ISlackRequestContextFactory GetRequestContextFactory() => _requestContextFactory.Value;
-        public ISlackRequestListener GetRequestListener() => _requestListener.Value;
+        public IEnumerable<ISlackRequestListener> GetRequestListeners() => _requestListeners;
         public ISlackHandlerFactory GetHandlerFactory() => _handlerFactory.Value;
         public ISlackApiClient GetApiClient() => _apiClient.Value;
         public ISlackSocketModeClient GetSocketModeClient() => _socketModeClient.Value;
-    }
-
-    public class SlackServiceCreationException : Exception
-    {
-        public SlackServiceCreationException(string message) : base(message) { }
     }
 }

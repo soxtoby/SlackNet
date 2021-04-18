@@ -27,19 +27,16 @@ namespace SlackNet.AspNetCore
 
     class SlackRequestHandler : ISlackRequestHandler
     {
-        private readonly ISlackRequestContextFactory _requestContextFactory;
-        private readonly ISlackRequestListener _requestListener;
+        private readonly IEnumerable<ISlackRequestListener> _requestListeners;
         private readonly ISlackHandlerFactory _handlerFactory;
         private readonly SlackJsonSettings _jsonSettings;
 
         public SlackRequestHandler(
-            ISlackRequestContextFactory requestContextFactory,
-            ISlackRequestListener requestListener,
+            IEnumerable<ISlackRequestListener> requestListeners,
             ISlackHandlerFactory handlerFactory,
             SlackJsonSettings jsonSettings)
         {
-            _requestContextFactory = requestContextFactory;
-            _requestListener = requestListener;
+            _requestListeners = requestListeners;
             _handlerFactory = handlerFactory;
             _jsonSettings = jsonSettings;
         }
@@ -253,7 +250,7 @@ namespace SlackNet.AspNetCore
         private async Task<SlackResult> InRequestContext(Func<SlackRequestContext, Task<SlackResult>> handleRequest)
         {
             var requestContext = new SlackRequestContext();
-            var requestScope = requestContext.BeginRequest(_requestListener);
+            var requestScope = requestContext.BeginRequest(_requestListeners);
             return (await handleRequest(requestContext).ConfigureAwait(false))
                 .OnCompleted(() => requestScope.DisposeAsync().AsTask());
         }

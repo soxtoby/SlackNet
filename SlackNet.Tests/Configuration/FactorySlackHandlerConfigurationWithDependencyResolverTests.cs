@@ -1,4 +1,7 @@
-﻿using NSubstitute;
+﻿using System;
+using System.Linq;
+using EasyAssertions;
+using NSubstitute;
 using NUnit.Framework;
 using SlackNet.Blocks;
 using SlackNet.Events;
@@ -51,19 +54,12 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
-        public void UseRequestContextFactoryFactory()
-        {
-            UseService<ISlackRequestContextFactory, TestRequestContextFactory>(
-                c => c.UseRequestContextFactory(r => new TestRequestContextFactory()),
-                s => s.GetRequestContextFactory());
-        }
-
-        [Test]
         public void UseRequestListenerFactory()
         {
-            UseService<ISlackRequestListener, TestRequestListener>(
-                c => c.UseRequestListener(r => new TestRequestListener()),
-                s => s.GetRequestListener());
+            var sut = Configure(c => c.UseRequestListener(r => new TestRequestListener(ResolveDependency<InstanceTracker>(r))));
+            var instanceTracker = InstanceTracker;
+
+            RequestListenersShouldBeCreatedOnceOnEnumeration(sut, instanceTracker);
         }
 
         [Test]

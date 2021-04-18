@@ -33,22 +33,19 @@ namespace SlackNet
         private const string Envelope = "Envelope";
         private readonly ICoreSocketModeClient _socket;
         private readonly SlackJsonSettings _jsonSettings;
-        private readonly ISlackRequestListener _requestListener;
-        private readonly ISlackRequestContextFactory _requestContextFactory;
+        private readonly IEnumerable<ISlackRequestListener> _requestListeners;
         private readonly ISlackHandlerFactory _handlerFactory;
         private readonly IDisposable _requestSubscription;
 
         public SlackSocketModeClient(
             ICoreSocketModeClient socket,
             SlackJsonSettings jsonSettings,
-            ISlackRequestContextFactory requestContextFactory,
-            ISlackRequestListener requestListener,
+            IEnumerable<ISlackRequestListener> requestListeners,
             ISlackHandlerFactory handlerFactory)
         {
             _socket = socket;
             _jsonSettings = jsonSettings;
-            _requestContextFactory = requestContextFactory;
-            _requestListener = requestListener;
+            _requestListeners = requestListeners;
             _handlerFactory = handlerFactory;
 
             _requestSubscription = _socket.Messages
@@ -71,10 +68,8 @@ namespace SlackNet
         {
             try
             {
-                var requestContext = _requestContextFactory.CreateRequestContext();
-                requestContext[Envelope] = envelope;
-
-                await using (requestContext.BeginRequest(_requestListener).ConfigureAwait(false))
+                var requestContext = new SlackRequestContext { [Envelope] = envelope };
+                await using (requestContext.BeginRequest(_requestListeners).ConfigureAwait(false))
                 {
                     var responded = false;
 

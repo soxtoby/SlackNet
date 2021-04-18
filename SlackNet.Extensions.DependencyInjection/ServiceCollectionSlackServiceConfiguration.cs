@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -26,8 +27,7 @@ namespace SlackNet.Extensions.DependencyInjection
             serviceCollection.TryAddSingleton<ISlackTypeResolver>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetTypeResolver());
             serviceCollection.TryAddSingleton<ISlackUrlBuilder>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetUrlBuilder());
             serviceCollection.TryAddSingleton<IWebSocketFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetWebSocketFactory());
-            serviceCollection.TryAddSingleton<ISlackRequestContextFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetRequestContextFactory());
-            serviceCollection.TryAddSingleton<ISlackRequestListener>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetRequestListener());
+            serviceCollection.TryAddSingleton<IEnumerable<ISlackRequestListener>>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetRequestListeners());
             serviceCollection.TryAddSingleton<ISlackHandlerFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetHandlerFactory());
             serviceCollection.TryAddSingleton<ISlackApiClient>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetApiClient());
             serviceCollection.TryAddSingleton<ISlackSocketModeClient>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetSocketModeClient());
