@@ -35,19 +35,22 @@ namespace SlackNet.Extensions.DependencyInjection
 
         protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService, TImplementation>()
         {
-            _serviceCollection.TryAddSingleton<TImplementation>();
-            return serviceFactory => ((ServiceProviderSlackServiceProvider)serviceFactory).GetRequiredService<TImplementation>();
+            if (ShouldRegisterType<TImplementation>())
+                _serviceCollection.TryAddSingleton<TImplementation>();
+            return serviceFactory => ((ServiceProviderSlackServiceProvider) serviceFactory).GetRequiredService<TImplementation>();
         }
 
         protected override Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler, TImplementation>()
         {
-            _serviceCollection.TryAddScoped<TImplementation>();
+            if (ShouldRegisterType<TImplementation>())
+                _serviceCollection.TryAddScoped<TImplementation>();
             return requestContext => requestContext.ServiceScope().ServiceProvider.GetRequiredService<TImplementation>();
         }
 
         protected override Func<SlackRequestContext, THandler> GetRegisteredHandlerFactory<THandler>()
         {
-            _serviceCollection.TryAddScoped<THandler>();
+            if (ShouldRegisterType<THandler>())
+                _serviceCollection.TryAddScoped<THandler>();
             return requestContext => requestContext.ServiceScope().ServiceProvider.GetRequiredService<THandler>();
         }
 

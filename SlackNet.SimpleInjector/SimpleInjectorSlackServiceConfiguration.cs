@@ -32,19 +32,22 @@ namespace SlackNet.SimpleInjector
 
         protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService, TImplementation>()
         {
-            RegisterFallbackType<TImplementation>(Lifestyle.Singleton);
+            if (ShouldRegisterType<TImplementation>())
+                RegisterFallbackType<TImplementation>(Lifestyle.Singleton);
             return serviceFactory => ((SimpleInjectorSlackServiceProvider)serviceFactory).GetInstance<TImplementation>();
         }
 
         protected override Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler, TImplementation>()
         {
-            RegisterFallbackType<TImplementation>(Lifestyle.Scoped);
+            if (ShouldRegisterType<TImplementation>())
+                RegisterFallbackType<TImplementation>(Lifestyle.Scoped);
             return requestContext => requestContext.ContainerScope().GetInstance<TImplementation>();
         }
 
         protected override Func<SlackRequestContext, THandler> GetRegisteredHandlerFactory<THandler>()
         {
-            RegisterFallbackType<THandler>(Lifestyle.Scoped);
+            if (ShouldRegisterType<THandler>())
+                RegisterFallbackType<THandler>(Lifestyle.Scoped);
             return requestContext => requestContext.ContainerScope().GetInstance<THandler>();
         }
 

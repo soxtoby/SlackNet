@@ -228,5 +228,15 @@ namespace SlackNet
         /// Get a factory for creating an individual registered handler, to be provided to the top-level handler for the request. Should scope the handler to the request.
         /// </summary>
         protected abstract Func<SlackRequestContext, THandler> GetRegisteredHandlerFactory<THandler>() where THandler : class;
+
+        /// <summary>
+        /// Whether the specified type should be registered in the factory, or just resolved from it.
+        /// </summary>
+        protected static bool ShouldRegisterType<T>()
+        {
+            var type = typeof(T);
+            return type.IsClass
+                && !type.IsAbstract;
+        }
     }
 }
