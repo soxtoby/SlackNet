@@ -1,30 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using SlackNet.Handlers;
 
 namespace SlackNet.AspNetCore
 {
     public abstract class SlackResult : IActionResult
     {
-        private readonly ISlackRequestListener _requestListener;
-        private readonly SlackRequestContext _requestContext;
+        private readonly IList<Func<Task>> _requestCompletedCallbacks = new List<Func<Task>>();
         private readonly HttpStatusCode _status;
-        private Func<Task> _requestCompletedCallback = () => Task.CompletedTask;
 
-        protected SlackResult(ISlackRequestListener requestListener, SlackRequestContext requestContext, HttpStatusCode status)
-        {
-            _requestListener = requestListener;
-            _requestContext = requestContext;
-            _status = status;
-        }
+        protected SlackResult(HttpStatusCode status) => _status = status;
 
+        /// <summary>
+        /// Registers a callback to be called when the request ends.
+        /// Callbacks will be called in first-in-first-out order.
+        /// </summary>
         public SlackResult OnCompleted(Func<Task> callback)
         {
-            _requestCompletedCallback = callback;
+            _requestCompletedCallbacks.Add(callback);
             return this;
         }
 
@@ -34,9 +32,9 @@ namespace SlackNet.AspNetCore
         {
             response.StatusCode = (int)_status;
 
-            // Note: completed callbacks are called last -> first
-            response.OnCompleted(() => _requestListener.OnRequestEnd(_requestContext));
-            response.OnCompleted(_requestCompletedCallback);
+            // Note: HttpResponse's completed callbacks are called in FILO order
+            foreach (var callback in _requestCompletedCallbacks.Reverse())
+                response.OnCompleted(callback);
 
             if (ContentType != null)
                 response.ContentType = ContentType;
@@ -51,14 +49,14 @@ namespace SlackNet.AspNetCore
 
     class EmptyResult : SlackResult
     {
-        public EmptyResult(ISlackRequestListener requestListener, SlackRequestContext requestContext, HttpStatusCode status)
-            : base(requestListener, requestContext, status) { }
+        public EmptyResult(HttpStatusCode status)
+            : base(status) { }
     }
 
     class StringResult : SlackResult
     {
-        public StringResult(ISlackRequestListener requestListener, SlackRequestContext requestContext, HttpStatusCode status, string body)
-            : base(requestListener, requestContext, status) => Body = body;
+        public StringResult(HttpStatusCode status, string body)
+            : base(status) => Body = body;
 
         protected override string Body { get; }
     }
@@ -68,8 +66,8 @@ namespace SlackNet.AspNetCore
         private readonly SlackJsonSettings _jsonSettings;
         private readonly object _data;
 
-        public JsonResult(ISlackRequestListener requestListener, SlackRequestContext requestContext, SlackJsonSettings jsonSettings, HttpStatusCode status, object data)
-            : base(requestListener, requestContext, status)
+        public JsonResult(SlackJsonSettings jsonSettings, HttpStatusCode status, object data)
+            : base(status)
         {
             _jsonSettings = jsonSettings;
             _data = data;
