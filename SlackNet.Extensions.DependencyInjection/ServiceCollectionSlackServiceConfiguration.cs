@@ -16,8 +16,12 @@ namespace SlackNet.Extensions.DependencyInjection
         internal static void Configure(IServiceCollection serviceCollection, Action<ServiceCollectionSlackServiceConfiguration> configure = null)
         {
             var config = new ServiceCollectionSlackServiceConfiguration(serviceCollection);
-            config.UseRequestListener<ServiceProviderSlackRequestListener>();
+
+            config.UseRequestListener<IServiceProviderSlackRequestListener>();
+
             configure?.Invoke(config);
+
+            serviceCollection.TryAddSingleton<IServiceProviderSlackRequestListener, ServiceProviderSlackRequestListener>();
 
             serviceCollection.AddScoped<HandlerDisposer>();
 
@@ -44,28 +48,28 @@ namespace SlackNet.Extensions.DependencyInjection
         {
             if (ShouldRegisterType<TImplementation>())
                 _serviceCollection.TryAddScoped<TImplementation>();
-            return requestContext => requestContext.ServiceScope().ServiceProvider.GetRequiredService<TImplementation>();
+            return requestContext => requestContext.ServiceProvider().GetRequiredService<TImplementation>();
         }
 
         protected override Func<SlackRequestContext, THandler> GetRegisteredHandlerFactory<THandler>()
         {
             if (ShouldRegisterType<THandler>())
                 _serviceCollection.TryAddScoped<THandler>();
-            return requestContext => requestContext.ServiceScope().ServiceProvider.GetRequiredService<THandler>();
+            return requestContext => requestContext.ServiceProvider().GetRequiredService<THandler>();
         }
 
         protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService>(Func<IServiceProvider, TService> getService)
         {
             _serviceCollection.AddSingleton(getService);
-            return serviceFactory => ((ServiceProviderSlackServiceProvider)serviceFactory).GetRequiredService<TService>();
+            return serviceFactory => ((ServiceProviderSlackServiceProvider) serviceFactory).GetRequiredService<TService>();
         }
 
         protected override Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler>(Func<IServiceProvider, THandler> getHandler) =>
             requestContext =>
                 {
-                    var handler = getHandler(requestContext.ServiceScope().ServiceProvider);
+                    var handler = getHandler(requestContext.ServiceProvider());
                     if (handler is IDisposable disposable)
-                        requestContext.ServiceScope().ServiceProvider.GetRequiredService<HandlerDisposer>().Add(disposable);
+                        requestContext.ServiceProvider().GetRequiredService<HandlerDisposer>().Add(disposable);
                     return handler;
                 };
     }

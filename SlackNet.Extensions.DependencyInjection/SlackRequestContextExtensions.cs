@@ -1,17 +1,15 @@
 ﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using SlackNet.Handlers;
 
 namespace SlackNet.Extensions.DependencyInjection
 {
-    static class SlackRequestContextExtensions
+    public static class SlackRequestContextExtensions
     {
-        private const string ScopeKey = "ServiceScope";
+        private const string ProviderKey = "ServiceProvider";
 
-        public static void SetServiceScope(this SlackRequestContext context, IServiceScope scope) => context[ScopeKey] = scope;
+        public static void SetServiceProvider(this SlackRequestContext context, IServiceProvider scopedProvider) => context[ProviderKey] = scopedProvider;
 
-        public static IServiceScope ServiceScope(this SlackRequestContext context) =>
-            context[ScopeKey] as IServiceScope
+        public static IServiceProvider ServiceProvider(this SlackRequestContext context) =>
+            context[ProviderKey] as IServiceProvider
             ?? throw new InvalidOperationException("Service scope missing from Slack request context");
     }
 }
