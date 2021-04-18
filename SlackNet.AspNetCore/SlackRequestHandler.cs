@@ -253,9 +253,9 @@ namespace SlackNet.AspNetCore
         private async Task<SlackResult> InRequestContext(Func<SlackRequestContext, Task<SlackResult>> handleRequest)
         {
             var requestContext = new SlackRequestContext();
-            await _requestListener.OnRequestBegin(requestContext).ConfigureAwait(false);
+            var requestScope = requestContext.BeginRequest(_requestListener);
             return (await handleRequest(requestContext).ConfigureAwait(false))
-                .OnCompleted(() => _requestListener.OnRequestEnd(requestContext));
+                .OnCompleted(() => requestScope.DisposeAsync().AsTask());
         }
 
         private static SlackResult EmptyResult(HttpStatusCode status) =>

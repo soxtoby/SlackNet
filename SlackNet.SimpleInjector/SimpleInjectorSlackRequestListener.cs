@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using SimpleInjector;
+﻿using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
 namespace SlackNet.SimpleInjector
@@ -9,13 +8,11 @@ namespace SlackNet.SimpleInjector
         private readonly Container _container;
         public SimpleInjectorSlackRequestListener(Container container) => _container = container;
 
-        public Task OnRequestBegin(SlackRequestContext context)
+        public void OnRequestBegin(SlackRequestContext context)
         {
-            context.SetContainerScope(AsyncScopedLifestyle.BeginScope(_container));
-            return Task.CompletedTask;
+            var scope = AsyncScopedLifestyle.BeginScope(_container);
+            context.SetContainerScope(scope);
+            context.OnComplete(() => scope.DisposeScopeAsync());
         }
-
-        public Task OnRequestEnd(SlackRequestContext context) =>
-            context.ContainerScope().DisposeScopeAsync();
     }
 }

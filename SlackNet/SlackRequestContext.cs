@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
@@ -8,6 +10,7 @@ namespace SlackNet
     public class SlackRequestContext
     {
         private readonly Dictionary<string, object> _items = new();
+        private readonly Stack<Func<Task>> _onCompleteCallbacks = new();
 
         /// <summary>
         /// Gets or sets the value with the associated key.
@@ -35,5 +38,31 @@ namespace SlackNet
         public IHandlerIndex<IInteractiveMessageHandler> LegacyInteractiveMessageHandlers => (IHandlerIndex<IInteractiveMessageHandler>)_items[nameof(LegacyInteractiveMessageHandlers)];
         public IHandlerIndex<IOptionProvider> LegacyOptionProviders => (IHandlerIndex<IOptionProvider>)_items[nameof(LegacyOptionProviders)];
         public IHandlerIndex<IDialogSubmissionHandler> LegacyDialogSubmissionHandlers => (IHandlerIndex<IDialogSubmissionHandler>)_items[nameof(LegacyDialogSubmissionHandlers)];
+
+        /// <summary>
+        /// Registers a callback to be called when the request ends.
+        /// Callbacks will be called in first-in-last-out order.
+        /// </summary>
+        public void OnComplete(Func<Task> onComplete) =>
+            _onCompleteCallbacks.Push(onComplete);
+
+        public IAsyncDisposable BeginRequest(ISlackRequestListener requestListener)
+        {
+            requestListener.OnRequestBegin(this);
+
+            return new SlackRequestContextScope(this);
+        }
+
+        class SlackRequestContextScope : IAsyncDisposable
+        {
+            private readonly SlackRequestContext _requestContext;
+            public SlackRequestContextScope(SlackRequestContext requestContext) => _requestContext = requestContext;
+
+            public async ValueTask DisposeAsync()
+            {
+                foreach (var callback in _requestContext._onCompleteCallbacks)
+                    await callback().ConfigureAwait(false);
+            }
+        }
     }
 }
