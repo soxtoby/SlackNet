@@ -4,21 +4,22 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace SlackNet.Extensions.DependencyInjection
 {
-    class ServiceProviderSlackRequestListener : ISlackRequestListener
+    public interface IServiceProviderSlackRequestListener : ISlackRequestListener { }
+
+    class ServiceProviderSlackRequestListener : IServiceProviderSlackRequestListener
     {
         private readonly IServiceProvider _serviceProvider;
         public ServiceProviderSlackRequestListener(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
-        public Task OnRequestBegin(SlackRequestContext context)
+        public void OnRequestBegin(SlackRequestContext context)
         {
-            context.SetServiceScope(_serviceProvider.CreateScope());
-            return Task.CompletedTask;
-        }
-
-        public Task OnRequestEnd(SlackRequestContext context)
-        {
-            context.ServiceScope().Dispose();
-            return Task.CompletedTask;
+            var scope = _serviceProvider.CreateScope();
+            context.SetServiceScope(scope);
+            context.OnComplete(() =>
+                {
+                    scope.Dispose();
+                    return Task.CompletedTask;
+                });
         }
     }
 }

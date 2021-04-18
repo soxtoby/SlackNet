@@ -73,26 +73,28 @@ namespace SlackNet
             {
                 var requestContext = _requestContextFactory.CreateRequestContext();
                 requestContext[Envelope] = envelope;
-                await _requestListener.OnRequestBegin(requestContext).ConfigureAwait(false);
-                var responded = false;
 
-                try
+                await using (requestContext.BeginRequest(_requestListener).ConfigureAwait(false))
                 {
-                    await HandleSpecificRequest(requestContext, envelope, Respond).ConfigureAwait(false);
-                }
-                finally
-                {
-                    if (!responded)
-                        Respond(null);
-                    await _requestListener.OnRequestEnd(requestContext).ConfigureAwait(false);
-                }
+                    var responded = false;
 
-                void Respond(object payload)
-                {
-                    responded = true;
-                    var ack = payload == null ? new Acknowledgement() : new Acknowledgement<object> { Payload = payload };
-                    ack.EnvelopeId = envelope.EnvelopeId;
-                    Send(envelope.SocketId, ack);
+                    try
+                    {
+                        await HandleSpecificRequest(requestContext, envelope, Respond).ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        if (!responded)
+                            Respond(null);
+                    }
+
+                    void Respond(object payload)
+                    {
+                        responded = true;
+                        var ack = payload == null ? new Acknowledgement() : new Acknowledgement<object> { Payload = payload };
+                        ack.EnvelopeId = envelope.EnvelopeId;
+                        Send(envelope.SocketId, ack);
+                    }
                 }
             }
             catch

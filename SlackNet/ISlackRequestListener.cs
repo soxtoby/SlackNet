@@ -1,12 +1,8 @@
-﻿using System.Threading.Tasks;
-using SlackNet.Handlers;
-
-namespace SlackNet
+﻿namespace SlackNet
 {
     public interface ISlackRequestListener
     {
-        Task OnRequestBegin(SlackRequestContext context);
-        Task OnRequestEnd(SlackRequestContext context);
+        void OnRequestBegin(SlackRequestContext context);
     }
 
     class NullRequestListener : ISlackRequestListener
@@ -14,7 +10,6 @@ namespace SlackNet
         private NullRequestListener() { }
         public static readonly ISlackRequestListener Instance = new NullRequestListener();
 
-        public Task OnRequestBegin(SlackRequestContext context) => Task.CompletedTask;
-        public Task OnRequestEnd(SlackRequestContext context) => Task.CompletedTask;
+        public void OnRequestBegin(SlackRequestContext context) { }
     }
 }

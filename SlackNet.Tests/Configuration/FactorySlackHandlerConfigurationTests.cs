@@ -941,8 +941,7 @@ namespace SlackNet.Tests.Configuration
 
         protected class TestRequestListener : ISlackRequestListener
         {
-            public Task OnRequestBegin(SlackRequestContext context) => throw new NotImplementedException();
-            public Task OnRequestEnd(SlackRequestContext context) => throw new NotImplementedException();
+            public void OnRequestBegin(SlackRequestContext context) => throw new NotImplementedException();
         }
 
         protected class TestHandlerFactory : ISlackHandlerFactory

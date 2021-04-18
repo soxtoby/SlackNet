@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 
 namespace SlackNet.Autofac
 {
@@ -8,13 +7,11 @@ namespace SlackNet.Autofac
         private readonly ILifetimeScope _rootScope;
         public AutofacSlackRequestListener(ILifetimeScope rootScope) => _rootScope = rootScope;
 
-        public Task OnRequestBegin(SlackRequestContext context)
+        public void OnRequestBegin(SlackRequestContext context)
         {
-            context.SetLifetimeScope(_rootScope.BeginLifetimeScope());
-            return Task.CompletedTask;
+            var scope = _rootScope.BeginLifetimeScope();
+            context.SetLifetimeScope(scope);
+            context.OnComplete(() => scope.DisposeAsync().AsTask());
         }
-
-        public async Task OnRequestEnd(SlackRequestContext context) =>
-            await context.LifetimeScope().DisposeAsync().ConfigureAwait(false);
     }
 }

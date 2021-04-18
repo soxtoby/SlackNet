@@ -670,12 +670,16 @@ namespace SlackNet.Tests.Configuration
         protected static void DuringRequest(ISlackServiceProvider services, Action<SlackRequestContext> duringRequest)
         {
             var requestContext = services.GetRequestContextFactory().CreateRequestContext();
-            var requestListener = services.GetRequestListener();
-            requestListener.OnRequestBegin(requestContext);
+            var requestScope = requestContext.BeginRequest(services.GetRequestListener());
 
-            duringRequest(requestContext);
-
-            requestListener.OnRequestEnd(requestContext);
+            try
+            {
+                duringRequest(requestContext);
+            }
+            finally
+            {
+                requestScope.DisposeAsync().AsTask().ShouldComplete();
+            }
         }
 
         protected virtual ISlackServiceProvider DefaultServiceFactory() => Configure(_ => { });
