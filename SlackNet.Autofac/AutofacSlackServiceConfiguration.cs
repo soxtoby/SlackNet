@@ -33,24 +33,30 @@ namespace SlackNet.Autofac
 
         protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService, TImplementation>()
         {
-            _containerBuilder.RegisterType<TImplementation>().As<TService>().SingleInstance();
+            if (ShouldRegisterType<TImplementation>())
+                _containerBuilder.RegisterType<TImplementation>().As<TService>().SingleInstance();
             return serviceFactory => ((AutofacSlackServiceProvider)serviceFactory).Resolve<TService>();
         }
 
         protected override Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler, TImplementation>()
         {
-            _containerBuilder.RegisterType<TImplementation>().As<THandler>().InstancePerLifetimeScope();
+            if (ShouldRegisterType<TImplementation>())
+                _containerBuilder.RegisterType<TImplementation>().As<THandler>().InstancePerLifetimeScope();
             return requestContext => requestContext.LifetimeScope().Resolve<THandler>();
         }
 
         protected override Func<SlackRequestContext, THandler> GetRegisteredHandlerFactory<THandler>()
         {
-            _containerBuilder.RegisterType<THandler>().InstancePerLifetimeScope();
+            if (ShouldRegisterType<THandler>())
+                _containerBuilder.RegisterType<THandler>().InstancePerLifetimeScope();
             return requestContext => requestContext.LifetimeScope().Resolve<THandler>();
         }
 
-        protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService>(Func<IComponentContext, TService> getService) =>
-            serviceFactory => ((AutofacSlackServiceProvider)serviceFactory).Resolve(getService);
+        protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService>(Func<IComponentContext, TService> getService)
+        {
+            _containerBuilder.Register(getService).SingleInstance();
+            return serviceFactory => ((AutofacSlackServiceProvider)serviceFactory).Resolve<TService>();
+        }
 
         protected override Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler>(Func<IComponentContext, THandler> getHandler) =>
             requestContext => getHandler(requestContext.LifetimeScope());
