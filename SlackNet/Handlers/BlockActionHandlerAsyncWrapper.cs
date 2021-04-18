@@ -9,10 +9,6 @@ namespace SlackNet.Handlers
         private readonly IBlockActionHandler _syncHandler;
         public BlockActionHandlerAsyncWrapper(IBlockActionHandler syncHandler) => _syncHandler = syncHandler;
 
-        public async Task Handle(BlockActionRequest request, Responder respond)
-        {
-            await _syncHandler.Handle(request).ConfigureAwait(false);
-            await respond().ConfigureAwait(false);
-        }
+        public Task Handle(BlockActionRequest request, Responder respond) => _syncHandler.Handle(request);
     }
 }

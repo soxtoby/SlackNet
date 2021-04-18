@@ -9,10 +9,6 @@ namespace SlackNet.Handlers
         private readonly IMessageShortcutHandler _syncHandler;
         public MessageShortcutHandlerAsyncWrapper(IMessageShortcutHandler syncHandler) => _syncHandler = syncHandler;
 
-        public async Task Handle(MessageShortcut request, Responder respond)
-        {
-            await _syncHandler.Handle(request).ConfigureAwait(false);
-            await respond().ConfigureAwait(false);
-        }
+        public Task Handle(MessageShortcut request, Responder respond) => _syncHandler.Handle(request);
     }
 }
