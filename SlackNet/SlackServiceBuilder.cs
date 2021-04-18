@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SlackNet.Handlers;
 
 namespace SlackNet
@@ -18,8 +19,7 @@ namespace SlackNet
         public ISlackTypeResolver GetTypeResolver() => _factory.Value.GetTypeResolver();
         public ISlackUrlBuilder GetUrlBuilder() => _factory.Value.GetUrlBuilder();
         public IWebSocketFactory GetWebSocketFactory() => _factory.Value.GetWebSocketFactory();
-        public ISlackRequestContextFactory GetRequestContextFactory() => _factory.Value.GetRequestContextFactory();
-        public ISlackRequestListener GetRequestListener() => _factory.Value.GetRequestListener();
+        public IEnumerable<ISlackRequestListener> GetRequestListeners() => _factory.Value.GetRequestListeners();
         public ISlackHandlerFactory GetHandlerFactory() => _factory.Value.GetHandlerFactory();
         public ISlackApiClient GetApiClient() => _factory.Value.GetApiClient();
         public ISlackSocketModeClient GetSocketModeClient() => _factory.Value.GetSocketModeClient();

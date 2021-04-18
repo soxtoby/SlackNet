@@ -51,19 +51,11 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
-        public void UseRequestContextFactoryFactory()
-        {
-            UseService<ISlackRequestContextFactory, TestRequestContextFactory>(
-                c => c.UseRequestContextFactory(() => new TestRequestContextFactory()),
-                s => s.GetRequestContextFactory());
-        }
-
-        [Test]
         public void UseRequestListenerFactory()
         {
-            UseService<ISlackRequestListener, TestRequestListener>(
-                c => c.UseRequestListener(() => new TestRequestListener()),
-                s => s.GetRequestListener());
+            var sut = Configure(c => c.UseRequestListener(() => new TestRequestListener(InstanceTracker)));
+
+            RequestListenersShouldBeCreatedOnceOnEnumeration(sut, InstanceTracker);
         }
 
         [Test]

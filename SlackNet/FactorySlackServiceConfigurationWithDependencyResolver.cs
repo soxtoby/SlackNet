@@ -14,7 +14,6 @@ namespace SlackNet
         public TConfig UseTypeResolver(Func<TDependencyResolver, ISlackTypeResolver> slackTypeResolverProvider) => UseTypeResolver(GetServiceFactory(slackTypeResolverProvider));
         public TConfig UseUrlBuilder(Func<TDependencyResolver, ISlackUrlBuilder> urlBuilderProvider) => UseUrlBuilder(GetServiceFactory(urlBuilderProvider));
         public TConfig UseWebSocketFactory(Func<TDependencyResolver, IWebSocketFactory> webSocketFactoryProvider) => UseWebSocketFactory(GetServiceFactory(webSocketFactoryProvider));
-        public TConfig UseRequestContextFactory(Func<TDependencyResolver, ISlackRequestContextFactory> requestContextFactoryProvider) => UseRequestContextFactory(GetServiceFactory(requestContextFactoryProvider));
         public TConfig UseRequestListener(Func<TDependencyResolver, ISlackRequestListener> requestListenerProvider) => UseRequestListener(GetServiceFactory(requestListenerProvider));
         public TConfig UseHandlerFactory(Func<TDependencyResolver, ISlackHandlerFactory> handlerFactoryProvider) => UseHandlerFactory(GetServiceFactory(handlerFactoryProvider));
         public TConfig UseApiClient(Func<TDependencyResolver, ISlackApiClient> apiClientProvider) => UseApiClient(GetServiceFactory(apiClientProvider));

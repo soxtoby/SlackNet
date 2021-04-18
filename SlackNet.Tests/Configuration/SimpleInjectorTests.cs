@@ -11,6 +11,19 @@ namespace SlackNet.Tests.Configuration
     public class SimpleInjectorTests : FactorySlackHandlerConfigurationWithExternalDependencyResolverTests<SimpleInjectorSlackServiceConfiguration>
     {
         private Container _container;
+        private InstanceTracker _instanceTracker;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _instanceTracker = new InstanceTracker();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _container?.Verify();
+        }
 
         protected override void ResolvedServiceShouldReferToProviderService<TService>(Func<ISlackServiceProvider, TService> getServiceFromProvider)
         {
@@ -21,36 +34,21 @@ namespace SlackNet.Tests.Configuration
                 .ShouldReferTo(getServiceFromProvider(slackServiceProvider));
         }
 
-        protected override ISlackServiceProvider DefaultServiceFactory() =>
-            Configure(DefaultContainer(), _ => { });
-
         protected override ISlackServiceProvider Configure(Action<SimpleInjectorSlackServiceConfiguration> configure) =>
             Configure(_container = DefaultContainer(), configure);
 
         private static Container DefaultContainer() =>
-            new() { Options = { DefaultScopedLifestyle = new AsyncScopedLifestyle() } };
+            new() { Options = { DefaultScopedLifestyle = new AsyncScopedLifestyle(), EnableAutoVerification = false} };
 
-        private static ISlackServiceProvider Configure(Container container, Action<SimpleInjectorSlackServiceConfiguration> configure)
+        private ISlackServiceProvider Configure(Container container, Action<SimpleInjectorSlackServiceConfiguration> configure)
         {
-            container.Register<InstanceTracker, SimpleInjectorInstanceTracker>(Lifestyle.Singleton);
+            container.RegisterInstance(_instanceTracker);
             container.AddSlackNet(configure);
             return container.GetInstance<ISlackServiceProvider>();
         }
 
         protected override T ResolveDependency<T>() => _container.GetInstance<T>();
 
-        protected override InstanceTracker InstanceTracker => _container.GetInstance<InstanceTracker>();
-
-        class SimpleInjectorInstanceTracker : InstanceTracker
-        {
-            private readonly Container _container;
-            public SimpleInjectorInstanceTracker(Container container) => _container = container;
-
-            public override void AddInstance(TrackedClass instance)
-            {
-                if (!_container.IsVerifying)
-                    base.AddInstance(instance);
-            }
-        }
+        protected override InstanceTracker InstanceTracker => _instanceTracker;
     }
 }

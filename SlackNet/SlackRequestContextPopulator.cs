@@ -6,12 +6,7 @@ using SlackNet.Interaction.Experimental;
 
 namespace SlackNet
 {
-    public interface ISlackRequestContextFactory
-    {
-        SlackRequestContext CreateRequestContext();
-    }
-
-    class SlackRequestContextFactory : ISlackRequestContextFactory
+    class SlackRequestContextPopulator : ISlackRequestListener
     {
         private readonly ISlackServiceProvider _serviceProvider;
         private readonly IReadOnlyCollection<Func<SlackRequestContext, IEventHandler>> _eventHandlers;
@@ -27,7 +22,7 @@ namespace SlackNet
         private readonly IReadOnlyDictionary<string, Func<SlackRequestContext, IOptionProvider>> _legacyOptionProviders;
         private readonly IReadOnlyDictionary<string, Func<SlackRequestContext, IDialogSubmissionHandler>> _legacyDialogSubmissionHandlers;
 
-        public SlackRequestContextFactory(
+        public SlackRequestContextPopulator(
             ISlackServiceProvider serviceProvider,
             IReadOnlyCollection<Func<SlackRequestContext, IEventHandler>> eventHandlers,
             IReadOnlyCollection<Func<SlackRequestContext, IAsyncBlockActionHandler>> blockActionHandlers,
@@ -55,9 +50,8 @@ namespace SlackNet
             _legacyDialogSubmissionHandlers = legacyDialogSubmissionHandlers;
         }
 
-        public SlackRequestContext CreateRequestContext()
+        public void OnRequestBegin(SlackRequestContext context)
         {
-            var context = new SlackRequestContext();
             context[nameof(SlackRequestContext.ServiceProvider)] = _serviceProvider;
             context[nameof(SlackRequestContext.EventHandlers)] = new HandlerCollection<IEventHandler>(context, _eventHandlers);
             context[nameof(SlackRequestContext.BlockActionHandlers)] = new HandlerCollection<IAsyncBlockActionHandler>(context, _blockActionHandlers);
@@ -70,7 +64,6 @@ namespace SlackNet
             context[nameof(SlackRequestContext.LegacyInteractiveMessageHandlers)] = new HandlerIndex<IInteractiveMessageHandler>(context, _legacyInteractiveMessageHandlers);
             context[nameof(SlackRequestContext.LegacyOptionProviders)] = new HandlerIndex<IOptionProvider>(context, _legacyOptionProviders);
             context[nameof(SlackRequestContext.LegacyDialogSubmissionHandlers)] = new HandlerIndex<IDialogSubmissionHandler>(context, _legacyDialogSubmissionHandlers);
-            return context;
         }
     }
 }

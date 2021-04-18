@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Handlers;
@@ -14,7 +16,6 @@ namespace SlackNet
         public TConfig UseTypeResolver<TService>() where TService : class, ISlackTypeResolver => UseTypeResolver(GetServiceFactory<ISlackTypeResolver, TService>());
         public TConfig UseUrlBuilder<TService>() where TService : class, ISlackUrlBuilder => UseUrlBuilder(GetServiceFactory<ISlackUrlBuilder, TService>());
         public TConfig UseWebSocketFactory<TService>() where TService : class, IWebSocketFactory => UseWebSocketFactory(GetServiceFactory<IWebSocketFactory, TService>());
-        public TConfig UseRequestContextFactory<TService>() where TService : class, ISlackRequestContextFactory => UseRequestContextFactory(GetServiceFactory<ISlackRequestContextFactory, TService>());
         public TConfig UseRequestListener<TService>() where TService : class, ISlackRequestListener => UseRequestListener(GetServiceFactory<ISlackRequestListener, TService>());
         public TConfig UseHandlerFactory<TService>() where TService : class, ISlackHandlerFactory => UseHandlerFactory(GetServiceFactory<ISlackHandlerFactory, TService>());
         public TConfig UseApiClient<TService>() where TService : class, ISlackApiClient => UseApiClient(GetServiceFactory<ISlackApiClient, TService>());

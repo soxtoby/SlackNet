@@ -79,19 +79,24 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
-        public void UseRequestContextFactoryType()
-        {
-            UseService<ISlackRequestContextFactory, TestRequestContextFactory>(
-                c => c.UseRequestContextFactory<TestRequestContextFactory>(),
-                s => s.GetRequestContextFactory());
-        }
-
-        [Test]
         public void UseRequestListenerType()
         {
-            UseService<ISlackRequestListener, TestRequestListener>(
-                c => c.UseRequestListener<TestRequestListener>(),
-                s => s.GetRequestListener());
+            var sut = Configure(c => c.UseRequestListener<TestRequestListener>());
+
+            RequestListenersShouldBeCreatedOnceOnEnumeration(sut, InstanceTracker);
+        }
+
+        protected static void RequestListenersShouldBeCreatedOnceOnEnumeration(ISlackServiceProvider sut, InstanceTracker instanceTracker)
+        {
+            var listeners = sut.GetRequestListeners();
+
+            instanceTracker.GetInstances<TestRequestListener>().ShouldBeEmpty("Listeners should not be created until enumerated");
+
+            var expectedListener = listeners.Last();
+            listeners.Last().ShouldBe(expectedListener, "Should be same instance");
+
+            var createdInstances = instanceTracker.GetInstances<TestRequestListener>().Cast<ISlackRequestListener>();
+            createdInstances.ShouldMatchReferences(new[] { expectedListener }, "Listeners should be created once on enumeration");
         }
 
         [Test]
@@ -871,9 +876,7 @@ namespace SlackNet.Tests.Configuration
             service.ShouldReferTo(getService(sut), "Should be same instance")
                 .And.ShouldBeA<TImplementation>();
 
-            // Need to use a real request listener from a separate config to test request behaviour
-            var realFactory = DefaultServiceFactory();
-            DuringRequest(realFactory, _ => getService(sut).ShouldReferTo(service, "Should be same instance during request"));
+            DuringRequest(sut, _ => getService(sut).ShouldReferTo(service, "Should be same instance during request"));
         }
 
         protected void ReplaceRequestHandling<THandler, TImplementation>(
@@ -932,16 +935,6 @@ namespace SlackNet.Tests.Configuration
         protected class TestWebSocketFactory : IWebSocketFactory
         {
             public IWebSocket Create(string uri) => throw new NotImplementedException();
-        }
-
-        protected class TestRequestContextFactory : ISlackRequestContextFactory
-        {
-            public SlackRequestContext CreateRequestContext() => throw new NotImplementedException();
-        }
-
-        protected class TestRequestListener : ISlackRequestListener
-        {
-            public void OnRequestBegin(SlackRequestContext context) => throw new NotImplementedException();
         }
 
         protected class TestHandlerFactory : ISlackHandlerFactory

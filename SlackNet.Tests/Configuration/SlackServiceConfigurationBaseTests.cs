@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using EasyAssertions;
 using Newtonsoft.Json;
 using NSubstitute;
@@ -11,6 +12,7 @@ using SlackNet.Events;
 using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
+using Button = SlackNet.Interaction.Button;
 
 namespace SlackNet.Tests.Configuration
 {
@@ -74,24 +76,23 @@ namespace SlackNet.Tests.Configuration
         }
 
         [Test]
-        public void UseRequestContextFactory()
-        {
-            var requestContextFactory = Substitute.For<ISlackRequestContextFactory>();
-            requestContextFactory.CreateRequestContext().Returns(_ => new SlackRequestContext());
-
-            UseService(
-                requestContextFactory,
-                (c, sp) => c.UseRequestContextFactory(sp),
-                s => s.GetRequestContextFactory());
-        }
-
-        [Test]
         public void UseRequestListener()
         {
-            UseService(
-                Substitute.For<ISlackRequestListener>(),
-                (c, sp) => c.UseRequestListener(sp),
-                s => s.GetRequestListener());
+            var instanceTracker = new InstanceTracker();
+            var sut = Configure(c => c.UseRequestListener(sp => new TestRequestListener(instanceTracker)));
+
+            RequestListenersShouldBeCreatedOnEnumeration(sut, instanceTracker);
+        }
+
+        private static void RequestListenersShouldBeCreatedOnEnumeration(ISlackServiceProvider sut, InstanceTracker instanceTracker)
+        {
+            var listeners = sut.GetRequestListeners();
+
+            instanceTracker.GetInstances<TestRequestListener>().ShouldBeEmpty("Listeners should not be created until enumerated");
+
+            var expectedListeners = new[] { listeners.Last(), listeners.Last() };
+            var createdInstances = instanceTracker.GetInstances<TestRequestListener>().Cast<ISlackRequestListener>();
+            createdInstances.ShouldMatchReferences(expectedListeners, "Listeners should be created once per enumeration");
         }
 
         [Test]
@@ -514,8 +515,8 @@ namespace SlackNet.Tests.Configuration
         {
             // Arrange
             var handler = Substitute.For<IInteractiveMessageHandler>();
-            var otherInteractiveMessage = new InteractiveMessage { Actions = { new Interaction.Button { Name = "other" } } };
-            var interactiveMessage = new InteractiveMessage { Actions = { new Interaction.Button { Name = "action" } } };
+            var otherInteractiveMessage = new InteractiveMessage { Actions = { new Button { Name = "other" } } };
+            var interactiveMessage = new InteractiveMessage { Actions = { new Button { Name = "action" } } };
 
             var sut = Configure(c => c.RegisterInteractiveMessageHandler("action", handler));
 
@@ -669,8 +670,8 @@ namespace SlackNet.Tests.Configuration
 
         protected static void DuringRequest(ISlackServiceProvider services, Action<SlackRequestContext> duringRequest)
         {
-            var requestContext = services.GetRequestContextFactory().CreateRequestContext();
-            var requestScope = requestContext.BeginRequest(services.GetRequestListener());
+            var requestContext = new SlackRequestContext();
+            var requestScope = requestContext.BeginRequest(services.GetRequestListeners());
 
             try
             {
@@ -682,8 +683,12 @@ namespace SlackNet.Tests.Configuration
             }
         }
 
-        protected virtual ISlackServiceProvider DefaultServiceFactory() => Configure(_ => { });
-
         protected abstract ISlackServiceProvider Configure(Action<TConfig> configure);
+
+        protected class TestRequestListener : TrackedClass, ISlackRequestListener
+        {
+            public TestRequestListener(InstanceTracker tracker) : base(tracker) { }
+            public void OnRequestBegin(SlackRequestContext context) { }
+        }
     }
 }

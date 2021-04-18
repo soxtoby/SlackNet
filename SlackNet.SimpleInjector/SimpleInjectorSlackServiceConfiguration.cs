@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using SimpleInjector;
 using SlackNet.Handlers;
@@ -23,8 +24,7 @@ namespace SlackNet.SimpleInjector
             RegisterFallback<ISlackTypeResolver>(container, () => container.GetInstance<ISlackServiceProvider>().GetTypeResolver(), Lifestyle.Singleton);
             RegisterFallback<ISlackUrlBuilder>(container, () => container.GetInstance<ISlackServiceProvider>().GetUrlBuilder(), Lifestyle.Singleton);
             RegisterFallback<IWebSocketFactory>(container, () => container.GetInstance<ISlackServiceProvider>().GetWebSocketFactory(), Lifestyle.Singleton);
-            RegisterFallback<ISlackRequestContextFactory>(container, () => container.GetInstance<ISlackServiceProvider>().GetRequestContextFactory(), Lifestyle.Singleton);
-            RegisterFallback<ISlackRequestListener>(container, () => container.GetInstance<ISlackServiceProvider>().GetRequestListener(), Lifestyle.Singleton);
+            RegisterFallback<IEnumerable<ISlackRequestListener>>(container, () => container.GetInstance<ISlackServiceProvider>().GetRequestListeners(), Lifestyle.Singleton);
             RegisterFallback<ISlackHandlerFactory>(container, () => container.GetInstance<ISlackServiceProvider>().GetHandlerFactory(), Lifestyle.Singleton);
             RegisterFallback<ISlackApiClient>(container, () => container.GetInstance<ISlackServiceProvider>().GetApiClient(), Lifestyle.Singleton);
             RegisterFallback<ISlackSocketModeClient>(container, () => container.GetInstance<ISlackServiceProvider>().GetSocketModeClient(), Lifestyle.Singleton);

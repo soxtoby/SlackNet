@@ -46,9 +46,10 @@ namespace SlackNet
         public void OnComplete(Func<Task> onComplete) =>
             _onCompleteCallbacks.Push(onComplete);
 
-        public IAsyncDisposable BeginRequest(ISlackRequestListener requestListener)
+        public IAsyncDisposable BeginRequest(IEnumerable<ISlackRequestListener> requestListeners)
         {
-            requestListener.OnRequestBegin(this);
+            foreach (var listener in requestListeners)
+                listener.OnRequestBegin(this);
 
             return new SlackRequestContextScope(this);
         }

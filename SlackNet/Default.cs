@@ -50,8 +50,6 @@ namespace SlackNet
 
         public static IWebSocketFactory WebSocketFactory => new WebSocketFactory();
 
-        public static ISlackRequestListener RequestListener => NullRequestListener.Instance;
-
         public static IScheduler Scheduler => System.Reactive.Concurrency.Scheduler.Default;
 
         public static SocketModeConnectionOptions SocketModeConnectionOptions => new();
