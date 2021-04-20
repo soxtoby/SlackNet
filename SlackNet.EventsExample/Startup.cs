@@ -62,7 +62,7 @@ namespace SlackNet.EventsExample
                 .UseSigningSecret(Configuration["Slack:SigningSecret"])
                 .UseSocketMode(false));
 
-            app.UseMvc();
+            app.UseMvcWithDefaultRoute();
         }
     }
 }
