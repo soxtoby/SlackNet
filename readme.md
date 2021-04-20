@@ -2,7 +2,7 @@
 An easy-to-use and flexible API for writing Slack bots in .NET, built on top of a comprehensive Slack API client.
 
 ## Getting Started
-There are three NuGet packages available to install, depending on your use case.
+There are three main NuGet packages available to install, depending on your use case.
   - [SlackNet](https://www.nuget.org/packages/SlackNet/): A comprehensive Slack API client for .NET.
   - [SlackNet.Bot](https://www.nuget.org/packages/SlackNet.Bot/): Easy-to-use API for writing Slack bots.
   - [SlackNet.AspNetCore](https://www.nuget.org/packages/SlackNet.AspNetCore/): ASP.NET Core integration for receiving requests from Slack.
@@ -10,20 +10,25 @@ There are three NuGet packages available to install, depending on your use case.
 ### SlackNet
 To use the Web API:
 ```c#
-var api = new SlackApiClient("<your OAuth access token here>");
+var api = new SlackServiceBuilder()
+    .UseApiToken("<your OAuth access token here>")
+    .GetApiClient();
 ```
 then start calling methods:
 ```c#
 var channels = await api.Conversations.List();
 ```
 
-To use the RTM API:
+To use the socket mode client:
 ```c#
-var rtm = new SlackRtmClient("<your OAuth access token here>");
-await rtm.Connect();
-rtm.Events.Subscribe(/* handle every event */);
-rtm.Messages.Subscribe(/* handle message events */);
+var client = new SlackServiceBuilder()
+    .UseAppLevelToken("<app-level OAuth token required for socket mode>")
+    /* Register handlers here */
+    .GetSocketModeClient();
+await client.Connect();
 ```
+
+A range of handler registration methods are available, but all require that you construct the handlers manually. You can simplify handler registration by integrating with a DI container. Integrations are provided for Autofac, Microsoft.Extensions.DependencyInjection, and SimpleInjector. See the [socket mode release notes](https://github.com/soxtoby/SlackNet/releases/tag/v0.9.0) for more information. 
 
 ### SlackNet.Bot
 ```c#
@@ -83,6 +88,14 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 
 Add event handler registrations inside the AddSlackNet callback. See the `SlackNet.EventsExample` project for more detail.
 
+#### Socket Mode
+
+While testing an ASP.NET application, you can use socket mode instead of needing to host the website publicly, by enabling socket mode with:
+
+```c#
+app.UseSlackNet(c => c.UseSocketMode());
+```
+
 #### Azure Functions
 SlackNet.AspNetCore can be used in Azure Functions as well, although it's a little more manual at the moment.
 
@@ -105,24 +118,12 @@ See the `SlackNet.AzureFunctionExample` and `SlackNet.EventsExample` projects fo
 
 SlackNet requires the Slack app endpoints to be named after the following convention:
 
-**Event subscriptions**
-
-`{route_prefix}/event`
-
-
-**Interactivity**
-
-`{route_prefix}/action`
-
-
-**Select menus**
-
-`{route_prefix}/options`
-
-
-**Slash commands**
-
-`{route_prefix}/command`
+| Endpoint            | Route                    |
+|---------------------|--------------------------|
+| Event subscriptions | `{route_prefix}/event`   |
+| Interactivity       | `{route_prefix}/action`  |
+| Select menus        | `{route_prefix}/options` |
+| Slash commands      | `{route_prefix}/command` |
 
 
 By default, the value of `{route_prefix}` is `slack`, but this can be configured like so:
