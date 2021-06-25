@@ -26,6 +26,7 @@ namespace SlackNet.WebApi
         /// <param name="mpimAware">Returns MPIMs to the client in the API response.</param>
         /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
         /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
+        /// <param name="includeLocale">Set this to true to receive the locale for users and channels.</param>
         /// <param name="noLatest">Exclude latest timestamps for channels, groups, mpims, and ims. Automatically sets <paramref name="noUnreads"/> to False.</param>
         /// <param name="cancellationToken"></param>
         Task<StartResponse> Start(
@@ -34,6 +35,7 @@ namespace SlackNet.WebApi
             bool mpimAware = false,
             bool manualPresenceSubscription = false,
             bool batchPresenceAware = false,
+            bool includeLocale = false,
             bool noLatest = false,
             CancellationToken? cancellationToken = null
         );
@@ -64,6 +66,7 @@ namespace SlackNet.WebApi
         /// <param name="mpimAware">Returns MPIMs to the client in the API response.</param>
         /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
         /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
+        /// <param name="includeLocale">Set this to true to receive the locale for users and channels.</param>
         /// <param name="noLatest">Exclude latest timestamps for channels, groups, mpims, and ims. Automatically sets <paramref name="noUnreads"/> to False.</param>
         /// <param name="cancellationToken"></param>
         public Task<StartResponse> Start(
@@ -72,6 +75,7 @@ namespace SlackNet.WebApi
             bool mpimAware = false,
             bool manualPresenceSubscription = false,
             bool batchPresenceAware = false,
+            bool includeLocale = false,
             bool noLatest = false,
             CancellationToken? cancellationToken = null
         ) =>
@@ -82,6 +86,7 @@ namespace SlackNet.WebApi
                         { "mpim_aware", mpimAware },
                         { "presence_sub", manualPresenceSubscription },
                         { "batch_presence_aware", batchPresenceAware },
+                        { "include_locale", includeLocale },
                         { "no_latest", noLatest }
                     },
                 cancellationToken);
