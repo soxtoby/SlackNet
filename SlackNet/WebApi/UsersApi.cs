@@ -51,8 +51,9 @@ namespace SlackNet.WebApi
         /// Returns information about a team member.
         /// </summary>
         /// <param name="userId">User to get info on.</param>
+        /// <param name="includeLocale">Set this to true to receive the locale for this user.</param>
         /// <param name="cancellationToken"></param>
-        Task<User> Info(string userId, CancellationToken? cancellationToken = null);
+        Task<User> Info(string userId, bool includeLocale = false, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Returns a list of all users in the team.
@@ -63,9 +64,10 @@ namespace SlackNet.WebApi
         /// returned by a previous request's <see cref="UserListResponse.ResponseMetadata"/>.
         /// Default value fetches the first "page" of the collection.
         /// </param>
+        /// <param name="includeLocale">Set this to true to receive the locale for users.</param>
         /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
         /// <param name="cancellationToken"></param>
-        Task<UserListResponse> List(string cursor = null, int limit = 0, CancellationToken? cancellationToken = null);
+        Task<UserListResponse> List(string cursor = null, bool includeLocale = false, int limit = 0, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Find a user with an email address.
@@ -171,9 +173,14 @@ namespace SlackNet.WebApi
         /// Returns information about a team member.
         /// </summary>
         /// <param name="userId">User to get info on.</param>
+        /// <param name="includeLocale">Set this to true to receive the locale for this user.</param>
         /// <param name="cancellationToken"></param>
-        public async Task<User> Info(string userId, CancellationToken? cancellationToken = null) =>
-            (await _client.Get<UserResponse>("users.info", new Args { { "user", userId } }, cancellationToken).ConfigureAwait(false)).User;
+        public async Task<User> Info(string userId, bool includeLocale = false, CancellationToken? cancellationToken = null) =>
+            (await _client.Get<UserResponse>("users.info", new Args
+                {
+                    { "user", userId },
+                    { "include_locale", includeLocale },
+                }, cancellationToken).ConfigureAwait(false)).User;
 
         /// <summary>
         /// Returns a list of all users in the team.
@@ -184,12 +191,14 @@ namespace SlackNet.WebApi
         /// returned by a previous request's <see cref="UserListResponse.ResponseMetadata"/>.
         /// Default value fetches the first "page" of the collection.
         /// </param>
+        /// <param name="includeLocale">Set this to true to receive the locale for users.</param>
         /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
         /// <param name="cancellationToken"></param>
-        public Task<UserListResponse> List(string cursor = null, int limit = 0, CancellationToken? cancellationToken = null) =>
+        public Task<UserListResponse> List(string cursor = null, bool includeLocale = false, int limit = 0, CancellationToken? cancellationToken = null) =>
             _client.Get<UserListResponse>("users.list", new Args
                 {
                     { "cursor", cursor },
+                    { "include_locale", includeLocale },
                     { "limit", limit }
                 }, cancellationToken);
 
