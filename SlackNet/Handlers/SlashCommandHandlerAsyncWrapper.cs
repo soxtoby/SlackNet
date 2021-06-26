@@ -9,6 +9,7 @@ namespace SlackNet.Handlers
         private readonly ISlashCommandHandler _syncHandler;
         public SlashCommandHandlerAsyncWrapper(ISlashCommandHandler syncHandler) => _syncHandler = syncHandler;
 
-        public Task Handle(SlashCommand command, Responder<SlashCommandResponse> respond) => _syncHandler.Handle(command);
+        public async Task Handle(SlashCommand command, Responder<SlashCommandResponse> respond) =>
+            await respond(await _syncHandler.Handle(command).ConfigureAwait(false)).ConfigureAwait(false);
     }
 }
