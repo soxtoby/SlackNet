@@ -44,7 +44,7 @@ namespace SlackNet.WebApi
                     { "client_secret", clientSecret },
                     { "code", code },
                     { "grant_type", grantType },
-                    { "redirect_uri",, redirectUrl },
+                    { "redirect_uri", redirectUrl },
                     { "refresh_token", refreshToken }
                 }, cancellationToken);
     }
