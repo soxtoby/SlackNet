@@ -11,7 +11,7 @@
 
         public Space Team { get; set; }
         public Space Enterprise { get; set; }
-        public User User { get; set; }
+        public AuthedUser AuthedUser { get; set; }
     }
 
     public class Space
@@ -20,7 +20,7 @@
         public string Name { get; set; }
     }
 
-    public class User
+    public class AuthedUser
     {
         public string Id { get; set; }
         public string Scope { get; set; }
