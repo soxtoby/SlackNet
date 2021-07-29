@@ -13,11 +13,11 @@ namespace SlackNet.WebApi
         /// <param name="clientId">Issued when you created your application.</param>
         /// <param name="clientSecret">Issued when you created your application.</param>
         /// <param name="code">The code param returned via the OAuth callback.</param>
-        /// <param name="grant_type">The grant_type param as described in the OAuth spec.</param>
+        /// <param name="grantType">The grant_type param as described in the OAuth spec.</param>
         /// <param name="redirectUrl">This must match the originally submitted URI (if one was sent).</param>
-        /// <param name="refresh_token">The refresh_token param as described in the OAuth spec.</param>
+        /// <param name="refreshToken">The refresh_token param as described in the OAuth spec.</param>
         /// <param name="cancellationToken"></param>
-        Task<OauthV2AccessResponse> Access(string clientId, string clientSecret, string code, string grant_type, string redirectUrl, string refresh_token, CancellationToken? cancellationToken = null);
+        Task<OauthV2AccessResponse> Access(string clientId, string clientSecret, string code, string grantType, string redirectUrl, string refreshToken, CancellationToken? cancellationToken = null);
 
     }
 
@@ -33,9 +33,9 @@ namespace SlackNet.WebApi
         /// <param name="clientId">Issued when you created your application.</param>
         /// <param name="clientSecret">Issued when you created your application.</param>
         /// <param name="code">The code param returned via the OAuth callback.</param>
-        /// <param name="grant_type">The grant_type param as described in the OAuth spec.</param>
+        /// <param name="grantType">The grant_type param as described in the OAuth spec.</param>
         /// <param name="redirectUrl">This must match the originally submitted URI (if one was sent).</param>
-        /// <param name="refresh_token">The refresh_token param as described in the OAuth spec.</param>
+        /// <param name="refreshToken">The refresh_token param as described in the OAuth spec.</param>
         /// <param name="cancellationToken"></param>
         public Task<OauthV2AccessResponse> Access(string clientId, string clientSecret, string code, string grantType, string redirectUrl, string refreshToken, CancellationToken? cancellationToken = null) =>
             _client.Get<OauthV2AccessResponse>("oauth.v2.access", new Args
