@@ -36,7 +36,7 @@ namespace SlackNet.WebApi
         public OAuthV2Api(ISlackApiClient client) => _client = client;
 
         /// <summary>
-        /// Exchanges a temporary OAuth verifier code for an access token.
+        /// Exchanges a temporary OAuth verifier code for an access token or refresh an access token.
         /// See https://api.slack.com/methods/oauth.v2.access for more information.
         /// </summary>
         /// <param name="clientId">Issued when you created your application.</param>
@@ -49,8 +49,9 @@ namespace SlackNet.WebApi
         public Task<OauthV2AccessResponse> Access(
             string clientId,
             string clientSecret,
-            string code, string grantType,
 #nullable enable
+            string? code,
+            string? grantType,
             string? redirectUrl,
             string? refreshToken,
 #nullable disable
