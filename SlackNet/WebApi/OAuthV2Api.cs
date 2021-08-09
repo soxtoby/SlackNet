@@ -4,7 +4,7 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
-    public interface IOAuthApiV2
+    public interface IOAuthV2Api
     {
         /// <summary>
         /// Exchanges a temporary OAuth verifier code for an access token.
@@ -17,14 +17,23 @@ namespace SlackNet.WebApi
         /// <param name="redirectUrl">This must match the originally submitted URI (if one was sent).</param>
         /// <param name="refreshToken">The refresh_token param as described in the OAuth spec.</param>
         /// <param name="cancellationToken"></param>
-        Task<OauthV2AccessResponse> Access(string clientId, string clientSecret, string code, string grantType, string redirectUrl, string refreshToken, CancellationToken? cancellationToken = null);
+        Task<OauthV2AccessResponse> Access(
+            string clientId,
+            string clientSecret,
+            string code, string grantType,
+#nullable enable
+            string? redirectUrl,
+            string? refreshToken,
+#nullable disable
+            CancellationToken? cancellationToken
+        );
 
     }
 
-    public class OAuthApiV2 : IOAuthApiV2
+    public class OAuthV2Api : IOAuthV2Api
     {
         private readonly ISlackApiClient _client;
-        public OAuthApiV2(ISlackApiClient client) => _client = client;
+        public OAuthV2Api(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Exchanges a temporary OAuth verifier code for an access token.
@@ -37,8 +46,16 @@ namespace SlackNet.WebApi
         /// <param name="redirectUrl">This must match the originally submitted URI (if one was sent).</param>
         /// <param name="refreshToken">The refresh_token param as described in the OAuth spec.</param>
         /// <param name="cancellationToken"></param>
-        public Task<OauthV2AccessResponse> Access(string clientId, string clientSecret, string code, string grantType, string redirectUrl, string refreshToken, CancellationToken? cancellationToken = null) =>
-            _client.Get<OauthV2AccessResponse>("oauth.v2.access", new Args
+        public Task<OauthV2AccessResponse> Access(
+            string clientId,
+            string clientSecret,
+            string code, string grantType,
+#nullable enable
+            string? redirectUrl,
+            string? refreshToken,
+#nullable disable
+            CancellationToken? cancellationToken = null
+         ) => _client.Post<OauthV2AccessResponse>("oauth.v2.access", new Args
                 {
                     { "client_id", clientId },
                     { "client_secret", clientSecret },
