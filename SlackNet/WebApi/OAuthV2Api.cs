@@ -20,8 +20,9 @@ namespace SlackNet.WebApi
         Task<OauthV2AccessResponse> Access(
             string clientId,
             string clientSecret,
-            string code, string grantType,
 #nullable enable
+            string? code, 
+            string? grantType,
             string? redirectUrl,
             string? refreshToken,
 #nullable disable
