@@ -13,6 +13,7 @@ namespace SlackNet.Events
         public string User { get; set; }
         public string Text { get; set; }
         public string Ts { get; set; }
+        public string Team { get; set; }
         [JsonIgnore]
         public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
         public string ThreadTs { get; set; }
