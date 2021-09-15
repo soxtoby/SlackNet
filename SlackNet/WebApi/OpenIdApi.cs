@@ -87,7 +87,7 @@ namespace SlackNet.WebApi
         /// <param name="cancellationToken"></param>
         public Task<OpenIdUserInfoResponse> UserInfo(
             string token,
-            CancellationToken? cancellationToken
+            CancellationToken? cancellationToken = null
         ) => _client.Post<OpenIdUserInfoResponse>("openid.connect.userInfo", new Args {
             { "token", token }
         }, cancellationToken);

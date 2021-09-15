@@ -969,6 +969,7 @@ namespace SlackNet.Tests.Configuration
             public IMigrationApi Migration { get; }
             public IOAuthApi OAuth { get; }
             public IOAuthV2Api OAuthV2 { get; }
+            public IOpenIdApi OpenIdApi { get; }
             public IPinsApi Pins { get; }
             public IReactionsApi Reactions { get; }
             public IRemindersApi Reminders { get; }
