@@ -29,6 +29,7 @@ namespace SlackNet
         IMigrationApi Migration { get; }
         IOAuthApi OAuth { get; }
         IOAuthV2Api OAuthV2 { get; }
+        IOpenIdApi OpenIdApi { get; }
         IPinsApi Pins { get; }
         IReactionsApi Reactions { get; }
         IRemindersApi Reminders { get; }
@@ -161,6 +162,7 @@ namespace SlackNet
         public IMigrationApi Migration => new MigrationApi(this);
         public IOAuthApi OAuth => new OAuthApi(this);
         public IOAuthV2Api OAuthV2 => new OAuthV2Api(this);
+        public IOpenIdApi OpenIdApi => new OpenIdApi(this);
         public IPinsApi Pins => new PinsApi(this);
         public IReactionsApi Reactions => new ReactionsApi(this);
         public IRemindersApi Reminders => new RemindersApi(this);
