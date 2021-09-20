@@ -32,13 +32,12 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Get the identity of a user who has authorized Sign in with Slack.
         /// See https://api.slack.com/methods/openid.connect.userInfo for more information.
+        /// Note: that this method uses an Authentication token passed in the header.
+        /// Use <c>SlackApiClient.WithAccessToken</c> to specify a token.
         /// </summary>
         /// <param name="token">Authentication token bearing required scopes. Tokens should be passed as an HTTP Authorization header or alternatively, as a POST parameter.</param>
         /// <param name="cancellationToken"></param>
-        Task<OpenIdUserInfoResponse> UserInfo(
-            string token,
-            CancellationToken? cancellationToken
-        );
+        Task<OpenIdUserInfoResponse> UserInfo(CancellationToken? cancellationToken);
 
   }
 
@@ -82,14 +81,12 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Get the identity of a user who has authorized Sign in with Slack.
         /// See https://api.slack.com/methods/openid.connect.userInfo for more information.
+        /// Note: that this method uses an Authentication token passed in the header.
+        /// Use <c>SlackApiClient.WithAccessToken</c> to specify a token.
         /// </summary>
         /// <param name="token">Authentication token bearing required scopes. Tokens should be passed as an HTTP Authorization header or alternatively, as a POST parameter.</param>
         /// <param name="cancellationToken"></param>
-        public Task<OpenIdUserInfoResponse> UserInfo(
-            string token,
-            CancellationToken? cancellationToken = null
-        ) => _client.Post<OpenIdUserInfoResponse>("openid.connect.userInfo", new Args {
-            { "token", token }
-        }, cancellationToken);
+        public Task<OpenIdUserInfoResponse> UserInfo(CancellationToken? cancellationToken = null) =>
+            _client.Post<OpenIdUserInfoResponse>("openid.connect.userInfo", new Args { }, cancellationToken);
     }
 }
