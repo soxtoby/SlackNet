@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Args = System.Collections.Generic.Dictionary<string, object>;
 
@@ -38,7 +40,6 @@ namespace SlackNet.WebApi
         /// <param name="token">Authentication token bearing required scopes. Tokens should be passed as an HTTP Authorization header or alternatively, as a POST parameter.</param>
         /// <param name="cancellationToken"></param>
         Task<OpenIdUserInfoResponse> UserInfo(CancellationToken? cancellationToken);
-
   }
 
     public class OpenIdApi : IOpenIdApi
@@ -61,21 +62,26 @@ namespace SlackNet.WebApi
             string clientId,
             string clientSecret,
 #nullable enable
-            string? code,
-            string? grantType,
-            string? redirectUrl,
-            string? refreshToken,
+            string? code = null,
+            string? grantType = null,
+            string? redirectUrl = null,
+            string? refreshToken = null,
 #nullable disable
-            CancellationToken? cancellationToken = null
-         ) => _client.Post<OpenIdTokenResponse>("openid.connect.token", new Args
-                {
-                    { "client_id", clientId },
-                    { "client_secret", clientSecret },
-                    { "code", code },
-                    { "grant_type", grantType },
-                    { "redirect_uri", redirectUrl },
-                    { "refresh_token", refreshToken }
-                }, cancellationToken);
+            CancellationToken? cancellationToken = null)
+        {
+            var form = new Dictionary<string, string>
+            {
+                { "client_id", clientId },
+                { "client_secret", clientSecret }
+            };
+            if (!string.IsNullOrEmpty(code)) form.Add("code", code);
+            if (!string.IsNullOrEmpty(grantType)) form.Add("grant_type", grantType);
+            if (!string.IsNullOrEmpty(redirectUrl)) form.Add("redirect_url", redirectUrl);
+            if (!string.IsNullOrEmpty(refreshToken)) form.Add("refresh_token", refreshToken);
+
+
+            return _client.Post<OpenIdTokenResponse>("openid.connect.token", new Args { }, new FormUrlEncodedContent(form), cancellationToken);
+        }
 
 
         /// <summary>
