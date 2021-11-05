@@ -29,7 +29,9 @@ namespace SlackNet
         {
             HttpResponseMessage response;
 
-            var requestLog = _log.WithContext("RequestBody", await requestMessage.Content.ReadAsStringAsync().ConfigureAwait(false));
+            var requestLog = requestMessage.Content is null
+                ? _log
+                : _log.WithContext("RequestBody", await requestMessage.Content.ReadAsStringAsync().ConfigureAwait(false));
 
             try
             {
