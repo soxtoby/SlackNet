@@ -21,7 +21,7 @@ namespace SlackNet.WebApi
             string clientId,
             string clientSecret,
 #nullable enable
-            string? code, 
+            string? code,
             string? grantType,
             string? redirectUrl,
             string? refreshToken,
@@ -57,14 +57,16 @@ namespace SlackNet.WebApi
             string? refreshToken,
 #nullable disable
             CancellationToken? cancellationToken = null
-         ) => _client.Post<OauthV2AccessResponse>("oauth.v2.access", new Args
-                {
-                    { "client_id", clientId },
-                    { "client_secret", clientSecret },
-                    { "code", code },
-                    { "grant_type", grantType },
-                    { "redirect_uri", redirectUrl },
-                    { "refresh_token", refreshToken }
-                }, cancellationToken);
+        ) =>
+            _client.Post<OauthV2AccessResponse>("oauth.v2.access", new Args(), new SlackFormContent
+                    {
+                        { "client_id", clientId },
+                        { "client_secret", clientSecret },
+                        { "code", code },
+                        { "grant_type", grantType },
+                        { "redirect_uri", redirectUrl },
+                        { "refresh_token", refreshToken }
+                    }
+                , cancellationToken);
     }
 }

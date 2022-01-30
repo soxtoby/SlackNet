@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Args = System.Collections.Generic.Dictionary<string, object>;
 
@@ -37,7 +35,6 @@ namespace SlackNet.WebApi
         /// Note: that this method uses an Authentication token passed in the header.
         /// Use <c>SlackApiClient.WithAccessToken</c> to specify a token.
         /// </summary>
-        /// <param name="token">Authentication token bearing required scopes. Tokens should be passed as an HTTP Authorization header or alternatively, as a POST parameter.</param>
         /// <param name="cancellationToken"></param>
         Task<OpenIdUserInfoResponse> UserInfo(CancellationToken? cancellationToken);
   }
@@ -67,22 +64,18 @@ namespace SlackNet.WebApi
             string? redirectUrl = null,
             string? refreshToken = null,
 #nullable disable
-            CancellationToken? cancellationToken = null)
-        {
-            var form = new Dictionary<string, string>
-            {
-                { "client_id", clientId },
-                { "client_secret", clientSecret }
-            };
-            if (!string.IsNullOrEmpty(code)) form.Add("code", code);
-            if (!string.IsNullOrEmpty(grantType)) form.Add("grant_type", grantType);
-            if (!string.IsNullOrEmpty(redirectUrl)) form.Add("redirect_url", redirectUrl);
-            if (!string.IsNullOrEmpty(refreshToken)) form.Add("refresh_token", refreshToken);
-
-
-            return _client.Post<OpenIdTokenResponse>("openid.connect.token", new Args { }, new FormUrlEncodedContent(form), cancellationToken);
-        }
-
+            CancellationToken? cancellationToken = null
+        ) =>
+            _client.Post<OpenIdTokenResponse>("openid.connect.token", new Args(), new SlackFormContent
+                    {
+                        { "client_id", clientId },
+                        { "client_secret", clientSecret },
+                        { "code", code },
+                        { "grant_type", grantType },
+                        { "redirect_url", redirectUrl },
+                        { "refresh_token", refreshToken },
+                    }
+                , cancellationToken);
 
         /// <summary>
         /// Get the identity of a user who has authorized Sign in with Slack.
@@ -90,9 +83,8 @@ namespace SlackNet.WebApi
         /// Note: that this method uses an Authentication token passed in the header.
         /// Use <c>SlackApiClient.WithAccessToken</c> to specify a token.
         /// </summary>
-        /// <param name="token">Authentication token bearing required scopes. Tokens should be passed as an HTTP Authorization header or alternatively, as a POST parameter.</param>
         /// <param name="cancellationToken"></param>
         public Task<OpenIdUserInfoResponse> UserInfo(CancellationToken? cancellationToken = null) =>
-            _client.Post<OpenIdUserInfoResponse>("openid.connect.userInfo", new Args { }, cancellationToken);
+            _client.Post<OpenIdUserInfoResponse>("openid.connect.userInfo", new Args(), cancellationToken);
     }
 }

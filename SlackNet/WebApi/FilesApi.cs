@@ -351,17 +351,16 @@ namespace SlackNet.WebApi
             IEnumerable<string> channels = null,
             CancellationToken? cancellationToken = null
         ) =>
-            _client.Post<FileResponse>("files.upload", new Args(),
-                new FormUrlEncodedContent(new Dictionary<string, string>
+            _client.Post<FileResponse>("files.upload", new Args(), new SlackFormContent
                     {
                         { "filetype", fileType },
                         { "filename", fileName },
                         { "title", title },
                         { "initial_comment", initialComment },
-                        { "channels", string.Join(",", channels) },
+                        { "channels", channels is null ? null : string.Join(",", channels) },
                         { "thread_ts", threadTs },
                         { "content", snippet }
-                    }),
+                    },
                 cancellationToken);
     }
 }
