@@ -5,7 +5,7 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
 {
-    public interface IAppsEventsAuthorizationsApi
+    public interface IAppsEventAuthorizationsApi
     {
         /// <summary>
         /// Get a list of authorizations for the given event context. Should always be used with app token type.
@@ -24,10 +24,10 @@ namespace SlackNet.WebApi
             CancellationToken? cancellationToken = null);
     }
 
-    public class AppsEventsAuthorizationsApi : IAppsEventsAuthorizationsApi
+    public class AppsEventAuthorizationsApi : IAppsEventAuthorizationsApi
     {
         private readonly ISlackApiClient _client;
-        public AppsEventsAuthorizationsApi(ISlackApiClient client) => _client = client;
+        public AppsEventAuthorizationsApi(ISlackApiClient client) => _client = client;
 
         /// <summary>
         /// Get a list of authorizations for the given event context. Should always be used with app token type.
@@ -45,7 +45,7 @@ namespace SlackNet.WebApi
             string cursor = null,
             CancellationToken? cancellationToken = null
         ) =>
-            _client.Post<AppsEventsAuthorizationsListResponse>("apps.events.authorizations.list", new Args
+            _client.Post<AppsEventsAuthorizationsListResponse>("apps.event.authorizations.list", new Args
                     {
                         { "event_context", eventContext },
                         { "cursor", cursor },

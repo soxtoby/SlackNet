@@ -195,7 +195,7 @@ namespace SlackNet.Tests
 
             public IApiApi Api { get; }
             public IAppsConnectionsApi AppsConnectionsApi { get; }
-            public IAppsEventsAuthorizationsApi AppsEventsAuthorizations { get; }
+            public IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
             public IAuthApi Auth { get; }
             public IBotsApi Bots { get; }
             public IChatApi Chat { get; }

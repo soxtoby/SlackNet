@@ -16,7 +16,7 @@ namespace SlackNet
     {
         IApiApi Api { get; }
         IAppsConnectionsApi AppsConnectionsApi { get; }
-        IAppsEventsAuthorizationsApi AppsEventsAuthorizations { get; }
+        IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
         IAuthApi Auth { get; }
         IBotsApi Bots { get; }
         IChatApi Chat { get; }
@@ -149,7 +149,7 @@ namespace SlackNet
 
         public IApiApi Api => new ApiApi(this);
         public IAppsConnectionsApi AppsConnectionsApi => new AppsConnectionsApi(this);
-        public IAppsEventsAuthorizationsApi AppsEventsAuthorizations => new AppsEventsAuthorizationsApi(this);
+        public IAppsEventAuthorizationsApi AppsEventAuthorizations => new AppsEventAuthorizationsApi(this);
         public IAuthApi Auth => new AuthApi(this);
         public IBotsApi Bots => new BotsApi(this);
         public IChatApi Chat => new ChatApi(this);
