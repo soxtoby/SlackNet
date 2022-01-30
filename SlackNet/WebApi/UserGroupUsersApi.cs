@@ -10,6 +10,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Returns a list of all users within a User Group.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/usergroups.users.list">Slack documentation</a> for more information.</remarks>
         /// <param name="userGroupId">ID of the User Group to update.</param>
         /// <param name="includeDisabled">Allow results that involve disabled User Groups.</param>
         /// <param name="cancellationToken"></param>
@@ -19,6 +20,7 @@ namespace SlackNet.WebApi
         /// Updates the list of users that belong to a User Group.
         /// This method replaces all users in a User Group with the list of users provided in the <paramref name="userIds"/> parameter.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/usergroups.users.update">Slack documentation</a> for more information.</remarks>
         /// <param name="userGroupId">ID of the User Group to update.</param>
         /// <param name="userIds">User IDs that represent the entire list of users for the User Group.</param>
         /// <param name="includeCount">Include the number of users in the User Group.</param>
@@ -31,12 +33,6 @@ namespace SlackNet.WebApi
         private readonly ISlackApiClient _client;
         public UserGroupUsersApi(ISlackApiClient client) => _client = client;
 
-        /// <summary>
-        /// Returns a list of all users within a User Group.
-        /// </summary>
-        /// <param name="userGroupId">ID of the User Group to update.</param>
-        /// <param name="includeDisabled">Allow results that involve disabled User Groups.</param>
-        /// <param name="cancellationToken"></param>
         public async Task<IReadOnlyList<string>> List(string userGroupId, bool includeDisabled = false, CancellationToken? cancellationToken = null) =>
             (await _client.Get<MembershipResponse>("usergroups.users.list", new Args
                 {
@@ -45,14 +41,6 @@ namespace SlackNet.WebApi
                 }, cancellationToken).ConfigureAwait(false))
             .Users;
 
-        /// <summary>
-        /// Updates the list of users that belong to a User Group.
-        /// This method replaces all users in a User Group with the list of users provided in the <paramref name="userIds"/> parameter.
-        /// </summary>
-        /// <param name="userGroupId">ID of the User Group to update.</param>
-        /// <param name="userIds">User IDs that represent the entire list of users for the User Group.</param>
-        /// <param name="includeCount">Include the number of users in the User Group.</param>
-        /// <param name="cancellationToken"></param>
         public async Task<UserGroup> Update(string userGroupId, IEnumerable<string> userIds, bool includeCount = false, CancellationToken? cancellationToken = null) =>
             (await _client.Post<UserGroupResponse>("usergroups.users.update", new Args
                 {

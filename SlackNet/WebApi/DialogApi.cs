@@ -10,6 +10,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Open a dialog with a user.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/dialog.open">Slack documentation</a> for more information.</remarks>
         /// <param name="triggerId">Exchange a trigger to post to the user.</param>
         /// <param name="dialog">The dialog definition.</param>
         /// <param name="cancellationToken"></param>
@@ -21,12 +22,6 @@ namespace SlackNet.WebApi
         private readonly ISlackApiClient _client;
         public DialogApi(ISlackApiClient client) => _client = client;
 
-        /// <summary>
-        /// Open a dialog with a user.
-        /// </summary>
-        /// <param name="triggerId">Exchange a trigger to post to the user.</param>
-        /// <param name="dialog">The dialog definition.</param>
-        /// <param name="cancellationToken"></param>
         public Task Open(string triggerId, Dialog dialog, CancellationToken? cancellationToken = null) =>
             _client.Post("dialog.open", new Args
                 {

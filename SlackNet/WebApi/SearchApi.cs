@@ -9,6 +9,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Allows users and applications to search both messages and files in a single call.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/search.all">Slack documentation</a> for more information.</remarks>
         /// <param name="query">Search query. May contains booleans, etc.</param>
         /// <param name="sort">Return matches sorted by either score or timestamp.</param>
         /// <param name="sortDirection">Change sort direction to ascending or descending</param>
@@ -29,6 +30,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Returns files matching a search query.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/search.files">Slack documentation</a> for more information.</remarks>
         /// <param name="query">Search query. May contains booleans, etc.</param>
         /// <param name="sort">Return matches sorted by either score or timestamp.</param>
         /// <param name="sortDirection">Change sort direction to ascending or descending</param>
@@ -49,6 +51,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Returns messages matching a search query.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/search.messages">Slack documentation</a> for more information.</remarks>
         /// <param name="query">Search query. May contains booleans, etc.</param>
         /// <param name="sort">Return matches sorted by either score or timestamp.</param>
         /// <param name="sortDirection">Change sort direction to ascending or descending</param>
@@ -72,16 +75,6 @@ namespace SlackNet.WebApi
         private readonly ISlackApiClient _client;
         public SearchApi(ISlackApiClient client) => _client = client;
 
-        /// <summary>
-        /// Allows users and applications to search both messages and files in a single call.
-        /// </summary>
-        /// <param name="query">Search query. May contains booleans, etc.</param>
-        /// <param name="sort">Return matches sorted by either score or timestamp.</param>
-        /// <param name="sortDirection">Change sort direction to ascending or descending</param>
-        /// <param name="highlight">Pass a value of True to enable query highlight markers.</param>
-        /// <param name="count">Number of items to return per page.</param>
-        /// <param name="page">Page number of results to return.</param>
-        /// <param name="cancellationToken"></param>
         public Task<SearchResponse> All(
             string query,
             SortBy sort = SortBy.Score,
@@ -102,16 +95,6 @@ namespace SlackNet.WebApi
                     },
                 cancellationToken);
 
-        /// <summary>
-        /// Returns files matching a search query.
-        /// </summary>
-        /// <param name="query">Search query. May contains booleans, etc.</param>
-        /// <param name="sort">Return matches sorted by either score or timestamp.</param>
-        /// <param name="sortDirection">Change sort direction to ascending or descending</param>
-        /// <param name="highlight">Pass a value of True to enable query highlight markers.</param>
-        /// <param name="count">Number of items to return per page.</param>
-        /// <param name="page">Page number of results to return.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileSearchResponse> Files(
             string query,
             SortBy sort = SortBy.Score,
@@ -132,16 +115,6 @@ namespace SlackNet.WebApi
                     },
                 cancellationToken);
 
-        /// <summary>
-        /// Returns messages matching a search query.
-        /// </summary>
-        /// <param name="query">Search query. May contains booleans, etc.</param>
-        /// <param name="sort">Return matches sorted by either score or timestamp.</param>
-        /// <param name="sortDirection">Change sort direction to ascending or descending</param>
-        /// <param name="highlight">Pass a value of True to enable query highlight markers.</param>
-        /// <param name="count">Number of items to return per page.</param>
-        /// <param name="page">Page number of results to return.</param>
-        /// <param name="cancellationToken"></param>
         public Task<MessageSearchResponse> Messages(
             string query,
             SortBy sort = SortBy.Score,

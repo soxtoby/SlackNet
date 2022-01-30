@@ -10,6 +10,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Pins a message to a particular channel.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/pins.add">Slack documentation</a> for more information.</remarks>
         /// <param name="channelId">Channel to pin the message in.</param>
         /// <param name="ts">Timestamp of the message to pin.</param>
         /// <param name="cancellationToken"></param>
@@ -18,6 +19,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Lists the items pinned to a channel.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/pins.list">Slack documentation</a> for more information.</remarks>
         /// <param name="channelId">Channel to get pinned items for.</param>
         /// <param name="cancellationToken"></param>
         Task<IReadOnlyList<PinnedItem>> List(string channelId, CancellationToken? cancellationToken = null);
@@ -25,6 +27,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Un-pins a file from a channel.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/pins.remove">Slack documentation</a> for more information.</remarks>
         /// <param name="channelId">Channel where the file is pinned to.</param>
         /// <param name="fileId">File to un-pin.</param>
         /// <param name="cancellationToken"></param>
@@ -33,6 +36,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Un-pins a file comment from a channel.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/pins.remove">Slack documentation</a> for more information.</remarks>
         /// <param name="channelId">Channel where the file comment is pinned to.</param>
         /// <param name="fileCommentId">File comment to un-pin.</param>
         /// <param name="cancellationToken"></param>
@@ -41,6 +45,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Un-pins a message from a channel.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/pins.remove">Slack documentation</a> for more information.</remarks>
         /// <param name="channelId">Channel where the message is pinned to.</param>
         /// <param name="ts">Timestamp of the message to un-pin.</param>
         /// <param name="cancellationToken"></param>
@@ -52,12 +57,6 @@ namespace SlackNet.WebApi
         private readonly ISlackApiClient _client;
         public PinsApi(ISlackApiClient client) => _client = client;
 
-        /// <summary>
-        /// Pins a message to a particular channel.
-        /// </summary>
-        /// <param name="channelId">Channel to pin the message in.</param>
-        /// <param name="ts">Timestamp of the message to pin.</param>
-        /// <param name="cancellationToken"></param>
         public Task AddMessage(string channelId, string ts = null, CancellationToken? cancellationToken = null) =>
             _client.Post("pins.add", new Args
                 {
@@ -65,20 +64,9 @@ namespace SlackNet.WebApi
                     { "timestamp", ts }
                 }, cancellationToken);
 
-        /// <summary>
-        /// Lists the items pinned to a channel.
-        /// </summary>
-        /// <param name="channelId">Channel to get pinned items for.</param>
-        /// <param name="cancellationToken"></param>
         public async Task<IReadOnlyList<PinnedItem>> List(string channelId, CancellationToken? cancellationToken = null) =>
             (await _client.Get<PinnedItemListResponse>("pins.list", new Args { { "channel", channelId } }, cancellationToken).ConfigureAwait(false)).Items;
 
-        /// <summary>
-        /// Un-pins a file from a channel.
-        /// </summary>
-        /// <param name="channelId">Channel where the file is pinned to.</param>
-        /// <param name="fileId">File to un-pin.</param>
-        /// <param name="cancellationToken"></param>
         public Task RemoveFile(string channelId, string fileId, CancellationToken? cancellationToken = null) =>
             _client.Post("pins.remove", new Args
                 {
@@ -86,12 +74,6 @@ namespace SlackNet.WebApi
                     { "file", fileId }
                 }, cancellationToken);
 
-        /// <summary>
-        /// Un-pins a file comment from a channel.
-        /// </summary>
-        /// <param name="channelId">Channel where the file comment is pinned to.</param>
-        /// <param name="fileCommentId">File comment to un-pin.</param>
-        /// <param name="cancellationToken"></param>
         public Task RemoveFileComment(string channelId, string fileCommentId, CancellationToken? cancellationToken = null) =>
             _client.Post("pins.remove", new Args
                 {
@@ -99,12 +81,6 @@ namespace SlackNet.WebApi
                     { "file_comment", fileCommentId }
                 }, cancellationToken);
 
-        /// <summary>
-        /// Un-pins a message from a channel.
-        /// </summary>
-        /// <param name="channelId">Channel where the message is pinned to.</param>
-        /// <param name="ts">Timestamp of the message to un-pin.</param>
-        /// <param name="cancellationToken"></param>
         public Task RemoveMessage(string channelId, string ts, CancellationToken? cancellationToken = null) =>
             _client.Post("pins.remove", new Args
                 {

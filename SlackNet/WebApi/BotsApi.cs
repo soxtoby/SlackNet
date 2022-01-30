@@ -9,8 +9,9 @@ namespace SlackNet.WebApi
     {
         /// <summary>
         /// Returns information about a bot user.
-        /// <paramref name="botId"/> is returned from <see cref="BotMessage"/> events and in the response of methods like <see cref="ChannelsApi.History"/>.
+        /// <paramref name="botId"/> is returned from <see cref="BotMessage"/> events and in the response of methods like <see cref="ConversationsApi.History"/>.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/bots.info">Slack documentation</a> for more information.</remarks>
         /// <param name="botId">Bot user to get info on.</param>
         /// <param name="cancellationToken"></param>
         Task<BotInfo> Info(string botId, CancellationToken? cancellationToken = null);
@@ -21,12 +22,6 @@ namespace SlackNet.WebApi
         private readonly ISlackApiClient _client;
         public BotsApi(ISlackApiClient client) => _client = client;
 
-        /// <summary>
-        /// Returns information about a bot user.
-        /// <paramref name="botId"/> is returned from <see cref="BotMessage"/> events and in the response of methods like <see cref="ChannelsApi.History"/>.
-        /// </summary>
-        /// <param name="botId">Bot user to get info on.</param>
-        /// <param name="cancellationToken"></param>
         public async Task<BotInfo> Info(string botId, CancellationToken? cancellationToken = null) =>
             (await _client.Get<BotsInfoResponse>("bots.info", new Args { { "bot", botId } }, cancellationToken).ConfigureAwait(false)).Bot;
     }

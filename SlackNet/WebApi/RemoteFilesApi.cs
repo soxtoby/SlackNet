@@ -13,6 +13,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Adds a file from a remote service.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.add">Slack documentation</a> for more information.</remarks>
         /// <param name="externalId">Creator defined unique ID for the file.</param>
         /// <param name="externalUrl">URL of the remote file.</param>
         /// <param name="title">Title of the file being shared.</param>
@@ -31,6 +32,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Adds a file from a remote service.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.add">Slack documentation</a> for more information.</remarks>
         /// <param name="externalId">Creator defined unique ID for the file.</param>
         /// <param name="externalUrl">URL of the remote file.</param>
         /// <param name="title">Title of the file being shared.</param>
@@ -51,6 +53,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Adds a file from a remote service.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.add">Slack documentation</a> for more information.</remarks>
         /// <param name="externalId">Creator defined unique ID for the file.</param>
         /// <param name="externalUrl">URL of the remote file.</param>
         /// <param name="title">Title of the file being shared.</param>
@@ -71,6 +74,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Retrieve information about a remote file added to Slack.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.info">Slack documentation</a> for more information.</remarks>
         /// <param name="externalId">Creator defined unique ID for the file.</param>
         /// <param name="cancellationToken"></param>
         Task<FileResponse> InfoByExternalId(string externalId, CancellationToken? cancellationToken = null);
@@ -78,6 +82,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Retrieve information about a remote file added to Slack.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.info">Slack documentation</a> for more information.</remarks>
         /// <param name="fileId">Specify a file by providing its ID.</param>
         /// <param name="cancellationToken"></param>
         Task<FileResponse> InfoByFileId(string fileId, CancellationToken? cancellationToken = null);
@@ -85,6 +90,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Lists remote files visible to the token that calls it.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.list">Slack documentation</a> for more information.</remarks>
         /// <param name="channelId">Filter files appearing in a specific channel, indicated by its ID.</param>
         /// <param name="limit">The maximum number of items to return.</param>
         /// <param name="tsFrom">Filter files created after this timestamp (inclusive).</param>
@@ -107,6 +113,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Removes a remote file from Slack. It does not delete the file from its external host.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.remove">Slack documentation</a> for more information.</remarks>
         /// <param name="externalId">Creator defined unique ID for the file.</param>
         /// <param name="cancellationToken"></param>
         Task RemoveByExternalId(string externalId, CancellationToken? cancellationToken = null);
@@ -114,6 +121,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Removes a remote file from Slack. It does not delete the file from its external host.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.remove">Slack documentation</a> for more information.</remarks>
         /// <param name="fileId">Specify a file by providing its ID.</param>
         /// <param name="cancellationToken"></param>
         Task RemoveByFileId(string fileId, CancellationToken? cancellationToken = null);
@@ -121,6 +129,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Share a remote file into a channel.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.share">Slack documentation</a> for more information.</remarks>
         /// <param name="externalId">Creator defined unique ID for the file.</param>
         /// <param name="channelIds">List of channel IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
@@ -129,6 +138,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Share a remote file into a channel.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.share">Slack documentation</a> for more information.</remarks>
         /// <param name="fileId">Specify a file by providing its ID.</param>
         /// <param name="channelIds">List of channel IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
@@ -137,6 +147,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Updates an existing remote file.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
         /// <param name="externalId">Creator defined unique ID for the file.</param>
         /// <param name="externalUrl">URL of the remote file.</param>
         /// <param name="title">Title of the file being shared.</param>
@@ -155,6 +166,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Updates an existing remote file.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
         /// <param name="fileId">Specify a file by providing its ID.</param>
         /// <param name="externalUrl">URL of the remote file.</param>
         /// <param name="title">Title of the file being shared.</param>
@@ -173,6 +185,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Updates an existing remote file.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
         /// <param name="externalId">Creator defined unique ID for the file.</param>
         /// <param name="externalUrl">URL of the remote file.</param>
         /// <param name="title">Title of the file being shared.</param>
@@ -193,6 +206,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Updates an existing remote file.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
         /// <param name="fileId">Specify a file by providing its ID.</param>
         /// <param name="externalUrl">URL of the remote file.</param>
         /// <param name="title">Title of the file being shared.</param>
@@ -213,6 +227,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Updates an existing remote file.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
         /// <param name="externalId">Creator defined unique ID for the file.</param>
         /// <param name="externalUrl">URL of the remote file.</param>
         /// <param name="title">Title of the file being shared.</param>
@@ -233,6 +248,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Updates an existing remote file.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
         /// <param name="fileId">Specify a file by providing its ID.</param>
         /// <param name="externalUrl">URL of the remote file.</param>
         /// <param name="title">Title of the file being shared.</param>
@@ -256,15 +272,6 @@ namespace SlackNet.WebApi
         private readonly ISlackApiClient _client;
         public RemoteFilesApi(ISlackApiClient client) => _client = client;
 
-        /// <summary>
-        /// Adds a file from a remote service.
-        /// </summary>
-        /// <param name="externalId">Creator defined unique ID for the file.</param>
-        /// <param name="externalUrl">URL of the remote file.</param>
-        /// <param name="title">Title of the file being shared.</param>
-        /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
-        /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> Add(
             string externalId,
             string externalUrl,
@@ -275,16 +282,6 @@ namespace SlackNet.WebApi
         ) =>
             Add(externalId, externalUrl, title, filetype, indexableFileContents, null, cancellationToken);
 
-        /// <summary>
-        /// Adds a file from a remote service.
-        /// </summary>
-        /// <param name="externalId">Creator defined unique ID for the file.</param>
-        /// <param name="externalUrl">URL of the remote file.</param>
-        /// <param name="title">Title of the file being shared.</param>
-        /// <param name="previewImage">Preview of the document.</param>
-        /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
-        /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> Add(
             string externalId,
             string externalUrl,
@@ -296,16 +293,6 @@ namespace SlackNet.WebApi
         ) =>
             Add(externalId, externalUrl, title, filetype, indexableFileContents, new ByteArrayContent(previewImage), cancellationToken);
 
-        /// <summary>
-        /// Adds a file from a remote service.
-        /// </summary>
-        /// <param name="externalId">Creator defined unique ID for the file.</param>
-        /// <param name="externalUrl">URL of the remote file.</param>
-        /// <param name="title">Title of the file being shared.</param>
-        /// <param name="previewImage">Preview of the document.</param>
-        /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
-        /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> Add(
             string externalId,
             string externalUrl,
@@ -334,35 +321,12 @@ namespace SlackNet.WebApi
                     { "filetype", filetype }
                 }, indexableFileContents, previewContent, cancellationToken);
 
-        /// <summary>
-        /// Retrieve information about a remote file added to Slack.
-        /// </summary>
-        /// <param name="externalId">Creator defined unique ID for the file.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> InfoByExternalId(string externalId, CancellationToken? cancellationToken = null) =>
             _client.Get<FileResponse>("files.remote.info", new Args { { "external_id", externalId } }, cancellationToken);
 
-        /// <summary>
-        /// Retrieve information about a remote file added to Slack.
-        /// </summary>
-        /// <param name="fileId">Specify a file by providing its ID.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> InfoByFileId(string fileId, CancellationToken? cancellationToken = null) =>
             _client.Get<FileResponse>("files.remote.info", new Args { { "file", fileId } }, cancellationToken);
 
-        /// <summary>
-        /// Lists remote files visible to the token that calls it.
-        /// </summary>
-        /// <param name="channelId">Filter files appearing in a specific channel, indicated by its ID.</param>
-        /// <param name="limit">The maximum number of items to return.</param>
-        /// <param name="tsFrom">Filter files created after this timestamp (inclusive).</param>
-        /// <param name="tsTo">Filter files created before this timestamp (inclusive).</param>
-        /// <param name="cursor">
-        /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> attribute
-        /// returned by a previous request's <see cref="FileListResponse.ResponseMetadata"/>.
-        /// Default value fetches the first "page" of the collection.
-        /// </param>
-        /// <param name="cancellationToken"></param>
         public Task<FileListResponse> List(
             string channelId = null,
             int limit = 100,
@@ -380,49 +344,18 @@ namespace SlackNet.WebApi
                     { "cursor", cursor }
                 }, cancellationToken);
 
-        /// <summary>
-        /// Removes a remote file from Slack. It does not delete the file from its external host.
-        /// </summary>
-        /// <param name="externalId">Creator defined unique ID for the file.</param>
-        /// <param name="cancellationToken"></param>
         public Task RemoveByExternalId(string externalId, CancellationToken? cancellationToken = null) =>
             _client.Get("files.remote.remove", new Args { { "external_id", externalId } }, cancellationToken);
 
-        /// <summary>
-        /// Removes a remote file from Slack. It does not delete the file from its external host.
-        /// </summary>
-        /// <param name="fileId">Specify a file by providing its ID.</param>
-        /// <param name="cancellationToken"></param>
         public Task RemoveByFileId(string fileId, CancellationToken? cancellationToken = null) =>
             _client.Get("files.remote.remove", new Args { { "file", fileId } }, cancellationToken);
 
-        /// <summary>
-        /// Share a remote file into a channel.
-        /// </summary>
-        /// <param name="externalId">Creator defined unique ID for the file.</param>
-        /// <param name="channelIds">List of channel IDs where the file will be shared.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> ShareByExternalId(string externalId, IEnumerable<string> channelIds, CancellationToken? cancellationToken = null) =>
             _client.Get<FileResponse>("files.remote.share", new Args { { "external_id", externalId }, { "channels", channelIds } }, cancellationToken);
 
-        /// <summary>
-        /// Share a remote file into a channel.
-        /// </summary>
-        /// <param name="fileId">Specify a file by providing its ID.</param>
-        /// <param name="channelIds">List of channel IDs where the file will be shared.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> ShareByFileId(string fileId, IEnumerable<string> channelIds, CancellationToken? cancellationToken = null) =>
             _client.Get<FileResponse>("files.remote.share", new Args { { "file", fileId }, { "channels", channelIds } }, cancellationToken);
 
-        /// <summary>
-        /// Updates an existing remote file.
-        /// </summary>
-        /// <param name="externalId">Creator defined unique ID for the file.</param>
-        /// <param name="externalUrl">URL of the remote file.</param>
-        /// <param name="title">Title of the file being shared.</param>
-        /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
-        /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> UpdateByExternalId(
             string externalId,
             string externalUrl = null,
@@ -433,15 +366,6 @@ namespace SlackNet.WebApi
         ) =>
             Update(externalId, null, externalUrl, title, filetype, indexableFileContents, null, cancellationToken);
 
-        /// <summary>
-        /// Updates an existing remote file.
-        /// </summary>
-        /// <param name="fileId">Specify a file by providing its ID.</param>
-        /// <param name="externalUrl">URL of the remote file.</param>
-        /// <param name="title">Title of the file being shared.</param>
-        /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
-        /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> UpdateByFileId(
             string fileId,
             string externalUrl = null,
@@ -452,16 +376,6 @@ namespace SlackNet.WebApi
         ) =>
             Update(null, fileId, externalUrl, title, filetype, indexableFileContents, null, cancellationToken);
 
-        /// <summary>
-        /// Updates an existing remote file.
-        /// </summary>
-        /// <param name="externalId">Creator defined unique ID for the file.</param>
-        /// <param name="externalUrl">URL of the remote file.</param>
-        /// <param name="title">Title of the file being shared.</param>
-        /// <param name="previewImage">Preview of the document.</param>
-        /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
-        /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> UpdateByExternalId(
             string externalId,
             byte[] previewImage,
@@ -473,16 +387,6 @@ namespace SlackNet.WebApi
         ) =>
             Update(externalId, null, externalUrl, title, filetype, indexableFileContents, new ByteArrayContent(previewImage), cancellationToken);
 
-        /// <summary>
-        /// Updates an existing remote file.
-        /// </summary>
-        /// <param name="fileId">Specify a file by providing its ID.</param>
-        /// <param name="externalUrl">URL of the remote file.</param>
-        /// <param name="title">Title of the file being shared.</param>
-        /// <param name="previewImage">Preview of the document.</param>
-        /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
-        /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> UpdateByFileId(
             string fileId,
             byte[] previewImage,
@@ -494,16 +398,6 @@ namespace SlackNet.WebApi
         ) =>
             Update(null, fileId, externalUrl, title, filetype, indexableFileContents, new ByteArrayContent(previewImage), cancellationToken);
 
-        /// <summary>
-        /// Updates an existing remote file.
-        /// </summary>
-        /// <param name="externalId">Creator defined unique ID for the file.</param>
-        /// <param name="externalUrl">URL of the remote file.</param>
-        /// <param name="title">Title of the file being shared.</param>
-        /// <param name="previewImage">Preview of the document.</param>
-        /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
-        /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> UpdateByExternalId(
             string externalId,
             Stream previewImage,
@@ -515,16 +409,6 @@ namespace SlackNet.WebApi
         ) =>
             Update(externalId, null, externalUrl, title, filetype, indexableFileContents, new StreamContent(previewImage), cancellationToken);
 
-        /// <summary>
-        /// Updates an existing remote file.
-        /// </summary>
-        /// <param name="fileId">Specify a file by providing its ID.</param>
-        /// <param name="externalUrl">URL of the remote file.</param>
-        /// <param name="title">Title of the file being shared.</param>
-        /// <param name="previewImage">Preview of the document.</param>
-        /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
-        /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
-        /// <param name="cancellationToken"></param>
         public Task<FileResponse> UpdateByFileId(
             string fileId,
             Stream previewImage,

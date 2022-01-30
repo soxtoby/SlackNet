@@ -10,6 +10,7 @@ namespace SlackNet.WebApi
         /// <summary>
         /// Get a list of authorizations for the given event context. Should always be used with app token type.
         /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/apps.event.authorizations.list">Slack documentation</a> for more information.</remarks>
         /// <param name="eventContext">The <see cref="EventCallback.EventContext"/> from an event.</param>
         /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
         /// <param name="cursor">
@@ -29,16 +30,6 @@ namespace SlackNet.WebApi
         private readonly ISlackApiClient _client;
         public AppsEventAuthorizationsApi(ISlackApiClient client) => _client = client;
 
-        /// <summary>
-        /// Get a list of authorizations for the given event context. Should always be used with app token type.
-        /// </summary>
-        /// <param name="eventContext">The <see cref="EventCallback.EventContext"/> from an event.</param>
-        /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
-        /// <param name="cursor">
-        /// Paginate through collections of data by setting the cursor parameter to the <see cref="AppsEventsAuthorizationsListResponse.CursorNext"/> property
-        /// returned by a previous request. Default value fetches the first "page" of the collection.
-        /// </param>
-        /// <param name="cancellationToken"></param>
         public Task<AppsEventsAuthorizationsListResponse> List(
             string eventContext,
             int limit = 100,
