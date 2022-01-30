@@ -77,7 +77,7 @@ namespace SlackNet.Tests
         private static void LastParamShouldBeOptionalCancellationToken(MethodInfo method)
         {
             var lastParam = method.GetParameters().Last();
-            lastParam.ParameterType.ShouldBe(typeof(CancellationToken?), $"{method.DeclaringType.Name}.{method.Name} is missing CancellationToken param");
+            lastParam.ParameterType.ShouldBe(typeof(CancellationToken?), $"{method.DeclaringType!.Name}.{method.Name} is missing CancellationToken param");
             lastParam.DefaultValue.ShouldBeNull($"{method.DeclaringType.Name}.{method.Name} CancellationToken param isn't null by default");
         }
 
@@ -87,44 +87,48 @@ namespace SlackNet.Tests
             if (slackMethodGroup == null)
                 slackMethodGroup = methodGroup;
             else
-                methodGroup.ShouldBe(slackMethodGroup, $"{method.DeclaringType.Name}.{method.Name} uses a different API method group than other methods");
+                methodGroup.ShouldBe(slackMethodGroup, $"{method.DeclaringType!.Name}.{method.Name} uses a different API method group than other methods");
         }
 
         private static void AllArgsShouldBeSnakeCase(Args args, MethodInfo method) =>
-            args.Keys.AllItemsSatisfy(arg => arg.ShouldMatch("[a-z_]", $"{method.DeclaringType.Name}.{method.Name} has incorrect casing for argument {arg}"));
+            args.Keys.AllItemsSatisfy(arg => arg.ShouldMatch("[a-z_]", $"{method.DeclaringType!.Name}.{method.Name} has incorrect casing for argument {arg}"));
 
-        private static object DummyValue(ParameterInfo param) =>
-            param.ParameterType == typeof(string) && param.Name == "contentType" ? "text/png"
-            : param.ParameterType == typeof(string) ? "foo"
-            : param.ParameterType == typeof(int) ? 0
-            : param.ParameterType == typeof(int?) ? null
-            : param.ParameterType == typeof(bool) ? false
-            : param.ParameterType == typeof(IEnumerable<string>) ? Enumerable.Empty<string>()
-            : param.ParameterType == typeof(Message) ? new Message()
-            : param.ParameterType == typeof(Dialog) ? new Dialog()
-            : param.ParameterType == typeof(MessageUpdate) ? new MessageUpdate()
-            : param.ParameterType == typeof(DateTime) ? DateTime.Now
-            : param.ParameterType == typeof(TimeSpan) ? TimeSpan.Zero
-            : param.ParameterType == typeof(SortBy) ? SortBy.Score
-            : param.ParameterType == typeof(SortDirection) ? SortDirection.Ascending
-            : param.ParameterType == typeof(ProfileFieldVisibility) ? ProfileFieldVisibility.All
-            : param.ParameterType == typeof(Presence) ? Presence.Active
-            : param.ParameterType == typeof(ChangeType?) ? null
-            : param.ParameterType == typeof(IEnumerable<ConversationType>) ? Enumerable.Empty<ConversationType>()
-            : param.ParameterType == typeof(IEnumerable<FileType>) ? Enumerable.Empty<FileType>()
-            : param.ParameterType == typeof(UserProfile) ? new UserProfile()
-            : param.ParameterType == typeof(ViewDefinition) ? new ModalViewDefinition()
-            : param.ParameterType == typeof(HomeViewDefinition) ? new HomeViewDefinition()
-            : param.ParameterType == typeof(byte[]) ? new byte[0]
-            : param.ParameterType == typeof(Stream) ? Stream.Null
-            : param.ParameterType == typeof(Args) ? new Args()
-            : param.ParameterType == typeof(IDictionary<string, Attachment>) ? new Dictionary<string, Attachment>()
-            : param.ParameterType == typeof(IDictionary<string, WorkflowInput>) ? new Dictionary<string, WorkflowInput>()
-            : param.ParameterType == typeof(IDictionary<string, string>) ? new Dictionary<string, string>()
-            : param.ParameterType == typeof(IEnumerable<WorkflowOutput>) ? Enumerable.Empty<WorkflowOutput>()
-            : param.ParameterType == typeof(WorkflowError) ? new WorkflowError()
-            : param.ParameterType == typeof(CancellationToken?) ? (object)null
-            : throw new AssertionException($"Unexpected param type {param.ParameterType.Name} in {param.Member.DeclaringType.Name}.{param.Member.Name}");
+        private static object DummyValue(ParameterInfo param) => ArgumentFactories.TryGetValue(param.ParameterType, out var factory)
+            ? factory(param)
+            : throw new AssertionException($"Unexpected param type {param.ParameterType.Name} in {param.Member.DeclaringType!.Name}.{param.Member.Name}");
+
+        private static readonly Dictionary<Type, Func<ParameterInfo, object>> ArgumentFactories = new()
+            {
+                { typeof(string), p => p.Name == "contentType" ? "text/png" : "foo" },
+                { typeof(int), _ => 0 },
+                { typeof(int?), _ => null },
+                { typeof(bool), _ => false },
+                { typeof(IEnumerable<string>), _ => Enumerable.Empty<string>() },
+                { typeof(Message), _ => new Message() },
+                { typeof(Dialog), _ => new Dialog() },
+                { typeof(MessageUpdate), _ => new MessageUpdate() },
+                { typeof(DateTime), _ => DateTime.Now },
+                { typeof(TimeSpan), _ => TimeSpan.Zero },
+                { typeof(SortBy), _ => SortBy.Score },
+                { typeof(SortDirection), _ => SortDirection.Ascending },
+                { typeof(ProfileFieldVisibility), _ => ProfileFieldVisibility.All },
+                { typeof(Presence), _ => Presence.Active },
+                { typeof(ChangeType?), _ => null },
+                { typeof(IEnumerable<ConversationType>), _ => Enumerable.Empty<ConversationType>() },
+                { typeof(IEnumerable<FileType>), _ => Enumerable.Empty<FileType>() },
+                { typeof(UserProfile), _ => new UserProfile() },
+                { typeof(ViewDefinition), _ => new ModalViewDefinition() },
+                { typeof(HomeViewDefinition), _ => new HomeViewDefinition() },
+                { typeof(byte[]), _ => Array.Empty<byte>() },
+                { typeof(Stream), _ => Stream.Null },
+                { typeof(Args), _ => new Args() },
+                { typeof(IDictionary<string, Attachment>), _ => new Dictionary<string, Attachment>() },
+                { typeof(IDictionary<string, WorkflowInput>), _ => new Dictionary<string, WorkflowInput>() },
+                { typeof(IDictionary<string, string>), _ => new Dictionary<string, string>() },
+                { typeof(IEnumerable<WorkflowOutput>), _ => Enumerable.Empty<WorkflowOutput>() },
+                { typeof(WorkflowError), _ => new WorkflowError() },
+                { typeof(CancellationToken?), _ => null },
+            };
 
         private static IEnumerable<Type> ApiClasses => typeof(ApiApi).Assembly
             .GetExportedTypes()
