@@ -250,9 +250,10 @@ namespace SlackNet
 
         private Task<T> Post<T>(string requestUri, object body, CancellationToken? cancellationToken) where T : class =>
             WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, requestUri)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(body, _jsonSettings.SerializerSettings), Encoding.UTF8, "application/json")
-                }, cancellationToken);
+                    {
+                        Content = new StringContent(JsonConvert.SerializeObject(body, _jsonSettings.SerializerSettings), Encoding.UTF8, "application/json")
+                    },
+                cancellationToken);
 
         private string Url(string apiMethod, Args args = null) =>
             _urlBuilder.Url(apiMethod, args ?? new Args());
@@ -264,9 +265,12 @@ namespace SlackNet
                 try
                 {
                     var request = createRequest();
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+                    if (!string.IsNullOrEmpty(_token)) // Token is cleared by methods that don't require authentication (e.g. OAuthV2Api.Access)
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+
                     var response = await _http.Execute<WebApiResponse>(request, cancellationToken ?? CancellationToken.None).ConfigureAwait(false)
                         ?? new WebApiResponse { Ok = true };
+
                     return Deserialize<T>(response);
                 }
                 catch (SlackRateLimitException e) when (!DisableRetryOnRateLimit)

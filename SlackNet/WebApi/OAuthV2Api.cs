@@ -48,15 +48,16 @@ namespace SlackNet.WebApi
 #nullable disable
             CancellationToken? cancellationToken = null
         ) =>
-            _client.Post<OauthV2AccessResponse>("oauth.v2.access", new Args(), new SlackFormContent
-                    {
-                        { "client_id", clientId },
-                        { "client_secret", clientSecret },
-                        { "code", code },
-                        { "grant_type", grantType },
-                        { "redirect_uri", redirectUrl },
-                        { "refresh_token", refreshToken }
-                    }
-                , cancellationToken);
+            _client.WithAccessToken(string.Empty) // Since this endpoint is for getting an access token, it doesn't make sense to include an existing token in the request
+                .Post<OauthV2AccessResponse>("oauth.v2.access", new Args(), new SlackFormContent
+                        {
+                            { "client_id", clientId },
+                            { "client_secret", clientSecret },
+                            { "code", code },
+                            { "grant_type", grantType },
+                            { "redirect_uri", redirectUrl },
+                            { "refresh_token", refreshToken }
+                        },
+                    cancellationToken);
     }
 }
