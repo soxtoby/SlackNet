@@ -188,10 +188,7 @@ namespace SlackNet.Tests
                 throw new NotImplementedException();
             }
 
-            public ISlackApiClient WithAccessToken(string accessToken)
-            {
-                throw new NotImplementedException();
-            }
+            public ISlackApiClient WithAccessToken(string accessToken) => this;
 
             public IApiApi Api { get; }
             public IAppsConnectionsApi AppsConnectionsApi { get; }
