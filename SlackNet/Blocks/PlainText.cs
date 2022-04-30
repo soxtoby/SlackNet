@@ -11,7 +11,7 @@
         /// <summary>
         /// Indicates whether emojis in a text field should be escaped into the colon emoji format.
         /// </summary>
-        public bool Emoji { get; set; }
+        public bool Emoji { get; set; } = true;
 
         public override string ToString() => Text;
 
