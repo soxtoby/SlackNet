@@ -8,6 +8,5 @@ namespace SlackNet.Events
         public string User { get; set; }
         public string ChannelId { get; set; }
         public PinnedItem Item { get; set; }
-        public string EventTs { get; set; }
     }
 }

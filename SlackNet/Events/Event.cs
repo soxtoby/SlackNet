@@ -7,6 +7,8 @@ namespace SlackNet.Events
     {
         public string Type { get; set; }
 
+        public string EventTs { get; set; }
+
         /// <summary>
         /// Anything that Slack includes in the event that isn't covered by other properties can be accessed through this property.
         /// If you find anything here, please raise an issue at https://github.com/soxtoby/SlackNet/issues so we can add it to the library.

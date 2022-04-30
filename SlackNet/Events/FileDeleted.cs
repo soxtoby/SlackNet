@@ -6,6 +6,5 @@ namespace SlackNet.Events
     public class FileDeleted : Event
     {
         public string FileId { get; set; }
-        public string EventTs { get; set; }
     }
 }

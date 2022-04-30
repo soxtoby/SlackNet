@@ -10,6 +10,5 @@
         /// The message being replied to.
         /// </summary>
         public MessageEvent Message { get; set; }
-        public string EventTs { get; set; }
     }
 }

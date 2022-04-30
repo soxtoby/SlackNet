@@ -6,6 +6,5 @@ namespace SlackNet.Events
     public class EmailDomainChanged : Event
     {
         public string EmailDomain { get; set; }
-        public string EventTs { get; set; }
     }
 }

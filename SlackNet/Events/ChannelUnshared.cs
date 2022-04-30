@@ -17,6 +17,5 @@
         /// True if the channel is still externally shared, and False otherwise.
         /// </summary>
         public bool IsExtShared { get; set; }
-        public string EventTs { get; set; }
     }
 }

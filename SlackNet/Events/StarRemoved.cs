@@ -7,6 +7,5 @@ namespace SlackNet.Events
     {
         public string User { get; set; }
         public StarredItem Item { get; set; }
-        public string EventTs { get; set; }
     }
 }

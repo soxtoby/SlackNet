@@ -12,6 +12,5 @@ namespace SlackNet.Events
         /// Indicates that there are other pinned items in the channel.
         /// </summary>
         public bool HasPins { get; set; }
-        public string EventTs { get; set; }
     }
 }

@@ -9,6 +9,5 @@ namespace SlackNet.Events
     {
         public string Subtype { get; set; }
         public IList<string> Names { get; set; }
-        public string EventTs { get; set; }
     }
 }

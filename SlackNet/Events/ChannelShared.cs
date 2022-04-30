@@ -14,6 +14,5 @@
         /// The ID for the public or private channel.
         /// </summary>
         public string Channel { get; set; }
-        public string EventTs { get; set; }
     }
 }

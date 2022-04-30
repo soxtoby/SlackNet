@@ -15,6 +15,5 @@ namespace SlackNet.Events
         /// </summary>
         public string ItemUser { get; set; }
         public ReactionItem Item { get; set; }
-        public string EventTs { get; set; }
     }
 }
