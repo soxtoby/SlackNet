@@ -1,14 +1,11 @@
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using SlackNet.Blocks;
-using System;
-using System.Collections.Generic;
 
 namespace SlackNet.Events
 {
-    /// <summary>
-    /// Subscribe to only the message events that mention your app or bot.
-    /// </summary>
-    public class AppMention : Event
+    public abstract class MessageEventBase : Event
     {
         public string User { get; set; }
         public string Text { get; set; }
@@ -16,8 +13,6 @@ namespace SlackNet.Events
         [JsonIgnore]
         public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
         public string Channel { get; set; }
-        public string EventTs { get; set; }
-        public string Subtype { get; set; }
         public string ThreadTs { get; set; }
         [JsonIgnore]
         public DateTime? ThreadTimestamp => ThreadTs.ToDateTime();
@@ -25,6 +20,9 @@ namespace SlackNet.Events
         public IList<Block> Blocks { get; set; } = new List<Block>();
         public Edit Edited { get; set; }
         public IList<File> Files { get; set; } = new List<File>();
+        /// <summary>
+        /// Indicates whether a file share happened at upload time, or some time later.
+        /// </summary>
         public bool Upload { get; set; }
     }
 }
