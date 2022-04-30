@@ -7,7 +7,7 @@ namespace SlackNet.Events
     [SlackType("message")]
     public class MessageEvent : MessageEventBase
     {
-        public string Team { get; set; }
+        public string ChannelType { get; set; }
         /// <summary>
         /// Indicates message is part of the history of a channel but should not be displayed to users.
         /// </summary>
