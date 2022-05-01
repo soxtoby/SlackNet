@@ -80,7 +80,7 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
-        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
         Task<FileResponse> Upload(
@@ -103,7 +103,7 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
-        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
         Task<FileResponse> Upload(byte[] fileContents,
@@ -125,7 +125,7 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
-        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
         Task<FileResponse> Upload(
@@ -150,7 +150,7 @@ namespace SlackNet.WebApi
         /// <param name="fileName">Filename of file.</param>
         /// <param name="title">Title of file</param>
         /// <param name="initialComment">Initial comment to add to file.</param>
-        /// <param name="threadTs">Provide another message's <see cref="MessageEvent.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
+        /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
         /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
         /// <param name="cancellationToken"></param>
         Task<FileResponse> UploadSnippet(

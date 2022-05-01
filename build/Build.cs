@@ -59,6 +59,7 @@ class Build : NukeBuild
         {
             DotNetTest(s => s
                 .SetProjectFile(Solution)
+                .SetConfiguration(Configuration)
                 .EnableNoRestore()
                 .EnableNoBuild());
         });
@@ -71,6 +72,7 @@ class Build : NukeBuild
         {
             DotNetPack(s => s
                 .SetProject(Solution)
+                .SetConfiguration(Configuration)
                 .SetVersion(GitVersion.FullSemVer)
                 .SetOutputDirectory(OutputDirectory)
                 .EnableNoRestore()

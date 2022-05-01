@@ -67,7 +67,7 @@ namespace SlackNet.WebApi
         string IconEmoji { get; }
 
         /// <summary>
-        /// Provide another message's <see cref="MessageEvent.Ts"/> value to make this message a reply. Avoid using a reply's ts value; use its parent instead.
+        /// Provide another message's <see cref="MessageEventBase.Ts"/> value to make this message a reply. Avoid using a reply's ts value; use its parent instead.
         /// </summary>
         string ThreadTs { get; }
 
