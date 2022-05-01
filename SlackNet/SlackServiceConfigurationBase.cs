@@ -73,7 +73,7 @@ namespace SlackNet
         public TConfig UseJsonSettings(Func<ISlackServiceProvider, SlackJsonSettings> jsonSettingsProvider) => Chain(() => _jsonSettingsProvider = jsonSettingsProvider);
         public TConfig UseTypeResolver(Func<ISlackServiceProvider, ISlackTypeResolver> slackTypeResolverProvider) => Chain(() => _slackTypeResolverProvider = slackTypeResolverProvider);
         public TConfig UseUrlBuilder(Func<ISlackServiceProvider, ISlackUrlBuilder> urlBuilderProvider) => Chain(() => _urlBuilderProvider = urlBuilderProvider);
-        public TConfig UseLogger(Func<ISlackServiceProvider, ILogger> loggerProvider) => Chain(() => _loggerProvider = loggerProvider); // NOCOMMIT test
+        public TConfig UseLogger(Func<ISlackServiceProvider, ILogger> loggerProvider) => Chain(() => _loggerProvider = loggerProvider);
         public TConfig UseWebSocketFactory(Func<ISlackServiceProvider, IWebSocketFactory> webSocketFactoryProvider) => Chain(() => _webSocketFactoryProvider = webSocketFactoryProvider);
         public TConfig UseRequestListener(Func<ISlackServiceProvider, ISlackRequestListener> requestListenerProvider) => Chain(() => _requestListenerProviders.Add(requestListenerProvider));
         public TConfig UseHandlerFactory(Func<ISlackServiceProvider, ISlackHandlerFactory> handlerFactoryProvider) => Chain(() => _handlerFactoryProvider = handlerFactoryProvider);

@@ -13,9 +13,10 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 [DotNetVerbosityMapping]
 [CheckBuildProjectConfigurations]
 [ShutdownDotNetAfterServerBuild]
+[AppVeyor(AppVeyorImage.VisualStudioLatest, InvokedTargets = new[] { nameof(Test), nameof(Pack) })]
 class Build : NukeBuild
 {
-    public static int Main () => Execute<Build>(x => x.Compile);
+    public static int Main() => Execute<Build>(x => x.Compile);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
@@ -65,6 +66,7 @@ class Build : NukeBuild
     Target Pack => _ => _
         .DependsOn(Clean, Compile)
         .After(Test)
+        .Produces(OutputDirectory  / "*.nupkg")
         .Executes(() =>
         {
             DotNetPack(s => s
