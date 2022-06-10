@@ -106,8 +106,9 @@ namespace SlackNet.WebApi
         /// returned by a previous request's <see cref="ConversationListResponse.ResponseMetadata"/>.
         /// Default value fetches the first "page" of the collection.
         /// </param>
+        /// <param name="teamId">encoded team id to list channels in, required if token belongs to org-wide app</param>
         /// <param name="cancellationToken"></param>
-        Task<ConversationListResponse> List(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string cursor = null, CancellationToken? cancellationToken = null);
+        Task<ConversationListResponse> List(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string cursor = null, string teamId = null, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Sets the read cursor in a channel.
@@ -284,13 +285,14 @@ namespace SlackNet.WebApi
         public Task Leave(string channelId, CancellationToken? cancellationToken = null) =>
             _client.Post("conversations.leave", new Args { { "channel", channelId } }, cancellationToken);
 
-        public Task<ConversationListResponse> List(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string cursor = null, CancellationToken? cancellationToken = null) =>
+        public Task<ConversationListResponse> List(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string cursor = null, string teamId = null, CancellationToken? cancellationToken = null) =>
             _client.Get<ConversationListResponse>("conversations.list", new Args
                 {
                     { "cursor", cursor },
                     { "exclude_archived", excludeArchived },
                     { "limit", limit },
-                    { "types", types }
+                    { "types", types },
+                    { "team_id", teamId }
                 }, cancellationToken);
 
         public Task Mark(string channelId, string messageTs, CancellationToken? cancellationToken = null) =>
