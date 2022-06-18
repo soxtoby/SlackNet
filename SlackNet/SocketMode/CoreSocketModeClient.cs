@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
@@ -13,7 +14,7 @@ namespace SlackNet.SocketMode
 {
     public interface ICoreSocketModeClient : IDisposable
     {
-        Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken? cancellationToken = null);
+        Task Connect(SocketModeConnectionOptions? connectionOptions = null, CancellationToken? cancellationToken = null);
         void Disconnect();
 
         /// <summary>
@@ -49,9 +50,9 @@ namespace SlackNet.SocketMode
         private readonly Subject<RawSocketMessage> _rawSocketMessagesSubject = new();
         private readonly ISubject<RawSocketMessage> _rawSocketMessages;
         private List<ReconnectingWebSocket> _webSockets = new();
-        private IDisposable _rawSocketStringsSubscription;
-        private CancellationTokenSource _disconnectCancellation;
-        private CancellationTokenSource _connectionCancelled;
+        private IDisposable? _rawSocketStringsSubscription;
+        private CancellationTokenSource? _disconnectCancellation;
+        private CancellationTokenSource? _connectionCancelled;
 
         public CoreSocketModeClient(string appLevelToken)
             : this(
@@ -79,6 +80,7 @@ namespace SlackNet.SocketMode
 
             Messages = _rawSocketMessages
                 .Select(DeserializeMessage)
+                .WhereNotNull()
                 .Publish()
                 .RefCount();
 
@@ -89,15 +91,26 @@ namespace SlackNet.SocketMode
                 .Subscribe(_ => Disconnect());
         }
 
-        private SocketMessage DeserializeMessage(RawSocketMessage rawMessage)
+        private SocketMessage? DeserializeMessage(RawSocketMessage rawMessage)
         {
-            var message = JsonConvert.DeserializeObject<SocketMessage>(rawMessage.Message, _jsonSettings.SerializerSettings);
-            message.SocketId = rawMessage.SocketId;
-            message.RequestId = rawMessage.RequestId;
-            return message;
+            try
+            {
+                var message = JsonConvert.DeserializeObject<SocketMessage>(rawMessage.Message, _jsonSettings.SerializerSettings);
+                message.SocketId = rawMessage.SocketId;
+                message.RequestId = rawMessage.RequestId;
+                return message;
+            }
+            catch (Exception e)
+            {
+                _log.WithContext("SocketId", rawMessage.SocketId)
+                    .WithContext("RequestId", rawMessage.RequestId)
+                    .WithContext("Message", rawMessage.Message)
+                    .Error(e, "Error deserializing socket mode message");
+                return null;
+            }
         }
 
-        public async Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken? cancellationToken = null)
+        public async Task Connect(SocketModeConnectionOptions? connectionOptions = null, CancellationToken? cancellationToken = null)
         {
             if (Connected)
                 throw new InvalidOperationException("Already connecting or connected");
@@ -142,19 +155,20 @@ namespace SlackNet.SocketMode
 
         public void Disconnect()
         {
-            _log.Internal("Disconnecting socket mode connections");
-            _disconnectCancellation?.Cancel();
-            foreach (var webSocket in _webSockets)
-                webSocket.Dispose();
+            if (_disconnectCancellation is not null)
+            {
+                _log.Internal("Disconnecting previous socket mode connections");
+                _disconnectCancellation?.Cancel();
+                foreach (var webSocket in _webSockets)
+                    webSocket.Dispose();
+            }
         }
 
         /// <summary>
         /// Is the client connecting or has it connected.
         /// </summary>
         public bool Connected =>
-            _webSockets.Any(ws =>
-                ws.State == WebSocketState.Connecting
-                || ws.State == WebSocketState.Open);
+            _webSockets.Any(ws => ws.State is WebSocketState.Connecting or WebSocketState.Open);
 
         public IObservable<RawSocketMessage> RawSocketMessages => _rawSocketMessages.AsObservable();
 
@@ -178,7 +192,7 @@ namespace SlackNet.SocketMode
         {
             _connectionCancelled?.Dispose();
             _disconnectCancellation?.Dispose();
-            _rawSocketStringsSubscription.Dispose();
+            _rawSocketStringsSubscription?.Dispose();
             _rawSocketMessagesSubject.Dispose();
             foreach (var webSocket in _webSockets)
                 webSocket.Dispose();

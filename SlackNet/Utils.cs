@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Globalization;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -34,7 +35,7 @@ namespace SlackNet
         public static DateTime? ToDateTime(this decimal timestamp) =>
             timestamp != 0
                 ? DateTimeOffset.FromUnixTimeMilliseconds((long)(timestamp * 1000)).UtcDateTime
-                : (DateTime?)null;
+                : null;
 
         /// <summary>
         /// Converts a <see cref="DateTime"/> to a Slack timestamp.
@@ -64,12 +65,12 @@ namespace SlackNet
         /// Format a <see cref="DateTime"/> in users' own locales.
         /// See https://api.slack.com/reference/surfaces/formatting#date-formatting for more information.
         /// </summary>
-        public static string FormatForMessage(this DateTime dateTime, string formatTokenString, string fallbackText = null, string linkUrl = null)
+        public static string FormatForMessage(this DateTime dateTime, string formatTokenString, string? fallbackText = null, string? linkUrl = null)
             => $"<!date^{dateTime.ToTimestamp()}^{formatTokenString}{(linkUrl != null ? "^" + linkUrl : string.Empty)}|{fallbackText ?? dateTime.ToString("R")}>";
 
         private static string SnakeCase(string value) => new SnakeCaseNamingStrategy().GetPropertyName(value, false);
 
-        public static async Task<T> NullIfNotFound<T>(this Task<T> apiTask) where T : class
+        public static async Task<T?> NullIfNotFound<T>(this Task<T> apiTask) where T : class
         {
             try
             {
@@ -87,7 +88,7 @@ namespace SlackNet
         /// <paramref name="delayIncrease"/> each time, up to <paramref name="maxDelay"/>.
         /// Resets back to <paramref name="initialDelay"/> on next value.
         /// </summary>
-        public static IObservable<T> RetryWithDelay<T>(this IObservable<T> source, TimeSpan initialDelay, TimeSpan delayIncrease, TimeSpan maxDelay, IScheduler scheduler = null, Action<Exception, TimeSpan> onError = null)
+        public static IObservable<T> RetryWithDelay<T>(this IObservable<T> source, TimeSpan initialDelay, TimeSpan delayIncrease, TimeSpan maxDelay, IScheduler? scheduler = null, Action<Exception, TimeSpan>? onError = null)
         {
             var currentDelay = initialDelay;
             return source
@@ -103,5 +104,7 @@ namespace SlackNet
                 .Do(_ => currentDelay = initialDelay)
                 .Retry();
         }
+
+        internal static IObservable<T> WhereNotNull<T>(this IObservable<T?> source) => source.Where(v => v is not null)!;
     }
 }
