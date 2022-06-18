@@ -185,8 +185,8 @@ namespace SlackNet.Tests
                 .Data("Foo: {Foo}, Bar: {Bar}", 3, 4);
 
             _sut.Event.FullMessageTemplate().ShouldBe("Foo: {Foo}, Bar: {Bar}"
-                + Environment.NewLine + "Extra1: {Extra1}"
-                + Environment.NewLine + "Extra2: {Extra2}");
+                + Environment.NewLine + "  Extra1: {Extra1}"
+                + Environment.NewLine + "  Extra2: {Extra2}");
         }
 
         [Test]
@@ -197,9 +197,9 @@ namespace SlackNet.Tests
                 .Error(new Exception(), "Foo: {Foo}, Bar: {Bar}", 3, 4);
 
             _sut.Event.FullMessageTemplate().ShouldBe("Foo: {Foo}, Bar: {Bar}"
-                + Environment.NewLine + "Extra1: {Extra1}"
-                + Environment.NewLine + "Extra2: {Extra2}"
-                + Environment.NewLine + "Exception: {Exception}");
+                + Environment.NewLine + "  Extra1: {Extra1}"
+                + Environment.NewLine + "  Extra2: {Extra2}"
+                + Environment.NewLine + "  Exception: {Exception}");
         }
 
         [Test]
@@ -218,9 +218,9 @@ namespace SlackNet.Tests
                 .Error(new Exception(), "Foo: {Foo}, Bar: {Bar}", 3, 4);
 
             _sut.Event.IndexedFullMessageTemplate().ShouldBe("Foo: {0}, Bar: {1}"
-                + Environment.NewLine + "Extra1: {2}"
-                + Environment.NewLine + "Extra2: {3}"
-                + Environment.NewLine + "Exception: {4}");
+                + Environment.NewLine + "  Extra1: {2}"
+                + Environment.NewLine + "  Extra2: {3}"
+                + Environment.NewLine + "  Exception: {4}");
         }
 
         [Test]
@@ -255,8 +255,8 @@ namespace SlackNet.Tests
                     1, "two", typeof(LoggingTests), new[] { "a", "b", "c" });
 
             _sut.Event.FullMessage().ShouldBe($"Number: 1, String: two, Type: {typeof(LoggingTests).FullName}, Enumerable: a, b, c"
-                + Environment.NewLine + "Extra: extra"
-                + Environment.NewLine + $"Exception: {exception}");
+                + Environment.NewLine + "  Extra: extra"
+                + Environment.NewLine + $"  Exception: {exception}");
         }
 
         [Test]

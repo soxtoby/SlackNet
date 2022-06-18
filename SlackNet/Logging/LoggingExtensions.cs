@@ -42,15 +42,15 @@ namespace SlackNet
         /// </summary>
         /// <example><code>
         /// @"Message with a {Property} placeholder here and {OtherProperty} here
-        /// ExtraProperty: {ExtraProperty}
-        /// Exception: {Exception}"
+        ///     ExtraProperty: {ExtraProperty}
+        ///     Exception: {Exception}"
         /// </code></example>
         public static string FullMessageTemplate(this ILogEvent logEvent) =>
             string.Join(Environment.NewLine,
                 new[] { logEvent.MessageTemplate }
-                    .Concat(logEvent.ExtraPropertyNames().Select(p => $"{p}: {{{p}}}"))
+                    .Concat(logEvent.ExtraPropertyNames().Select(p => $"  {p}: {{{p}}}"))
                     .Concat(logEvent.Exception is not null
-                        ? new[] { $"Exception: {{{ExceptionProperty}}}" }
+                        ? new[] { $"  Exception: {{{ExceptionProperty}}}" }
                         : Enumerable.Empty<object?>()));
 
         /// <summary>
