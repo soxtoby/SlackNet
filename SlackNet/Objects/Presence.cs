@@ -2,7 +2,7 @@
 {
     public enum Presence
     {
-        Active,
+        Auto,
         Away
     }
 }
