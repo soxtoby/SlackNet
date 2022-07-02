@@ -95,7 +95,7 @@ namespace SlackNet.SocketMode
         {
             try
             {
-                var message = JsonConvert.DeserializeObject<SocketMessage>(rawMessage.Message, _jsonSettings.SerializerSettings);
+                var message = JsonConvert.DeserializeObject<SocketMessage>(rawMessage.Message, _jsonSettings.SerializerSettings)!;
                 message.SocketId = rawMessage.SocketId;
                 message.RequestId = rawMessage.RequestId;
                 return message;
