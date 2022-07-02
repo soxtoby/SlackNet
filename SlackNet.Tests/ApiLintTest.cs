@@ -113,6 +113,7 @@ namespace SlackNet.Tests
                 { typeof(SortDirection), _ => SortDirection.Ascending },
                 { typeof(ProfileFieldVisibility), _ => ProfileFieldVisibility.All },
                 { typeof(Presence), _ => Presence.Active },
+                { typeof(RequestPresence), _ => RequestPresence.Auto },
                 { typeof(ChangeType?), _ => null },
                 { typeof(IEnumerable<ConversationType>), _ => Enumerable.Empty<ConversationType>() },
                 { typeof(IEnumerable<FileType>), _ => Enumerable.Empty<FileType>() },

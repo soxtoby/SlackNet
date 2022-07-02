@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -123,7 +124,16 @@ namespace SlackNet.WebApi
         /// <remarks>See the <a href="https://api.slack.com/methods/users.setPresence">Slack documentation</a> for more information.</remarks>
         /// <param name="presence">User's presence.</param>
         /// <param name="cancellationToken"></param>
+        [Obsolete("Use SetPresence with RequestPresence enum instead")]
         Task SetPresence(Presence presence, CancellationToken? cancellationToken = null);
+        
+        /// <summary>
+        /// Lets you set the calling user's manual presence.
+        /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/users.setPresence">Slack documentation</a> for more information.</remarks>
+        /// <param name="presence">User's presence.</param>
+        /// <param name="cancellationToken"></param>
+        Task SetPresence(RequestPresence presence, CancellationToken? cancellationToken = null);
     }
 
     public class UsersApi : IUsersApi
@@ -203,6 +213,9 @@ namespace SlackNet.WebApi
                 cancellationToken);
 
         public Task SetPresence(Presence presence, CancellationToken? cancellationToken = null) =>
+            SetPresence(presence == Presence.Active ? RequestPresence.Auto : RequestPresence.Away, cancellationToken);
+
+        public Task SetPresence(RequestPresence presence, CancellationToken? cancellationToken = null) =>
             _client.Post("users.setPresence", new Args { { "presence", presence } }, cancellationToken);
     }
 }
