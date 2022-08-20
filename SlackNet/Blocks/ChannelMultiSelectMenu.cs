@@ -13,6 +13,7 @@ namespace SlackNet.Blocks
         /// <summary>
         /// A list of one or more IDs of any valid public channel to be pre-selected when the menu loads.
         /// </summary>
+        [IgnoreIfEmpty]
         public IList<string> InitialChannels { get; set; } = new List<string>();
 
         /// <summary>

@@ -13,6 +13,7 @@ namespace SlackNet.Blocks
         /// <summary>
         /// A list of one or more IDs of any valid conversations to be pre-selected when the menu loads.
         /// </summary>
+        [IgnoreIfEmpty]
         public IList<string> InitialConversations { get; set; } = new List<string>();
 
         /// <summary>

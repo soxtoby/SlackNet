@@ -7,7 +7,8 @@ namespace SlackNet
     {
         public override bool ShouldSerialize(object value)
         {
-            return !(value is IEnumerable<object> enumerable) || enumerable.Any();
+            return value is not IEnumerable<object> enumerable 
+                || enumerable.Any();
         }
     }
 }

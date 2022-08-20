@@ -13,6 +13,7 @@ namespace SlackNet.Blocks
         /// <summary>
         /// A list of user IDs of any valid users to be pre-selected when the menu loads.
         /// </summary>
+        [IgnoreIfEmpty]
         public IList<string> InitialUsers { get; set; } = new List<string>();
 
         /// <summary>

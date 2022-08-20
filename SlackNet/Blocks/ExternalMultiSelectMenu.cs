@@ -16,6 +16,7 @@ namespace SlackNet.Blocks
         /// or <see cref="BlockOptionsResponse.OptionGroups"/> loaded from the external data source.
         /// These options will be selected when the menu initially loads.
         /// </summary>
+        [IgnoreIfEmpty]
         public IList<Option> InitialOptions { get; set; } = new List<Option>();
 
         /// <summary>
