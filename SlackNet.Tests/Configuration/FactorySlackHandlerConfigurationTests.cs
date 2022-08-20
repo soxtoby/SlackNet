@@ -971,6 +971,7 @@ namespace SlackNet.Tests.Configuration
             public IAppsConnectionsApi AppsConnectionsApi { get; }
             public IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
             public IAuthApi Auth { get; }
+            public IBookmarksApi Bookmarks { get; }
             public IBotsApi Bots { get; }
             public IChatApi Chat { get; }
             public IConversationsApi Conversations { get; }

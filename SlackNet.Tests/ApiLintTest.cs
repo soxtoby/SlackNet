@@ -114,6 +114,7 @@ namespace SlackNet.Tests
                 { typeof(ProfileFieldVisibility), _ => ProfileFieldVisibility.All },
                 { typeof(Presence), _ => Presence.Active },
                 { typeof(RequestPresence), _ => RequestPresence.Auto },
+                { typeof(BookmarkType), _ => BookmarkType.Link },
                 { typeof(ChangeType?), _ => null },
                 { typeof(IEnumerable<ConversationType>), _ => Enumerable.Empty<ConversationType>() },
                 { typeof(IEnumerable<FileType>), _ => Enumerable.Empty<FileType>() },
@@ -195,6 +196,7 @@ namespace SlackNet.Tests
             public IAppsConnectionsApi AppsConnectionsApi { get; }
             public IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
             public IAuthApi Auth { get; }
+            public IBookmarksApi Bookmarks { get; }
             public IBotsApi Bots { get; }
             public IChatApi Chat { get; }
             public IConversationsApi Conversations { get; }

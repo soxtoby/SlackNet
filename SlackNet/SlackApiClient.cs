@@ -18,6 +18,7 @@ namespace SlackNet
         IAppsConnectionsApi AppsConnectionsApi { get; }
         IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
         IAuthApi Auth { get; }
+        IBookmarksApi Bookmarks { get; }
         IBotsApi Bots { get; }
         IChatApi Chat { get; }
         IConversationsApi Conversations { get; }
@@ -151,6 +152,7 @@ namespace SlackNet
         public IAppsConnectionsApi AppsConnectionsApi => new AppsConnectionsApi(this);
         public IAppsEventAuthorizationsApi AppsEventAuthorizations => new AppsEventAuthorizationsApi(this);
         public IAuthApi Auth => new AuthApi(this);
+        public IBookmarksApi Bookmarks => new BookmarksApi(this);
         public IBotsApi Bots => new BotsApi(this);
         public IChatApi Chat => new ChatApi(this);
         public IConversationsApi Conversations => new ConversationsApi(this);
