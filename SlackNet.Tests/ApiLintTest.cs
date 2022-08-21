@@ -108,7 +108,9 @@ namespace SlackNet.Tests
                 { typeof(Dialog), _ => new Dialog() },
                 { typeof(MessageUpdate), _ => new MessageUpdate() },
                 { typeof(DateTime), _ => DateTime.Now },
+                { typeof(DateTime?), _ => DateTime.Now },
                 { typeof(TimeSpan), _ => TimeSpan.Zero },
+                { typeof(TimeSpan?), _ => TimeSpan.Zero },
                 { typeof(SortBy), _ => SortBy.Score },
                 { typeof(SortDirection), _ => SortDirection.Ascending },
                 { typeof(ProfileFieldVisibility), _ => ProfileFieldVisibility.All },
@@ -121,6 +123,7 @@ namespace SlackNet.Tests
                 { typeof(UserProfile), _ => new UserProfile() },
                 { typeof(ViewDefinition), _ => new ModalViewDefinition() },
                 { typeof(HomeViewDefinition), _ => new HomeViewDefinition() },
+                { typeof(IEnumerable<CallUser>), _ => Enumerable.Empty<CallUser>() },
                 { typeof(byte[]), _ => Array.Empty<byte>() },
                 { typeof(Stream), _ => Stream.Null },
                 { typeof(Args), _ => new Args() },
@@ -198,6 +201,8 @@ namespace SlackNet.Tests
             public IAuthApi Auth { get; }
             public IBookmarksApi Bookmarks { get; }
             public IBotsApi Bots { get; }
+            public ICallParticipantsApi CallParticipants { get; }
+            public ICallsApi Calls { get; }
             public IChatApi Chat { get; }
             public IConversationsApi Conversations { get; }
             public IDialogApi Dialog { get; }

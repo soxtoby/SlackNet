@@ -973,6 +973,8 @@ namespace SlackNet.Tests.Configuration
             public IAuthApi Auth { get; }
             public IBookmarksApi Bookmarks { get; }
             public IBotsApi Bots { get; }
+            public ICallParticipantsApi CallParticipants { get; }
+            public ICallsApi Calls { get; }
             public IChatApi Chat { get; }
             public IConversationsApi Conversations { get; }
             public IDialogApi Dialog { get; }
