@@ -13,6 +13,7 @@ namespace SlackNet.Interaction
         public string TriggerId { get; set; }
         public MessageEvent Message { get; set; }
         public ViewInfo View { get; set; }
+        public State State { get; set; }
         public IList<BlockAction> Actions { get; set; } = new List<BlockAction>();
         [JsonIgnore]
         public BlockAction Action => Actions.First();
