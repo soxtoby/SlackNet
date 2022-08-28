@@ -8,6 +8,28 @@ namespace SlackNet.WebApi
     public interface IConversationsApi
     {
         /// <summary>
+        /// Accepts an invitation to a Slack Connect channel.
+        /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/conversations.acceptSharedInvite">Slack documentation</a> for more information.</remarks>
+        /// <param name="channelName">Name of the channel. If the channel does not exist already in your workspace, this name is the one that the channel will take.</param>
+        /// <param name="inviteId"><see cref="SlackNet.Invite.Id"/> from the <see cref="SharedChannelInviteReceived"/> event.</param>
+        /// <param name="channelId">ID of the channel that you'd like to accept. Must provide either <see cref="inviteId"/> or <see cref="channelId"/>.</param>
+        /// <param name="freeTrialAccepted">Whether you'd like to use your workspace's free trial to begin using Slack Connect.</param>
+        /// <param name="isPrivate">Whether the channel should be private.</param>
+        /// <param name="teamId">The ID of the workspace to accept the channel in. If an org-level token is used to call this method, the <see cref="teamId"/> argument is required.</param>
+        /// <param name="cancellationToken"></param>
+        Task<AcceptSharedInviteResponse> AcceptSharedInvite(string channelName, string inviteId = null, string channelId = null, bool freeTrialAccepted = false, bool isPrivate = false, string teamId = null, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Approves an invitation to a Slack Connect channel.
+        /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/conversations.approveSharedInvite">Slack documentation</a> for more information.</remarks>
+        /// <param name="inviteId">ID of the shared channel invite to approve. Subscribe to the <see cref="SharedChannelInviteAccepted"/> event to receive IDs of Slack Connect channel invites that have been accepted and are awaiting approval.</param>
+        /// <param name="targetTeam">The team or enterprise id of the other party involved in the invitation you are approving.</param>
+        /// <param name="cancellationToken"></param>
+        Task ApproveSharedInvite(string inviteId, string targetTeam = null, CancellationToken? cancellationToken = null);
+        
+        /// <summary>
         /// Archives a conversation. Not all types of conversations can be archived.
         /// </summary>
         /// <remarks>See the <a href="https://api.slack.com/methods/conversations.archive">Slack documentation</a> for more information.</remarks>
@@ -32,6 +54,15 @@ namespace SlackNet.WebApi
         /// <param name="isPrivate">Create a private channel instead of a public one.</param>
         /// <param name="cancellationToken"></param>
         Task<Conversation> Create(string name, bool isPrivate, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Declines a Slack Connect channel invite.
+        /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/conversations.declineSharedInvite">Slack documentation</a> for more information.</remarks>
+        /// <param name="inviteId">ID of the Slack Connect invite to decline. Subscribe to the <see cref="SharedChannelInviteAccepted"/> event to receive IDs of Slack Connect channel invites that have been accepted and are awaiting approval.</param>
+        /// <param name="targetTeam">The team or enterprise id of the other party involved in the invitation you are declining.</param>
+        /// <param name="cancellationToken"></param>
+        Task DeclineSharedInvite(string inviteId, string targetTeam = null, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Fetches a conversation's history of messages and events.
@@ -68,6 +99,17 @@ namespace SlackNet.WebApi
         /// <param name="userIds">A comma separated list of user IDs. Up to 30 users may be listed.</param>
         /// <param name="cancellationToken"></param>
         Task<Conversation> Invite(string channelId, IEnumerable<string> userIds, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Sends an invitation to a Slack Connect channel.
+        /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/conversations.inviteShared">Slack documentation</a> for more information.</remarks>
+        /// <param name="channelId">ID of the channel on your team that you'd like to share.</param>
+        /// <param name="emails">Emails to receive this invite. Either <see cref="emails"/> or <see cref="userIds"/> must be provided.</param>
+        /// <param name="userIds">User IDs to receive this invite. Either <see cref="emails"/> or <see cref="userIds"/> must be provided.</param>
+        /// <param name="externalLimited">Whether invite is to an external limited member.</param>
+        /// <param name="cancellationToken"></param>
+        Task<InviteSharedResponse> InviteShared(string channelId, IEnumerable<string> emails, IEnumerable<string> userIds, bool externalLimited = true, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Joins an existing conversation.
@@ -109,6 +151,16 @@ namespace SlackNet.WebApi
         /// <param name="teamId">encoded team id to list channels in, required if token belongs to org-wide app</param>
         /// <param name="cancellationToken"></param>
         Task<ConversationListResponse> List(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string cursor = null, string teamId = null, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Lists shared channel invites that have been generated or received but have not been approved by all parties.
+        /// </summary>
+        /// <remarks>See the <a href="https://api.slack.com/methods/conversations.listConnectInvites">Slack documentation</a> for more information.</remarks>
+        /// <param name="count">Maximum number of invites to return.</param>
+        /// <param name="cursor">Set to <see cref="ResponseMetadata.NextCursor"/> returned by previous call to list items in subsequent page.</param>
+        /// <param name="teamId">Encoded team id for the workspace to retrieve invites for, required if org token is used.</param>
+        /// <param name="cancellationToken"></param>
+        Task<ConnectInvitesListResponse> ListConnectInvites(int count = 100, string cursor = null, string teamId = null, CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Sets the read cursor in a channel.
@@ -230,6 +282,24 @@ namespace SlackNet.WebApi
         private readonly ISlackApiClient _client;
         public ConversationsApi(ISlackApiClient client) => _client = client;
 
+        public Task<AcceptSharedInviteResponse> AcceptSharedInvite(string channelName, string inviteId = null, string channelId = null, bool freeTrialAccepted = false, bool isPrivate = false, string teamId = null, CancellationToken? cancellationToken = null) =>
+            _client.Post<AcceptSharedInviteResponse>("conversations.acceptSharedInvite", new Args
+                {
+                    { "channel_name", channelName },
+                    { "invite_id", inviteId },
+                    { "channel_id", channelId },
+                    { "free_trial_accepted", freeTrialAccepted },
+                    { "is_private", isPrivate },
+                    { "team_id", teamId }
+                }, cancellationToken);
+
+        public Task ApproveSharedInvite(string inviteId, string targetTeam = null, CancellationToken? cancellationToken = null) =>
+            _client.Post("conversations.approveSharedInvite", new Args
+                {
+                    { "invite_id", inviteId },
+                    { "target_team", targetTeam }
+                }, cancellationToken);
+
         public Task Archive(string channelId, CancellationToken? cancellationToken = null) =>
             _client.Post("conversations.archive", new Args { { "channel", channelId } }, cancellationToken);
 
@@ -243,6 +313,13 @@ namespace SlackNet.WebApi
                     { "is_private", isPrivate }
                 }, cancellationToken).ConfigureAwait(false))
             .Channel;
+
+        public Task DeclineSharedInvite(string inviteId, string targetTeam = null, CancellationToken? cancellationToken = null) =>
+            _client.Get("conversations.declineSharedInvite", new Args
+                {
+                    { "invite_id", inviteId },
+                    { "target_team", targetTeam }
+                }, cancellationToken);
 
         public Task<ConversationHistoryResponse> History(string channelId, string latestTs = null, string oldestTs = null, bool inclusive = false, int limit = 100, string cursor = null, CancellationToken? cancellationToken = null) =>
             _client.Get<ConversationHistoryResponse>("conversations.history", new Args
@@ -272,6 +349,15 @@ namespace SlackNet.WebApi
                 }, cancellationToken).ConfigureAwait(false))
             .Channel;
 
+        public Task<InviteSharedResponse> InviteShared(string channelId, IEnumerable<string> emails, IEnumerable<string> userIds, bool externalLimited = true, CancellationToken? cancellationToken = null) =>
+            _client.Get<InviteSharedResponse>("conversations.inviteShared", new Args()
+                {
+                    { "channel", channelId },
+                    { "emails", emails },
+                    { "user_ids", userIds },
+                    { "external_limited", externalLimited }
+                }, cancellationToken);
+
         public Task<ConversationJoinResponse> Join(string channelId, CancellationToken? cancellationToken = null) =>
             _client.Post<ConversationJoinResponse>("conversations.join", new Args { { "channel", channelId } }, cancellationToken);
 
@@ -292,6 +378,14 @@ namespace SlackNet.WebApi
                     { "exclude_archived", excludeArchived },
                     { "limit", limit },
                     { "types", types },
+                    { "team_id", teamId }
+                }, cancellationToken);
+
+        public Task<ConnectInvitesListResponse> ListConnectInvites(int count = 100, string cursor = null, string teamId = null, CancellationToken? cancellationToken = null) =>
+            _client.Post<ConnectInvitesListResponse>("conversations.listConnectInvites", new Args
+                {
+                    { "count", count },
+                    { "cursor", cursor },
                     { "team_id", teamId }
                 }, cancellationToken);
 
