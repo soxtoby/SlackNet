@@ -227,6 +227,8 @@ namespace SlackNet.Tests
             public ISearchApi Search { get; }
             public IStarsApi Stars { get; }
             public ITeamApi Team { get; }
+            public ITeamBillingApi TeamBilling { get; }
+            public ITeamPreferencesApi TeamPreferences { get; }
             public ITeamProfileApi TeamProfile { get; }
             public IUserGroupsApi UserGroups { get; }
             public IUserGroupUsersApi UserGroupUsers { get; }

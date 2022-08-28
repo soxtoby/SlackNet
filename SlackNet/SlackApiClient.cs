@@ -42,6 +42,8 @@ namespace SlackNet
         ISearchApi Search { get; }
         IStarsApi Stars { get; }
         ITeamApi Team { get; }
+        ITeamBillingApi TeamBilling { get; }
+        ITeamPreferencesApi TeamPreferences { get; }
         ITeamProfileApi TeamProfile { get; }
         IUserGroupsApi UserGroups { get; }
         IUserGroupUsersApi UserGroupUsers { get; }
@@ -178,6 +180,8 @@ namespace SlackNet
         public ISearchApi Search => new SearchApi(this);
         public IStarsApi Stars => new StarsApi(this);
         public ITeamApi Team => new TeamApi(this);
+        public ITeamBillingApi TeamBilling => new TeamBillingApi(this);
+        public ITeamPreferencesApi TeamPreferences => new TeamPreferencesApi(this);
         public ITeamProfileApi TeamProfile => new TeamProfileApi(this);
         public IUserGroupsApi UserGroups => new UserGroupsApi(this);
         public IUserGroupUsersApi UserGroupUsers => new UserGroupUsersApi(this);

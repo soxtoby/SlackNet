@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-
 namespace SlackNet.Events
 {
     /// <summary>
@@ -8,11 +6,5 @@ namespace SlackNet.Events
     public class TeamPlanChange : Event
     {
         public Plan Plan { get; set; }
-    }
-
-    public enum Plan
-    {
-        [EnumMember(Value = "std")] Standard,
-        Plus
     }
 }
