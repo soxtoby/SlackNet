@@ -26,10 +26,14 @@
 
         /// <summary>
         /// Decorates buttons with alternative visual color schemes. Use this option with restraint.
-        /// Leave as <c>null</c> to use the default button style.
         /// </summary>
         [IgnoreIfDefault]
         public ButtonStyle Style { get; set; }
+
+        /// <summary>
+        /// A label for longer descriptive text about a button element. This label will be read out by screen readers instead of the button <see cref="Text"/> object.
+        /// </summary>
+        public string AccessibilityLabel { get; set; }
     }
 
     public enum ButtonStyle
