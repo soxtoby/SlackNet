@@ -21,6 +21,11 @@ namespace SlackNet.Blocks
         /// </summary>
         [IgnoreIfEmpty]
         public IList<Option> InitialOptions { get; set; } = new List<Option>();
+
+        /// <summary>
+        /// Indicates whether the element will be set to auto focus within the <see cref="ViewInfo"/> object. Only one element can be set to true.
+        /// </summary>
+        public bool FocusOnLoad { get; set; }
     }
 
     [SlackType("checkboxes")]

@@ -20,6 +20,11 @@ namespace SlackNet.Blocks
         /// This option will be selected when the radio button group initially loads.
         /// </summary>
         public Option InitialOption { get; set; }
+
+        /// <summary>
+        /// Indicates whether the element will be set to auto focus within the <see cref="ViewInfo"/> object. Only one element can be set to true.
+        /// </summary>
+        public bool FocusOnLoad { get; set; }
     }
 
     [SlackType("radio_buttons")]

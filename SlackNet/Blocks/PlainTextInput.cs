@@ -42,6 +42,11 @@ namespace SlackNet.Blocks
         /// A <see cref="DispatchActionConfig"/> that determines when during text input the element returns a <see cref="BlockAction"/> payload.
         /// </summary>
         public DispatchActionConfig DispatchActionConfig { get; set; }
+
+        /// <summary>
+        /// Indicates whether the element will be set to auto focus within the <see cref="ViewInfo"/> object. Only one element can be set to true.
+        /// </summary>
+        public bool FocusOnLoad { get; set; }
     }
 
     [SlackType("plain_text_input")]
