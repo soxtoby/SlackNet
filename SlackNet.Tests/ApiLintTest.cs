@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyAssertions;
 using NUnit.Framework;
+using SlackNet.Blocks;
+using SlackNet.Events;
 using SlackNet.Interaction;
 using SlackNet.WebApi;
 using Args = System.Collections.Generic.Dictionary<string, object>;
@@ -118,8 +120,10 @@ namespace SlackNet.Tests
                 { typeof(RequestPresence), _ => RequestPresence.Auto },
                 { typeof(BookmarkType), _ => BookmarkType.Link },
                 { typeof(ChangeType?), _ => null },
+                { typeof(LinkSource), _ => LinkSource.Composer },
                 { typeof(IEnumerable<ConversationType>), _ => Enumerable.Empty<ConversationType>() },
                 { typeof(IEnumerable<FileType>), _ => Enumerable.Empty<FileType>() },
+                { typeof(IEnumerable<Block>), _ => Enumerable.Empty<Block>() },
                 { typeof(UserProfile), _ => new UserProfile() },
                 { typeof(ViewDefinition), _ => new ModalViewDefinition() },
                 { typeof(HomeViewDefinition), _ => new HomeViewDefinition() },

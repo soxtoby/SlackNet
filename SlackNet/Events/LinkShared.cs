@@ -10,7 +10,15 @@ namespace SlackNet.Events
         public string Channel { get; set; }
         public string User { get; set; }
         public string MessageTs { get; set; }
+        public string UnfurlId { get; set; }
+        public LinkSource Source { get; set; }
         public IList<SharedLink> Links { get; set; } = new List<SharedLink>();
+    }
+
+    public enum LinkSource
+    {
+        ConversationsHistory,
+        Composer
     }
 
     public class SharedLink

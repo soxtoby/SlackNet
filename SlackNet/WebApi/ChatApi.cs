@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SlackNet.Blocks;
+using SlackNet.Events;
 using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi
@@ -55,12 +57,14 @@ namespace SlackNet.WebApi
 
         /// <summary>
         /// Attaches Slack app unfurl behavior to a specified and relevant message.
-        /// A user token is required as this method does not support bot user tokens.
         /// </summary>
         /// <param name="channelId">Channel ID of the message.</param>
         /// <param name="ts">Timestamp of the message to add unfurl behavior to.</param>
         /// <param name="unfurls">Dictionary mapping a set of URLs from the message to their unfurl attachment.</param>
         /// <param name="userAuthRequired">Set to True to indicate the user must install your Slack app to trigger unfurls for this domain.</param>
+        /// <param name="userAuthBlocks">Structured blocks to send as an ephemeral message to the user as invitation to authenticate further and enable full unfurling behavior.</param>
+        /// <param name="userAuthMessage">A simply-formatted string to send as an ephemeral message to the user as invitation to authenticate further and enable full unfurling behavior.</param>
+        /// <param name="userAuthUrl">Send users to this custom URL where they will complete authentication in your app to fully trigger unfurling. Value should be properly URL-encoded.</param>
         /// <param name="cancellationToken"></param>
         /// <remarks>
         /// <para>
@@ -72,7 +76,46 @@ namespace SlackNet.WebApi
         /// See the <a href="https://api.slack.com/methods/chat.unfurl">Slack documentation</a> for more information.
         /// </para>
         /// </remarks>
-        Task Unfurl(string channelId, string ts, IDictionary<string, Attachment> unfurls, bool userAuthRequired = false, CancellationToken? cancellationToken = null);
+        Task Unfurl(
+            string channelId,
+            string ts,
+            IDictionary<string, Attachment> unfurls,
+            bool userAuthRequired = false,
+            IEnumerable<Block> userAuthBlocks = null,
+            string userAuthMessage = null,
+            string userAuthUrl = null,
+            CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        /// Attaches Slack app unfurl behavior to a specified and relevant message.
+        /// </summary>
+        /// <param name="source">The source of the link to unfurl.</param>
+        /// <param name="unfurlId">The ID of the link to unfurl.</param>
+        /// <param name="unfurls">Dictionary mapping a set of URLs from the message to their unfurl attachment.</param>
+        /// <param name="userAuthRequired">Set to True to indicate the user must install your Slack app to trigger unfurls for this domain.</param>
+        /// <param name="userAuthBlocks">Structured blocks to send as an ephemeral message to the user as invitation to authenticate further and enable full unfurling behavior.</param>
+        /// <param name="userAuthMessage">A simply-formatted string to send as an ephemeral message to the user as invitation to authenticate further and enable full unfurling behavior.</param>
+        /// <param name="userAuthUrl">Send users to this custom URL where they will complete authentication in your app to fully trigger unfurling. Value should be properly URL-encoded.</param>
+        /// <param name="cancellationToken"></param>
+        /// <remarks>
+        /// <para>
+        /// The first time this method is executed with a particular <paramref name="source"/> and <paramref name="unfurlId"/> combination,
+        /// the valid <paramref name="unfurls"/> attachments you provide will be attached to the message.
+        /// Subsequent attempts with the same <paramref name="source"/> and <paramref name="unfurlId"/> values will modify the same attachments, rather than adding more.
+        /// </para>
+        /// <para>
+        /// See the <a href="https://api.slack.com/methods/chat.unfurl">Slack documentation</a> for more information.
+        /// </para>
+        /// </remarks>
+        Task Unfurl(
+            LinkSource source,
+            string unfurlId,
+            IDictionary<string, Attachment> unfurls,
+            bool userAuthRequired = false,
+            IEnumerable<Block> userAuthBlocks = null,
+            string userAuthMessage = null,
+            string userAuthUrl = null,
+            CancellationToken? cancellationToken = null);
 
         /// <summary>
         /// Updates a message in a channel.
@@ -163,13 +206,46 @@ namespace SlackNet.WebApi
                     },
                 cancellationToken);
 
-        public Task Unfurl(string channelId, string ts, IDictionary<string, Attachment> unfurls, bool userAuthRequired = false, CancellationToken? cancellationToken = null) =>
+        public Task Unfurl(
+            string channelId,
+            string ts,
+            IDictionary<string, Attachment> unfurls,
+            bool userAuthRequired = false,
+            IEnumerable<Block> userAuthBlocks = null,
+            string userAuthMessage = null,
+            string userAuthUrl = null,
+            CancellationToken? cancellationToken = null
+        ) =>
             _client.Post("chat.unfurl", new Args
                 {
                     { "channel", channelId },
                     { "ts", ts },
                     { "unfurls", unfurls },
-                    { "user_auth_required", userAuthRequired }
+                    { "user_auth_required", userAuthRequired },
+                    { "user_auth_blocks", userAuthBlocks },
+                    { "user_auth_message", userAuthMessage },
+                    { "user_auth_url", userAuthUrl }
+                }, cancellationToken);
+
+        public Task Unfurl(
+            LinkSource source,
+            string unfurlId,
+            IDictionary<string, Attachment> unfurls,
+            bool userAuthRequired = false,
+            IEnumerable<Block> userAuthBlocks = null,
+            string userAuthMessage = null,
+            string userAuthUrl = null,
+            CancellationToken? cancellationToken = null
+        ) =>
+            _client.Post("chat.unfurl", new Args
+                {
+                    { "source", source },
+                    { "unfurl_id", unfurlId },
+                    { "unfurls", unfurls },
+                    { "user_auth_required", userAuthRequired },
+                    { "user_auth_blocks", userAuthBlocks },
+                    { "user_auth_message", userAuthMessage },
+                    { "user_auth_url", userAuthUrl }
                 }, cancellationToken);
 
         public Task<MessageUpdateResponse> Update(MessageUpdate messageUpdate, CancellationToken? cancellationToken = null) =>
