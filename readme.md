@@ -46,16 +46,17 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 }
 ```
 
-or in the setup of your ASP.NET Core 6.0 app:
+You can also setup your ASP.NET Core Web API in Program.cs:
 ```c#
-builder.Services.AddSlackNet(c => c.UseApiToken("<your OAuth access token here>"));
+var builder = WebApplication.CreateBuilder(args);
+...
+builder.Services.AddSingleton(new SlackEndpointConfiguration().UseSigningSecret("<your signing secret here>"));
+builder.Services.AddSlackNet(c => c.UseApiToken("<your OAuth access token here>").RegisterEventHandler<MessageEvent, PingHandler>());
+...
 var app = builder.Build();
-app.UseSlackNet(c => c.UseSigningSecret("<your signing secret here>"));
+
 ```
-
-ASP.NET Core 6.0 app
-
-Add event handler registrations inside the AddSlackNet callback. See the [SlackNet.EventAspNetCoreExample](https://github.com/soxtoby/SlackNet/tree/master/SlackNet.EventAspNetCoreExample) project for more detail.
+See the [SlackNet.EventAspNetCoreExample](https://github.com/soxtoby/SlackNet/tree/master/SlackNet.EventAspNetCoreExample) project for more detail.
 
 #### Developing with Socket Mode
 
