@@ -1,5 +1,3 @@
-
-
 using SlackNet.AspNetCore;
 using SlackNet.Events;
 using SlackNet.EventsAspNetCoreExample.Handlers;
