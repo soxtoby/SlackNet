@@ -53,7 +53,9 @@ var app = builder.Build();
 app.UseSlackNet(c => c.UseSigningSecret("<your signing secret here>"));
 ```
 
-Add event handler registrations inside the AddSlackNet callback. See the [SlackNet.EventsExample](https://github.com/soxtoby/SlackNet/tree/master/SlackNet.EventsExample) project for more detail.
+ASP.NET Core 6.0 app
+
+Add event handler registrations inside the AddSlackNet callback. See the [SlackNet.EventAspNetCoreExample](https://github.com/soxtoby/SlackNet/tree/master/SlackNet.EventAspNetCoreExample) project for more detail.
 
 #### Developing with Socket Mode
 
