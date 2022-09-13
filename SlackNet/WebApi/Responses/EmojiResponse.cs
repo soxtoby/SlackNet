@@ -4,6 +4,6 @@ namespace SlackNet.WebApi
 {
     class EmojiResponse
     {
-        public Dictionary<string, string> Emoji { get; } = new();
+        public Dictionary<string, string> Emoji { get; set; } = new();
     }
 }
