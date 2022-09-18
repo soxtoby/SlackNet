@@ -4,6 +4,6 @@ namespace SlackNet.WebApi
 {
     class TeamDndResponse
     {
-        public Dictionary<string, DndStatus> Users { get; } = new();
+        public Dictionary<string, DndStatus> Users { get; set; } = new();
     }
 }
