@@ -40,6 +40,7 @@ namespace SlackNet.Interaction
         private Attachment Attachment => _response.Message.Attachments.First();
         public string ChannelTeam => Attachment.ChannelTeam;
         public string ChannelId => Attachment.ChannelId;
+        public string ChannelName => Attachment.ChannelName;
         public bool? IsShare => Attachment.IsShare;
         public bool? IsMsgUnfurl => Attachment.IsMsgUnfurl;
     }

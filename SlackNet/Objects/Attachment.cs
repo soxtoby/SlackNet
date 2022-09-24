@@ -33,6 +33,7 @@ namespace SlackNet
         IList<ActionElement> Actions { get; }
         string ChannelTeam { get; }
         string ChannelId { get; }
+        string ChannelName { get; }
         bool? IsShare { get; }
         bool? IsMsgUnfurl { get; }
     }
@@ -74,6 +75,7 @@ namespace SlackNet
         public IList<ActionElement> Actions { get; set; } = new List<ActionElement>();
         public string ChannelTeam { get; set; }
         public string ChannelId { get; set; }
+        public string ChannelName { get; set; }
         public bool? IsShare { get; set; }
         public bool? IsMsgUnfurl { get; set; }
     }
