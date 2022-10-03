@@ -24,7 +24,7 @@ class CounterDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonActio
 
     public async Task Handle(MessageEvent slackEvent)
     {
-        if (slackEvent.Text.Contains(Trigger, StringComparison.OrdinalIgnoreCase))
+        if (slackEvent.Text?.Contains(Trigger, StringComparison.OrdinalIgnoreCase) == true)
         {
             Console.WriteLine($"{(await _slack.Users.Info(slackEvent.User)).Name} asked for a counter demo in the {(await _slack.Conversations.Info(slackEvent.Channel)).Name} channel");
             

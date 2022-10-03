@@ -21,7 +21,7 @@ class PingDemo : IEventHandler<MessageEvent>
 
     public async Task Handle(MessageEvent slackEvent)
     {
-        if (slackEvent.Text.Contains("ping", StringComparison.OrdinalIgnoreCase))
+        if (slackEvent.Text?.Contains("ping", StringComparison.OrdinalIgnoreCase) == true)
         {
             _log.LogInformation("Received ping from {User} in the {Channel} channel", (await _slack.Users.Info(slackEvent.User)).Name, (await _slack.Conversations.Info(slackEvent.Channel)).Name);
             

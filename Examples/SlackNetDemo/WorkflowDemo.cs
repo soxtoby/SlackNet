@@ -30,7 +30,7 @@ class WorkflowDemo : IWorkflowStepEditHandler, IViewSubmissionHandler, IEventHan
     /// </summary>
     public async Task Handle(WorkflowStepEdit workflowStepEdit)
     {
-        Console.WriteLine($"{workflowStepEdit.User.Name} opened the configuration dialog for the demo workflow step in the {workflowStepEdit.Channel.Name} channel");
+        Console.WriteLine($"{(await _slack.Users.Info(workflowStepEdit.User.Id)).Name} opened the configuration dialog for the demo workflow step");
         
         await _slack.Views.Open(workflowStepEdit.TriggerId, new ConfigurationModalViewDefinition
             {
@@ -64,7 +64,7 @@ class WorkflowDemo : IWorkflowStepEditHandler, IViewSubmissionHandler, IEventHan
     /// </summary>
     public async Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission)
     {
-        Console.WriteLine($"{viewSubmission.User.Name} submitted the configuration dialog for the demo workflow step in the {viewSubmission.Channel.Name} channel");
+        Console.WriteLine($"{viewSubmission.User.Name} submitted the configuration dialog for the demo workflow step");
         
         await _slack.Workflows.UpdateStep(
             viewSubmission.WorkflowStep.WorkflowStepEditId,
@@ -83,7 +83,7 @@ class WorkflowDemo : IWorkflowStepEditHandler, IViewSubmissionHandler, IEventHan
 
     public async Task HandleClose(ViewClosed viewClosed)
     {
-        Console.WriteLine($"{viewClosed.User.Name} cancelled the configuration dialog for the demo workflow step in the {viewClosed.Channel.Name} channel");
+        Console.WriteLine($"{viewClosed.User.Name} cancelled the configuration dialog for the demo workflow step");
     }
 
     /// <summary>

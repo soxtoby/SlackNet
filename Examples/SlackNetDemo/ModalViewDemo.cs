@@ -1,4 +1,5 @@
-﻿using SlackNet;
+﻿using System.Text.Json;
+using SlackNet;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Interaction;
@@ -31,7 +32,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
 
     public async Task Handle(MessageEvent slackEvent)
     {
-        if (slackEvent.Text.Contains(Trigger, StringComparison.OrdinalIgnoreCase))
+        if (slackEvent.Text?.Contains(Trigger, StringComparison.OrdinalIgnoreCase) == true)
         {
             Console.WriteLine($"{(await _slack.Users.Info(slackEvent.User)).Name} asked for a modal view demo in the {(await _slack.Conversations.Info(slackEvent.Channel)).Name} channel");
             
@@ -71,6 +72,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                             {
                                 Label = "Input",
                                 BlockId = InputBlockId,
+                                Optional = true,
                                 Element = new PlainTextInput
                                     {
                                         ActionId = InputActionId,
@@ -81,6 +83,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                             {
                                 Label = "Single-select",
                                 BlockId = "single_select_block",
+                                Optional = true,
                                 Element = new StaticSelectMenu
                                     {
                                         ActionId = SingleSelectActionId,
@@ -91,6 +94,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                             {
                                 Label = "Multi-select",
                                 BlockId = "multi_select_block",
+                                Optional = true,
                                 Element = new StaticMultiSelectMenu
                                     {
                                         ActionId = MultiSelectActionId,
@@ -101,18 +105,21 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                             {
                                 Label = "Date",
                                 BlockId = "date_block",
+                                Optional = true,
                                 Element = new DatePicker { ActionId = DatePickerActionId }
                             },
                         new InputBlock
                             {
                                 Label = "Time",
                                 BlockId = "time_block",
+                                Optional = true,
                                 Element = new TimePicker { ActionId = TimePickerActionId }
                             },
                         new InputBlock
                             {
                                 Label = "Radio options",
                                 BlockId = "radio_block",
+                                Optional = true,
                                 Element = new RadioButtonGroup
                                     {
                                         ActionId = RadioActionId,
@@ -123,6 +130,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                             {
                                 Label = "Checkbox options",
                                 BlockId = "checkbox_block",
+                                Optional = true,
                                 Element = new CheckboxGroup
                                     {
                                         ActionId = CheckboxActionId,
@@ -133,6 +141,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                             {
                                 Label = "Single user select",
                                 BlockId = "single_user_block",
+                                Optional = true,
                                 Element = new UserSelectMenu
                                     {
                                         ActionId = SingleUserActionId
@@ -140,7 +149,8 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                             }
                     },
                 Submit = "Submit",
-                NotifyOnClose = true
+                NotifyOnClose = true,
+                PrivateMetadata = JsonSerializer.Serialize(new ModalMetadata(request.Channel.Id, request.Channel.Name)) // Holding onto this info for later
             });
     }
 
@@ -153,24 +163,25 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
 
     public async Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission)
     {
-        Console.WriteLine($"{viewSubmission.User.Name} submitted the demo modal view in the {viewSubmission.Channel.Name} channel");
+        var metadata = JsonSerializer.Deserialize<ModalMetadata>(viewSubmission.View.PrivateMetadata)!;
+        Console.WriteLine($"{viewSubmission.User.Name} submitted the demo modal view in the {metadata.ChannelName} channel");
         
         var state = viewSubmission.View.State;
         var values = new Dictionary<string, string>
             {
-                { "Input", state.GetValue<PlainTextInputValue>(InputActionId).Value },
+                { "Input", state.GetValue<PlainTextInputValue>(InputActionId).Value ?? "none" },
                 { "Single-select", state.GetValue<StaticSelectValue>(SingleSelectActionId).SelectedOption?.Text.Text ?? "none" },
                 { "Multi-select", string.Join(", ", state.GetValue<StaticMultiSelectValue>(MultiSelectActionId).SelectedOptions.Select(o => o.Text).DefaultIfEmpty("none")) },
                 { "Date", state.GetValue<DatePickerValue>(DatePickerActionId).SelectedDate?.ToString("yyyy-MM-dd") ?? "none" },
                 { "Time", state.GetValue<TimePickerValue>(TimePickerActionId).SelectedTime?.ToString("hh\\:mm") ?? "none" },
                 { "Radio options", state.GetValue<RadioButtonGroupValue>(RadioActionId).SelectedOption?.Text.Text ?? "none" },
                 { "Checkbox options", string.Join(", ", state.GetValue<CheckboxGroupValue>(CheckboxActionId).SelectedOptions.Select(o => o.Text).DefaultIfEmpty("none")) },
-                { "Single user select", state.GetValue<UserSelectValue>(SingleUserActionId).SelectedUser ?? "none" }
+                { "Single user select", state.GetValue<UserSelectValue>(SingleUserActionId).SelectedUser is string userId ? Link.User(userId).ToString() : "none" }
             };
 
         await _slack.Chat.PostMessage(new Message
             {
-                Channel = viewSubmission.Channel.Id,
+                Channel = metadata.ChannelId,
                 Text = $"You entered: {state.GetValue<PlainTextInputValue>(InputActionId).Value}",
                 Blocks =
                     {
@@ -187,12 +198,15 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
 
     public async Task HandleClose(ViewClosed viewClosed)
     {
-        Console.WriteLine($"{viewClosed.User.Name} cancelled the demo modal view in the {viewClosed.Channel.Name} channel");
+        var metadata = JsonSerializer.Deserialize<ModalMetadata>(viewClosed.View.PrivateMetadata)!;
+        Console.WriteLine($"{viewClosed.User.Name} cancelled the demo modal view in the {metadata.ChannelName} channel");
         
         await _slack.Chat.PostMessage(new Message
             {
-                Channel = viewClosed.Channel.Id,
+                Channel = metadata.ChannelId,
                 Text = "You cancelled the modal"
             });
     }
+
+    record ModalMetadata(string ChannelId, string ChannelName);
 }

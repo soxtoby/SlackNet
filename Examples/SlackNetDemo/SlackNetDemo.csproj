@@ -5,6 +5,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <UserSecretsId>4f5fbd91-3081-4e07-a894-702e56df325a</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,6 +17,12 @@
     <ItemGroup>
       <ProjectReference Include="..\..\SlackNet.Extensions.DependencyInjection\SlackNet.Extensions.DependencyInjection.csproj" />
       <ProjectReference Include="..\..\SlackNet\SlackNet.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
