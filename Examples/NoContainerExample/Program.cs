@@ -28,4 +28,8 @@ await client.Connect();
 Console.WriteLine("Connected. Press any key to exit...");
 await Task.Run(Console.ReadKey);
 
-record AppSettings(string ApiToken, string AppLevelToken);
+record AppSettings
+{
+    public string ApiToken { get; init; } = string.Empty;
+    public string AppLevelToken { get; init; } = string.Empty;
+}

@@ -4,7 +4,7 @@ using SlackNet.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var slackSettings = builder.Configuration.GetValue<SlackSettings>("Slack");
+var slackSettings = builder.Configuration.GetSection("Slack").Get<SlackSettings>();
 
 builder.Services.AddSlackNet(c => c
     // Configure the tokens used to authenticate with Slack
@@ -32,4 +32,9 @@ app.MapGet("/", () => "Hello, Slack!");
 
 app.Run();
 
-record SlackSettings(string ApiToken, string AppLevelToken, string SigningSecret);
+record SlackSettings
+{
+    public string ApiToken { get; init; } = string.Empty;
+    public string AppLevelToken { get; init; } = string.Empty;
+    public string SigningSecret { get; init; } = string.Empty;
+}

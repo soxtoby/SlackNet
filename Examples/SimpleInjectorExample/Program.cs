@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SimpleInjector;
+using SimpleInjector.Lifestyles;
 using SimpleInjectorExample;
 using SlackNet.Events;
 using SlackNet.SimpleInjector;
@@ -12,7 +13,8 @@ var settings = new ConfigurationBuilder()
     .Build()
     .Get<AppSettings>();
 
-await using var container = new Container();
+await using var container = new Container { Options = { DefaultScopedLifestyle = new AsyncScopedLifestyle() } };
+
 container.AddSlackNet(c => c
     // Configure the tokens used to authenticate with Slack
     .UseApiToken(settings.ApiToken) // This gets used by the API client
@@ -30,4 +32,8 @@ await client.Connect();
 Console.WriteLine("Connected. Press any key to exit...");
 await Task.Run(Console.ReadKey);
 
-record AppSettings(string ApiToken, string AppLevelToken);
+record AppSettings
+{
+    public string ApiToken { get; init; } = string.Empty;
+    public string AppLevelToken { get; init; } = string.Empty;
+}

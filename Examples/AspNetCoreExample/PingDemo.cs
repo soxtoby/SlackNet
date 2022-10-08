@@ -13,7 +13,7 @@ class PingDemo : IEventHandler<MessageEvent>
     private readonly ISlackApiClient _slack;
     private readonly ILogger _log;
 
-    public PingDemo(ISlackApiClient slack, ILogger log)
+    public PingDemo(ISlackApiClient slack, ILogger<PingDemo> log)
     {
         _slack = slack;
         _log = log;
