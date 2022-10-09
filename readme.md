@@ -1,7 +1,7 @@
 # SlackNet
 An easy-to-use and comprehensive API for writing Slack apps in .NET.
 
-This project builds on the [Slack API](https://api.slack.com/). You should through Slack's documentation to get an understanding of how Slack apps work and what you can do with them before using SlackNet.
+This project builds on the [Slack API](https://api.slack.com/). You should [read through Slack's documentation](https://api.slack.com/start) to get an understanding of how Slack apps work and what you can do with them before using SlackNet.
 
 - [Getting Started](#getting-started)
   - [SlackNet](#slacknet)
@@ -15,21 +15,21 @@ This project builds on the [Slack API](https://api.slack.com/). You should throu
 
 ## Getting Started
 There are two main NuGet packages available to install, depending on your use case.
-  - [SlackNet](https://www.nuget.org/packages/SlackNet/): A comprehensive Slack API client for .NET.
+  - [SlackNet](https://www.nuget.org/packages/SlackNet/): A comprehensive Slack API client for .NET, including a socket mode client for receiving events.
   - [SlackNet.AspNetCore](https://www.nuget.org/packages/SlackNet.AspNetCore/): ASP.NET Core integration for receiving requests from Slack.
 
 A [SlackNet.Bot](SlackNet.Bot#slacknetbot) package for using Slack's deprecated RTM API is also available, but you're probably better off using the [Socket Mode client](#socket-mode) instead.
 
 ### SlackNet
-To use the Web API:
+To use the Web API, build the API client:
 ```c#
 var api = new SlackServiceBuilder()
-    .UseApiToken("<your OAuth access token here>")
+    .UseApiToken("<your bot or user OAuth token here>")
     .GetApiClient();
 ```
-then start calling methods:
+then call any of Slack's [many API methods](https://api.slack.com/methods):
 ```c#
-var channels = await api.Conversations.List();
+await api.Chat.PostMessage(new Message { Text = "Hello, Slack!", Channel = "#general" });
 ```
 
 #### Socket Mode
@@ -60,7 +60,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 
 or in the setup of your ASP.NET Core 6.0 app:
 ```c#
-builder.Services.AddSlackNet(c => c.UseApiToken("<your OAuth access token here>"));
+builder.Services.AddSlackNet(c => c.UseApiToken("<your bot or user OAuth token here>"));
 var app = builder.Build();
 app.UseSlackNet(c => c.UseSigningSecret("<your signing secret here>"));
 ```
@@ -82,7 +82,7 @@ You'll need to [enable dependency injection](https://docs.microsoft.com/en-us/az
 ```c#
 public override void Configure(IFunctionsHostBuilder builder)
 {
-    builder.Services.AddSlackNet(c => c.UseApiToken("<your OAuth access token here>"));
+    builder.Services.AddSlackNet(c => c.UseApiToken("<your bot or user OAuth token here>"));
     builder.Services.AddSingleton(new SlackEndpointConfiguration()
         .UseSigningSecret("<your signing secret here>"));
 }
