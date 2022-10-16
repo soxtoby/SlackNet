@@ -2,7 +2,6 @@ using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.AppVeyor;
-using Nuke.Common.Execution;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
@@ -11,7 +10,6 @@ using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 [DotNetVerbosityMapping]
-[CheckBuildProjectConfigurations]
 [ShutdownDotNetAfterServerBuild]
 [AppVeyor(AppVeyorImage.VisualStudioLatest, InvokedTargets = new[] { nameof(Test), nameof(Pack) })]
 class Build : NukeBuild
@@ -21,8 +19,8 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Solution] readonly Solution Solution;
-    [GitVersion(Framework = "netcoreapp2.1")] readonly GitVersion GitVersion;
+    [Solution] readonly Solution Solution = null!;
+    [GitVersion(Framework = "netcoreapp2.1")] readonly GitVersion GitVersion = null!;
 
     AbsolutePath OutputDirectory => RootDirectory / "output";
 
