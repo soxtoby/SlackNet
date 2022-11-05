@@ -43,7 +43,7 @@ namespace SlackNet.Interaction
         public string UserName { get; set; }
 
         public string TeamId { get; set; }
-        public string TeamName { get; set; }
+        public string TeamDomain { get; set; }
 
         public string EnterpriseId { get; set; }
         public string EnterpriseName { get; set; }
