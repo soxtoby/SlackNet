@@ -7,5 +7,6 @@ namespace SlackNet.Interaction
         public SelectElement() : base("select") { }
 
         public IList<SelectOption> Options { get; set; } = new List<SelectOption>();
+        public DataSource DataSource { get; set; }
     }
 }
