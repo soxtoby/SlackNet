@@ -7,7 +7,7 @@
     <NoWarn>CS0649;CS0169</NoWarn>
     <NukeRootDirectory>..</NukeRootDirectory>
     <NukeScriptDirectory>..</NukeScriptDirectory>
-    <LangVersion>default</LangVersion>
+    <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
     <NukeTelemetryVersion>1</NukeTelemetryVersion>
   </PropertyGroup>

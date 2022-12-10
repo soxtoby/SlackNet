@@ -10,7 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>Slack API RTM Bot</PackageTags>
     <NoWarn>1591</NoWarn>
-    <LangVersion>9</LangVersion>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
