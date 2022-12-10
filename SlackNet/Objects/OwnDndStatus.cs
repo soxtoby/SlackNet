@@ -1,8 +1,7 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+public class OwnDndStatus : DndStatus
 {
-    public class OwnDndStatus : DndStatus
-    {
-        public bool SnoozeEnabled { get; set; }
-        public int SnoozeEndtime { get; set; }
-    }
+    public bool SnoozeEnabled { get; set; }
+    public int SnoozeEndtime { get; set; }
 }

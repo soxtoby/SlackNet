@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace SlackNet.Interaction
+namespace SlackNet.Interaction;
+
+public interface IInteractiveMessageHandler
 {
-    public interface IInteractiveMessageHandler
-    {
-        Task<MessageResponse> Handle(InteractiveMessage message);
-    }
+    Task<MessageResponse> Handle(InteractiveMessage message);
 }

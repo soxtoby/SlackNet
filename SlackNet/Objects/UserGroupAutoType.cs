@@ -1,8 +1,7 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+public enum UserGroupAutoType
 {
-    public enum UserGroupAutoType
-    {
-        Admins,
-        Owners
-    }
+    Admins,
+    Owners
 }

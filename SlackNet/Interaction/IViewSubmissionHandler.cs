@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
 
-namespace SlackNet.Interaction
+namespace SlackNet.Interaction;
+
+public interface IViewSubmissionHandler
 {
-    public interface IViewSubmissionHandler
-    {
-        Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission);
-        Task HandleClose(ViewClosed viewClosed);
-    }
+    Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission);
+    Task HandleClose(ViewClosed viewClosed);
 }

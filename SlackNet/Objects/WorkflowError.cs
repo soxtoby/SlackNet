@@ -1,7 +1,6 @@
-namespace SlackNet
+namespace SlackNet;
+
+public class WorkflowError
 {
-    public class WorkflowError
-    {
-        public string Message { get; set; }
-    }
+    public string Message { get; set; }
 }

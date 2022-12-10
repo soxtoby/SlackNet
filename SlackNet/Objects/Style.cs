@@ -1,9 +1,8 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+public enum Style
 {
-    public enum Style
-    {
-        Default,
-        Primary,
-        Danger
-    }
+    Default,
+    Primary,
+    Danger
 }

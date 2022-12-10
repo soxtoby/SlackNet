@@ -1,10 +1,9 @@
 ﻿using SlackNet.Events;
 
-namespace SlackNet
+namespace SlackNet;
+
+[SlackType("message")]
+public class StarredMessage : StarredItem
 {
-    [SlackType("message")]
-    public class StarredMessage : StarredItem
-    {
-        public MessageEvent Message { get; set; }
-    }
+    public MessageEvent Message { get; set; }
 }

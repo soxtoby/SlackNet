@@ -1,8 +1,7 @@
-namespace SlackNet.Events
+namespace SlackNet.Events;
+
+public class EventRequest
 {
-    public class EventRequest
-    {
-        public string Type { get; set; }
-        public string Token { get; set; }
-    }
+    public string Type { get; set; }
+    public string Token { get; set; }
 }

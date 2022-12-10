@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+class UserGroupListResponse
 {
-    class UserGroupListResponse
-    {
-        public List<UserGroup> Usergroups { get; set; } = new();
-    }
+    public List<UserGroup> Usergroups { get; set; } = new();
 }

@@ -1,11 +1,10 @@
-namespace SlackNet.Events
+namespace SlackNet.Events;
+
+/// <summary>
+/// Sent to all connections for a team when a team channel is archived.
+/// </summary>
+public class ChannelArchive : Event
 {
-    /// <summary>
-    /// Sent to all connections for a team when a team channel is archived.
-    /// </summary>
-    public class ChannelArchive : Event
-    {
-        public string Channel { get; set; }
-        public string User { get; set; }
-    }
+    public string Channel { get; set; }
+    public string User { get; set; }
 }

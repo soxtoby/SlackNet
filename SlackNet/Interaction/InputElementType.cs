@@ -1,10 +1,9 @@
-﻿namespace SlackNet.Interaction
+﻿namespace SlackNet.Interaction;
+
+public enum InputElementType
 {
-    public enum InputElementType
-    {
-        Email,
-        Number,
-        Tel,
-        Url
-    }
+    Email,
+    Number,
+    Tel,
+    Url
 }

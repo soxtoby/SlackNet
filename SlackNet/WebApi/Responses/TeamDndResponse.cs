@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+class TeamDndResponse
 {
-    class TeamDndResponse
-    {
-        public Dictionary<string, DndStatus> Users { get; set; } = new();
-    }
+    public Dictionary<string, DndStatus> Users { get; set; } = new();
 }

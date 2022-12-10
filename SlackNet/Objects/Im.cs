@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace SlackNet
+namespace SlackNet;
+
+[Obsolete("Use Conversation instead")]
+public class Im : Hub
 {
-    [Obsolete("Use Conversation instead")]
-    public class Im : Hub
-    {
-        public Im() => IsMember = true;
+    public Im() => IsMember = true;
 
-        public string User { get; set; }
-        public bool IsUserDeleted { get; set; }
+    public string User { get; set; }
+    public bool IsUserDeleted { get; set; }
 
-        public override string ToString() => Link.User(User).ToString();
-    }
+    public override string ToString() => Link.User(User).ToString();
 }

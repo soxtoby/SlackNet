@@ -1,20 +1,19 @@
-﻿namespace SlackNet.Blocks
+﻿namespace SlackNet.Blocks;
+
+[SlackType("plain_text")]
+public class PlainText : TextObject, IContextElement
 {
-    [SlackType("plain_text")]
-    public class PlainText : TextObject, IContextElement
+    public PlainText(string text = "") : base("plain_text")
     {
-        public PlainText(string text = "") : base("plain_text")
-        {
-            Text = text;
-        }
-
-        /// <summary>
-        /// Indicates whether emojis in a text field should be escaped into the colon emoji format.
-        /// </summary>
-        public bool Emoji { get; set; } = true;
-
-        public override string ToString() => Text;
-
-        public static implicit operator PlainText(string text) => new(text);
+        Text = text;
     }
+
+    /// <summary>
+    /// Indicates whether emojis in a text field should be escaped into the colon emoji format.
+    /// </summary>
+    public bool Emoji { get; set; } = true;
+
+    public override string ToString() => Text;
+
+    public static implicit operator PlainText(string text) => new(text);
 }

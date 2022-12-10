@@ -1,8 +1,7 @@
-﻿namespace SlackNet.Interaction
+﻿namespace SlackNet.Interaction;
+
+public class DialogError
 {
-    public class DialogError
-    {
-        public string Name { get; set; }
-        public string Error { get; set; }
-    }
+    public string Name { get; set; }
+    public string Error { get; set; }
 }

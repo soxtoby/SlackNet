@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace SlackNet.Interaction
+namespace SlackNet.Interaction;
+
+public interface IGlobalShortcutHandler
 {
-    public interface IGlobalShortcutHandler
-    {
-        Task Handle(GlobalShortcut shortcut);
-    }
+    Task Handle(GlobalShortcut shortcut);
 }

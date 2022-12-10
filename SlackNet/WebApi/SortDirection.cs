@@ -1,10 +1,9 @@
 ﻿using System.Runtime.Serialization;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+public enum SortDirection
 {
-    public enum SortDirection
-    {
-        [EnumMember(Value = "asc")] Ascending,
-        [EnumMember(Value = "desc")] Descending
-    }
+    [EnumMember(Value = "asc")] Ascending,
+    [EnumMember(Value = "desc")] Descending
 }

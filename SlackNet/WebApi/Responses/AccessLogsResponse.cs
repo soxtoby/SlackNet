@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+public class AccessLogsResponse
 {
-    public class AccessLogsResponse
-    {
-        public IList<Login> Logins { get; set; } = new List<Login>();
-        public Paging Paging { get; set; }
-    }
+    public IList<Login> Logins { get; set; } = new List<Login>();
+    public Paging Paging { get; set; }
 }

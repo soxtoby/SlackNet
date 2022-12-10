@@ -1,10 +1,9 @@
-﻿namespace SlackNet.Interaction
+﻿namespace SlackNet.Interaction;
+
+public class TextArea : TextElementBase
 {
-    public class TextArea : TextElementBase
+    public TextArea() : base("textarea")
     {
-        public TextArea() : base("textarea")
-        {
-            MaxLength = 3000;
-        }
+        MaxLength = 3000;
     }
 }

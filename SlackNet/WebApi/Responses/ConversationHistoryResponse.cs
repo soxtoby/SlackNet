@@ -1,8 +1,7 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+public class ConversationHistoryResponse : ConversationMessagesResponse
 {
-    public class ConversationHistoryResponse : ConversationMessagesResponse
-    {
-        public string Latest { get; set; }
-        public int PinCount { get; set; }
-    }
+    public string Latest { get; set; }
+    public int PinCount { get; set; }
 }

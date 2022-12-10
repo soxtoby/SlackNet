@@ -1,10 +1,9 @@
-namespace SlackNet.Events
+namespace SlackNet.Events;
+
+/// <summary>
+/// Sent to all connections for a team when an integration "bot" is updated.
+/// </summary>
+public class BotChanged : Event
 {
-    /// <summary>
-    /// Sent to all connections for a team when an integration "bot" is updated.
-    /// </summary>
-    public class BotChanged : Event
-    {
-        public BotInfo Bot { get; set; }
-    }
+    public BotInfo Bot { get; set; }
 }

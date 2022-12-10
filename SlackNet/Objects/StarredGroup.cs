@@ -1,8 +1,7 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+[SlackType("group")]
+public class StarredGroup : StarredItem
 {
-    [SlackType("group")]
-    public class StarredGroup : StarredItem
-    {
-        public string Group { get; set; }
-    }
+    public string Group { get; set; }
 }

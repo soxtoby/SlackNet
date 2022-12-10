@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
 
-namespace SlackNet.Interaction
+namespace SlackNet.Interaction;
+
+public interface ISlashCommandHandler
 {
-    public interface ISlashCommandHandler
-    {
-        Task<SlashCommandResponse> Handle(SlashCommand command);
-    }
+    Task<SlashCommandResponse> Handle(SlashCommand command);
 }

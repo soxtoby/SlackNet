@@ -1,9 +1,8 @@
 ﻿using SlackNet.Events;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+class MessageReactionsResponse
 {
-    class MessageReactionsResponse
-    {
-        public MessageEvent Message { get; set; }
-    }
+    public MessageEvent Message { get; set; }
 }

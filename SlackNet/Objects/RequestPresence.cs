@@ -1,8 +1,7 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+public enum RequestPresence
 {
-    public enum RequestPresence
-    {
-        Auto,
-        Away
-    }
+    Auto,
+    Away
 }

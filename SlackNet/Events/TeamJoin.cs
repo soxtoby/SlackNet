@@ -1,10 +1,9 @@
-namespace SlackNet.Events
+namespace SlackNet.Events;
+
+/// <summary>
+/// Sent to all connections for a team when a new team member joins the team.
+/// </summary>
+public class TeamJoin : Event
 {
-    /// <summary>
-    /// Sent to all connections for a team when a new team member joins the team.
-    /// </summary>
-    public class TeamJoin : Event
-    {
-        public User User { get; set; }
-    }
+    public User User { get; set; }
 }

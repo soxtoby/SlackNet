@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+class FileCommentResponse
 {
-    class FileCommentResponse
-    {
-        public FileComment Comment { get; set; }
-    }
+    public FileComment Comment { get; set; }
 }

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+class EmojiResponse
 {
-    class EmojiResponse
-    {
-        public Dictionary<string, string> Emoji { get; set; } = new();
-    }
+    public Dictionary<string, string> Emoji { get; set; } = new();
 }

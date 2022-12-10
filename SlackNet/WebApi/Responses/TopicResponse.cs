@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+class TopicResponse
 {
-    class TopicResponse
-    {
-        public string Topic { get; set; }
-    }
+    public string Topic { get; set; }
 }

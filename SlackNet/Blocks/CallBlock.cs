@@ -1,10 +1,9 @@
-﻿namespace SlackNet.Blocks
-{
-    [SlackType("call")]
-    public class CallBlock : Block
-    {
-        public CallBlock() : base("call") { }
+﻿namespace SlackNet.Blocks;
 
-        public string CallId { get; set; }
-    }
+[SlackType("call")]
+public class CallBlock : Block
+{
+    public CallBlock() : base("call") { }
+
+    public string CallId { get; set; }
 }

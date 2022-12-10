@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+class TeamResponse
 {
-    class TeamResponse
-    {
-        public Team Team { get; set; }
-    }
+    public Team Team { get; set; }
 }

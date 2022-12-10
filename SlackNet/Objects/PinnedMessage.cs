@@ -1,14 +1,13 @@
 ﻿using SlackNet.Events;
 
-namespace SlackNet
+namespace SlackNet;
+
+[SlackType("message")]
+public class PinnedMessage : PinnedItem
 {
-    [SlackType("message")]
-    public class PinnedMessage : PinnedItem
-    {
-        /// <summary>
-        /// The channel ID for the message.
-        /// </summary>
-        public string Channel { get; set; }
-        public MessageEvent Message { get; set; }
-    }
+    /// <summary>
+    /// The channel ID for the message.
+    /// </summary>
+    public string Channel { get; set; }
+    public MessageEvent Message { get; set; }
 }

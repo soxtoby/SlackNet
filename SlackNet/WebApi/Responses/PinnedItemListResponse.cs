@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+class PinnedItemListResponse
 {
-    class PinnedItemListResponse
-    {
-        public List<PinnedItem> Items { get; set; }
-    }
+    public List<PinnedItem> Items { get; set; }
 }

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+class BillableInfoResponse
 {
-    class BillableInfoResponse
-    {
-        public IList<BillableInfo> BillableInfo { get; set; } = new List<BillableInfo>();
-    }
+    public IList<BillableInfo> BillableInfo { get; set; } = new List<BillableInfo>();
 }

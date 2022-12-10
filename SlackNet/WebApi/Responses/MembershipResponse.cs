@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+class MembershipResponse
 {
-    class MembershipResponse
-    {
-        public List<string> Users { get; set; } = new();
-    }
+    public List<string> Users { get; set; } = new();
 }

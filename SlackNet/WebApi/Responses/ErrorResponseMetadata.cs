@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+public class ErrorResponseMetadata
 {
-    public class ErrorResponseMetadata
-    {
-        public IList<string> Messages { get; set; } = new List<string>();
-    }
+    public IList<string> Messages { get; set; } = new List<string>();
 }

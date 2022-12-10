@@ -1,10 +1,9 @@
-namespace SlackNet.Events
+namespace SlackNet.Events;
+
+/// <summary>
+/// Sent to all connections for a user when that user leaves a private channel.
+/// </summary>
+public class GroupLeft : Event
 {
-    /// <summary>
-    /// Sent to all connections for a user when that user leaves a private channel.
-    /// </summary>
-    public class GroupLeft : Event
-    {
-        public string Channel { get; set; }
-    }
+    public string Channel { get; set; }
 }

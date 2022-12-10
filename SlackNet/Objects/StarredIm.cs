@@ -1,8 +1,7 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+[SlackType("im")]
+public class StarredIm : StarredItem
 {
-    [SlackType("im")]
-    public class StarredIm : StarredItem
-    {
-        public string Channel { get; set; }
-    }
+    public string Channel { get; set; }
 }

@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+class ReminderResponse
 {
-    class ReminderResponse
-    {
-        public Reminder Reminder { get; set; }
-    }
+    public Reminder Reminder { get; set; }
 }

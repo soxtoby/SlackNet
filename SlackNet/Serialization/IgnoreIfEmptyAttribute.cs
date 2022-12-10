@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace SlackNet
+namespace SlackNet;
+
+public class IgnoreIfEmptyAttribute : ShouldSerializeAttribute
 {
-    public class IgnoreIfEmptyAttribute : ShouldSerializeAttribute
+    public override bool ShouldSerialize(object value)
     {
-        public override bool ShouldSerialize(object value)
-        {
-            return value is not IEnumerable<object> enumerable 
-                || enumerable.Any();
-        }
+        return value is not IEnumerable<object> enumerable 
+            || enumerable.Any();
     }
 }

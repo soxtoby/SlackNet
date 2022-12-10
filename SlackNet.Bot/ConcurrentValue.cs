@@ -1,33 +1,32 @@
 ﻿using System;
 
-namespace SlackNet.Bot
+namespace SlackNet.Bot;
+
+class ConcurrentValue<T>
 {
-    class ConcurrentValue<T>
+    private readonly object _gate = new();
+    public bool HasValue { get; private set; }
+    private T _value;
+
+    public T GetOrCreateValue(Func<T> createValue)
     {
-        private readonly object _gate = new();
-        public bool HasValue { get; private set; }
-        private T _value;
-
-        public T GetOrCreateValue(Func<T> createValue)
+        lock (_gate)
         {
-            lock (_gate)
+            if (!HasValue)
             {
-                if (!HasValue)
-                {
-                    _value = createValue();
-                    HasValue = true;
-                }
-                return _value;
+                _value = createValue();
+                HasValue = true;
             }
+            return _value;
         }
+    }
 
-        public void Clear()
+    public void Clear()
+    {
+        lock (_gate)
         {
-            lock (_gate)
-            {
-                HasValue = false;
-                _value = default(T);
-            }
+            HasValue = false;
+            _value = default(T);
         }
     }
 }

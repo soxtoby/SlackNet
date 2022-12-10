@@ -1,11 +1,10 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+public class AuthTestResponse
 {
-    public class AuthTestResponse
-    {
-        public string Url { get; set; }
-        public string Team { get; set; }
-        public string User { get; set; }
-        public string TeamId { get; set; }
-        public string UserId { get; set; }
-    }
+    public string Url { get; set; }
+    public string Team { get; set; }
+    public string User { get; set; }
+    public string TeamId { get; set; }
+    public string UserId { get; set; }
 }

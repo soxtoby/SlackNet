@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 
-namespace SlackNet
+namespace SlackNet;
+
+public class TeamProfile
 {
-    public class TeamProfile
-    {
-        public IList<TeamProfileField> Fields { get; set; } = new List<TeamProfileField>();
-    }
+    public IList<TeamProfileField> Fields { get; set; } = new List<TeamProfileField>();
 }

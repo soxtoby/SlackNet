@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.Interaction
+namespace SlackNet.Interaction;
+
+public class DialogErrorResponse
 {
-    public class DialogErrorResponse
-    {
-        public IEnumerable<DialogError> Errors { get; set; }
-    }
+    public IEnumerable<DialogError> Errors { get; set; }
 }

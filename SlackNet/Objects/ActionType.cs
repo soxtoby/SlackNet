@@ -1,8 +1,7 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+public enum ActionType
 {
-    public enum ActionType
-    {
-        Button,
-        Select
-    }
+    Button,
+    Select
 }

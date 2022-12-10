@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 
-namespace SlackNet.Events
+namespace SlackNet.Events;
+
+public class DeletedProfile
 {
-    public class DeletedProfile
-    {
-        public IList<string> Fields { get; set; }
-    }
+    public IList<string> Fields { get; set; }
 }

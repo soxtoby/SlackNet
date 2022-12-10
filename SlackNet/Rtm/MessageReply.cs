@@ -1,8 +1,7 @@
-﻿namespace SlackNet.Rtm
+﻿namespace SlackNet.Rtm;
+
+public class MessageReply
 {
-    public class MessageReply
-    {
-        public string Ts { get; set; }
-        public string Text { get; set; }
-    }
+    public string Ts { get; set; }
+    public string Text { get; set; }
 }

@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+public class BotsInfoResponse
 {
-    public class BotsInfoResponse
-    {
-        public BotInfo Bot { get; set; }
-    }
+    public BotInfo Bot { get; set; }
 }

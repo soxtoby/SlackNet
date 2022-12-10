@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace SlackNet.Interaction.Experimental
+namespace SlackNet.Interaction.Experimental;
+
+[Obsolete(Warning.Experimental)]
+public interface IAsyncGlobalShortcutHandler
 {
-    [Obsolete(Warning.Experimental)]
-    public interface IAsyncGlobalShortcutHandler
-    {
-        Task Handle(GlobalShortcut shortcut, Responder respond);
-    }
+    Task Handle(GlobalShortcut shortcut, Responder respond);
 }

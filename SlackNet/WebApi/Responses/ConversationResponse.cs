@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+class ConversationResponse
 {
-    class ConversationResponse
-    {
-        public Conversation Channel { get; set; }
-    }
+    public Conversation Channel { get; set; }
 }

@@ -1,10 +1,9 @@
 ﻿using System.Runtime.Serialization;
 
-namespace SlackNet
+namespace SlackNet;
+
+public enum ChannelType
 {
-    public enum ChannelType
-    {
-        [EnumMember(Value = "C")] Channel,
-        [EnumMember(Value = "G")] PrivateGroup
-    }
+    [EnumMember(Value = "C")] Channel,
+    [EnumMember(Value = "G")] PrivateGroup
 }

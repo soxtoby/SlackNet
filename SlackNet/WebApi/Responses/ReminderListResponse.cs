@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+class ReminderListResponse
 {
-    class ReminderListResponse
-    {
-        public List<Reminder> Reminders { get; set; } = new();
-    }
+    public List<Reminder> Reminders { get; set; } = new();
 }

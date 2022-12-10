@@ -1,8 +1,7 @@
-﻿namespace SlackNet.Interaction
+﻿namespace SlackNet.Interaction;
+
+public class DialogCancellation : InteractionRequest
 {
-    public class DialogCancellation : InteractionRequest
-    {
-        public string CallbackId { get; set; }
-        public string State { get; set; }
-    }
+    public string CallbackId { get; set; }
+    public string State { get; set; }
 }

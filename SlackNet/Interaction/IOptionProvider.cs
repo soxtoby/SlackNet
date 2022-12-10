@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace SlackNet.Interaction
+namespace SlackNet.Interaction;
+
+public interface IOptionProvider
 {
-    public interface IOptionProvider
-    {
-        Task<OptionsResponse> GetOptions(OptionsRequest request);
-    }
+    Task<OptionsResponse> GetOptions(OptionsRequest request);
 }

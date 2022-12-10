@@ -1,8 +1,7 @@
-namespace SlackNet
+namespace SlackNet;
+
+[SlackType("workflow_step")]
+public class ConfigurationModalViewInfo : ViewInfo
 {
-    [SlackType("workflow_step")]
-    public class ConfigurationModalViewInfo : ViewInfo
-    {
         
-    }
 }

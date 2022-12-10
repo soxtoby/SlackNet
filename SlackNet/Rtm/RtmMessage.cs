@@ -1,8 +1,7 @@
-﻿namespace SlackNet.Rtm
+﻿namespace SlackNet.Rtm;
+
+public class RtmMessage : OutgoingRtmEvent
 {
-    public class RtmMessage : OutgoingRtmEvent
-    {
-        public string Channel { get; set; }
-        public string Text { get; set; }
-    }
+    public string Channel { get; set; }
+    public string Text { get; set; }
 }

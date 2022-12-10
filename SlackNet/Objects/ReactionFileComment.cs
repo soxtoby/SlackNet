@@ -1,9 +1,8 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+[SlackType("file_comment")]
+public class ReactionFileComment : ReactionItem
 {
-    [SlackType("file_comment")]
-    public class ReactionFileComment : ReactionItem
-    {
-        public string FileComment { get; set; }
-        public string File { get; set; }
-    }
+    public string FileComment { get; set; }
+    public string File { get; set; }
 }

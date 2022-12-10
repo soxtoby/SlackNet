@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
 
-namespace SlackNet.Interaction
+namespace SlackNet.Interaction;
+
+public interface IWorkflowStepEditHandler
 {
-    public interface IWorkflowStepEditHandler
-    {
-        Task Handle(WorkflowStepEdit workflowStepEdit);
-    }
+    Task Handle(WorkflowStepEdit workflowStepEdit);
 }

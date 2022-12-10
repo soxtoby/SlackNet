@@ -1,11 +1,10 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+public enum DataSource
 {
-    public enum DataSource
-    {
-        Static,
-        Users,
-        Channels,
-        Conversations,
-        External
-    }
+    Static,
+    Users,
+    Channels,
+    Conversations,
+    External
 }

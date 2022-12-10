@@ -1,10 +1,10 @@
-namespace SlackNet
+namespace SlackNet;
+
+/// <summary>
+/// If you make use of a <a href="https://api.slack.com/authentication/token-types#user">user_token</a> this object is included.
+/// </summary>
+public class AuthedUser
 {
-  /// <summary>
-  /// If you make use of a <a href="https://api.slack.com/authentication/token-types#user">user_token</a> this object is included.
-  /// </summary>
-  public class AuthedUser
-  {
     public string Id { get; set; }
     public string Scope { get; set; }
     public string AccessToken { get; set; }
@@ -20,5 +20,4 @@ namespace SlackNet
     public string? RefreshToken { get; set; }
 #nullable disable
     public string TokenType { get; set; }
-  }
 }

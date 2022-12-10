@@ -1,7 +1,6 @@
-namespace SlackNet
+namespace SlackNet;
+
+public class ConfigurationModalViewDefinition : ViewDefinition
 {
-    public class ConfigurationModalViewDefinition : ViewDefinition
-    {
-        public ConfigurationModalViewDefinition() : base("workflow_step") { }
-    }
+    public ConfigurationModalViewDefinition() : base("workflow_step") { }
 }

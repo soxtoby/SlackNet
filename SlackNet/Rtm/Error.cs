@@ -1,8 +1,7 @@
-﻿namespace SlackNet.Rtm
+﻿namespace SlackNet.Rtm;
+
+public class Error
 {
-    public class Error
-    {
-        public int Code { get; set; }
-        public string Msg { get; set; }
-    }
+    public int Code { get; set; }
+    public string Msg { get; set; }
 }

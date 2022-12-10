@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+class PresenceResponse
 {
-    class PresenceResponse
-    {
-        public Presence Presence { get; set; }
-    }
+    public Presence Presence { get; set; }
 }

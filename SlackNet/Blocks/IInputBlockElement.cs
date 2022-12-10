@@ -1,4 +1,3 @@
-namespace SlackNet.Blocks
-{
-    public interface IInputBlockElement : IActionElement { }
-}
+namespace SlackNet.Blocks;
+
+public interface IInputBlockElement : IActionElement { }

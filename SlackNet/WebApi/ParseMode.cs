@@ -1,9 +1,8 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+public enum ParseMode
 {
-    public enum ParseMode
-    {
-        None,
-        Full,
-        Client
-    }
+    None,
+    Full,
+    Client
 }

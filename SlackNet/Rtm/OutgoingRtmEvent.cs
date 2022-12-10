@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
 
-namespace SlackNet.Rtm
+namespace SlackNet.Rtm;
+
+public abstract class OutgoingRtmEvent
 {
-    public abstract class OutgoingRtmEvent
-    {
-        public string Type => GetType().GetTypeInfo().SlackType();
-    }
+    public string Type => GetType().GetTypeInfo().SlackType();
 }

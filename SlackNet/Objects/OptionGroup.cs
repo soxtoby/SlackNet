@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet
+namespace SlackNet;
+
+public class OptionGroup
 {
-    public class OptionGroup
-    {
-        public string Text { get; set; }
-        public IList<Option> Options { get; set; }
-    }
+    public string Text { get; set; }
+    public IList<Option> Options { get; set; }
 }

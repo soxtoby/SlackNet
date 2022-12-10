@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+public class ConversationListResponse
 {
-    public class ConversationListResponse
-    {
-        public IList<Conversation> Channels { get; set; } = new List<Conversation>();
-        public ResponseMetadata ResponseMetadata { get; set; } = new();
-    }
+    public IList<Conversation> Channels { get; set; } = new List<Conversation>();
+    public ResponseMetadata ResponseMetadata { get; set; } = new();
 }

@@ -1,12 +1,11 @@
 ﻿using System.Runtime.Serialization;
 
-namespace SlackNet
+namespace SlackNet;
+
+public enum PinnedItemType
 {
-    public enum PinnedItemType
-    {
-        [EnumMember(Value = "C")] ChannelMessage,
-        [EnumMember(Value = "G")] PrivateGroupMessage,
-        [EnumMember(Value = "F")] File,
-        [EnumMember(Value = "Fc")] FileComment
-    }
+    [EnumMember(Value = "C")] ChannelMessage,
+    [EnumMember(Value = "G")] PrivateGroupMessage,
+    [EnumMember(Value = "F")] File,
+    [EnumMember(Value = "Fc")] FileComment
 }

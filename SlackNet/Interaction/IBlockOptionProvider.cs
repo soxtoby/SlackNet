@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace SlackNet.Interaction
+namespace SlackNet.Interaction;
+
+public interface IBlockOptionProvider
 {
-    public interface IBlockOptionProvider
-    {
-        Task<BlockOptionsResponse> GetOptions(BlockOptionsRequest request);
-    }
+    Task<BlockOptionsResponse> GetOptions(BlockOptionsRequest request);
 }

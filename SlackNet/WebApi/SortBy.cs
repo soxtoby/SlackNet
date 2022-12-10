@@ -1,8 +1,7 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+public enum SortBy
 {
-    public enum SortBy
-    {
-        Score,
-        Timestamp
-    }
+    Score,
+    Timestamp
 }

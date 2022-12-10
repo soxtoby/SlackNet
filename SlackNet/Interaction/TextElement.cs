@@ -1,7 +1,6 @@
-﻿namespace SlackNet.Interaction
+﻿namespace SlackNet.Interaction;
+
+public class TextElement : TextElementBase
 {
-    public class TextElement : TextElementBase
-    {
-        public TextElement() : base("text") { }
-    }
+    public TextElement() : base("text") { }
 }

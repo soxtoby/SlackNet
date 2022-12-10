@@ -1,11 +1,10 @@
 ﻿using SlackNet.Events;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+public class PostMessageResponse
 {
-    public class PostMessageResponse
-    {
-        public string Ts { get; set; }
-        public string Channel { get; set; }
-        public MessageEvent Message { get; set; }
-    }
+    public string Ts { get; set; }
+    public string Channel { get; set; }
+    public MessageEvent Message { get; set; }
 }

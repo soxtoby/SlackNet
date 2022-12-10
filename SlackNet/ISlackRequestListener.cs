@@ -1,7 +1,6 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+public interface ISlackRequestListener
 {
-    public interface ISlackRequestListener
-    {
-        void OnRequestBegin(SlackRequestContext context);
-    }
+    void OnRequestBegin(SlackRequestContext context);
 }

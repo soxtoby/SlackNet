@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+class RevokeResponse
 {
-    class RevokeResponse
-    {
-        public bool Revoked { get; set; }
-    }
+    public bool Revoked { get; set; }
 }

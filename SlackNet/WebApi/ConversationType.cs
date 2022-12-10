@@ -1,10 +1,9 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+public enum ConversationType
 {
-    public enum ConversationType
-    {
-        PublicChannel,
-        PrivateChannel,
-        Mpim,
-        Im
-    }
+    PublicChannel,
+    PrivateChannel,
+    Mpim,
+    Im
 }

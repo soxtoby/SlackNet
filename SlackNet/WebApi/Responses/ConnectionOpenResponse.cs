@@ -1,8 +1,7 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+public class ConnectionOpenResponse
 {
-    public class ConnectionOpenResponse
-    {
-        public bool Ok { get; set; }
-        public string Url { get; set; }
-    }
+    public bool Ok { get; set; }
+    public string Url { get; set; }
 }

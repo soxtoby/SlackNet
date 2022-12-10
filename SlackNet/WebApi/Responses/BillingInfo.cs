@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+public class BillingInfo
 {
-    public class BillingInfo
-    {
-        public Plan Plan { get; set; }
-    }
+    public Plan Plan { get; set; }
 }

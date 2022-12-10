@@ -1,7 +1,6 @@
-namespace SlackNet.Events
+namespace SlackNet.Events;
+
+public class FileId
 {
-    public class FileId
-    {
-        public string Id { get; set; }
-    }
+    public string Id { get; set; }
 }

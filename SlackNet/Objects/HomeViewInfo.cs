@@ -1,5 +1,4 @@
-namespace SlackNet
-{
-    [SlackType("home")]
-    public class HomeViewInfo : ViewInfo { }
-}
+namespace SlackNet;
+
+[SlackType("home")]
+public class HomeViewInfo : ViewInfo { }

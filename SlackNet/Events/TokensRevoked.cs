@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.Events
+namespace SlackNet.Events;
+
+/// <summary>
+/// API tokens for your app were revoked.
+/// </summary>
+public class TokensRevoked : Event
 {
     /// <summary>
-    /// API tokens for your app were revoked.
+    /// Type of revoked token -> list of user IDs.
     /// </summary>
-    public class TokensRevoked : Event
-    {
-        /// <summary>
-        /// Type of revoked token -> list of user IDs.
-        /// </summary>
-        public Dictionary<string, IList<string>> Tokens { get; set; } = new();
-    }
+    public Dictionary<string, IList<string>> Tokens { get; set; } = new();
 }

@@ -1,10 +1,9 @@
-﻿namespace SlackNet.Events
+﻿namespace SlackNet.Events;
+
+/// <summary>
+/// Sent to all members of a private channel when it is deleted.
+/// </summary>
+public class GroupDeleted : Event
 {
-    /// <summary>
-    /// Sent to all members of a private channel when it is deleted.
-    /// </summary>
-    public class GroupDeleted : Event
-    {
-        public string Channel { get; set; }
-    }
+    public string Channel { get; set; }
 }

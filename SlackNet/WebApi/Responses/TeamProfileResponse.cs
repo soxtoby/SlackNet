@@ -1,7 +1,6 @@
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+class TeamProfileResponse
 {
-    class TeamProfileResponse
-    {
-        public TeamProfile Profile { get; set; }
-    }
+    public TeamProfile Profile { get; set; }
 }

@@ -1,7 +1,6 @@
 ﻿using SlackNet.Interaction;
 
-namespace SlackNet.SocketMode
-{
-    [SlackType("slash_commands")]
-    public class SlashCommandEnvelope : SocketEnvelope<SlashCommand> { }
-}
+namespace SlackNet.SocketMode;
+
+[SlackType("slash_commands")]
+public class SlashCommandEnvelope : SocketEnvelope<SlashCommand> { }

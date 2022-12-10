@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+class UserGroupResponse
 {
-    class UserGroupResponse
-    {
-        public UserGroup Usergroup { get; set; }
-    }
+    public UserGroup Usergroup { get; set; }
 }

@@ -1,8 +1,7 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+[SlackType("file")]
+public class PinnedFile : PinnedItem
 {
-    [SlackType("file")]
-    public class PinnedFile : PinnedItem
-    {
-        public File File { get; set; }
-    }
+    public File File { get; set; }
 }

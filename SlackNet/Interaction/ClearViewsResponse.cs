@@ -1,7 +1,6 @@
-namespace SlackNet.Interaction
+namespace SlackNet.Interaction;
+
+public class ClearViewsResponse : ViewSubmissionResponse
 {
-    public class ClearViewsResponse : ViewSubmissionResponse
-    {
-        public ClearViewsResponse() : base("clear") { }
-    }
+    public ClearViewsResponse() : base("clear") { }
 }

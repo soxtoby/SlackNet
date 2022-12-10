@@ -1,7 +1,6 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+class NullLogger : ILogger
 {
-    class NullLogger : ILogger
-    {
-        public void Log(ILogEvent logEvent) { }
-    }
+    public void Log(ILogEvent logEvent) { }
 }

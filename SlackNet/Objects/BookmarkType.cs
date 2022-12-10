@@ -1,7 +1,6 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+public enum BookmarkType
 {
-    public enum BookmarkType
-    {
-        Link
-    }
+    Link
 }

@@ -1,7 +1,6 @@
-﻿namespace SlackNet.WebApi
+﻿namespace SlackNet.WebApi;
+
+class UserProfileResponse
 {
-    class UserProfileResponse
-    {
-        public UserProfile Profile { get; set; }
-    }
+    public UserProfile Profile { get; set; }
 }

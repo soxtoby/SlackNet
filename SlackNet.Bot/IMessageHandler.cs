@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace SlackNet.Bot
+namespace SlackNet.Bot;
+
+public interface IMessageHandler
 {
-    public interface IMessageHandler
-    {
-        Task HandleMessage(IMessage message);
-    }
+    Task HandleMessage(IMessage message);
 }

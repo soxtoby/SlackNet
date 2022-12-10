@@ -4,35 +4,34 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using SlackNet.Extensions.DependencyInjection;
 
-namespace SlackNet.AspNetCore
+namespace SlackNet.AspNetCore;
+
+class AspNetCoreServiceProviderSlackRequestListener : IServiceProviderSlackRequestListener
 {
-    class AspNetCoreServiceProviderSlackRequestListener : IServiceProviderSlackRequestListener
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IServiceProvider _serviceProvider;
+
+    public AspNetCoreServiceProviderSlackRequestListener(IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IServiceProvider _serviceProvider;
+        _httpContextAccessor = httpContextAccessor;
+        _serviceProvider = serviceProvider;
+    }
 
-        public AspNetCoreServiceProviderSlackRequestListener(IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
+    public void OnRequestBegin(SlackRequestContext context)
+    {
+        if (context.ContainsKey("Envelope")) // Socket mode
         {
-            _httpContextAccessor = httpContextAccessor;
-            _serviceProvider = serviceProvider;
+            var scope = _serviceProvider.CreateScope();
+            context.SetServiceProvider(scope.ServiceProvider);
+            context.OnComplete(() =>
+                {
+                    scope.Dispose();
+                    return Task.CompletedTask;
+                });
         }
-
-        public void OnRequestBegin(SlackRequestContext context)
+        else
         {
-            if (context.ContainsKey("Envelope")) // Socket mode
-            {
-                var scope = _serviceProvider.CreateScope();
-                context.SetServiceProvider(scope.ServiceProvider);
-                context.OnComplete(() =>
-                    {
-                        scope.Dispose();
-                        return Task.CompletedTask;
-                    });
-            }
-            else
-            {
-                context.SetServiceProvider(_httpContextAccessor.HttpContext.RequestServices);
-            }
+            context.SetServiceProvider(_httpContextAccessor.HttpContext.RequestServices);
         }
     }
 }

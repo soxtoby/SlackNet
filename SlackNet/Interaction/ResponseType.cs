@@ -1,8 +1,7 @@
-﻿namespace SlackNet.Interaction
+﻿namespace SlackNet.Interaction;
+
+public enum ResponseType
 {
-    public enum ResponseType
-    {
-        InChannel,
-        Ephemeral
-    }
+    InChannel,
+    Ephemeral
 }

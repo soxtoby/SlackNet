@@ -1,8 +1,7 @@
 ﻿#nullable enable
-namespace SlackNet
+namespace SlackNet;
+
+public interface ILogger
 {
-    public interface ILogger
-    {
-        public void Log(ILogEvent logEvent);
-    }
+    public void Log(ILogEvent logEvent);
 }

@@ -1,8 +1,7 @@
-﻿namespace SlackNet
+﻿namespace SlackNet;
+
+public enum Presence
 {
-    public enum Presence
-    {
-        Active,
-        Away
-    }
+    Active,
+    Away
 }

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SlackNet.WebApi
+namespace SlackNet.WebApi;
+
+class TestResponse
 {
-    class TestResponse
-    {
-        public Dictionary<string, string> Args { get; set; }
-    }
+    public Dictionary<string, string> Args { get; set; }
 }

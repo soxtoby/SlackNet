@@ -1,17 +1,16 @@
-﻿namespace SlackNet.Blocks
+﻿namespace SlackNet.Blocks;
+
+public abstract class SelectMenuBase : ActionElement, IInputBlockElement
 {
-    public abstract class SelectMenuBase : ActionElement, IInputBlockElement
-    {
-        protected SelectMenuBase(string type) : base(type) { }
+    protected SelectMenuBase(string type) : base(type) { }
 
-        /// <summary>
-        /// A plain text object that defines the placeholder text shown on the menu. 
-        /// </summary>
-        public PlainText Placeholder { get; set; }
+    /// <summary>
+    /// A plain text object that defines the placeholder text shown on the menu. 
+    /// </summary>
+    public PlainText Placeholder { get; set; }
 
-        /// <summary>
-        /// Indicates whether the element will be set to auto focus within the <see cref="ViewInfo"/> object. Only one element can be set to true.
-        /// </summary>
-        public bool FocusOnLoad { get; set; }
-    }
+    /// <summary>
+    /// Indicates whether the element will be set to auto focus within the <see cref="ViewInfo"/> object. Only one element can be set to true.
+    /// </summary>
+    public bool FocusOnLoad { get; set; }
 }

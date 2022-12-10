@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace SlackNet.Interaction.Experimental
+namespace SlackNet.Interaction.Experimental;
+
+[Obsolete(Warning.Experimental)]
+public interface IAsyncMessageShortcutHandler
 {
-    [Obsolete(Warning.Experimental)]
-    public interface IAsyncMessageShortcutHandler
-    {
-        Task Handle(MessageShortcut request, Responder respond);
-    }
+    Task Handle(MessageShortcut request, Responder respond);
 }
