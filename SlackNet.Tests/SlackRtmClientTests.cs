@@ -4,7 +4,6 @@ using System.Reactive.Subjects;
 using System.Threading;
 using EasyAssertions;
 using Microsoft.Reactive.Testing;
-using Newtonsoft.Json;
 using NSubstitute;
 using NUnit.Framework;
 using SlackNet.WebApi;

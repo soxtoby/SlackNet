@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Handlers;

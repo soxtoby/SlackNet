@@ -1,6 +1,5 @@
 ﻿using System;
 using NUnit.Framework;
-using SlackNet.Handlers;
 
 namespace SlackNet.Tests.Configuration;
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using EasyAssertions;
-using NSubstitute;
+﻿using NSubstitute;
 using NUnit.Framework;
 using SlackNet.Blocks;
 using SlackNet.Events;

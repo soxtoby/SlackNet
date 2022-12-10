@@ -1,6 +1,5 @@
 ﻿using System;
 using SimpleInjector;
-using SlackNet.Handlers;
 
 namespace SlackNet.SimpleInjector;
 

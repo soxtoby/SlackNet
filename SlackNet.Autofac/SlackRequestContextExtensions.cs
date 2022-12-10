@@ -1,6 +1,5 @@
 ﻿using System;
 using Autofac;
-using SlackNet.Handlers;
 
 namespace SlackNet.Autofac;
 
