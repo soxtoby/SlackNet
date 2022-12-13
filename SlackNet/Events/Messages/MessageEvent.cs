@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace SlackNet.Events;
 
@@ -19,6 +19,15 @@ public class MessageEvent : MessageEventBase
     public string LatestReply { get; set; }
     public bool IsStarred { get; set; }
     public IList<Reaction> Reactions { get; set; } = new List<Reaction>();
+    public string[] PinnedTo { get; set; }
+    public PinnedInfo PinnedInfo { get; set; }
+}
+
+public class PinnedInfo
+{
+    public string Channel { get; set; }
+    public string PinnedBy { get; set; }
+    public int? PinnedTs { get; set; }
 }
 
 public class Edit
