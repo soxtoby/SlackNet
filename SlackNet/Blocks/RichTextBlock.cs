@@ -51,7 +51,8 @@ public class RichTextUser : RichTextSectionElement
 public class RichTextEmoji : RichTextSectionElement
 {
     public string Name { get; set; }
-    public string Unicode { get; set; }
+    public string Unicode { get; set; } 
+    public int? SkinTone { get; set; }
 }
 
 [SlackType("link")]
