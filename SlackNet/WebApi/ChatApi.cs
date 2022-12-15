@@ -133,6 +133,16 @@ public interface IChatApi
     /// <param name="messageTs">A message's timestamp, uniquely identifying it within a channel.</param>
     /// <param name="cancellationToken"></param>
     Task<PermalinkResponse> GetPermalink(string channelId, string messageTs, CancellationToken? cancellationToken = null);
+
+
+    /// <summary>
+    /// Deletes a scheduled message.
+    /// </summary>
+    /// <param name="messageId">The ID of the scheduled message.</param>
+    /// <param name="channelId">The channel ID of the scheduled message.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<DeleteScheduledMessageResponse> DeleteScheduledMessage(string messageId, string channelId, CancellationToken? cancellationToken = null);
 }
 
 public class ChatApi : IChatApi
@@ -171,6 +181,15 @@ public class ChatApi : IChatApi
                 {
                     { "post_at", postAt.ToTimestamp() }
                 }),
+            cancellationToken);
+
+
+    public Task<DeleteScheduledMessageResponse> DeleteScheduledMessage(string messageId, string channelId, CancellationToken? cancellationToken = null) =>
+        _client.Post<DeleteScheduledMessageResponse>("chat.deleteScheduledMessage", new Args
+                {
+                    { "scheduled_message_id", messageId },
+                    { "channel", channelId }
+                },
             cancellationToken);
 
     private static Args PopulateMessageArgs(Message message, Args args)
