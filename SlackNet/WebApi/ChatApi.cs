@@ -47,6 +47,16 @@ public interface IChatApi
     Task<ScheduleMessageResponse> ScheduleMessage(Message message, DateTime postAt, CancellationToken? cancellationToken = null);
 
     /// <summary>
+    /// Deletes a scheduled message.
+    /// </summary>
+    /// <remarks>See the <a href="https://api.slack.com/methods/chat.deleteScheduledMessage">Slack documentation</a> for more information.</remarks>
+    /// <param name="messageId">The ID of the scheduled message.</param>
+    /// <param name="channelId">The channel ID of the scheduled message.</param>
+    /// <param name="asUser">Pass True to delete the message as the authed user. Bot users in this context are considered authed users.</param>
+    /// <param name="cancellationToken"></param>
+    Task DeleteScheduledMessage(string messageId, string channelId, bool asUser = false, CancellationToken? cancellationToken = null);
+
+    /// <summary>
     /// Sends an ephemeral message to a user in a channel.
     /// </summary>
     /// <remarks>See the <a href="https://api.slack.com/methods/chat.postEphemeral">Slack documentation</a> for more information.</remarks>
@@ -133,16 +143,6 @@ public interface IChatApi
     /// <param name="messageTs">A message's timestamp, uniquely identifying it within a channel.</param>
     /// <param name="cancellationToken"></param>
     Task<PermalinkResponse> GetPermalink(string channelId, string messageTs, CancellationToken? cancellationToken = null);
-
-
-    /// <summary>
-    /// Deletes a scheduled message.
-    /// </summary>
-    /// <param name="messageId">The ID of the scheduled message.</param>
-    /// <param name="channelId">The channel ID of the scheduled message.</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<DeleteScheduledMessageResponse> DeleteScheduledMessage(string messageId, string channelId, CancellationToken? cancellationToken = null);
 }
 
 public class ChatApi : IChatApi
@@ -183,15 +183,6 @@ public class ChatApi : IChatApi
                 }),
             cancellationToken);
 
-
-    public Task<DeleteScheduledMessageResponse> DeleteScheduledMessage(string messageId, string channelId, CancellationToken? cancellationToken = null) =>
-        _client.Post<DeleteScheduledMessageResponse>("chat.deleteScheduledMessage", new Args
-                {
-                    { "scheduled_message_id", messageId },
-                    { "channel", channelId }
-                },
-            cancellationToken);
-
     private static Args PopulateMessageArgs(Message message, Args args)
     {
         args["channel"] = message.Channel;
@@ -210,6 +201,15 @@ public class ChatApi : IChatApi
         args["reply_broadcast"] = message.ReplyBroadcast;
         return args;
     }
+
+    public Task DeleteScheduledMessage(string messageId, string channelId, bool asUser = false, CancellationToken? cancellationToken = null) =>
+        _client.Post("chat.deleteScheduledMessage", new Args
+                {
+                    { "scheduled_message_id", messageId },
+                    { "channel", channelId },
+                    { "as_user", asUser }
+                },
+            cancellationToken);
 
     public Task<PostMessageResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null) =>
         _client.Post<PostMessageResponse>("chat.postEphemeral", new Args
