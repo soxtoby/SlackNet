@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using SlackNet.Handlers;
@@ -105,7 +106,7 @@ namespace SlackNet
         private static string FormatLogValue(object? value) =>
             value switch
                 {
-                    IEnumerable enumerable and not string => FormatEnumerable(enumerable),
+                    IEnumerable enumerable and not (string or HttpResponseHeaders) => FormatEnumerable(enumerable),
                     _ => Convert.ToString(value)
                 };
 
