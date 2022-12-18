@@ -10,6 +10,7 @@ namespace SlackNet.Events;
 public class EventCallback : EventRequest
 {
     public string TeamId { get; set; }
+    public string EnterpriseId { get; set; }
     public string ApiAppId { get; set; }
     public Event Event { get; set; }
     public IList<Authorization> Authorizations { get; set; }
