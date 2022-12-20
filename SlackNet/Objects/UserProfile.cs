@@ -5,6 +5,7 @@ namespace SlackNet;
 
 public class UserProfile
 {
+    public string ApiAppId { get; set; }
     public string Title { get; set; }
     public string AvatarHash { get; set; }
     public string StatusEmoji { get; set; }
