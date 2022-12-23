@@ -51,7 +51,7 @@ public class RichTextUser : RichTextSectionElement
 public class RichTextEmoji : RichTextSectionElement
 {
     public string Name { get; set; }
-    public string Unicode { get; set; } 
+    public string Unicode { get; set; }
     public int? SkinTone { get; set; }
 }
 
@@ -98,6 +98,7 @@ public class RichTextList : RichTextElement
     public IList<RichTextElement> Elements { get; set; } = new List<RichTextElement>();
     public string Style { get; set; }
     public int Indent { get; set; }
+    public int Border { get; set; }
 }
 
 public class RichTextQuote : RichTextElement
