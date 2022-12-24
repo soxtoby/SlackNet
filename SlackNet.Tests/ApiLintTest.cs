@@ -105,6 +105,7 @@ public class ApiLintTest
             { typeof(int), _ => 0 },
             { typeof(int?), _ => null },
             { typeof(bool), _ => false },
+            { typeof(bool?), _ => null },
             { typeof(IEnumerable<string>), _ => Enumerable.Empty<string>() },
             { typeof(Message), _ => new Message() },
             { typeof(Dialog), _ => new Dialog() },

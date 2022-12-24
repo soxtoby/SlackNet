@@ -54,7 +54,7 @@ public interface IChatApi
     /// <param name="channelId">The channel ID of the scheduled message.</param>
     /// <param name="asUser">Pass True to delete the message as the authed user. Bot users in this context are considered authed users.</param>
     /// <param name="cancellationToken"></param>
-    Task DeleteScheduledMessage(string messageId, string channelId, bool asUser = false, CancellationToken? cancellationToken = null);
+    Task DeleteScheduledMessage(string messageId, string channelId, bool? asUser = null, CancellationToken? cancellationToken = null);
 
     /// <summary>
     /// Sends an ephemeral message to a user in a channel.
@@ -202,7 +202,7 @@ public class ChatApi : IChatApi
         return args;
     }
 
-    public Task DeleteScheduledMessage(string messageId, string channelId, bool asUser = false, CancellationToken? cancellationToken = null) =>
+    public Task DeleteScheduledMessage(string messageId, string channelId, bool? asUser = null, CancellationToken? cancellationToken = null) =>
         _client.Post("chat.deleteScheduledMessage", new Args
                 {
                     { "scheduled_message_id", messageId },
