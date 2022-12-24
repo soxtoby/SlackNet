@@ -52,6 +52,13 @@ public class SlackUrlBuilderTests
     }
 
     [Test]
+    public void EnumArg_NoQuotes()
+    {
+        _sut.Url("method", new Args { { "foo", SortDirection.Descending } })
+            .ShouldBe(BaseUrl + "method?foo=desc");
+    }
+
+    [Test]
     public void EnumListArgs_CommaSeparatedEscaped()
     {
         _sut.Url("method", new Args { { "foo", new[] { ConversationType.PrivateChannel, ConversationType.Im } } })
