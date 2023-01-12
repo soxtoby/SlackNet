@@ -13,7 +13,7 @@ public class AttachmentUpdateResponse : IReadOnlyAttachment
     public ResponseType ResponseType => _response.ResponseType;
     public bool ReplaceOriginal => _response.ReplaceOriginal;
     public bool DeleteOriginal => _response.DeleteOriginal;
-    public IList<Block> MessageBlocks => Attachment.MessageBlocks;
+    public IList<MessageBlock> MessageBlocks => Attachment.MessageBlocks;
     public IList<Block> Blocks => Attachment.Blocks;
     public string Color => Attachment.Color;
     public string Id => Attachment.Id;
