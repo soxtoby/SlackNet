@@ -9,7 +9,7 @@ namespace SlackNet;
 public interface IReadOnlyAttachment
 {
     IList<Block> Blocks { get; }
-    IList<Block> MessageBlocks { get; }
+    IList<MessageBlock> MessageBlocks { get; }
     string Color { get; }
     string Id { get; }
     string Fallback { get; }
@@ -46,7 +46,7 @@ public class Attachment : IReadOnlyAttachment
     [IgnoreIfEmpty]
     public IList<Block> Blocks { get; set; } = new List<Block>();
     [IgnoreIfEmpty]
-    public IList<Block> MessageBlocks { get; set; } = new List<Block>();
+    public IList<MessageBlock> MessageBlocks { get; set; } = new List<MessageBlock>();
     public string Color { get; set; }
     public string Id { get; set; }
     public string Fallback { get; set; }
