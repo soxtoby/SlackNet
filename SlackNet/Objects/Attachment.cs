@@ -79,3 +79,16 @@ public class Attachment : IReadOnlyAttachment
     public bool? IsShare { get; set; }
     public bool? IsMsgUnfurl { get; set; }
 }
+
+public class MessageBlock
+{
+    public string Team { get; set; }
+    public string Channel { get; set; }
+    public string Ts { get; set; }
+    public MessageBlocks Message { get; set; }
+}
+
+public class MessageBlocks 
+{
+    public IList<Block> Blocks { get; set; }
+}

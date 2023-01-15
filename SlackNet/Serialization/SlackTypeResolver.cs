@@ -14,19 +14,18 @@ class SlackTypeResolver : ISlackTypeResolver
 {
     private readonly Assembly[] _assemblies;
     private Dictionary<Type, Dictionary<string, Type>> _typeLookups = new();
-    private object _lock = new object();
+    private readonly object _lock = new();
     public SlackTypeResolver(params Assembly[] assemblies) => _assemblies = assemblies;
 
     public Type FindType(Type baseType, string slackType)
     {
-        Dictionary<string, Type> typeLookup;
-        if (!_typeLookups.TryGetValue(baseType, out typeLookup))
+        if (!_typeLookups.TryGetValue(baseType, out var typeLookup))
         {
             lock (_lock)
             {
                 if (!_typeLookups.TryGetValue(baseType, out typeLookup))
                 {
-                    var copy = _typeLookups.ToDictionary(x => x.Key, x => x.Value);
+                    var copy = _typeLookups.ToDictionary(kv => kv.Key, kv => kv.Value);
                     typeLookup = copy[baseType] = CreateLookup(baseType);
                     _typeLookups = copy;
                 }
