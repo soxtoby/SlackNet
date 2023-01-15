@@ -110,22 +110,22 @@ public class SerializationTests
     [Test]
     public void IgnoreIfEmpty_NotEmpty_Serialized()
     {
-        var result = Serialize(new IgnoreIfEmptyProperty { List = new List<string>{ "foo" } });
+        var result = Serialize(new IgnoreIfEmptyProperty { List = new List<string> { "foo" } });
         result.ShouldBe(@"{""list"":[""foo""]}");
     }
 
     [Test]
     public void IgnoreIfDefault_IsDefault_Ignored()
     {
-        var result = Serialize(new IgnoreIfDefaultProperty { Value = TestEnum.Default });
+        var result = Serialize(new IgnoreIfDefaultProperty { EnumValue = TestEnum.Default, BoolValue = false });
         result.ShouldBe("{}");
     }
 
     [Test]
     public void IgnoreIfDefault_NotDefault_Serialized()
     {
-        var result = Serialize(new IgnoreIfDefaultProperty { Value = TestEnum.TestValue });
-        result.ShouldBe(@"{""value"":""test_value""}");
+        var result = Serialize(new IgnoreIfDefaultProperty { EnumValue = TestEnum.TestValue, BoolValue = true });
+        result.ShouldBe(@"{""enum_value"":""test_value"",""bool_value"":true}");
     }
 
     [Test]
@@ -219,8 +219,7 @@ public class SerializationTests
     {
         Default,
         TestValue,
-        [EnumMember(Value = "other_value")]
-        RenamedValue
+        [EnumMember(Value = "other_value")] RenamedValue
     }
 
     class HasSlackTypeProperty
@@ -237,14 +236,13 @@ public class SerializationTests
 
     class IgnoreIfEmptyProperty
     {
-        [IgnoreIfEmpty]
-        public IList<string> List { get; set; }
+        [IgnoreIfEmpty] public IList<string> List { get; set; }
     }
 
     class IgnoreIfDefaultProperty
     {
-        [IgnoreIfDefault]
-        public TestEnum Value { get; set; }
+        [IgnoreIfDefault] public TestEnum EnumValue { get; set; }
+        [IgnoreIfDefault] public bool BoolValue { get; set; }
     }
 
     class HasDateTimeProperty

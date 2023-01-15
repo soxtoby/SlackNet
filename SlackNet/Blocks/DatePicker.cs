@@ -23,6 +23,7 @@ public class DatePicker : ActionElement, IInputBlockElement
     /// <summary>
     /// Indicates whether the element will be set to auto focus within the <see cref="ViewInfo"/> object. Only one element can be set to true.
     /// </summary>
+    [IgnoreIfDefault] // See issue #138 - Slack returns an internal error when this is included in a HomeViewDefinition
     public bool FocusOnLoad { get; set; }
 }
 
