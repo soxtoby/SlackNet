@@ -22,4 +22,5 @@ public class Link
     [Obsolete("Use Conversation instead")]
     public static Link Hub(string hubId) => new('#' + hubId, null);
     public static Link Conversation(string conversationId) => new('#' + conversationId, null);
+    public static Link Email(string email, string caption = null) => new($"mailto:{email}", caption ?? email);
 }
