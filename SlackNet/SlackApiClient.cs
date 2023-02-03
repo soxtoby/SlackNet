@@ -154,11 +154,6 @@ public class SlackApiClient : ISlackApiClient
         _token = token;
     }
 
-    /// <summary>
-    /// Returns a copy of the client using a different access token.
-    /// Useful when you need to run a command as a specific user.
-    /// </summary>
-    /// <param name="accessToken">New access token.</param>
     public ISlackApiClient WithAccessToken(string accessToken) => new SlackApiClient(_http, _urlBuilder, _jsonSettings, accessToken);
 
     public IApiApi Api => new ApiApi(this);
@@ -199,71 +194,24 @@ public class SlackApiClient : ISlackApiClient
     public IViewsApi Views => new ViewsApi(this);
     public IWorkflowsApi Workflows => new WorkflowsApi(this);
 
-    /// <summary>
-    /// Calls a Slack API method.
-    /// </summary>
-    /// <param name="apiMethod">Name of Slack method.</param>
-    /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
-    /// <param name="cancellationToken"></param>
     public Task Get(string apiMethod, Args args, CancellationToken? cancellationToken) =>
         Get<object>(apiMethod, args, cancellationToken);
 
-    /// <summary>
-    /// Calls a Slack API method.
-    /// </summary>
-    /// <typeparam name="T">Type of response expected.</typeparam>
-    /// <param name="apiMethod">Name of Slack method.</param>
-    /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
-    /// <param name="cancellationToken"></param>
     public Task<T> Get<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class =>
         WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Get, Url(apiMethod, args)), cancellationToken);
 
-    /// <summary>
-    /// Calls a Slack API that requires POST content.
-    /// </summary>
-    /// <param name="apiMethod">Name of Slack method.</param>
-    /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
-    /// <param name="cancellationToken"></param>
     public Task Post(string apiMethod, Args args, CancellationToken? cancellationToken) =>
         Post<object>(apiMethod, args, cancellationToken);
 
-    /// <summary>
-    /// Calls a Slack API that requires POST content.
-    /// </summary>
-    /// <typeparam name="T">Type of response expected.</typeparam>
-    /// <param name="apiMethod">Name of Slack method.</param>
-    /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
-    /// <param name="cancellationToken"></param>
     public Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class =>
         Post<T>(Url(apiMethod), (object)StripNullArgs(args), cancellationToken);
 
-    /// <summary>
-    /// Calls a Slack API that requires POST content.
-    /// </summary>
-    /// <param name="apiMethod">Name of Slack method.</param>
-    /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
-    /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
-    /// <param name="cancellationToken"></param>
     public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) =>
         Post<object>(apiMethod, args, content, cancellationToken);
 
-    /// <summary>
-    /// Calls a Slack API that requires POST content.
-    /// </summary>
-    /// <typeparam name="T">Type of response expected.</typeparam>
-    /// <param name="apiMethod">Name of Slack method.</param>
-    /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
-    /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
-    /// <param name="cancellationToken"></param>
     public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) where T : class =>
         WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, Url(apiMethod, args)) { Content = content }, cancellationToken);
 
-    /// <summary>
-    /// Posts a message to a response URL provided by e.g. <see cref="InteractionRequest"/> or <see cref="SlashCommand"/>.
-    /// </summary>
-    /// <param name="responseUrl">A temporary webhook that can be used to send messages in response to interactions.</param>
-    /// <param name="message">The message to respond with.</param>
-    /// <param name="cancellationToken"></param>
     public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken) =>
         Post<object>(responseUrl, message, cancellationToken);
 
