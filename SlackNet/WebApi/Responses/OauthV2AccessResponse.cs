@@ -31,4 +31,29 @@ public class OauthV2AccessResponse : OauthAccessResponse
 #nullable disable
 
     public AuthedUser AuthedUser { get; set; }
+    
+    public IncomingWebhook IncomingWebhook { get; set; }
+}
+
+public class IncomingWebhook
+{
+    /// <summary>
+    /// The name of the channel that the user selected as a destination for webhook messages.
+    /// </summary>
+    public string Channel { get; set; }
+    
+    /// <summary>
+    /// The ID of the same channel.
+    /// </summary>
+    public string ChannelId { get; set; }
+    
+    /// <summary>
+    /// A link to the page that configures your app within the workspace it was installed to.
+    /// </summary>
+    public string ConfigurationUrl { get; set; }
+    
+    /// <summary>
+    /// The Incoming Webhook URL.
+    /// </summary>
+    public string Url { get; set; }
 }
