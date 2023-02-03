@@ -114,6 +114,15 @@ public interface ISlackApiClient
     Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken);
 
     /// <summary>
+    /// Posts a message to an incoming webhook.
+    /// </summary>
+    /// <param name="webhookUrl">URL for the incoming webhook.</param>
+    /// <param name="message">The message to send to the incoming webhook.</param>
+    /// <param name="cancellationToken"></param>
+    /// <remarks>See the <a href="https://api.slack.com/messaging/webhooks">Slack documentation</a> for more information.</remarks>
+    Task PostToWebhook(string webhookUrl, Message message, CancellationToken? cancellationToken = null);
+
+    /// <summary>
     /// Returns a copy of the client using a different access token.
     /// Useful when you need to run a command as a specific user.
     /// </summary>
@@ -257,6 +266,11 @@ public class SlackApiClient : ISlackApiClient
     /// <param name="cancellationToken"></param>
     public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken) =>
         Post<object>(responseUrl, message, cancellationToken);
+
+    public Task PostToWebhook(string webhookUrl, Message message, CancellationToken? cancellationToken = null) =>
+        string.IsNullOrEmpty(_token)
+            ? Post<object>(webhookUrl, message, cancellationToken)
+            : WithAccessToken(string.Empty).PostToWebhook(webhookUrl, message, cancellationToken);
 
     private Task<T> Post<T>(string requestUri, object body, CancellationToken? cancellationToken) where T : class =>
         WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, requestUri)

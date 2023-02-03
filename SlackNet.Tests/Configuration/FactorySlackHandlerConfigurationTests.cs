@@ -1011,6 +1011,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public Task Post(string apiMethod, Dictionary<string, object> args, HttpContent content, CancellationToken? cancellationToken) => throw new NotImplementedException();
         public Task<T> Post<T>(string apiMethod, Dictionary<string, object> args, HttpContent content, CancellationToken? cancellationToken) where T : class => throw new NotImplementedException();
         public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken) => throw new NotImplementedException();
+        public Task PostToWebhook(string webhookUrl, Message message, CancellationToken? cancellationToken) => throw new NotImplementedException();
         public ISlackApiClient WithAccessToken(string accessToken) => throw new NotImplementedException();
     }
 
