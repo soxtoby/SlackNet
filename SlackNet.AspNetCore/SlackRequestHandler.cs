@@ -392,6 +392,9 @@ class SlackRequestHandler : ISlackRequestHandler
 
     private async Task<T> DeserializePayload<T>(HttpRequest request)
     {
+        if (!request.HasFormContentType)
+            return default;
+
         var form = await request.ReadFormAsync().ConfigureAwait(false);
 
         return form["payload"]
@@ -401,6 +404,9 @@ class SlackRequestHandler : ISlackRequestHandler
 
     private async Task<T> DeserializeForm<T>(HttpRequest request)
     {
+        if (!request.HasFormContentType)
+            return default;
+        
         var form = await request.ReadFormAsync().ConfigureAwait(false);
 
         var json = new JObject();
