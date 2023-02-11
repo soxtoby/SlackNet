@@ -58,6 +58,7 @@ class StringResult : SlackResult
     public StringResult(HttpStatusCode status, string body)
         : base(status) => Body = body;
 
+    protected override string ContentType => "text/plain";
     protected override string Body { get; }
 }
 
