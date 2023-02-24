@@ -17,6 +17,8 @@ public class UserProfile
     public string RealNameNormalized { get; set; }
     public string DisplayName { get; set; }
     public string Email { get; set; }
+    public string HuddleState { get; set; }
+    public int HuddleStateExpirationTs { get; set; }
     public string Skype { get; set; }
     public string Phone { get; set; }
     public bool? AlwaysActive { get; set; }
