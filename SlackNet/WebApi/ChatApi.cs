@@ -277,7 +277,8 @@ public class ChatApi : IChatApi
                     { "blocks", messageUpdate.Blocks },
                     { "parse", messageUpdate.Parse },
                     { "link_names", messageUpdate.LinkNames },
-                    { "as_user", messageUpdate.AsUser }
+                    { "as_user", messageUpdate.AsUser },
+                    { "file_ids", messageUpdate.FileIds }
                 },
             cancellationToken);
 }

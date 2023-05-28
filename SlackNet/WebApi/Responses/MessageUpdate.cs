@@ -38,4 +38,8 @@ public class MessageUpdate
     /// Set to True to update the message as the authed user. Bot users in this context are considered authed users.
     /// </summary>
     public bool? AsUser { get; set; }
+    /// <summary>
+    /// Array of new file ids that will be sent with this message.
+    /// </summary>
+    public IList<string> FileIds { get; set; }
 }
