@@ -154,7 +154,8 @@ public class SlackApiClient : ISlackApiClient
         _token = token;
     }
 
-    public ISlackApiClient WithAccessToken(string accessToken) => new SlackApiClient(_http, _urlBuilder, _jsonSettings, accessToken);
+    public ISlackApiClient WithAccessToken(string accessToken) => 
+        new SlackApiClient(_http, _urlBuilder, _jsonSettings, accessToken) { DisableRetryOnRateLimit = DisableRetryOnRateLimit };
 
     public IApiApi Api => new ApiApi(this);
     public IAppsConnectionsApi AppsConnectionsApi => new AppsConnectionsApi(this);
