@@ -15,8 +15,12 @@ public interface ITeamApi
     /// <param name="before">End of time range of logs to include in results (inclusive).</param>
     /// <param name="count">Number of items to return per page.</param>
     /// <param name="page">Page number of results to return.</param>
+    /// <param name="cursor">
+    /// Parameter for pagination.
+    /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="ReactionItemListResponse.ResponseMetadata"/>.
+    /// </param>
     /// <param name="cancellationToken"></param>
-    Task<AccessLogsResponse> AccessLogs(DateTime before, int count = 100, int page = 1, CancellationToken? cancellationToken = null);
+    Task<AccessLogsResponse> AccessLogs(DateTime before, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null);
 
     /// <summary>
     /// Used to get the access logs for users on a team.
@@ -25,8 +29,12 @@ public interface ITeamApi
     /// <param name="before">End of time range of logs to include in results (inclusive).</param>
     /// <param name="count">Number of items to return per page.</param>
     /// <param name="page">Page number of results to return.</param>
+    /// <param name="cursor">
+    /// Parameter for pagination.
+    /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="ReactionItemListResponse.ResponseMetadata"/>.
+    /// </param>
     /// <param name="cancellationToken"></param>
-    Task<AccessLogsResponse> AccessLogs(int? before = null, int count = 100, int page = 1, CancellationToken? cancellationToken = null);
+    Task<AccessLogsResponse> AccessLogs(int? before = null, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null);
 
     /// <summary>
     /// Lists billable information for each user on the team.
@@ -72,20 +80,22 @@ public class TeamApi : ITeamApi
     private readonly ISlackApiClient _client;
     public TeamApi(ISlackApiClient client) => _client = client;
 
-    public Task<AccessLogsResponse> AccessLogs(DateTime before, int count = 100, int page = 1, CancellationToken? cancellationToken = null) =>
+    public Task<AccessLogsResponse> AccessLogs(DateTime before, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null) =>
         _client.Get<AccessLogsResponse>("team.accessLogs", new Args
             {
                 { "before", before.ToTimestamp() },
                 { "count", count },
-                { "page", page }
+                { "page", page },
+                { "cursor", cursor }
             }, cancellationToken);
 
-    public Task<AccessLogsResponse> AccessLogs(int? before = null, int count = 100, int page = 1, CancellationToken? cancellationToken = null) =>
+    public Task<AccessLogsResponse> AccessLogs(int? before = null, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null) =>
         _client.Get<AccessLogsResponse>("team.accessLogs", new Args
             {
                 { "before", before },
                 { "count", count },
-                { "page", page }
+                { "page", page },
+                { "cursor", cursor }
             }, cancellationToken);
 
     public async Task<IList<BillableInfo>> BillableInfo(string userId = null, CancellationToken? cancellationToken = null) =>

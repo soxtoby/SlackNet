@@ -43,6 +43,10 @@ public interface IFilesApi
     /// <param name="types">Filter files by type.</param>
     /// <param name="count">Number of items to return per page.</param>
     /// <param name="page">Page number of results to return.</param>
+    /// <param name="cursor">
+    /// Parameter for pagination.
+    /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="ReactionItemListResponse.ResponseMetadata"/>.
+    /// </param>
     /// <param name="cancellationToken"></param>
     Task<FileListResponse> List(
         string userId = null,
@@ -52,6 +56,7 @@ public interface IFilesApi
         IEnumerable<FileType> types = null,
         int count = 100,
         int page = 1,
+        string cursor = null,
         CancellationToken? cancellationToken = null
     );
 
@@ -191,6 +196,7 @@ public class FilesApi : IFilesApi
         IEnumerable<FileType> types = null,
         int count = 100,
         int page = 1,
+        string cursor = null,
         CancellationToken? cancellationToken = null
     ) =>
         _client.Get<FileListResponse>("files.list", new Args
@@ -201,7 +207,8 @@ public class FilesApi : IFilesApi
                 { "ts_to", tsTo },
                 { "types", types },
                 { "count", count },
-                { "page", page }
+                { "page", page },
+                { "cursor", cursor }
             }, cancellationToken);
 
     public Task<FileResponse> RevokePublicUrl(string fileId, CancellationToken? cancellationToken = null) =>
