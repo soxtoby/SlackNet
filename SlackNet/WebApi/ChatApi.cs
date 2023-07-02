@@ -221,6 +221,7 @@ public class ChatApi : IChatApi
                     { "attachments", message.Attachments },
                     { "blocks", message.Blocks },
                     { "link_names", message.LinkNames },
+                    { "thread_ts", message.ThreadTs },
                     { "parse", message.Parse }
                 },
             cancellationToken);
