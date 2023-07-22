@@ -9,6 +9,11 @@ namespace SlackNet
         Data,
 
         /// <summary>
+        /// Low-level logging from the serializer.
+        /// </summary>
+        Serialization,
+
+        /// <summary>
         /// Low-level logging of internal operations.
         /// </summary>
         Internal,

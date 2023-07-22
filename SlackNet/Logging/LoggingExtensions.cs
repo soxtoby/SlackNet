@@ -137,6 +137,12 @@ namespace SlackNet
             logger.Log(new LogEvent(LogCategory.Data, messageTemplate, values));
 
         /// <summary>
+        /// Logs an event with the <see cref="LogCategory.Serialization"/> category.
+        /// </summary>
+        public static void Serialization(this ILogger logger, Exception? exception, [StructuredMessageTemplate] string messageTemplate, params object?[] values) =>
+            logger.Log(new LogEvent(LogCategory.Serialization, messageTemplate, values) { Exception = exception });
+
+        /// <summary>
         /// Logs an event with the <see cref="LogCategory.Internal"/> category.
         /// </summary>
         public static void Internal(this ILogger logger, [StructuredMessageTemplate] string messageTemplate, params object?[] values) =>

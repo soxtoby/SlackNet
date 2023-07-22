@@ -21,13 +21,15 @@ public static class Default
 
     public static ISlackUrlBuilder UrlBuilder(SlackJsonSettings jsonSettings = null) => new SlackUrlBuilder(jsonSettings ?? JsonSettings());
 
-    public static SlackJsonSettings JsonSettings(ISlackTypeResolver slackTypeResolver = null) => new(SerializerSettings(slackTypeResolver ?? SlackTypeResolver()));
+    public static SlackJsonSettings JsonSettings(ISlackTypeResolver slackTypeResolver = null, ILogger logger = null) => 
+        new(SerializerSettings(slackTypeResolver ?? SlackTypeResolver(), logger ?? Logger));
 
-    private static JsonSerializerSettings SerializerSettings(ISlackTypeResolver slackTypeResolver)
+    private static JsonSerializerSettings SerializerSettings(ISlackTypeResolver slackTypeResolver, ILogger logger)
     {
         var namingStrategy = new SnakeCaseNamingStrategy();
         return new JsonSerializerSettings
             {
+                TraceWriter = new SerializationLogger(logger),
                 NullValueHandling = NullValueHandling.Ignore,
                 DateFormatString = "yyyy-MM-dd",
                 ContractResolver = new SlackNetContractResolver

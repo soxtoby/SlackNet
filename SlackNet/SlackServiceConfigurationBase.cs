@@ -15,7 +15,7 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     private string _appLevelToken;
 
     private Func<ISlackServiceProvider, IHttp> _httpProvider = sp => Default.Http(sp.GetJsonSettings(), logger: sp.GetLogger());
-    private Func<ISlackServiceProvider, SlackJsonSettings> _jsonSettingsProvider = sp => Default.JsonSettings(sp.GetTypeResolver());
+    private Func<ISlackServiceProvider, SlackJsonSettings> _jsonSettingsProvider = sp => Default.JsonSettings(sp.GetTypeResolver(), sp.GetLogger());
     private Func<ISlackServiceProvider, ISlackTypeResolver> _slackTypeResolverProvider = sp => Default.SlackTypeResolver();
     private Func<ISlackServiceProvider, ISlackUrlBuilder> _urlBuilderProvider = sp => Default.UrlBuilder(sp.GetJsonSettings());
     private Func<ISlackServiceProvider, ILogger> _loggerProvider = sp => Default.Logger;
