@@ -225,7 +225,6 @@ public class ApiLintTest
         public IRtmApi Rtm { get; }
         public IScheduledMessagesApi ScheduledMessages { get; }
         public ISearchApi Search { get; }
-        public IStarsApi Stars { get; }
         public ITeamApi Team { get; }
         public ITeamBillingApi TeamBilling { get; }
         public ITeamPreferencesApi TeamPreferences { get; }
