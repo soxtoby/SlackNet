@@ -30,6 +30,8 @@ public class AttachmentUpdateResponse : IReadOnlyAttachment
     public IList<Field> Fields => Attachment.Fields;
     public string ImageUrl => Attachment.ImageUrl;
     public string ThumbUrl => Attachment.ThumbUrl;
+    public int? ThumbWidth => Attachment.ThumbWidth;
+    public int? ThumbHeight => Attachment.ThumbHeight;
     public string FromUrl => Attachment.FromUrl;
     public string Footer => Attachment.Footer;
     public string FooterIcon => Attachment.FooterIcon;

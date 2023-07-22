@@ -61,6 +61,7 @@ public class RichTextLink : RichTextSectionElement
     public string Url { get; set; }
     public string Text { get; set; }
     public RichTextStyle Style { get; set; } = new();
+    public bool? Unsafe { get; set; }
 }
 
 [SlackType("team")]

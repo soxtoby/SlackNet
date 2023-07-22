@@ -25,6 +25,8 @@ public interface IReadOnlyAttachment
     IList<Field> Fields { get; }
     string ImageUrl { get; }
     string ThumbUrl { get; }
+    int? ThumbWidth { get; }
+    int? ThumbHeight { get; }
     string FromUrl { get; }
     string Footer { get; }
     string FooterIcon { get; }
@@ -64,7 +66,10 @@ public class Attachment : IReadOnlyAttachment
     public IList<Field> Fields { get; set; } = new List<Field>();
     public string ImageUrl { get; set; }
     public string ThumbUrl { get; set; }
+    public int? ThumbWidth { get; set; }
+    public int? ThumbHeight { get; set; }
     public string FromUrl { get; set; }
+    public string OriginalUrl { get; set; }
     public string Footer { get; set; }
     public string FooterIcon { get; set; }
     public string Ts { get; set; }
@@ -78,6 +83,8 @@ public class Attachment : IReadOnlyAttachment
     public string ChannelName { get; set; }
     public bool? IsShare { get; set; }
     public bool? IsMsgUnfurl { get; set; }
+    public string ServiceName { get; set; }
+    public string ServiceIcon { get; set; }
 }
 
 public class MessageBlock
@@ -88,7 +95,7 @@ public class MessageBlock
     public MessageBlocks Message { get; set; }
 }
 
-public class MessageBlocks 
+public class MessageBlocks
 {
     public IList<Block> Blocks { get; set; }
 }
