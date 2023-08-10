@@ -61,6 +61,10 @@ class SlackRequestHandler : ISlackRequestHandler
                     }
 
                     var requestBody = await ReadString(request).ConfigureAwait(false);
+                    
+                    _log.WithContext("RequestBody", requestBody)
+                        .Data("Received event request");
+                    
                     var eventRequest = DeserializeEventRequest(requestBody);
 
                     if (eventRequest is null)
@@ -113,13 +117,18 @@ class SlackRequestHandler : ISlackRequestHandler
 
                     var interactionRequest = await DeserializePayload<InteractionRequest>(request).ConfigureAwait(false);
 
+                    var requestBody = await ReadString(request).ConfigureAwait(false);
+                    
+                    _log.WithContext("RequestBody", requestBody)
+                        .Data("Received action request");
+
                     if (interactionRequest is null)
                     {
                         _log.Internal("Unrecognized action request content");
                         return StringResult(HttpStatusCode.BadRequest, "Unrecognized content");
                     }
-
-                    return RequestValidation(await ReadString(request).ConfigureAwait(false), request.Headers, interactionRequest.Token, config)
+                    
+                    return RequestValidation(requestBody, request.Headers, interactionRequest.Token, config)
                         ?? await HandleAction(requestContext, interactionRequest).ConfigureAwait(false);
                 });
 
@@ -244,13 +253,18 @@ class SlackRequestHandler : ISlackRequestHandler
 
                     var optionsRequest = await DeserializePayload<OptionsRequestBase>(request).ConfigureAwait(false);
 
+                    var requestBody = await ReadString(request).ConfigureAwait(false);
+                    
+                    _log.WithContext("RequestBody", requestBody)
+                        .Data("Received options request");
+
                     if (optionsRequest == null)
                     {
                         _log.Internal("Unrecognized options request content");
                         return StringResult(HttpStatusCode.BadRequest, "Unrecognized content");
                     }
-
-                    return RequestValidation(await ReadString(request).ConfigureAwait(false), request.Headers, optionsRequest.Token, config)
+                    
+                    return RequestValidation(requestBody, request.Headers, optionsRequest.Token, config)
                         ?? optionsRequest switch
                             {
                                 OptionsRequest legacyOptionsRequest => await HandleLegacyOptionsRequest(requestContext, legacyOptionsRequest).ConfigureAwait(false),
@@ -295,13 +309,18 @@ class SlackRequestHandler : ISlackRequestHandler
 
                     var command = await DeserializeForm<SlashCommand>(request).ConfigureAwait(false);
 
+                    var requestBody = await ReadString(request).ConfigureAwait(false);
+                    
+                    _log.WithContext("RequestBody", requestBody)
+                        .Data("Received slash command request");
+
                     if (command is null)
                     {
                         _log.Internal("Unrecognized slash command request content");
                         return StringResult(HttpStatusCode.BadRequest, "Unrecognized content");
                     }
-
-                    return RequestValidation(await ReadString(request).ConfigureAwait(false), request.Headers, command.Token, config)
+                    
+                    return RequestValidation(requestBody, request.Headers, command.Token, config)
                         ?? await RespondAsync<SlashCommandResponse>(r =>
                                 {
                                     var handler = _handlerFactory.CreateSlashCommandHandler(requestContext);
