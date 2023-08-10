@@ -40,7 +40,7 @@ public static class Default
                     {
                         new EnumNameConverter(namingStrategy),
                         new TimeSpanConverter(),
-                        new SlackTypeConverter(slackTypeResolver)
+                        new SlackTypeConverter(slackTypeResolver, logger)
                     }
             };
     }

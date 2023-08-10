@@ -12,12 +12,14 @@ namespace SlackNet;
 class SlackTypeConverter : JsonConverter
 {
     private readonly ISlackTypeResolver _slackTypeResolver;
+    private readonly ILogger _log;
     [ThreadStatic] private static bool _isInsideRead;
     [ThreadStatic] private static JsonReader _reader;
 
-    public SlackTypeConverter(ISlackTypeResolver slackTypeResolver)
+    public SlackTypeConverter(ISlackTypeResolver slackTypeResolver, ILogger logger)
     {
         _slackTypeResolver = slackTypeResolver;
+        _log = logger.ForSource<SlackTypeConverter>();
     }
 
     public override bool CanRead => !_isInsideRead || !string.IsNullOrEmpty(_reader.Path);
@@ -35,17 +37,13 @@ class SlackTypeConverter : JsonConverter
         while (reader.TokenType == JsonToken.Comment)
             reader.Read();
 
-        switch (reader.TokenType)
-        {
-            case JsonToken.Null:
-                return null;
-            case JsonToken.StartObject:
-                return ReadObject(reader, objectType, serializer);
-            case JsonToken.StartArray:
-                return ReadArray(reader, objectType, serializer);
-            default:
-                return ReadInner(CreateAnotherReader(JToken.Load(reader), reader), objectType, serializer);
-        }
+        return reader.TokenType switch
+            {
+                JsonToken.Null => null,
+                JsonToken.StartObject => ReadObject(reader, objectType, serializer),
+                JsonToken.StartArray => ReadArray(reader, objectType, serializer),
+                _ => ReadInner(CreateAnotherReader(JToken.Load(reader), reader), objectType, serializer)
+            };
     }
 
     private IList ReadArray(JsonReader reader, Type targetType, JsonSerializer serializer)
@@ -56,9 +54,10 @@ class SlackTypeConverter : JsonConverter
         while (reader.Read() && reader.TokenType != JsonToken.EndArray)
             list.Add(ReadJson(reader, elementType, serializer));
 
-        if (!targetType.IsArray) return list;
+        if (!targetType.IsArray) 
+            return list;
             
-        var array = Array.CreateInstance(targetType.GetElementType(), list.Count);
+        var array = Array.CreateInstance(targetType.GetElementType()!, list.Count);
         list.CopyTo(array, 0);
 
         return array;
@@ -96,7 +95,8 @@ class SlackTypeConverter : JsonConverter
 
     private Type GetType(JToken jObject, Type parentType)
     {
-        if (jObject.Value<uint>("reply_to") > 0) return typeof(Reply);
+        if (jObject.Value<uint>("reply_to") > 0)
+            return typeof(Reply);
 
         var type = GetType(jObject, "type", parentType);
         return GetType(jObject, "subtype", type);
@@ -105,10 +105,12 @@ class SlackTypeConverter : JsonConverter
     private Type GetType(JToken jObject, string typeProperty, Type baseType)
     {
         var slackType = jObject.Value<string>(typeProperty);
-        return slackType == null ? baseType : _slackTypeResolver.FindType(baseType, slackType);
+        return slackType == null 
+            ? baseType 
+            : _slackTypeResolver.FindType(baseType, slackType);
     }
 
-    private static object ReadInner(JsonReader reader, Type objectType, JsonSerializer serializer)
+    private object ReadInner(JsonReader reader, Type objectType, JsonSerializer serializer)
     {
         _reader = reader;
         _isInsideRead = true;
@@ -118,7 +120,7 @@ class SlackTypeConverter : JsonConverter
         }
         catch (Exception ex)
         { 
-            Console.Write($"Couldn't deserialize, fallback to default value. " + ex.Source);
+            _log.Serialization(ex, "Error deserializing to {ObjectType}, falling back to default value", objectType.FullName);
             return DefaultValue(objectType);
         }
         finally
@@ -127,10 +129,8 @@ class SlackTypeConverter : JsonConverter
         }
     }
 
-    private static object DefaultValue(Type type)
-    {
-        return type.GetTypeInfo().IsValueType
+    private static object DefaultValue(Type type) =>
+        type.GetTypeInfo().IsValueType
             ? Activator.CreateInstance(type)
             : null;
-    }
 }
