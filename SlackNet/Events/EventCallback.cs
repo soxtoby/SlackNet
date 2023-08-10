@@ -12,6 +12,7 @@ public class EventCallback : EventRequest
     public string TeamId { get; set; }
     public string EnterpriseId { get; set; }
     public string ApiAppId { get; set; }
+    public bool IsExtSharedChannel { get; set; }
     public Event Event { get; set; }
     public IList<Authorization> Authorizations { get; set; }
     public string EventContext { get; set; }
