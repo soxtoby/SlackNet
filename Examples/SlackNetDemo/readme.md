@@ -12,7 +12,7 @@ Check out the [other example projects](../) to see how to configure SlackNet wit
    - `chat:write` for posting messages.
 3. [Install the app to your workspace](https://api.slack.com/authentication/basics#installing) and copy the bot user OAuth token from your app's OAuth & Permissions page into the demo's [appsettings.json](./appsettings.json) file for the value of the `ApiToken`.
 4. [Enable socket mode](https://api.slack.com/apis/connections/socket#toggling) for your app. You'll be required to generate an app-level token - copy this into [appsettings.json](./appsettings.json) for the value of the `AppLevelToken`.
-5. [Enable the home tab](https://api.slack.com/surfaces/tabs/using#tab_setup) for your app.
+5. [Enable the home tab](https://api.slack.com/surfaces/app-home#enabling) for your app.
 6. [Enable events](https://api.slack.com/apis/connections/events-api#the-events-api__subscribing-to-event-types) and subscribe to the following bot events: 
    - `app_home_opened` for showing app home tab.
    - `message.channels` `message.groups` `message.im` `message.mpim` for receiving messages.
