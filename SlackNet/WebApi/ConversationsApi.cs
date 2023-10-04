@@ -52,8 +52,9 @@ public interface IConversationsApi
     /// <remarks>See the <a href="https://api.slack.com/methods/conversations.create">Slack documentation</a> for more information.</remarks>
     /// <param name="name">Name of the public or private channel to create.</param>
     /// <param name="isPrivate">Create a private channel instead of a public one.</param>
+    /// <param name="teamId">Encoded team id to create the channel in, required if org token is used</param>
     /// <param name="cancellationToken"></param>
-    Task<Conversation> Create(string name, bool isPrivate, CancellationToken? cancellationToken = null);
+    Task<Conversation> Create(string name, bool isPrivate, string teamId = null, CancellationToken? cancellationToken = null);
 
     /// <summary>
     /// Declines a Slack Connect channel invite.
@@ -306,11 +307,12 @@ public class ConversationsApi : IConversationsApi
     public Task Close(string channelId, CancellationToken? cancellationToken = null) =>
         _client.Post("conversations.close", new Args { { "channel", channelId } }, cancellationToken);
 
-    public async Task<Conversation> Create(string name, bool isPrivate, CancellationToken? cancellationToken = null) =>
+    public async Task<Conversation> Create(string name, bool isPrivate, string teamId = null, CancellationToken? cancellationToken = null) =>
         (await _client.Post<ConversationResponse>("conversations.create", new Args
             {
                 { "name", name },
-                { "is_private", isPrivate }
+                { "is_private", isPrivate },
+                { "team_id", teamId }
             }, cancellationToken).ConfigureAwait(false))
         .Channel;
 
