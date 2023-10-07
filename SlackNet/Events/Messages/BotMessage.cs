@@ -8,7 +8,6 @@ namespace SlackNet.Events;
 /// </summary>
 public class BotMessage : MessageEvent
 {
-    public string BotId { get; set; }
     public string Username { get; set; }
     public Dictionary<string, string> Icons { get; set; }
 }

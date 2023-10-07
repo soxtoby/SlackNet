@@ -22,6 +22,9 @@ public class MessageEvent : MessageEventBase
     public IList<string> PinnedTo { get; set; } = new List<string>();
     public PinnedInfo PinnedInfo { get; set; }
     public MessageMetadata Metadata { get; set; }
+    public string BotId { get; set; }
+    public string AppId { get; set; }
+    public BotInfo BotProfile { get; set; }
 }
 
 public class PinnedInfo
