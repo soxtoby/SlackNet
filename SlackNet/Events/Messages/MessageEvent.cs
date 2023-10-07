@@ -21,6 +21,7 @@ public class MessageEvent : MessageEventBase
     public IList<Reaction> Reactions { get; set; } = new List<Reaction>();
     public IList<string> PinnedTo { get; set; } = new List<string>();
     public PinnedInfo PinnedInfo { get; set; }
+    public MessageMetadata Metadata { get; set; }
 }
 
 public class PinnedInfo

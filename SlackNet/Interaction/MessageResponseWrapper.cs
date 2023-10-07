@@ -23,4 +23,6 @@ public class MessageResponseWrapper : IReadOnlyMessage
     public string IconEmoji => _response.Message?.IconEmoji;
     public string ThreadTs => _response.Message?.ThreadTs;
     public bool ReplyBroadcast => _response.Message?.ReplyBroadcast ?? default;
+    public MessageMetadata MetadataJson => _response.Message?.MetadataJson;
+    public object MetadataObject => _response.Message?.MetadataObject;
 }

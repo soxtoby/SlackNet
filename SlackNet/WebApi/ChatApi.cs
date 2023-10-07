@@ -148,7 +148,13 @@ public interface IChatApi
 public class ChatApi : IChatApi
 {
     private readonly ISlackApiClient _client;
-    public ChatApi(ISlackApiClient client) => _client = client;
+    private readonly SlackJsonSettings _jsonSettings;
+
+    public ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings)
+    {
+        _client = client;
+        _jsonSettings = jsonSettings;
+    }
 
     public Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken? cancellationToken = null) =>
         _client.Post<MessageTsResponse>("chat.delete", new Args
@@ -183,7 +189,7 @@ public class ChatApi : IChatApi
                 }),
             cancellationToken);
 
-    private static Args PopulateMessageArgs(Message message, Args args)
+    private Args PopulateMessageArgs(Message message, Args args)
     {
         args["channel"] = message.Channel;
         args["text"] = message.Text;
@@ -199,6 +205,7 @@ public class ChatApi : IChatApi
         args["icon_emoji"] = message.IconEmoji;
         args["thread_ts"] = message.ThreadTs;
         args["reply_broadcast"] = message.ReplyBroadcast;
+        args["metadata"] = message.MetadataJson ?? MessageMetadata.FromObject(message.MetadataObject, _jsonSettings);
         return args;
     }
 

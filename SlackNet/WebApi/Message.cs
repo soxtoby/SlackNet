@@ -75,6 +75,18 @@ public interface IReadOnlyMessage
     /// Used in conjunction with <see cref="ThreadTs"/> and indicates whether reply should be made visible to everyone in the channel or conversation.
     /// </summary>
     bool ReplyBroadcast { get; }
+    
+    /// <summary>
+    /// A custom event attached to the message. Metadata you post to Slack is accessible to any app or user who is a member of that workspace.
+    /// </summary>
+    /// <remarks>Will take precedence over <see cref="MetadataObject"/>.</remarks>
+    MessageMetadata MetadataJson { get; }
+    
+    /// <summary>
+    /// A custom event attached to the message. Metadata you post to Slack is accessible to any app or user who is a member of that workspace.
+    /// </summary>
+    /// <remarks>The specified object be automatically converted to a <see cref="MessageMetadata"/> using the standard Slack JSON conventions.</remarks>
+    object MetadataObject { get; }
 }
 
 public class Message : IReadOnlyMessage
@@ -93,4 +105,6 @@ public class Message : IReadOnlyMessage
     public string IconEmoji { get; set; }
     public string ThreadTs { get; set; }
     public bool ReplyBroadcast { get; set; }
+    public MessageMetadata MetadataJson { get; set; }
+    public object MetadataObject { get; set; }
 }

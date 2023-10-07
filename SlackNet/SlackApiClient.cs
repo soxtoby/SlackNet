@@ -164,7 +164,7 @@ public class SlackApiClient : ISlackApiClient
     public IBotsApi Bots => new BotsApi(this);
     public ICallParticipantsApi CallParticipants => new CallParticipantsApi(this);
     public ICallsApi Calls => new CallsApi(this);
-    public IChatApi Chat => new ChatApi(this);
+    public IChatApi Chat => new ChatApi(this, _jsonSettings);
     public IConversationsApi Conversations => new ConversationsApi(this);
     public IDialogApi Dialog => new DialogApi(this);
     public IDndApi Dnd => new DndApi(this);

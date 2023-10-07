@@ -22,7 +22,9 @@ public class ApiLintTest
     public void Lint(Type api)
     {
         var client = new FakeClient();
-        var instance = Activator.CreateInstance(api, client);
+        var instance = api.GetConstructor(BindingFlags.Public | BindingFlags.Instance, new[] { typeof(ISlackApiClient), typeof(SlackJsonSettings) }) is not null
+            ? Activator.CreateInstance(api, client, Default.JsonSettings())
+            : Activator.CreateInstance(api, client);
 
         var apiInterface = GetApiInterface(api);
 
