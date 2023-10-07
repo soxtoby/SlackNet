@@ -16,7 +16,6 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
 {
     public const string Trigger = "modal demo";
     public const string OpenModal = "open_modal";
-    private const string InputBlockId = "input_block";
     private const string InputActionId = "text_input";
     private const string SingleSelectActionId = "single_select";
     private const string MultiSelectActionId = "multi_select";
@@ -25,6 +24,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
     private const string RadioActionId = "radio";
     private const string CheckboxActionId = "checkbox";
     private const string SingleUserActionId = "single_user";
+    private const string RichTextActionId = "rich_text_input";
     public const string ModalCallbackId = "modal_demo";
 
     private readonly ISlackApiClient _slack;
@@ -35,7 +35,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
         if (slackEvent.Text?.Contains(Trigger, StringComparison.OrdinalIgnoreCase) == true)
         {
             Console.WriteLine($"{(await _slack.Users.Info(slackEvent.User)).Name} asked for a modal view demo in the {(await _slack.Conversations.Info(slackEvent.Channel)).Name} channel");
-            
+
             await _slack.Chat.PostMessage(new Message
                 {
                     Channel = slackEvent.Channel,
@@ -61,7 +61,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
     public async Task Handle(ButtonAction action, BlockActionRequest request)
     {
         Console.WriteLine($"{request.User.Name} clicked the Open modal button in the {request.Channel.Name} channel");
-        
+
         await _slack.Views.Open(request.TriggerId, new ModalViewDefinition
             {
                 Title = "Example Modal",
@@ -71,7 +71,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                         new InputBlock
                             {
                                 Label = "Input",
-                                BlockId = InputBlockId,
+                                BlockId = "input_block",
                                 Optional = true,
                                 Element = new PlainTextInput
                                     {
@@ -146,6 +146,17 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                                     {
                                         ActionId = SingleUserActionId
                                     }
+                            },
+                        new InputBlock
+                            {
+                                Label = "Rich text",
+                                BlockId = "rich_text_block",
+                                Optional = true,
+                                Element = new RichTextInput
+                                    {
+                                        ActionId = RichTextActionId,
+                                        Placeholder = "Enter some rich text"
+                                    }
                             }
                     },
                 Submit = "Submit",
@@ -165,7 +176,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
     {
         var metadata = JsonSerializer.Deserialize<ModalMetadata>(viewSubmission.View.PrivateMetadata)!;
         Console.WriteLine($"{viewSubmission.User.Name} submitted the demo modal view in the {metadata.ChannelName} channel");
-        
+
         var state = viewSubmission.View.State;
         var values = new Dictionary<string, string>
             {
@@ -176,8 +187,10 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                 { "Time", state.GetValue<TimePickerValue>(TimePickerActionId).SelectedTime?.ToString("hh\\:mm") ?? "none" },
                 { "Radio options", state.GetValue<RadioButtonGroupValue>(RadioActionId).SelectedOption?.Text.Text ?? "none" },
                 { "Checkbox options", string.Join(", ", state.GetValue<CheckboxGroupValue>(CheckboxActionId).SelectedOptions.Select(o => o.Text).DefaultIfEmpty("none")) },
-                { "Single user select", state.GetValue<UserSelectValue>(SingleUserActionId).SelectedUser is string userId ? Link.User(userId).ToString() : "none" }
+                { "Single user select", state.GetValue<UserSelectValue>(SingleUserActionId).SelectedUser is string userId ? Link.User(userId).ToString()! : "none" }
             };
+        var richText = state.GetValue<RichTextInputValue>(RichTextActionId)?.RichTextValue
+            ?? new RichTextBlock { Elements = { new RichTextSection { Elements = { new RichTextText { Text = "none" } } } } };
 
         await _slack.Chat.PostMessage(new Message
             {
@@ -189,7 +202,21 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                             {
                                 Text = new Markdown("You entered:\n"
                                     + string.Join("\n", values.Select(kv => $"*{kv.Key}:* {kv.Value}")))
-                            }
+                            },
+                        new RichTextBlock
+                            {
+                                Elements =
+                                    {
+                                        new RichTextSection
+                                            {
+                                                Elements =
+                                                    {
+                                                        new RichTextText { Text = "Rich text:", Style = { Bold = true } }
+                                                    }
+                                            }
+                                    }
+                            },
+                        richText
                     }
             });
 
@@ -200,7 +227,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
     {
         var metadata = JsonSerializer.Deserialize<ModalMetadata>(viewClosed.View.PrivateMetadata)!;
         Console.WriteLine($"{viewClosed.User.Name} cancelled the demo modal view in the {metadata.ChannelName} channel");
-        
+
         await _slack.Chat.PostMessage(new Message
             {
                 Channel = metadata.ChannelId,

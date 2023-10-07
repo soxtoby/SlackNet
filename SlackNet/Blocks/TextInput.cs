@@ -14,11 +14,6 @@ public abstract class TextInput : BlockElement, IInputBlockElement
     public string ActionId { get; set; }
 
     /// <summary>
-    /// The initial value in the input when it is loaded.
-    /// </summary>
-    public string InitialValue { get; set; }
-
-    /// <summary>
     /// A plain text object that defines the placeholder text shown in the input. 
     /// </summary>
     public PlainText Placeholder { get; set; }

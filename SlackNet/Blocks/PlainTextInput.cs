@@ -18,6 +18,11 @@ public class PlainTextInput : TextInput
     /// The maximum length of input that the user can provide. If the user provides more, they will receive an error.
     /// </summary>
     public int? MaxLength { get; set; }
+
+    /// <summary>
+    /// The initial value in the input when it is loaded.
+    /// </summary>
+    public string InitialValue { get; set; }
 }
 
 [SlackType("plain_text_input")]

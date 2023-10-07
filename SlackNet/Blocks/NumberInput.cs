@@ -43,6 +43,11 @@ public class NumberInput : TextInput
     }
 
     /// <summary>
+    /// The initial value in the input when it is loaded.
+    /// </summary>
+    public string InitialValue { get; set; }
+
+    /// <summary>
     /// The minimum value as a double, cannot be greater than <see cref="MaxValue"/>.
     /// </summary>
     [JsonIgnore]
