@@ -10,4 +10,5 @@ public class BlockOptionsRequest : OptionsRequestBase
     public string ActionId { get; set; }
     public string BlockId { get; set; }
     public MessageEvent Message { get; set; }
+    public ViewInfo View { get; set; }
 }
