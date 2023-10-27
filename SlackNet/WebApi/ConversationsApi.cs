@@ -28,7 +28,7 @@ public interface IConversationsApi
     /// <param name="targetTeam">The team or enterprise id of the other party involved in the invitation you are approving.</param>
     /// <param name="cancellationToken"></param>
     Task ApproveSharedInvite(string inviteId, string targetTeam = null, CancellationToken? cancellationToken = null);
-        
+
     /// <summary>
     /// Archives a conversation. Not all types of conversations can be archived.
     /// </summary>
@@ -74,13 +74,14 @@ public interface IConversationsApi
     /// <param name="oldestTs">Start of time range of messages to include in results.</param>
     /// <param name="inclusive">Include messages with latest or oldest timestamp in results only when either timestamp is specified.</param>
     /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
+    /// <param name="includeAllMetadata">Return all metadata associated with the messages.</param>
     /// <param name="cursor">
     /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
     /// returned by a previous request's <see cref="ConversationMessagesResponse.ResponseMetadata"/>.
     /// Default value fetches the first "page" of the collection.
     /// </param>
     /// <param name="cancellationToken"></param>
-    Task<ConversationHistoryResponse> History(string channelId, string latestTs = null, string oldestTs = null, bool inclusive = false, int limit = 100, string cursor = null, CancellationToken? cancellationToken = null);
+    Task<ConversationHistoryResponse> History(string channelId, string latestTs = null, string oldestTs = null, bool inclusive = false, int limit = 100, bool includeAllMetadata = false, string cursor = null, CancellationToken? cancellationToken = null);
 
     /// <summary>
     /// Retrieve information about a conversation.
@@ -323,7 +324,7 @@ public class ConversationsApi : IConversationsApi
                 { "target_team", targetTeam }
             }, cancellationToken);
 
-    public Task<ConversationHistoryResponse> History(string channelId, string latestTs = null, string oldestTs = null, bool inclusive = false, int limit = 100, string cursor = null, CancellationToken? cancellationToken = null) =>
+    public Task<ConversationHistoryResponse> History(string channelId, string latestTs = null, string oldestTs = null, bool inclusive = false, int limit = 100, bool includeAllMetadata = false, string cursor = null, CancellationToken? cancellationToken = null) =>
         _client.Get<ConversationHistoryResponse>("conversations.history", new Args
             {
                 { "channel", channelId },
@@ -331,7 +332,8 @@ public class ConversationsApi : IConversationsApi
                 { "inclusive", inclusive },
                 { "latest", latestTs },
                 { "limit", limit },
-                { "oldest", oldestTs }
+                { "oldest", oldestTs },
+                { "include_all_metadata", includeAllMetadata }
             }, cancellationToken);
 
     public async Task<Conversation> Info(string channelId, bool includeLocale = false, bool includeNumMembers = false, CancellationToken? cancellationToken = null) =>
