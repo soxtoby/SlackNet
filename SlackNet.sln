@@ -42,6 +42,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleInjectorExample", "Ex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctionExample", "Examples\AzureFunctionExample\AzureFunctionExample.csproj", "{928AFF3A-2179-4821-BB53-455220C71E4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureIsolatedWorkerFunctionExample", "Examples\AzureIsolatedWorkerFunctionExample\AzureIsolatedWorkerFunctionExample.csproj", "{45D56004-2046-494D-B286-B2685ED45AC3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,10 @@ Global
 		{928AFF3A-2179-4821-BB53-455220C71E4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{928AFF3A-2179-4821-BB53-455220C71E4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{928AFF3A-2179-4821-BB53-455220C71E4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45D56004-2046-494D-B286-B2685ED45AC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45D56004-2046-494D-B286-B2685ED45AC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45D56004-2046-494D-B286-B2685ED45AC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45D56004-2046-494D-B286-B2685ED45AC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,6 +119,7 @@ Global
 		{F63F450D-D9B7-4CAE-87F1-83B6E836D8F2} = {00793FF5-D1F1-4596-B3F8-C6395754E010}
 		{CEEFFEAB-1E7E-4AF6-BD2C-0805855A22F6} = {00793FF5-D1F1-4596-B3F8-C6395754E010}
 		{928AFF3A-2179-4821-BB53-455220C71E4F} = {00793FF5-D1F1-4596-B3F8-C6395754E010}
+		{45D56004-2046-494D-B286-B2685ED45AC3} = {00793FF5-D1F1-4596-B3F8-C6395754E010}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D28BBD5F-1FD1-4A8A-920F-D52B53814623}
