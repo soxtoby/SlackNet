@@ -2,7 +2,7 @@
 using AzureIsolatedWorkerFunctionExample;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SlackNet.AspNetCore;
+using SlackNet.AzureFunctions;
 using SlackNet.Events;
 
 var host = new HostBuilder()

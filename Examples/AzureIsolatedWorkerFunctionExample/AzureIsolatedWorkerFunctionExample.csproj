@@ -24,9 +24,9 @@
     <None Remove="Properties\serviceDependencies.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SlackNet.AspNetCore\SlackNet.AspNetCore.csproj" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <ProjectReference Include="..\..\SlackNet.AzureFunctions\SlackNet.AzureFunctions.csproj" />
   </ItemGroup>
 </Project>

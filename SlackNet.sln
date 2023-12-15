@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctionExample", "Exa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureIsolatedWorkerFunctionExample", "Examples\AzureIsolatedWorkerFunctionExample\AzureIsolatedWorkerFunctionExample.csproj", "{45D56004-2046-494D-B286-B2685ED45AC3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackNet.AzureFunctions", "SlackNet.AzureFunctions\SlackNet.AzureFunctions.csproj", "{3F1C6572-BC43-4D4C-BD16-D280188621A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,10 @@ Global
 		{45D56004-2046-494D-B286-B2685ED45AC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45D56004-2046-494D-B286-B2685ED45AC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45D56004-2046-494D-B286-B2685ED45AC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F1C6572-BC43-4D4C-BD16-D280188621A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F1C6572-BC43-4D4C-BD16-D280188621A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F1C6572-BC43-4D4C-BD16-D280188621A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F1C6572-BC43-4D4C-BD16-D280188621A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
