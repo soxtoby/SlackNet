@@ -2,6 +2,7 @@
 using AzureIsolatedWorkerFunctionExample;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SlackNet.AspNetCore;
 using SlackNet.AzureFunctions;
 using SlackNet.Events;
 
@@ -11,7 +12,7 @@ var host = new HostBuilder()
 			var apiToken = Environment.GetEnvironmentVariable("SlackApiToken", EnvironmentVariableTarget.Process);
 			var signingSecret = Environment.GetEnvironmentVariable("SlackSigningSecret", EnvironmentVariableTarget.Process);
 
-			services.AddSlackNet(c => c
+			AzureFunctionExtensions.AddSlackNet( services, c => c
 				// Configure the token used to authenticate with Slack
 				.UseApiToken(apiToken)
             

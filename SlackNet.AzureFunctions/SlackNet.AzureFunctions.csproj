@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>10</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\SlackNet.Extensions.DependencyInjection\SlackNet.Extensions.DependencyInjection.csproj" />
-	  <ProjectReference Include="..\SlackNet\SlackNet.csproj" />
+	  <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.1.0" />
+	  <ProjectReference Include="..\SlackNet.AspNetCore\SlackNet.AspNetCore.csproj" />
 	</ItemGroup>
 
 </Project>
