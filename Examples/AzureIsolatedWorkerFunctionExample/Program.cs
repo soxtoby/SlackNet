@@ -7,7 +7,10 @@ using SlackNet.AzureFunctions;
 using SlackNet.Events;
 
 var host = new HostBuilder()
-	.ConfigureFunctionsWebApplication()
+	.ConfigureFunctionsWebApplication( app =>
+		{
+			app.UseSlackNet();
+		})
 	.ConfigureServices(services => {
 			var apiToken = Environment.GetEnvironmentVariable("SlackApiToken", EnvironmentVariableTarget.Process);
 			var signingSecret = Environment.GetEnvironmentVariable("SlackSigningSecret", EnvironmentVariableTarget.Process);
