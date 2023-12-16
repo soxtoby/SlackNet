@@ -11,6 +11,9 @@ builder.Services.AddSlackNet(c => c
     .UseApiToken(slackSettings.ApiToken) // This gets used by the API client
     .UseAppLevelToken(slackSettings.AppLevelToken) // (Optional) used for socket mode
     
+    // The signing secret ensures that SlackNet only handles requests from Slack 
+    .UseSigningSecret(slackSettings.SigningSecret)
+    
     // Register your Slack handlers here
     .RegisterEventHandler<MessageEvent, PingDemo>()
 );
@@ -21,9 +24,6 @@ var app = builder.Build();
 // By default the endpoints are /slack/event, /slack/action, /slack/options, and /slack/command,
 // but the 'slack' prefix can be changed using MapToPrefix.
 app.UseSlackNet(c => c
-    // The signing secret ensures that SlackNet only handles requests from Slack 
-    .UseSigningSecret(slackSettings.SigningSecret)
-
     // You can enable socket mode for testing without having to make your web app publicly accessible
     .UseSocketMode(false)
 );

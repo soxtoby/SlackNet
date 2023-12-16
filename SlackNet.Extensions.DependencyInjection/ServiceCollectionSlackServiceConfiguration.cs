@@ -7,61 +7,67 @@ using SlackNet.Handlers;
 
 namespace SlackNet.Extensions.DependencyInjection;
 
-[SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
-public class ServiceCollectionSlackServiceConfiguration : FactorySlackServiceConfigurationWithDependencyResolver<ServiceCollectionSlackServiceConfiguration, IServiceProvider>
+public class ServiceCollectionSlackServiceConfiguration : ServiceCollectionSlackServiceConfiguration<ServiceCollectionSlackServiceConfiguration>
 {
-    private readonly IServiceCollection _serviceCollection;
-    private ServiceCollectionSlackServiceConfiguration(IServiceCollection serviceCollection) => _serviceCollection = serviceCollection;
+    internal ServiceCollectionSlackServiceConfiguration(IServiceCollection serviceCollection)
+        : base(serviceCollection) { }
+}
 
-    internal static void Configure(IServiceCollection serviceCollection, Action<ServiceCollectionSlackServiceConfiguration> configure = null)
+[SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
+public abstract class ServiceCollectionSlackServiceConfiguration<TConfig> : FactorySlackServiceConfigurationWithDependencyResolver<TConfig, IServiceProvider> 
+    where TConfig : ServiceCollectionSlackServiceConfiguration<TConfig>
+{
+    protected internal ServiceCollectionSlackServiceConfiguration(IServiceCollection serviceCollection)
     {
-        var config = new ServiceCollectionSlackServiceConfiguration(serviceCollection);
+        ServiceCollection = serviceCollection;
+        UseRequestListener<IServiceProviderSlackRequestListener>();
+    }
 
-        config.UseRequestListener<IServiceProviderSlackRequestListener>();
+    protected IServiceCollection ServiceCollection { get; }
 
-        configure?.Invoke(config);
+    protected internal void ConfigureServices()
+    {
+        ServiceCollection.TryAddSingleton<IServiceProviderSlackRequestListener, ServiceProviderSlackRequestListener>();
 
-        serviceCollection.TryAddSingleton<IServiceProviderSlackRequestListener, ServiceProviderSlackRequestListener>();
+        ServiceCollection.AddScoped<HandlerDisposer>();
 
-        serviceCollection.AddScoped<HandlerDisposer>();
-
-        serviceCollection.TryAddSingleton<ISlackServiceProvider>(sp => new ServiceProviderSlackServiceProvider(config.CreateServiceFactory, sp));
-        serviceCollection.TryAddSingleton<IHttp>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetHttp());
-        serviceCollection.TryAddSingleton<SlackJsonSettings>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetJsonSettings());
-        serviceCollection.TryAddSingleton<ISlackTypeResolver>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetTypeResolver());
-        serviceCollection.TryAddSingleton<ISlackUrlBuilder>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetUrlBuilder());
-        serviceCollection.TryAddSingleton<ILogger>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetLogger());
-        serviceCollection.TryAddSingleton<IWebSocketFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetWebSocketFactory());
-        serviceCollection.TryAddSingleton<IEnumerable<ISlackRequestListener>>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetRequestListeners());
-        serviceCollection.TryAddSingleton<ISlackHandlerFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetHandlerFactory());
-        serviceCollection.TryAddSingleton<ISlackApiClient>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetApiClient());
-        serviceCollection.TryAddSingleton<ISlackSocketModeClient>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetSocketModeClient());
+        ServiceCollection.TryAddSingleton<ISlackServiceProvider>(sp => new ServiceProviderSlackServiceProvider(CreateServiceFactory, sp));
+        ServiceCollection.TryAddSingleton<IHttp>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetHttp());
+        ServiceCollection.TryAddSingleton<SlackJsonSettings>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetJsonSettings());
+        ServiceCollection.TryAddSingleton<ISlackTypeResolver>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetTypeResolver());
+        ServiceCollection.TryAddSingleton<ISlackUrlBuilder>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetUrlBuilder());
+        ServiceCollection.TryAddSingleton<ILogger>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetLogger());
+        ServiceCollection.TryAddSingleton<IWebSocketFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetWebSocketFactory());
+        ServiceCollection.TryAddSingleton<IEnumerable<ISlackRequestListener>>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetRequestListeners());
+        ServiceCollection.TryAddSingleton<ISlackHandlerFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetHandlerFactory());
+        ServiceCollection.TryAddSingleton<ISlackApiClient>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetApiClient());
+        ServiceCollection.TryAddSingleton<ISlackSocketModeClient>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetSocketModeClient());
     }
 
     protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService, TImplementation>()
     {
         if (ShouldRegisterType<TImplementation>())
-            _serviceCollection.TryAddSingleton<TImplementation>();
+            ServiceCollection.TryAddSingleton<TImplementation>();
         return serviceFactory => ((ServiceProviderSlackServiceProvider) serviceFactory).GetRequiredService<TImplementation>();
     }
 
     protected override Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler, TImplementation>()
     {
         if (ShouldRegisterType<TImplementation>())
-            _serviceCollection.TryAddScoped<TImplementation>();
+            ServiceCollection.TryAddScoped<TImplementation>();
         return requestContext => requestContext.ServiceProvider().GetRequiredService<TImplementation>();
     }
 
     protected override Func<SlackRequestContext, THandler> GetRegisteredHandlerFactory<THandler>()
     {
         if (ShouldRegisterType<THandler>())
-            _serviceCollection.TryAddScoped<THandler>();
+            ServiceCollection.TryAddScoped<THandler>();
         return requestContext => requestContext.ServiceProvider().GetRequiredService<THandler>();
     }
 
     protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService>(Func<IServiceProvider, TService> getService)
     {
-        _serviceCollection.AddSingleton(getService);
+        ServiceCollection.AddSingleton(getService);
         return serviceFactory => ((ServiceProviderSlackServiceProvider) serviceFactory).GetRequiredService<TService>();
     }
 

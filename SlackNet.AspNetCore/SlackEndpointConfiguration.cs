@@ -1,8 +1,9 @@
-﻿using SlackNet.SocketMode;
+﻿using System;
+using SlackNet.SocketMode;
 
 namespace SlackNet.AspNetCore;
 
-public class SlackEndpointConfiguration
+public class SlackEndpointConfiguration : ISlackRequestValidationConfiguration
 {
     /// <summary>
     /// Sets the path to receive Slack requests on. Defaults to "slack".
@@ -22,6 +23,7 @@ public class SlackEndpointConfiguration
     /// Use a token to verify that requests are actually coming from Slack.
     /// You'll find this value in the "App Credentials" section of your app's application management interface.
     /// </summary>
+    [Obsolete("Configure this in AddSlackNet instead.")]
     public SlackEndpointConfiguration VerifyWith(string verificationToken)
     {
         VerificationToken = verificationToken;
@@ -32,6 +34,7 @@ public class SlackEndpointConfiguration
     /// Use a signing secret to verify that requests are coming from Slack.
     /// You'll find this value in the "App Credentials" section of your app's application management interface.
     /// </summary>
+    [Obsolete("Configure this in AddSlackNet instead.")]
     public SlackEndpointConfiguration UseSigningSecret(string signingSecret)
     {
         SigningSecret = signingSecret;
@@ -44,6 +47,7 @@ public class SlackEndpointConfiguration
     /// <remarks>
     /// You should only disable this temporarily and in certain circumstances (see <a href="https://github.com/soxtoby/SlackNet/pull/57">SlackNet pull request #57</a> for more information).
     /// </remarks>
+    [Obsolete("Configure this in AddSlackNet instead.")]
     public SlackEndpointConfiguration UseEventUrlVerification(bool verifyEventUrl)
     {
         VerifyEventUrl = verifyEventUrl;

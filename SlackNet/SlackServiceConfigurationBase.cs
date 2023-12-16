@@ -397,7 +397,7 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     public TConfig RegisterDialogSubmissionHandler(string callbackId, Func<SlackRequestContext, IDialogSubmissionHandler> getHandler) =>
         Chain(() => _legacyDialogSubmissionHandlers.Add(callbackId, getHandler));
 
-    private TConfig Chain(Action action)
+    protected TConfig Chain(Action action)
     {
         action();
         return (TConfig)this;

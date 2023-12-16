@@ -1,24 +1,17 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using SlackNet.Extensions.DependencyInjection;
 
 namespace SlackNet.AspNetCore;
 
 public static class AspNetCoreExtensions
 {
-    public static IServiceCollection AddSlackNet(this IServiceCollection serviceCollection, Action<ServiceCollectionSlackServiceConfiguration> configure = null)
+    public static IServiceCollection AddSlackNet(this IServiceCollection serviceCollection, Action<AspNetSlackServiceConfiguration> configure = null)
     {
-        serviceCollection.TryAddSingleton<ISlackRequestHandler, SlackRequestHandler>();
-        serviceCollection.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        serviceCollection.TryAddSingleton<IServiceProviderSlackRequestListener, AspNetCoreServiceProviderSlackRequestListener>();
-        return ServiceCollectionExtensions.AddSlackNet(serviceCollection, c =>
-            {
-                c.UseLogger<MicrosoftLoggerAdaptor>();
-                configure?.Invoke(c);
-            });
+        var config = new AspNetSlackServiceConfiguration(serviceCollection);
+        configure?.Invoke(config);
+        config.ConfigureServices();
+        return serviceCollection;
     }
 
     /// <summary>

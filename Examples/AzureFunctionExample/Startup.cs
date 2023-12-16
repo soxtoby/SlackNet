@@ -1,8 +1,7 @@
 ﻿using System;
 using AzureFunctionExample;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
-using SlackNet.AspNetCore;
+using SlackNet.AzureFunctions;
 using SlackNet.Events;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -19,14 +18,12 @@ public class Startup : FunctionsStartup
         builder.Services.AddSlackNet(c => c
             // Configure the token used to authenticate with Slack
             .UseApiToken(apiToken)
-            
+
+            // The signing secret ensures that SlackNet only handles requests from Slack
+            .UseSigningSecret(signingSecret!)
+
             // Register your Slack handlers here
             .RegisterEventHandler<MessageEvent, PingDemo>()
         );
-
-        // This is roughly equivalent to the .UseSlackNet() call in ASP.NET Core
-        builder.Services.AddSingleton(new SlackEndpointConfiguration()
-            // The signing secret ensures that SlackNet only handles requests from Slack
-            .UseSigningSecret(signingSecret));
     }
 }

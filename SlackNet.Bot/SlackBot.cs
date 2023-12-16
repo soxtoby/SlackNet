@@ -494,15 +494,15 @@ namespace SlackNet.Bot
 
             if (message.Ephemeral)
             {
-                PostEphemeralResponse response = await _api.Chat.PostEphemeral(message.ReplyTo.User.Id, slackMessage, message.CancellationToken).ConfigureAwait(false);
+                var response = await _api.Chat.PostEphemeral(message.ReplyTo!.User.Id, slackMessage, message.CancellationToken).ConfigureAwait(false);
 
                 // for backwards compatibility, convert to the other type and supply the correct information
                 // which is more than null values for each
                 return new PostMessageResponse
-                {
-                    Ts = response.MessageTs,
-                    Channel = slackMessage.Channel
-                };
+                    {
+                        Ts = response.MessageTs,
+                        Channel = slackMessage.Channel
+                    };
             }
 
             return await _api.Chat.PostMessage(slackMessage, message.CancellationToken).ConfigureAwait(false);

@@ -7,7 +7,8 @@ using SlackNet.Interaction.Experimental;
 
 namespace SlackNet;
 
-public abstract class FactorySlackServiceConfigurationWithDependencyResolver<TConfig, TDependencyResolver> : FactorySlackServiceConfiguration<TConfig> where TConfig : FactorySlackServiceConfigurationWithDependencyResolver<TConfig, TDependencyResolver>
+public abstract class FactorySlackServiceConfigurationWithDependencyResolver<TConfig, TDependencyResolver> : FactorySlackServiceConfiguration<TConfig> 
+    where TConfig : FactorySlackServiceConfigurationWithDependencyResolver<TConfig, TDependencyResolver>
 {
     public TConfig UseHttp(Func<TDependencyResolver, IHttp> httpProvider) => UseHttp(GetServiceFactory(httpProvider));
     public TConfig UseJsonSettings(Func<TDependencyResolver, SlackJsonSettings> jsonSettingsProvider) => UseJsonSettings(GetServiceFactory(jsonSettingsProvider));

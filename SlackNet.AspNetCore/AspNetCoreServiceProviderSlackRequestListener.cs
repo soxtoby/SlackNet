@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using SlackNet.Extensions.DependencyInjection;
 
@@ -8,12 +7,12 @@ namespace SlackNet.AspNetCore;
 
 class AspNetCoreServiceProviderSlackRequestListener : IServiceProviderSlackRequestListener
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IRequestServiceProviderAccessor _serviceProviderAccessor;
     private readonly IServiceProvider _serviceProvider;
 
-    public AspNetCoreServiceProviderSlackRequestListener(IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
+    public AspNetCoreServiceProviderSlackRequestListener(IRequestServiceProviderAccessor serviceProviderAccessor, IServiceProvider serviceProvider)
     {
-        _httpContextAccessor = httpContextAccessor;
+        _serviceProviderAccessor = serviceProviderAccessor;
         _serviceProvider = serviceProvider;
     }
 
@@ -31,7 +30,7 @@ class AspNetCoreServiceProviderSlackRequestListener : IServiceProviderSlackReque
         }
         else
         {
-            context.SetServiceProvider(_httpContextAccessor.HttpContext.RequestServices);
+            context.SetServiceProvider(_serviceProviderAccessor.ServiceProvider);
         }
     }
 }
