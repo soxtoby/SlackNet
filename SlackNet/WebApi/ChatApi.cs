@@ -63,7 +63,7 @@ public interface IChatApi
     /// <param name="userId">ID of the user who will receive the ephemeral message. The user should be in the channel specified by the channel argument.</param>
     /// <param name="message">The message to post. Not all message properties are supported by <c>PostEphemeral</c>.</param>
     /// <param name="cancellationToken"></param>
-    Task<PostMessageResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null);
+    Task<PostEphemeralResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null);
 
     /// <summary>
     /// Attaches Slack app unfurl behavior to a specified and relevant message.
@@ -218,8 +218,8 @@ public class ChatApi : IChatApi
                 },
             cancellationToken);
 
-    public Task<PostMessageResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null) =>
-        _client.Post<PostMessageResponse>("chat.postEphemeral", new Args
+    public Task<PostEphemeralResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null) =>
+        _client.Post<PostEphemeralResponse>("chat.postEphemeral", new Args
                 {
                     { "channel", message.Channel },
                     { "text", message.Text },
