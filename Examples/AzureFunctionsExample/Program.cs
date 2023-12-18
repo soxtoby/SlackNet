@@ -1,4 +1,4 @@
-using IsolatedWorkerFunctionExample;
+using AzureFunctionsExample;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using SlackNet.AzureFunctions;

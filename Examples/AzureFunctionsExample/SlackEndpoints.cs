@@ -2,7 +2,7 @@
 using Microsoft.Azure.Functions.Worker;
 using SlackNet.AzureFunctions;
 
-namespace IsolatedWorkerFunctionExample;
+namespace AzureFunctionsExample;
 
 public class SlackEndpoints(ISlackFunctionRequestHandler requestHandler)
 {

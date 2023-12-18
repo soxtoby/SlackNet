@@ -40,9 +40,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutofacExample", "Examples\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleInjectorExample", "Examples\SimpleInjectorExample\SimpleInjectorExample.csproj", "{CEEFFEAB-1E7E-4AF6-BD2C-0805855A22F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctionExample", "Examples\AzureFunctionExample\AzureFunctionExample.csproj", "{928AFF3A-2179-4821-BB53-455220C71E4F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsolatedWorkerFunctionExample", "Examples\IsolatedWorkerFunctionExample\IsolatedWorkerFunctionExample.csproj", "{5B30E11E-D60B-4B23-8BD2-84B1A6E9ECAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctionsExample", "Examples\AzureFunctionsExample\AzureFunctionsExample.csproj", "{5B30E11E-D60B-4B23-8BD2-84B1A6E9ECAF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackNet.AzureFunctions", "SlackNet.AzureFunctions\SlackNet.AzureFunctions.csproj", "{0EDA6AF2-6725-47C8-BA9E-06EB714778AC}"
 EndProject
@@ -102,10 +100,6 @@ Global
 		{CEEFFEAB-1E7E-4AF6-BD2C-0805855A22F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEEFFEAB-1E7E-4AF6-BD2C-0805855A22F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEEFFEAB-1E7E-4AF6-BD2C-0805855A22F6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{928AFF3A-2179-4821-BB53-455220C71E4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{928AFF3A-2179-4821-BB53-455220C71E4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{928AFF3A-2179-4821-BB53-455220C71E4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{928AFF3A-2179-4821-BB53-455220C71E4F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5B30E11E-D60B-4B23-8BD2-84B1A6E9ECAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5B30E11E-D60B-4B23-8BD2-84B1A6E9ECAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B30E11E-D60B-4B23-8BD2-84B1A6E9ECAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -124,7 +118,6 @@ Global
 		{6324F22F-FC07-4148-8B5F-FD6BBCC9A91B} = {00793FF5-D1F1-4596-B3F8-C6395754E010}
 		{F63F450D-D9B7-4CAE-87F1-83B6E836D8F2} = {00793FF5-D1F1-4596-B3F8-C6395754E010}
 		{CEEFFEAB-1E7E-4AF6-BD2C-0805855A22F6} = {00793FF5-D1F1-4596-B3F8-C6395754E010}
-		{928AFF3A-2179-4821-BB53-455220C71E4F} = {00793FF5-D1F1-4596-B3F8-C6395754E010}
 		{5B30E11E-D60B-4B23-8BD2-84B1A6E9ECAF} = {00793FF5-D1F1-4596-B3F8-C6395754E010}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

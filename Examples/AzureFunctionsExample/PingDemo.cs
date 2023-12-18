@@ -3,7 +3,7 @@ using SlackNet;
 using SlackNet.Events;
 using SlackNet.WebApi;
 
-namespace IsolatedWorkerFunctionExample;
+namespace AzureFunctionsExample;
 
 /// <summary>
 /// A simple event handler that says pong when you say ping.
