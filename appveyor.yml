@@ -15,7 +15,7 @@
 # ------------------------------------------------------------------------------
 
 image:
-  - Previous Visual Studio 2022 # Temporary fix for latest image using .NET 7.0.200 SDK, which doesn't allow `pack --output`
+  - Visual Studio 2022
 
 build_script:
   - cmd: .\build.cmd Test Pack
