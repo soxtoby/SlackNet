@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI;
@@ -6,6 +7,7 @@ using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
+using Serilog;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
@@ -60,6 +62,16 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .EnableNoRestore()
                 .EnableNoBuild());
+
+            var unexpectedPackages = Solution.AllProjects
+                .Where(p => !ExpectedPackages.Contains(p.Name)
+                    && p.GetMSBuildProject().GetPropertyValue("IsPackable").Equals("true", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            if (unexpectedPackages.Any())
+            {
+                Log.Error("Unexpected packages: {Packages}", unexpectedPackages.Select(p => p.Name));
+                Assert.Fail("Unexpected packages");
+            }
         });
 
     Target Pack => _ => _
@@ -76,4 +88,15 @@ class Build : NukeBuild
                 .EnableNoRestore()
                 .EnableNoBuild());
         });
+
+    static readonly string[] ExpectedPackages =
+        {
+            "SlackNet",
+            "SlackNet.AspNetCore",
+            "SlackNet.Autofac",
+            "SlackNet.AzureFunctions",
+            "SlackNet.Bot",
+            "SlackNet.Extensions.DependencyInjection",
+            "SlackNet.SimpleInjector"
+        };
 }

@@ -10,6 +10,7 @@
     <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
     <NukeTelemetryVersion>1</NukeTelemetryVersion>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
