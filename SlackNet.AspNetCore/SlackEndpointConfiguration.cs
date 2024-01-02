@@ -71,10 +71,22 @@ public class SlackEndpointConfiguration : ISlackRequestValidationConfiguration
         return this;
     }
 
+    /// <summary>
+    /// Delay responding to Slack until after handlers have completed.
+    /// May be required in environments that pause or shut down after a request has been completed.
+    /// </summary>
+    [Obsolete(Warning.Experimental)]
+    public SlackEndpointConfiguration DelayResponse(bool delay = true)
+    {
+        DelayedResponse = delay;
+        return this;
+    }
+
     public string RoutePrefix { get; private set; } = "slack";
     public string VerificationToken { get; private set; }
     public string SigningSecret { get; private set; }
     public bool VerifyEventUrl { get; private set; } = true;
     public bool SocketMode { get; private set; }
+    public bool DelayedResponse { get; private set; }
     public SocketModeConnectionOptions SocketModeConnectionOptions { get; set; }
 }

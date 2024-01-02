@@ -34,18 +34,31 @@ class SlackRequestMiddleware
             await _next(context).ConfigureAwait(false);
     }
 
-    private static async Task Respond(HttpResponse httpResponse, SlackResult slackResult)
+    private async Task Respond(HttpResponse httpResponse, SlackResult slackResult)
     {
-        httpResponse.StatusCode = (int)slackResult.Status;
+        try
+        {
+            if (_configuration.DelayedResponse)
+            {
+                foreach (var callback in slackResult.RequestCompletedCallbacks)
+                    await callback().ConfigureAwait(false);
+            }
+            else
+            {
+                // Note: HttpResponse's completed callbacks are called in FILO order
+                foreach (var callback in slackResult.RequestCompletedCallbacks.Reverse())
+                    httpResponse.OnCompleted(callback);
+            }
+        }
+        finally
+        {
+            httpResponse.StatusCode = (int)slackResult.Status;
 
-        // Note: HttpResponse's completed callbacks are called in FILO order
-        foreach (var callback in slackResult.RequestCompletedCallbacks.Reverse())
-            httpResponse.OnCompleted(callback);
+            if (slackResult.ContentType != null)
+                httpResponse.ContentType = slackResult.ContentType;
 
-        if (slackResult.ContentType != null)
-            httpResponse.ContentType = slackResult.ContentType;
-
-        if (slackResult.Body != null)
-            await httpResponse.WriteAsync(slackResult.Body).ConfigureAwait(false);
+            if (slackResult.Body != null)
+                await httpResponse.WriteAsync(slackResult.Body).ConfigureAwait(false);
+        }
     }
 }
