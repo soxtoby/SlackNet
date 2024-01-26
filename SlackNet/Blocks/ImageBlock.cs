@@ -19,6 +19,11 @@ public class ImageBlock : Block
     public string AltText { get; set; }
 
     /// <summary>
+    /// A Slack image file object that defines the source of the image.
+    /// </summary>
+    public ImageFileReference SlackFile { get; set; }
+
+    /// <summary>
     /// An optional title for the image.
     /// </summary>
     public PlainText Title { get; set; }

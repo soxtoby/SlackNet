@@ -17,4 +17,9 @@ public class Image : BlockElement, IContextElement
     /// A plain-text summary of the image. This should not contain any markup.
     /// </summary>
     public string AltText { get; set; }
+
+    /// <summary>
+    /// A Slack image file object that defines the source of the image.
+    /// </summary>
+    public ImageFileReference SlackFile { get; set; }
 }
