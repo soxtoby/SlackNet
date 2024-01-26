@@ -106,6 +106,10 @@ public class RichTextDate : RichTextSectionElement
     
     public string Text { get; set; }
     public string Timestamp { get; set; }
+    /// <summary>
+    /// See https://api.slack.com/reference/surfaces/formatting#date-formatting for more information.
+    /// </summary>
+    public string Format { get; set; }
     public RichTextStyle Style { get; set; } = new();
 }
 
