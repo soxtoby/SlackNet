@@ -86,15 +86,13 @@ class TestWebSocketFactory : IWebSocketFactory
     }
 }
 
-class TestWebSocket : IWebSocket
+class TestWebSocket(string uri) : IWebSocket
 {
     private readonly Subject<Unit> _opened = new();
     private readonly Subject<Unit> _closed = new();
     private readonly Subject<string> _messages = new();
 
-    public TestWebSocket(string uri) => Uri = uri;
-
-    public string Uri { get; }
+    public string Uri { get; } = uri;
 
     public List<string> Sent { get; } = new();
 

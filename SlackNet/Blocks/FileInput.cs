@@ -3,10 +3,8 @@ using Newtonsoft.Json;
 
 namespace SlackNet.Blocks;
 
-public class FileInput : BlockElement, IInputBlockElement
+public class FileInput() : BlockElement("file_input"), IInputBlockElement
 {
-    public FileInput() : base("file_input") { }
-
     /// <summary>
     /// An identifier for this action. You can use this when you receive an interaction payload to identify the source of the action.
     /// Should be unique among all other <see cref="ActionId"/>s used elsewhere by your app. 

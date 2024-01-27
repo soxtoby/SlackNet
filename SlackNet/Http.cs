@@ -12,18 +12,9 @@ public interface IHttp
     Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null);
 }
 
-class Http : IHttp
+class Http(Func<HttpClient> getHttpClient, SlackJsonSettings jsonSettings, ILogger logger) : IHttp
 {
-    private readonly Func<HttpClient> _getHttpClient;
-    private readonly SlackJsonSettings _jsonSettings;
-    private readonly ILogger _log;
-
-    public Http(Func<HttpClient> getHttpClient, SlackJsonSettings jsonSettings, ILogger logger)
-    {
-        _getHttpClient = getHttpClient;
-        _jsonSettings = jsonSettings;
-        _log = logger.ForSource<Http>();
-    }
+    private readonly ILogger _log = logger.ForSource<Http>();
 
     public async Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null)
     {
@@ -35,7 +26,7 @@ class Http : IHttp
 
         try
         {
-            response = await _getHttpClient().SendAsync(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+            response = await getHttpClient().SendAsync(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
             requestLog
                 .WithContext("ResponseStatus", response.StatusCode)
                 .WithContext("ResponseReason", response.ReasonPhrase)
@@ -59,12 +50,10 @@ class Http : IHttp
     }
 
     private async Task<T> Deserialize<T>(HttpResponseMessage response) =>
-        JsonSerializer.Create(_jsonSettings.SerializerSettings).Deserialize<T>(new JsonTextReader(new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(false))));
+        JsonSerializer.Create(jsonSettings.SerializerSettings).Deserialize<T>(new JsonTextReader(new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(false))));
 }
 
-public class SlackRateLimitException : Exception
+public class SlackRateLimitException(TimeSpan? retryAfter) : Exception
 {
-    public TimeSpan? RetryAfter { get; }
-
-    public SlackRateLimitException(TimeSpan? retryAfter) => RetryAfter = retryAfter;
+    public TimeSpan? RetryAfter { get; } = retryAfter;
 }

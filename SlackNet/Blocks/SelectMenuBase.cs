@@ -1,9 +1,7 @@
 ﻿namespace SlackNet.Blocks;
 
-public abstract class SelectMenuBase : ActionElement, IInputBlockElement
+public abstract class SelectMenuBase(string type) : ActionElement(type), IInputBlockElement
 {
-    protected SelectMenuBase(string type) : base(type) { }
-
     /// <summary>
     /// A plain text object that defines the placeholder text shown on the menu. 
     /// </summary>

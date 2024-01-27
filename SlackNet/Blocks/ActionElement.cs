@@ -5,10 +5,8 @@ public interface IActionElement : IBlockElement
     string ActionId { get; set; }
 }
 
-public abstract class ActionElement : BlockElement, IActionElement
+public abstract class ActionElement(string type) : BlockElement(type), IActionElement
 {
-    protected ActionElement(string type) : base(type) { }
-
     /// <summary>
     /// An identifier for this action. You can use this when you receive an interaction payload to identify the source of the action.
     /// Should be unique among all other <see cref="ActionId"/>s used elsewhere by your app. 

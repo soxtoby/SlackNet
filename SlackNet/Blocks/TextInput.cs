@@ -2,10 +2,8 @@ using SlackNet.Interaction;
 
 namespace SlackNet.Blocks;
 
-public abstract class TextInput : BlockElement, IInputBlockElement
+public abstract class TextInput(string type) : BlockElement(type), IInputBlockElement
 {
-    protected TextInput(string type) : base(type) { }
-
     /// <summary>
     /// An identifier for the input value when the parent modal is submitted.
     /// You can use this when you receive a <see cref="ViewSubmission"/> payload to identify the value of the input element.

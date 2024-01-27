@@ -5,22 +5,14 @@ using SlackNet.Extensions.DependencyInjection;
 
 namespace SlackNet.AspNetCore;
 
-class AspNetCoreServiceProviderSlackRequestListener : IServiceProviderSlackRequestListener
+class AspNetCoreServiceProviderSlackRequestListener(IRequestServiceProviderAccessor serviceProviderAccessor, IServiceProvider serviceProvider)
+    : IServiceProviderSlackRequestListener
 {
-    private readonly IRequestServiceProviderAccessor _serviceProviderAccessor;
-    private readonly IServiceProvider _serviceProvider;
-
-    public AspNetCoreServiceProviderSlackRequestListener(IRequestServiceProviderAccessor serviceProviderAccessor, IServiceProvider serviceProvider)
-    {
-        _serviceProviderAccessor = serviceProviderAccessor;
-        _serviceProvider = serviceProvider;
-    }
-
     public void OnRequestBegin(SlackRequestContext context)
     {
         if (context.ContainsKey("Envelope")) // Socket mode
         {
-            var scope = _serviceProvider.CreateScope();
+            var scope = serviceProvider.CreateScope();
             context.SetServiceProvider(scope.ServiceProvider);
             context.OnComplete(() =>
                 {
@@ -30,7 +22,7 @@ class AspNetCoreServiceProviderSlackRequestListener : IServiceProviderSlackReque
         }
         else
         {
-            context.SetServiceProvider(_serviceProviderAccessor.ServiceProvider);
+            context.SetServiceProvider(serviceProviderAccessor.ServiceProvider);
         }
     }
 }

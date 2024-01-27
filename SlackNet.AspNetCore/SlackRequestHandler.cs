@@ -25,27 +25,15 @@ public interface ISlackRequestHandler
     Task<SlackResult> HandleSlashCommandRequest(HttpRequest request);
 }
 
-class SlackRequestHandler : ISlackRequestHandler
+class SlackRequestHandler(
+    ISlackRequestValidationConfiguration validationConfiguration,
+    IEnumerable<ISlackRequestListener> requestListeners,
+    ISlackHandlerFactory handlerFactory,
+    SlackJsonSettings jsonSettings,
+    ILogger logger)
+    : ISlackRequestHandler
 {
-    private readonly ISlackRequestValidationConfiguration _validationConfiguration;
-    private readonly IEnumerable<ISlackRequestListener> _requestListeners;
-    private readonly ISlackHandlerFactory _handlerFactory;
-    private readonly SlackJsonSettings _jsonSettings;
-    private readonly ILogger _log;
-
-    public SlackRequestHandler(
-        ISlackRequestValidationConfiguration validationConfiguration,
-        IEnumerable<ISlackRequestListener> requestListeners,
-        ISlackHandlerFactory handlerFactory,
-        SlackJsonSettings jsonSettings,
-        ILogger logger)
-    {
-        _validationConfiguration = validationConfiguration;
-        _requestListeners = requestListeners;
-        _handlerFactory = handlerFactory;
-        _jsonSettings = jsonSettings;
-        _log = logger.ForSource<SlackRequestHandler>();
-    }
+    private readonly ILogger _log = logger.ForSource<SlackRequestHandler>();
 
     public Task<SlackResult> HandleEventRequest(HttpRequest request) =>
         InRequestContext(request,
@@ -89,7 +77,7 @@ class SlackRequestHandler : ISlackRequestHandler
         EmptyResult(HttpStatusCode.OK)
             .OnCompleted(() =>
                 {
-                    var handler = _handlerFactory.CreateEventHandler(requestContext);
+                    var handler = handlerFactory.CreateEventHandler(requestContext);
                     _log.RequestHandler(handler, eventCallback, "Handling {EventType} event", eventCallback.Event.Type);
                     return handler.Handle(eventCallback);
                 });
@@ -153,14 +141,14 @@ class SlackRequestHandler : ISlackRequestHandler
     private Task<SlackResult> HandleBlockActions(SlackRequestContext requestContext, BlockActionRequest blockActionRequest) =>
         RespondAsync(r =>
             {
-                var handler = _handlerFactory.CreateBlockActionHandler(requestContext);
+                var handler = handlerFactory.CreateBlockActionHandler(requestContext);
                 _log.RequestHandler(handler, blockActionRequest, "Handling {BlockActionType} block action", blockActionRequest.Action.Type);
                 return handler.Handle(blockActionRequest, r);
             });
 
     private async Task<SlackResult> HandleInteractiveMessage(SlackRequestContext requestContext, InteractiveMessage interactiveMessage)
     {
-        var handler = _handlerFactory.CreateLegacyInteractiveMessageHandler(requestContext);
+        var handler = handlerFactory.CreateLegacyInteractiveMessageHandler(requestContext);
         _log.RequestHandler(handler, interactiveMessage, "Handling {InteractiveMessageName} interactive message", interactiveMessage.Action.Name);
         var response = await handler.Handle(interactiveMessage).ConfigureAwait(false);
 
@@ -173,7 +161,7 @@ class SlackRequestHandler : ISlackRequestHandler
 
     private async Task<SlackResult> HandleDialogSubmission(SlackRequestContext requestContext, DialogSubmission dialog)
     {
-        var handler = _handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
+        var handler = handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
         _log.RequestHandler(handler, dialog, "Handling dialog submission for {CallbackId}", dialog.CallbackId);
         var errors = (await handler.Handle(dialog).ConfigureAwait(false))?.ToList()
             ?? new List<DialogError>();
@@ -186,7 +174,7 @@ class SlackRequestHandler : ISlackRequestHandler
 
     private async Task<SlackResult> HandleDialogCancellation(SlackRequestContext requestContext, DialogCancellation dialogCancellation)
     {
-        var handler = _handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
+        var handler = handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
         _log.RequestHandler(handler, dialogCancellation, "Handling dialog cancellation for {CallbackId}", dialogCancellation.CallbackId);
         await handler.HandleCancel(dialogCancellation).ConfigureAwait(false);
         return EmptyResult(HttpStatusCode.OK);
@@ -195,7 +183,7 @@ class SlackRequestHandler : ISlackRequestHandler
     private Task<SlackResult> HandleMessageShortcut(SlackRequestContext requestContext, MessageShortcut messageShortcut) =>
         RespondAsync(r =>
             {
-                var handler = _handlerFactory.CreateMessageShortcutHandler(requestContext);
+                var handler = handlerFactory.CreateMessageShortcutHandler(requestContext);
                 _log.RequestHandler(handler, messageShortcut, "Handling message shortcut for {CallbackId}", messageShortcut.CallbackId);
                 return handler.Handle(messageShortcut, r);
             });
@@ -203,7 +191,7 @@ class SlackRequestHandler : ISlackRequestHandler
     private Task<SlackResult> HandleGlobalShortcut(SlackRequestContext requestContext, GlobalShortcut globalShortcut) =>
         RespondAsync(r =>
             {
-                var handler = _handlerFactory.CreateGlobalShortcutHandler(requestContext);
+                var handler = handlerFactory.CreateGlobalShortcutHandler(requestContext);
                 _log.RequestHandler(handler, globalShortcut, "Handling global shortcut for {CallbackId}", globalShortcut.CallbackId);
                 return handler.Handle(globalShortcut, r);
             });
@@ -211,7 +199,7 @@ class SlackRequestHandler : ISlackRequestHandler
     private Task<SlackResult> HandleViewSubmission(SlackRequestContext requestContext, ViewSubmission viewSubmission) =>
         RespondAsync<ViewSubmissionResponse>(respond =>
                 {
-                    var handler = _handlerFactory.CreateViewSubmissionHandler(requestContext);
+                    var handler = handlerFactory.CreateViewSubmissionHandler(requestContext);
                     _log.RequestHandler(handler, viewSubmission, "Handling view submission for {CallbackId}", viewSubmission.View.CallbackId);
                     return handler.Handle(viewSubmission, respond);
                 },
@@ -223,7 +211,7 @@ class SlackRequestHandler : ISlackRequestHandler
     private Task<SlackResult> HandleViewClosed(SlackRequestContext requestContext, ViewClosed viewClosed) =>
         RespondAsync(r =>
             {
-                var handler = _handlerFactory.CreateViewSubmissionHandler(requestContext);
+                var handler = handlerFactory.CreateViewSubmissionHandler(requestContext);
                 _log.RequestHandler(handler, viewClosed, "Handling view close for {CallbackId}", viewClosed.View.CallbackId);
                 return handler.HandleClose(viewClosed, r);
             });
@@ -231,7 +219,7 @@ class SlackRequestHandler : ISlackRequestHandler
     private Task<SlackResult> HandleWorkflowStepEdit(SlackRequestContext requestContext, WorkflowStepEdit workflowStepEdit) =>
         RespondAsync(r =>
             {
-                var handler = _handlerFactory.CreateWorkflowStepEditHandler(requestContext);
+                var handler = handlerFactory.CreateWorkflowStepEditHandler(requestContext);
                 _log.RequestHandler(handler, workflowStepEdit, "Handling workflow step edit for {CallbackId}", workflowStepEdit.CallbackId);
                 return handler.Handle(workflowStepEdit, r);
             });
@@ -278,7 +266,7 @@ class SlackRequestHandler : ISlackRequestHandler
 
     private async Task<SlackResult> HandleLegacyOptionsRequest(SlackRequestContext requestContext, OptionsRequest optionsRequest)
     {
-        var handler = _handlerFactory.CreateLegacyOptionProvider(requestContext);
+        var handler = handlerFactory.CreateLegacyOptionProvider(requestContext);
         _log.RequestHandler(handler, optionsRequest, "Handling options request for {RequestName}", optionsRequest.Name);
         var response = await handler.GetOptions(optionsRequest).ConfigureAwait(false);
         return JsonResult(HttpStatusCode.OK, response);
@@ -286,7 +274,7 @@ class SlackRequestHandler : ISlackRequestHandler
 
     private async Task<SlackResult> HandleBlockOptionsRequest(SlackRequestContext requestContext, BlockOptionsRequest blockOptionsRequest)
     {
-        var handler = _handlerFactory.CreateBlockOptionProvider(requestContext);
+        var handler = handlerFactory.CreateBlockOptionProvider(requestContext);
         _log.RequestHandler(handler, blockOptionsRequest, "Handling block options request for {ActionId}", blockOptionsRequest.ActionId);
         var response = await handler.GetOptions(blockOptionsRequest).ConfigureAwait(false);
         return JsonResult(HttpStatusCode.OK, response);
@@ -326,7 +314,7 @@ class SlackRequestHandler : ISlackRequestHandler
                     return RequestValidation(requestBody, request.Headers, command.Token)
                         ?? await RespondAsync<SlashCommandResponse>(r =>
                                 {
-                                    var handler = _handlerFactory.CreateSlashCommandHandler(requestContext);
+                                    var handler = handlerFactory.CreateSlashCommandHandler(requestContext);
                                     _log.RequestHandler(handler, command, "Handling slash command {SlashCommand}", command.Command);
                                     return handler.Handle(command, r);
                                 },
@@ -381,7 +369,7 @@ class SlackRequestHandler : ISlackRequestHandler
             {
                 [nameof(SlackRequestContext.RequestId)] = request.HttpContext.TraceIdentifier
             };
-        var requestScope = requestContext.BeginRequest(_requestListeners);
+        var requestScope = requestContext.BeginRequest(requestListeners);
 
         try
         {
@@ -402,7 +390,7 @@ class SlackRequestHandler : ISlackRequestHandler
         new StringResult(status, body);
 
     private SlackResult JsonResult(HttpStatusCode status, object data) =>
-        new JsonResult(_jsonSettings, status, data);
+        new JsonResult(jsonSettings, status, data);
 
     private static async Task ReplaceRequestStreamWithMemoryStream(HttpRequest request)
     {
@@ -420,7 +408,7 @@ class SlackRequestHandler : ISlackRequestHandler
         var form = await request.ReadFormAsync().ConfigureAwait(false);
 
         return form["payload"]
-            .Select(p => JsonConvert.DeserializeObject<T>(p, _jsonSettings.SerializerSettings))
+            .Select(p => JsonConvert.DeserializeObject<T>(p, jsonSettings.SerializerSettings))
             .FirstOrDefault();
     }
 
@@ -435,7 +423,7 @@ class SlackRequestHandler : ISlackRequestHandler
         foreach (var key in form.Keys)
             json[key] = form[key].FirstOrDefault();
 
-        return json.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings));
+        return json.ToObject<T>(JsonSerializer.Create(jsonSettings.SerializerSettings));
     }
 
     private static async Task<string> ReadString(HttpRequest request)
@@ -445,7 +433,7 @@ class SlackRequestHandler : ISlackRequestHandler
     }
 
     private SlackResult EventRequestValidation(string requestBody, IHeaderDictionary headers, EventRequest eventRequest) =>
-        eventRequest is UrlVerification && !_validationConfiguration.VerifyEventUrl
+        eventRequest is UrlVerification && !validationConfiguration.VerifyEventUrl
             ? null
             : RequestValidation(requestBody, headers, eventRequest.Token);
 
@@ -468,11 +456,11 @@ class SlackRequestHandler : ISlackRequestHandler
 
     private bool IsValidSignature(string requestBody, IHeaderDictionary headers)
     {
-        if (string.IsNullOrEmpty(_validationConfiguration.SigningSecret))
+        if (string.IsNullOrEmpty(validationConfiguration.SigningSecret))
             return true;
         
         var encoding = new UTF8Encoding();
-        using var hmac = new HMACSHA256(encoding.GetBytes(_validationConfiguration.SigningSecret));
+        using var hmac = new HMACSHA256(encoding.GetBytes(validationConfiguration.SigningSecret));
 
         var hash = hmac.ComputeHash(encoding.GetBytes($"v0:{headers["X-Slack-Request-Timestamp"]}:{requestBody}"));
         var hashString = $"v0={BitConverter.ToString(hash).Replace("-", "").ToLower(CultureInfo.InvariantCulture)}";
@@ -481,13 +469,13 @@ class SlackRequestHandler : ISlackRequestHandler
     }
 
     private bool IsValidToken(string requestToken) =>
-        string.IsNullOrEmpty(_validationConfiguration.VerificationToken)
-        || requestToken == _validationConfiguration.VerificationToken;
+        string.IsNullOrEmpty(validationConfiguration.VerificationToken)
+        || requestToken == validationConfiguration.VerificationToken;
 
     private EventRequest DeserializeEventRequest(string requestBody)
     {
         using var stringReader = new StringReader(requestBody);
         using var jsonTextReader = new JsonTextReader(stringReader);
-        return JsonSerializer.Create(_jsonSettings.SerializerSettings).Deserialize<EventRequest>(jsonTextReader);
+        return JsonSerializer.Create(jsonSettings.SerializerSettings).Deserialize<EventRequest>(jsonTextReader);
     }
 }

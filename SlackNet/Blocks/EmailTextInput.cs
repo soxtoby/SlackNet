@@ -1,9 +1,7 @@
 namespace SlackNet.Blocks;
 
-public class EmailTextInput : TextInput
+public class EmailTextInput() : TextInput("email_text_input")
 {
-    public EmailTextInput() : base("email_text_input") { }
-
     /// <summary>
     /// The initial value in the input when it is loaded.
     /// </summary>
