@@ -22,4 +22,4 @@ build_script:
   - sh: ./build.cmd Test Pack
 
 artifacts:
-  - path: output/*.nupkg
+  - path: 'output/*.nupkg'

@@ -8,12 +8,11 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Serilog;
-using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 [DotNetVerbosityMapping]
 [ShutdownDotNetAfterServerBuild]
-[AppVeyor(AppVeyorImage.VisualStudioLatest, InvokedTargets = new[] { nameof(Test), nameof(Pack) })]
+[AppVeyor(AppVeyorImage.VisualStudioLatest, InvokedTargets = [nameof(Test), nameof(Pack)])]
 class Build : NukeBuild
 {
     public static int Main() => Execute<Build>(x => x.Compile);
@@ -31,8 +30,8 @@ class Build : NukeBuild
         .Executes(() =>
         {
             foreach (var dir in RootDirectory.GlobDirectories("**/bin", "**/obj").Except(RootDirectory.GlobDirectories("build/**")))
-                EnsureCleanDirectory(dir);
-            EnsureCleanDirectory(OutputDirectory);
+                dir.CreateOrCleanDirectory();
+            OutputDirectory.CreateOrCleanDirectory();
         });
 
     Target Restore => _ => _
@@ -90,7 +89,7 @@ class Build : NukeBuild
         });
 
     static readonly string[] ExpectedPackages =
-        {
+        [
             "SlackNet",
             "SlackNet.AspNetCore",
             "SlackNet.Autofac",
@@ -98,5 +97,5 @@ class Build : NukeBuild
             "SlackNet.Bot",
             "SlackNet.Extensions.DependencyInjection",
             "SlackNet.SimpleInjector"
-        };
+        ];
 }
