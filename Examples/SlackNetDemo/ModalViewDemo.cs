@@ -25,6 +25,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
     private const string CheckboxActionId = "checkbox";
     private const string SingleUserActionId = "single_user";
     private const string RichTextActionId = "rich_text_input";
+    private const string FileInputActionId = "file_input";
     public const string ModalCallbackId = "modal_demo";
 
     private readonly ISlackApiClient _slack;
@@ -157,6 +158,17 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                                         ActionId = RichTextActionId,
                                         Placeholder = "Enter some rich text"
                                     }
+                            },
+                        new InputBlock
+                            {
+                                Label = "File upload",
+                                BlockId = "file_input_block",
+                                Optional = true,
+                                Element = new FileInput
+                                    {
+                                        ActionId = FileInputActionId,
+                                        MaxFiles = 3
+                                    }
                             }
                     },
                 Submit = "Submit",
@@ -187,7 +199,8 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
                 { "Time", state.GetValue<TimePickerValue>(TimePickerActionId).SelectedTime?.ToString("hh\\:mm") ?? "none" },
                 { "Radio options", state.GetValue<RadioButtonGroupValue>(RadioActionId).SelectedOption?.Text.Text ?? "none" },
                 { "Checkbox options", string.Join(", ", state.GetValue<CheckboxGroupValue>(CheckboxActionId).SelectedOptions.Select(o => o.Text).DefaultIfEmpty("none")) },
-                { "Single user select", state.GetValue<UserSelectValue>(SingleUserActionId).SelectedUser is string userId ? Link.User(userId).ToString()! : "none" }
+                { "Single user select", state.GetValue<UserSelectValue>(SingleUserActionId).SelectedUser is string userId ? Link.User(userId).ToString()! : "none" },
+                { "Files", string.Join(", ", state.GetValue<FileInputValue>(FileInputActionId).Files.Select(f => f.Name).DefaultIfEmpty("none")) }
             };
         var richText = state.GetValue<RichTextInputValue>(RichTextActionId)?.RichTextValue
             ?? new RichTextBlock { Elements = { new RichTextSection { Elements = { new RichTextText { Text = "none" } } } } };
