@@ -9,6 +9,7 @@
     <RepositoryUrl>https://github.com/soxtoby/SlackNet.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Slack API RTM Bot</PackageTags>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <NoWarn>1591</NoWarn>
     <LangVersion>12</LangVersion>
   </PropertyGroup>
@@ -16,13 +17,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\$(TargetFramework)\SlackNet.Bot.xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SlackNet\SlackNet.csproj" />

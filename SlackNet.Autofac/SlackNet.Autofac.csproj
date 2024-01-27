@@ -10,6 +10,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>Slack API Events Autofac</PackageTags>
         <LangVersion>12</LangVersion>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
     </PropertyGroup>
 
     <ItemGroup>
@@ -18,10 +19,6 @@
 
     <ItemGroup>
       <PackageReference Include="Autofac" Version="6.1.0" />
-      <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
     </ItemGroup>
 
 </Project>

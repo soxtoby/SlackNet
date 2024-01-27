@@ -10,6 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>Slack API RTM Events AspNetCore</PackageTags>
     <UserSecretsId>841b14b1-9d6a-4ab7-9e1f-c1b2c227bb5f</UserSecretsId>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <NoWarn>0618;1591;1701;1702</NoWarn>
     <LangVersion>12</LangVersion>
   </PropertyGroup>
@@ -27,10 +28,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.22" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="1.1.8" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
   </ItemGroup>

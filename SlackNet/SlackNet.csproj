@@ -9,6 +9,7 @@
     <RepositoryUrl>https://github.com/soxtoby/SlackNet.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Slack API RTM Events</PackageTags>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <NoWarn>0618;1591;1701;1702;1812</NoWarn>
     <LangVersion>12</LangVersion>
   </PropertyGroup>
@@ -32,10 +33,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="WebSocket4Net" Version="0.15.1" />
