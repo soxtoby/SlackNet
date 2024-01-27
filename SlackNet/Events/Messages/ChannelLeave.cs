@@ -3,4 +3,4 @@
 /// <summary>
 /// Sent when a member of a channel leaves that channel.
 /// </summary>
-public class ChannelLeave : MessageEvent { }
+public class ChannelLeave : MessageEvent;

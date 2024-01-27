@@ -8,4 +8,4 @@ namespace SlackNet.SocketMode;
 /// and because <see cref="InteractiveMessage"/> and <see cref="OptionsRequest"/> have the same type name, there's no way to automatically deserialize the correct payload type.
 /// </remarks>
 [SlackType("interactive")]
-public class InteractionEnvelope : SocketEnvelope<JObject> { }
+public class InteractionEnvelope : SocketEnvelope<JObject>;

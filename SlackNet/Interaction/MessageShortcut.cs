@@ -12,4 +12,4 @@ public class MessageAction : InteractionRequest
 }
 
 [SlackType("message_action")]
-public class MessageShortcut : MessageAction { }
+public class MessageShortcut : MessageAction;

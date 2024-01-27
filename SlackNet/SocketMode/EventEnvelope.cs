@@ -3,4 +3,4 @@
 namespace SlackNet.SocketMode;
 
 [SlackType("events_api")]
-public class EventEnvelope : SocketEnvelope<EventCallback> { }
+public class EventEnvelope : SocketEnvelope<EventCallback>;

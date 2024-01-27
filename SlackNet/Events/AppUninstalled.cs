@@ -3,4 +3,4 @@
 /// <summary>
 /// Your Slack app was uninstalled.
 /// </summary>
-public class AppUninstalled : Event { }
+public class AppUninstalled : Event;

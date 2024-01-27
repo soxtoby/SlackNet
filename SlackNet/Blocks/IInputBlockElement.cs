@@ -1,3 +1,3 @@
 namespace SlackNet.Blocks;
 
-public interface IInputBlockElement : IActionElement { }
+public interface IInputBlockElement : IActionElement;

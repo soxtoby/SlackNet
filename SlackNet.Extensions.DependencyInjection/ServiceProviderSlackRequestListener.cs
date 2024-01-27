@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace SlackNet.Extensions.DependencyInjection;
 
-public interface IServiceProviderSlackRequestListener : ISlackRequestListener { }
+public interface IServiceProviderSlackRequestListener : ISlackRequestListener;
 
 class ServiceProviderSlackRequestListener : IServiceProviderSlackRequestListener
 {
