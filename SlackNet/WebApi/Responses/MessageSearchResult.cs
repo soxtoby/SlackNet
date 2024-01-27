@@ -14,8 +14,8 @@ public class MessageSearchResult
     public string User { get; set; }
     public string Username { get; set; }
     public string Ts { get; set; }
-    public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
-    public IList<Block> Blocks { get; set; } = new List<Block>();
+    public IList<Attachment> Attachments { get; set; } = [];
+    public IList<Block> Blocks { get; set; } = [];
     public string Text { get; set; }
     public string Permalink { get; set; }
     public bool NoReactions { get; set; }

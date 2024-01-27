@@ -14,12 +14,12 @@ public class MessageEvent : MessageEventBase
     /// </summary>
     public virtual bool Hidden => false;
     public int ReplyCount { get; set; }
-    public IList<string> ReplyUsers { get; set; } = new List<string>();
+    public IList<string> ReplyUsers { get; set; } = [];
     public int ReplyUsersCount { get; set; }
     public string LatestReply { get; set; }
     public bool IsStarred { get; set; }
-    public IList<Reaction> Reactions { get; set; } = new List<Reaction>();
-    public IList<string> PinnedTo { get; set; } = new List<string>();
+    public IList<Reaction> Reactions { get; set; } = [];
+    public IList<string> PinnedTo { get; set; } = [];
     public PinnedInfo PinnedInfo { get; set; }
     public MessageMetadata Metadata { get; set; }
     public string BotId { get; set; }

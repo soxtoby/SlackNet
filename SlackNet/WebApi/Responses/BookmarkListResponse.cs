@@ -4,5 +4,5 @@ namespace SlackNet.WebApi;
 
 public class BookmarkListResponse
 {
-    public IList<Bookmark> Bookmarks { get; set; } = new List<Bookmark>();
+    public IList<Bookmark> Bookmarks { get; set; } = [];
 }

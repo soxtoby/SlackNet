@@ -14,7 +14,7 @@ public class UserMultiSelectMenu : SelectMenuBase
     /// A list of user IDs of any valid users to be pre-selected when the menu loads.
     /// </summary>
     [IgnoreIfEmpty]
-    public IList<string> InitialUsers { get; set; } = new List<string>();
+    public IList<string> InitialUsers { get; set; } = [];
 
     /// <summary>
     /// Specifies the maximum number of items that can be selected in the menu. Minimum number is 1.
@@ -25,11 +25,11 @@ public class UserMultiSelectMenu : SelectMenuBase
 [SlackType("multi_users_select")]
 public class UserMultiSelectAction : BlockAction
 {
-    public IList<string> SelectedUsers { get; set; } = new List<string>();
+    public IList<string> SelectedUsers { get; set; } = [];
 }
 
 [SlackType("multi_users_select")]
 public class UserMultiSelectValue : ElementValue
 {
-    public IList<string> SelectedUsers { get; set; } = new List<string>();
+    public IList<string> SelectedUsers { get; set; } = [];
 }

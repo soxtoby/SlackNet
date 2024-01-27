@@ -15,7 +15,7 @@ public class StaticMultiSelectMenu : StaticSelectMenuBase
     /// These options will be selected when the menu initially loads.
     /// </summary>
     [IgnoreIfEmpty]
-    public IList<Option> InitialOptions { get; set; } = new List<Option>();
+    public IList<Option> InitialOptions { get; set; } = [];
 
     /// <summary>
     /// Specifies the maximum number of items that can be selected in the menu. Minimum number is 1.
@@ -26,11 +26,11 @@ public class StaticMultiSelectMenu : StaticSelectMenuBase
 [SlackType("multi_static_select")]
 public class StaticMultiSelectAction : BlockAction
 {
-    public IList<Option> SelectedOptions { get; set; } = new List<Option>();
+    public IList<Option> SelectedOptions { get; set; } = [];
 }
 
 [SlackType("multi_static_select")]
 public class StaticMultiSelectValue : ElementValue
 {
-    public IList<Option> SelectedOptions { get; set; } = new List<Option>();
+    public IList<Option> SelectedOptions { get; set; } = [];
 }

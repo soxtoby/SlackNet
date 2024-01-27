@@ -27,6 +27,6 @@ public class UserGroup
     public string UpdatedBy { get; set; }
     public string DeletedBy { get; set; }
     public UserGroupPreferences Prefs { get; set; }
-    public IList<string> Users { get; set; } = new List<string>();
+    public IList<string> Users { get; set; } = [];
     public int UserCount { get; set; }
 }

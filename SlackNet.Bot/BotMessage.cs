@@ -53,11 +53,11 @@ public class BotMessage
     /// <summary>
     /// Structured message attachments.
     /// </summary>
-    public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
+    public IList<Attachment> Attachments { get; set; } = [];
     /// <summary>
     /// Structured blocks.
     /// </summary>
-    public IList<Block> Blocks { get; set; } = new List<Block>();
+    public IList<Block> Blocks { get; set; } = [];
     /// <summary>
     /// Pass True to enable unfurling of primarily text-based content.
     /// </summary>

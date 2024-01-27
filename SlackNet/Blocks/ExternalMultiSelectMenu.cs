@@ -17,7 +17,7 @@ public class ExternalMultiSelectMenu : ExternalSelectMenuBase
     /// These options will be selected when the menu initially loads.
     /// </summary>
     [IgnoreIfEmpty]
-    public IList<Option> InitialOptions { get; set; } = new List<Option>();
+    public IList<Option> InitialOptions { get; set; } = [];
 
     /// <summary>
     /// Specifies the maximum number of items that can be selected in the menu. Minimum number is 1.
@@ -28,11 +28,11 @@ public class ExternalMultiSelectMenu : ExternalSelectMenuBase
 [SlackType("multi_external_select")]
 public class ExternalMultiSelectAction : BlockAction
 {
-    public IList<Option> SelectedOptions { get; set; } = new List<Option>();
+    public IList<Option> SelectedOptions { get; set; } = [];
 }
 
 [SlackType("multi_external_select")]
 public class ExternalMultiSelectValue : ElementValue
 {
-    public IList<Option> SelectedOptions { get; set; } = new List<Option>();
+    public IList<Option> SelectedOptions { get; set; } = [];
 }

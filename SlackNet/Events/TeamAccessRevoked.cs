@@ -4,5 +4,5 @@ namespace SlackNet.Events;
 
 public class TeamAccessRevoked : Event
 {
-    public IList<string> TeamIds { get; set; } = new List<string>();
+    public IList<string> TeamIds { get; set; } = [];
 }

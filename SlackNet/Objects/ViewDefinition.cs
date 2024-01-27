@@ -13,7 +13,7 @@ public abstract class ViewDefinition
     /// <summary>
     /// A list of blocks that defines the content of the view.
     /// </summary>
-    public IList<Block> Blocks { get; set; } = new List<Block>();
+    public IList<Block> Blocks { get; set; } = [];
 
     /// <summary>
     /// An optional string that will be sent to your app in <see cref="ViewSubmission"/> and <see cref="BlockActionRequest"/> events. 

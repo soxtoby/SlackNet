@@ -95,8 +95,8 @@ public class Message : IReadOnlyMessage
     public string Text { get; set; }
     public ParseMode Parse { get; set; }
     public bool LinkNames { get; set; }
-    public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
-    public IList<Block> Blocks { get; set; } = new List<Block>();
+    public IList<Attachment> Attachments { get; set; } = [];
+    public IList<Block> Blocks { get; set; } = [];
     public bool UnfurlLinks { get; set; }
     public bool UnfurlMedia { get; set; } = true;
     public string Username { get; set; }

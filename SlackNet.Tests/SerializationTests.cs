@@ -103,14 +103,14 @@ public class SerializationTests
     [Test]
     public void IgnoreIfEmpty_IsEmpty_Ignored()
     {
-        var result = Serialize(new IgnoreIfEmptyProperty { List = new List<string>() });
+        var result = Serialize(new IgnoreIfEmptyProperty { List = [] });
         result.ShouldBe("{}");
     }
 
     [Test]
     public void IgnoreIfEmpty_NotEmpty_Serialized()
     {
-        var result = Serialize(new IgnoreIfEmptyProperty { List = new List<string> { "foo" } });
+        var result = Serialize(new IgnoreIfEmptyProperty { List = ["foo"] });
         result.ShouldBe(@"{""list"":[""foo""]}");
     }
 

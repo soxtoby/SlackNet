@@ -8,12 +8,12 @@ namespace SlackNet.Interaction;
 public class InteractiveMessage : InteractionRequest
 {
     public string CallbackId { get; set; }
-    public IList<ActionElement> Actions { get; set; } = new List<ActionElement>();
+    public IList<ActionElement> Actions { get; set; } = [];
     [JsonIgnore]
     public ActionElement Action
     {
         get => Actions.First();
-        set => Actions = new List<ActionElement> { value };
+        set => Actions = [value];
     }
     public string MessageTs { get; set; }
     public string AttachmentId { get; set; }

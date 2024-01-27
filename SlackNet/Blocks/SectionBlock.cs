@@ -20,7 +20,7 @@ public class SectionBlock : Block
     /// An array of text objects. Any text objects included with fields will be rendered in a compact format that allows for 2 columns of side-by-side text.
     /// </summary>
     [IgnoreIfEmpty]
-    public IList<TextObject> Fields { get; set; } = new List<TextObject>();
+    public IList<TextObject> Fields { get; set; } = [];
 
     /// <summary>
     /// One of the available element objects.

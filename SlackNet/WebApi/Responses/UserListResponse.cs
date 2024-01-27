@@ -6,7 +6,7 @@ namespace SlackNet.WebApi;
 
 public class UserListResponse
 {
-    public IList<User> Members { get; set; } = new List<User>();
+    public IList<User> Members { get; set; } = [];
     public int CacheTs { get; set; }
     [JsonIgnore]
     public DateTime CacheTime => CacheTs.ToDateTime().GetValueOrDefault();

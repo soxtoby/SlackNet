@@ -14,7 +14,7 @@ public class ChannelMultiSelectMenu : SelectMenuBase
     /// A list of one or more IDs of any valid public channel to be pre-selected when the menu loads.
     /// </summary>
     [IgnoreIfEmpty]
-    public IList<string> InitialChannels { get; set; } = new List<string>();
+    public IList<string> InitialChannels { get; set; } = [];
 
     /// <summary>
     /// Specifies the maximum number of items that can be selected in the menu. Minimum number is 1.
@@ -25,11 +25,11 @@ public class ChannelMultiSelectMenu : SelectMenuBase
 [SlackType("multi_channels_select")]
 public class ChannelMultiSelectAction : BlockAction
 {
-    public IList<string> SelectedChannels { get; set; } = new List<string>();
+    public IList<string> SelectedChannels { get; set; } = [];
 }
 
 [SlackType("multi_channels_select")]
 public class ChannelMultiSelectValue : ElementValue
 {
-    public IList<string> SelectedChannels { get; set; } = new List<string>();
+    public IList<string> SelectedChannels { get; set; } = [];
 }

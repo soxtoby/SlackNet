@@ -10,6 +10,6 @@ public class SharedChannelInviteAccepted : Event
     public string RecipientEmail { get; set; }
     public string RecipientUserId { get; set; }
     public InviteChannel Channel { get; set; }
-    public IList<ConnectedTeam> TeamsInChannel { get; set; } = new List<ConnectedTeam>();
+    public IList<ConnectedTeam> TeamsInChannel { get; set; } = [];
     public User AcceptingUser { get; set; }
 }

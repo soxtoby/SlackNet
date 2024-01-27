@@ -13,5 +13,5 @@ public class ActionsBlock : Block
     /// <summary>
     /// An array of interactive element objects.
     /// </summary>
-    public IList<IActionElement> Elements { get; set; } = new List<IActionElement>();
+    public IList<IActionElement> Elements { get; set; } = [];
 }

@@ -9,5 +9,5 @@ public class Dialog
     public string SubmitLabel { get; set; }
     public bool NotifyOnCancel { get; set; }
     public string State { get; set; }
-    public IList<DialogElement> Elements { get; set; } = new List<DialogElement>();
+    public IList<DialogElement> Elements { get; set; } = [];
 }

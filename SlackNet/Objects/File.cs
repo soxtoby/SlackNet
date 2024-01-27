@@ -49,7 +49,7 @@ public class File
     public bool IsStarred { get; set; }
     public string[] PinnedTo { get; set; }
     public FileShares Shares { get; set; }
-    public IList<Reaction> Reactions { get; set; } = new List<Reaction>();
+    public IList<Reaction> Reactions { get; set; } = [];
     public int CommentsCount { get; set; }
     public string ExternalId { get; set; }
     public string ExternalUrl { get; set; }

@@ -4,7 +4,7 @@ namespace SlackNet.WebApi;
 
 public class AccessLogsResponse
 {
-    public IList<Login> Logins { get; set; } = new List<Login>();
+    public IList<Login> Logins { get; set; } = [];
     public Paging Paging { get; set; }
     public ResponseMetadata ResponseMetadata { get; set; } = new();
 }

@@ -8,5 +8,5 @@ namespace SlackNet.Events;
 [SlackType("channel_archive")]
 public class ChannelArchiveMessage : MessageEvent
 {
-    public IList<string> Members { get; set; } = new List<string>();
+    public IList<string> Members { get; set; } = [];
 }

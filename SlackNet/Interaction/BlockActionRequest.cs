@@ -14,7 +14,7 @@ public class BlockActionRequest : InteractionRequest
     public MessageEvent Message { get; set; }
     public ViewInfo View { get; set; }
     public ViewState State { get; set; }
-    public IList<BlockAction> Actions { get; set; } = new List<BlockAction>();
+    public IList<BlockAction> Actions { get; set; } = [];
     [JsonIgnore]
     public BlockAction Action => Actions.First();
 }

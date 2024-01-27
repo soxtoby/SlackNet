@@ -8,7 +8,7 @@ public class RichTextBlock : Block
 {
     public RichTextBlock() : base("rich_text") { }
 
-    public IList<RichTextElement> Elements { get; set; } = new List<RichTextElement>();
+    public IList<RichTextElement> Elements { get; set; } = [];
 }
 
 public abstract class RichTextElement
@@ -22,7 +22,7 @@ public class RichTextSection : RichTextElement
 {
     public RichTextSection(): base("rich_text_section") { }
     
-    public IList<RichTextSectionElement> Elements { get; set; } = new List<RichTextSectionElement>();
+    public IList<RichTextSectionElement> Elements { get; set; } = [];
 }
 
 public abstract class RichTextSectionElement
@@ -126,7 +126,7 @@ public class RichTextList : RichTextElement
 {
     public RichTextList() : base("rich_text_list") { }
     
-    public IList<RichTextElement> Elements { get; set; } = new List<RichTextElement>();
+    public IList<RichTextElement> Elements { get; set; } = [];
     public string Style { get; set; }
     public int Indent { get; set; }
     public int Border { get; set; }
@@ -136,14 +136,14 @@ public class RichTextQuote : RichTextElement
 {
     public RichTextQuote() : base("rich_text_quote") { }
     
-    public IList<RichTextSectionElement> Elements { get; set; } = new List<RichTextSectionElement>();
+    public IList<RichTextSectionElement> Elements { get; set; } = [];
 }
 
 public class RichTextPreformatted : RichTextElement
 {
     public RichTextPreformatted() : base("rich_text_preformatted") { }
     
-    public IList<RichTextSectionElement> Elements { get; set; } = new List<RichTextSectionElement>();
+    public IList<RichTextSectionElement> Elements { get; set; } = [];
 }
 
 public class RichTextStyle

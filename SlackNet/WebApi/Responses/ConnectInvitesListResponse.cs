@@ -16,7 +16,7 @@ public class PendingInvite
     public string InviteType { get; set; }
     public Invite Invite { get; set; }
     public InviteChannel Channel { get; set; }
-    public IList<InviteAcceptance> Acceptances { get; set; } = new List<InviteAcceptance>();
+    public IList<InviteAcceptance> Acceptances { get; set; } = [];
 }
 
 public class InviteAcceptance
@@ -27,7 +27,7 @@ public class InviteAcceptance
     public int DateLastUpdated { get; set; }
     public ConnectedTeam AcceptingTeam { get; set; }
     public User AcceptingUser { get; set; }
-    public IList<InviteReview> Reviews { get; set; } = new List<InviteReview>();
+    public IList<InviteReview> Reviews { get; set; } = [];
 }
 
 public class InviteReview

@@ -16,6 +16,6 @@ public class SlackException : Exception
             : $"Slack returned an error response: {errorResponse.Error}.")
     {
         ErrorCode = errorResponse?.Error ?? "unknown";
-        ErrorMessages = errorResponse?.ResponseMetadata?.Messages.ToList() ?? new List<string>();
+        ErrorMessages = errorResponse?.ResponseMetadata?.Messages.ToList() ?? [];
     }
 }

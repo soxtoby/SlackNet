@@ -12,8 +12,8 @@ public class SubteamMembersChanged : Event
     public string TeamId { get; set; }
     public int DatePreviousUpdate { get; set; }
     public int DateUpdate { get; set; }
-    public IList<string> AddedUsers { get; set; } = new List<string>();
+    public IList<string> AddedUsers { get; set; } = [];
     public string AddedUsersCount { get; set; }
-    public IList<string> RemovedUsers { get; set; } = new List<string>();
+    public IList<string> RemovedUsers { get; set; } = [];
     public string RemovedUsersCount { get; set; }
 }

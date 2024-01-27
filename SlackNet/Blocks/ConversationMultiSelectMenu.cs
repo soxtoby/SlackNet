@@ -14,7 +14,7 @@ public class ConversationMultiSelectMenu : SelectMenuBase
     /// A list of one or more IDs of any valid conversations to be pre-selected when the menu loads.
     /// </summary>
     [IgnoreIfEmpty]
-    public IList<string> InitialConversations { get; set; } = new List<string>();
+    public IList<string> InitialConversations { get; set; } = [];
 
     /// <summary>
     /// Specifies the maximum number of items that can be selected in the menu. Minimum number is 1.
@@ -36,11 +36,11 @@ public class ConversationMultiSelectMenu : SelectMenuBase
 [SlackType("multi_conversations_select")]
 public class ConversationMultiSelectAction : BlockAction
 {
-    public IList<string> SelectedConversations { get; set; } = new List<string>();
+    public IList<string> SelectedConversations { get; set; } = [];
 }
 
 [SlackType("multi_conversations_select")]
 public class ConversationMultiSelectValue : ElementValue
 {
-    public IList<string> SelectedConversations { get; set; } = new List<string>();
+    public IList<string> SelectedConversations { get; set; } = [];
 }

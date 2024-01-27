@@ -13,5 +13,5 @@ public class ContextBlock : Block
     /// <summary>
     /// An array of image elements and text objects. 
     /// </summary>
-    public IList<IContextElement> Elements { get; set; } = new List<IContextElement>();
+    public IList<IContextElement> Elements { get; set; } = [];
 }

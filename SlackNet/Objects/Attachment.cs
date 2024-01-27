@@ -46,9 +46,9 @@ public class Attachment : IReadOnlyAttachment
     /// Structured blocks. If any blocks are specified, then no other properties can be set, except <see cref="Color"/>.
     /// </summary>
     [IgnoreIfEmpty]
-    public IList<Block> Blocks { get; set; } = new List<Block>();
+    public IList<Block> Blocks { get; set; } = [];
     [IgnoreIfEmpty]
-    public IList<MessageBlock> MessageBlocks { get; set; } = new List<MessageBlock>();
+    public IList<MessageBlock> MessageBlocks { get; set; } = [];
     public string Color { get; set; }
     public string Id { get; set; }
     public string Fallback { get; set; }
@@ -63,7 +63,7 @@ public class Attachment : IReadOnlyAttachment
     public string TitleLink { get; set; }
     public string Text { get; set; }
     [IgnoreIfEmpty]
-    public IList<Field> Fields { get; set; } = new List<Field>();
+    public IList<Field> Fields { get; set; } = [];
     public string ImageUrl { get; set; }
     public string ThumbUrl { get; set; }
     public int? ThumbWidth { get; set; }
@@ -77,7 +77,7 @@ public class Attachment : IReadOnlyAttachment
     public DateTime? Timestamp => Ts?.ToDateTime().GetValueOrDefault();
     public string CallbackId { get; set; }
     [IgnoreIfEmpty]
-    public IList<ActionElement> Actions { get; set; } = new List<ActionElement>();
+    public IList<ActionElement> Actions { get; set; } = [];
     public string ChannelTeam { get; set; }
     public string ChannelId { get; set; }
     public string ChannelName { get; set; }

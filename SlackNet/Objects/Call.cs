@@ -17,5 +17,5 @@ public class Call
     public string DesktopAppJoinUrl { get; set; }
     public string ExternalDisplayId { get; set; }
     public string Title { get; set; }
-    public IList<CallUser> Users { get; set; } = new List<CallUser>();
+    public IList<CallUser> Users { get; set; } = [];
 }

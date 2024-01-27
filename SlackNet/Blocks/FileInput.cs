@@ -19,7 +19,7 @@ public class FileInput() : BlockElement("file_input"), IInputBlockElement
     /// </summary>
     [IgnoreIfEmpty]
     [JsonProperty("filetypes")]
-    public IList<string> FileTypes { get; set; } = new List<string>();
+    public IList<string> FileTypes { get; set; } = [];
 
     /// <summary>
     /// Maximum number of files that can be uploaded for this element.

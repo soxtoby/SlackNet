@@ -18,10 +18,10 @@ public abstract class MessageEventBase : Event
     public string ThreadTs { get; set; }
     [JsonIgnore]
     public DateTime? ThreadTimestamp => ThreadTs.ToDateTime();
-    public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
-    public IList<Block> Blocks { get; set; } = new List<Block>();
+    public IList<Attachment> Attachments { get; set; } = [];
+    public IList<Block> Blocks { get; set; } = [];
     public Edit Edited { get; set; }
-    public IList<File> Files { get; set; } = new List<File>();
+    public IList<File> Files { get; set; } = [];
     /// <summary>
     /// Indicates whether a file share happened at upload time, or some time later.
     /// </summary>

@@ -19,7 +19,7 @@ public class OverflowMenu : ActionElement
     /// <summary>
     /// A list of option objects to display in the menu.
     /// </summary>
-    public IList<OverflowOption> Options { get; set; } = new List<OverflowOption>();
+    public IList<OverflowOption> Options { get; set; } = [];
 }
 
 [SlackType("overflow")]

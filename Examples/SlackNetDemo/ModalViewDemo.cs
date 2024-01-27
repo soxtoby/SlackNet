@@ -177,12 +177,12 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
             });
     }
 
-    private static IList<Option> ExampleOptions() => new List<Option>
-        {
+    private static IList<Option> ExampleOptions() =>
+        [
             new() { Text = "One", Value = "1" },
             new() { Text = "Two", Value = "2" },
             new() { Text = "Three", Value = "3" }
-        };
+        ];
 
     public async Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission)
     {

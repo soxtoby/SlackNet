@@ -12,7 +12,7 @@ public class LinkShared : Event
     public string MessageTs { get; set; }
     public string UnfurlId { get; set; }
     public LinkSource Source { get; set; }
-    public IList<SharedLink> Links { get; set; } = new List<SharedLink>();
+    public IList<SharedLink> Links { get; set; } = [];
 }
 
 public enum LinkSource

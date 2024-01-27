@@ -146,7 +146,7 @@ public class Conversation
     /// <summary>
     /// A list of user IDs for all users in this channel. This includes any disabled accounts that were in this channel when they were disabled.
     /// </summary>
-    public IList<string> Members { get; set; } = new List<string>();
+    public IList<string> Members { get; set; } = [];
 
     /// <summary>
     /// The other user in an IM.

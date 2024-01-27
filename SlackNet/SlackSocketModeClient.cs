@@ -190,7 +190,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
         var handler = _handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
         _log.RequestHandler(handler, dialogSubmission, "Handling dialog submission for {CallbackId}", dialogSubmission.CallbackId);
         var errors = (await handler.Handle(dialogSubmission).ConfigureAwait(false))?.ToList()
-            ?? new List<DialogError>();
+            ?? [];
 
         if (errors.Any())
             respond(new DialogErrorResponse { Errors = errors });

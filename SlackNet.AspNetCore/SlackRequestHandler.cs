@@ -164,7 +164,7 @@ class SlackRequestHandler(
         var handler = handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
         _log.RequestHandler(handler, dialog, "Handling dialog submission for {CallbackId}", dialog.CallbackId);
         var errors = (await handler.Handle(dialog).ConfigureAwait(false))?.ToList()
-            ?? new List<DialogError>();
+            ?? [];
 
         var body = new DialogErrorResponse { Errors = errors };
         return errors.Any()

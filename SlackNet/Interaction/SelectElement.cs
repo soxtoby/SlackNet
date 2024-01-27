@@ -6,6 +6,6 @@ public class SelectElement : DialogElement
 {
     public SelectElement() : base("select") { }
 
-    public IList<SelectOption> Options { get; set; } = new List<SelectOption>();
+    public IList<SelectOption> Options { get; set; } = [];
     public DataSource DataSource { get; set; }
 }

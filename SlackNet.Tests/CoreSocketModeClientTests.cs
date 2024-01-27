@@ -39,7 +39,7 @@ public class CoreSocketModeClientTests
             Scheduler.Default,
             _logger);
 
-        _messages = new List<SocketMessage>();
+        _messages = [];
         _sut.Messages.Subscribe(_messages.Add);
             
         slack.AppsConnectionsApi.Open(Arg.Any<CancellationToken>()).Returns(new ConnectionOpenResponse { Ok = true, Url = "some url" });

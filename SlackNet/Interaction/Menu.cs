@@ -13,13 +13,13 @@ public class Menu : ActionElement
     public IList<OptionGroup> OptionGroups { get; set; }
     public DataSource DataSource { get; set; }
     public int MinQueryLength { get; set; } = 1;
-    public IList<Option> SelectedOptions { get; set; } = new List<Option>();
+    public IList<Option> SelectedOptions { get; set; } = [];
 
     [JsonIgnore]
     public string SelectedValue
     {
         get => SelectedOptions.FirstOrDefault()?.Value;
         set => SelectedOptions = Options?.Where(o => o.Value == value).ToList()
-            ?? new List<Option> { new() { Value = value } };
+            ?? [new Option { Value = value }];
     }
 }

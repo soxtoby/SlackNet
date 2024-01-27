@@ -14,7 +14,7 @@ public class PresenceChange : Event
     public string User
     {
         get => Users?.First();
-        set => Users = new List<string> { value };
+        set => Users = [value];
     }
     public Presence Presence { get; set; }
 }

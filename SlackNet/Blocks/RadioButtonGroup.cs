@@ -13,7 +13,7 @@ public class RadioButtonGroup : ActionElement, IInputBlockElement
     /// <summary>
     /// An array of <see cref="Option"/> objects.
     /// </summary>
-    public IList<Option> Options { get; set; } = new List<Option>();
+    public IList<Option> Options { get; set; } = [];
 
     /// <summary>
     /// An <see cref="Option"/> object that exactly matches one of the options within <see cref="Options"/>.

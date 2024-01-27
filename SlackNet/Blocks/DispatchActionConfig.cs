@@ -11,7 +11,7 @@ public class DispatchActionConfig
     /// An array of <see cref="InteractionType"/> that you would like to receive a <see cref="BlockAction"/> payload for.
     /// </summary>
     [IgnoreIfEmpty]
-    public IList<InteractionType> TriggerActionsOn { get; set; } = new List<InteractionType>();
+    public IList<InteractionType> TriggerActionsOn { get; set; } = [];
 }
 
 public enum InteractionType

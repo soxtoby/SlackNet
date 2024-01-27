@@ -12,7 +12,7 @@ public class InstanceTracker
     {
         var type = instance.GetType();
         if (!_instances.ContainsKey(type))
-            _instances[type] = new List<object>();
+            _instances[type] = [];
         _instances[type].Add(instance);
         return _instances[type].Count;
     }

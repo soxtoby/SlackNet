@@ -23,11 +23,11 @@ public class SlackMessage : IMessage
     public string ThreadTs { get; set; }
     [JsonIgnore]
     public DateTime ThreadTimestamp => Ts.ToDateTime().GetValueOrDefault();
-    public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
+    public IList<Attachment> Attachments { get; set; } = [];
 
-    public IList<File> Files { get; set; } = new List<File>();
+    public IList<File> Files { get; set; } = [];
 
-    public IList<Block> Blocks { get; set; } = new List<Block>();
+    public IList<Block> Blocks { get; set; } = [];
     public bool IsInThread => ThreadTs != null;
 
     public bool MentionsBot =>

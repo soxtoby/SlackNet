@@ -36,5 +36,5 @@ public class WorkflowStep
     /// A list of <see cref="WorkflowOutput"/> objects created during step execution.
     /// This is the data your app promises to provide when your workflow step is executed.
     /// </summary>
-    public IList<WorkflowOutput> Outputs { get; set; } = new List<WorkflowOutput>();
+    public IList<WorkflowOutput> Outputs { get; set; } = [];
 }
