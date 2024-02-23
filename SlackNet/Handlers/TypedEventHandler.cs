@@ -10,10 +10,11 @@ public class TypedEventHandler<TEvent> : IEventHandler, IComposedHandler<EventCa
     private readonly IEventHandler<TEvent> _eventHandler;
     public TypedEventHandler(IEventHandler<TEvent> eventHandler) => _eventHandler = eventHandler;
 
-    public Task Handle(EventCallback eventCallback) =>
+    public Task Handle(EventCallback eventCallback) => 
         eventCallback.Event is TEvent slackEvent
-            ? _eventHandler.Handle(slackEvent)
+            ? Task.WhenAll(_eventHandler.Handle(slackEvent), _eventHandler.HandleWithContext(slackEvent, new EventContext(eventCallback)))
             : Task.CompletedTask;
+    
 
     IEnumerable<object> IComposedHandler<EventCallback>.InnerHandlers(EventCallback eventCallback) =>
         eventCallback.Event is TEvent

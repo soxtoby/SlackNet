@@ -11,4 +11,9 @@ public interface IEventHandler
 public interface IEventHandler<in T> where T: Event
 {
     Task Handle(T slackEvent);
+
+    Task HandleWithContext(T slackEvent, EventContext context)
+    {
+        return Task.CompletedTask;
+    }
 }
