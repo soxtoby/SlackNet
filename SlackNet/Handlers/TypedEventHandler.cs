@@ -12,9 +12,14 @@ public class TypedEventHandler<TEvent> : IEventHandler, IComposedHandler<EventCa
 
     public Task Handle(EventCallback eventCallback) => 
         eventCallback.Event is TEvent slackEvent
-            ? Task.WhenAll(_eventHandler.Handle(slackEvent), _eventHandler.HandleWithContext(slackEvent, new EventContext(eventCallback)))
+            ? Task.WhenAll(_eventHandler.Handle(slackEvent)
+            #if NETSTANDARD2_1_OR_GREATER
+                , _eventHandler.HandleWithContext(slackEvent, new EventContext(eventCallback))
+            #endif
+            )
             : Task.CompletedTask;
     
+
 
     IEnumerable<object> IComposedHandler<EventCallback>.InnerHandlers(EventCallback eventCallback) =>
         eventCallback.Event is TEvent
