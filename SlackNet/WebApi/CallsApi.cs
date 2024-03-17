@@ -14,7 +14,7 @@ public interface ICallsApi
     /// <remarks>See the <a href="https://api.slack.com/methods/calls.add">Slack documentation</a> for more information.</remarks>
     /// <param name="externalUniqueId">An ID supplied by the 3rd-party Call provider. It must be unique across all Calls from that service.</param>
     /// <param name="joinUrl">The URL required for a client to join the Call.</param>
-    /// <param name="createdByUserId">The valid Slack user ID of the user who created this Call. When this method is called with a user token, the <see cref="createdBy"/> parameter is optional and defaults to the authed user of the token. Otherwise, the field is required.</param>
+    /// <param name="createdByUserId">The valid Slack user ID of the user who created this Call. When this method is called with a user token, the <see cref="createdByUserId"/> parameter is optional and defaults to the authed user of the token. Otherwise, the field is required.</param>
     /// <param name="dateStart">Call start time.</param>
     /// <param name="desktopAppJoinUrl">When supplied, available Slack clients will attempt to directly launch the 3rd-party Call with this URL.</param>
     /// <param name="externalDisplayId">An optional, human-readable ID supplied by the 3rd-party Call provider. If supplied, this ID will be displayed in the Call object.</param>

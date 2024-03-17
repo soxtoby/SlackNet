@@ -13,7 +13,9 @@ public class SlackException : Exception
     public SlackException(ErrorResponse errorResponse)
         : base(errorResponse == null
             ? "Slack returned an unknown error response type"
-            : $"Slack returned an error response: {errorResponse.Error}.")
+            : string.Join(Environment.NewLine,
+                new[] { $"Slack returned an error response: {errorResponse.Error}." }
+                    .Concat(errorResponse.ResponseMetadata?.Messages ?? [])))
     {
         ErrorCode = errorResponse?.Error ?? "unknown";
         ErrorMessages = errorResponse?.ResponseMetadata?.Messages.ToList() ?? [];
