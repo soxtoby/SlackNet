@@ -3,6 +3,10 @@ using Newtonsoft.Json;
 
 namespace SlackNet.Blocks;
 
+/// <summary>
+/// Displays formatted, structured representation of text.
+/// </summary>
+/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text">Slack documentation</a> for more information.</remarks>
 [SlackType("rich_text")]
 public class RichTextBlock : Block
 {
@@ -18,6 +22,10 @@ public abstract class RichTextElement
     public string Type { get; set; }
 }
 
+/// <summary>
+/// Section element.
+/// </summary>
+/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_section">Slack documentation</a> for more information.</remarks>
 public class RichTextSection : RichTextElement
 {
     public RichTextSection(): base("rich_text_section") { }
@@ -122,34 +130,101 @@ public class RichTextBroadcast : RichTextSectionElement
     public RichTextStyle Style { get; set; } = new();
 }
 
+/// <summary>
+/// List element.
+/// </summary>
+/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_list">Slack documentation</a> for more information.</remarks>
 public class RichTextList : RichTextElement
 {
     public RichTextList() : base("rich_text_list") { }
     
-    public IList<RichTextElement> Elements { get; set; } = [];
-    public string Style { get; set; }
+    /// <summary>
+    /// An array of <see cref="RichTextSection"/> objects.
+    /// </summary>
+    public IList<RichTextSection> Elements { get; set; } = [];
+    
+    /// <summary>
+    /// Either <see cref="RichTextListStyle.Bullet"/> or <see cref="RichTextListStyle.Ordered"/>, the latter meaning a numbered list.
+    /// </summary>
+    public RichTextListStyle Style { get; set; }
+    
+    /// <summary>
+    /// Levels of indentation.
+    /// </summary>
     public int Indent { get; set; }
+    
+    /// <summary>
+    /// Number of pixels to offset the list.
+    /// </summary>
+    public int Offset { get; set; }
+    
+    /// <summary>
+    /// Number of pixels of border thickness.
+    /// </summary>
     public int Border { get; set; }
 }
 
+public enum RichTextListStyle
+{
+    Bullet,
+    Ordered
+}
+
+/// <summary>
+/// Quote element.
+/// </summary>
+/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_quote">Slack documentation</a> for more information.</remarks>
 public class RichTextQuote : RichTextElement
 {
     public RichTextQuote() : base("rich_text_quote") { }
     
+    /// <summary>
+    /// An array of rich text elements.
+    /// </summary>
     public IList<RichTextSectionElement> Elements { get; set; } = [];
+
+    /// <summary>
+    /// Number of pixels of border thickness.
+    /// </summary>
+    public int Border { get; set; }
 }
 
+/// <summary>
+/// Preformatted code block element.
+/// </summary>
+/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_preformatted">Slack documentation</a> for more information.</remarks>
 public class RichTextPreformatted : RichTextElement
 {
     public RichTextPreformatted() : base("rich_text_preformatted") { }
     
+    /// <summary>
+    /// An array of rich text elements.
+    /// </summary>
     public IList<RichTextSectionElement> Elements { get; set; } = [];
+
+    /// <summary>
+    /// Number of pixels of border thickness.
+    /// </summary>
+    public int Border { get; set; }
 }
 
+/// <summary>
+/// Rich text styling. Note that not all properties are supported by all elements.
+/// </summary>
 public class RichTextStyle
 {
+    [IgnoreIfDefault]
     public bool Bold { get; set; }
-    public bool Code { get; set; }
+    [IgnoreIfDefault]
     public bool Italic { get; set; }
+    [IgnoreIfDefault]
     public bool Strike { get; set; }
+    [IgnoreIfDefault]
+    public bool Code { get; set; }
+    [IgnoreIfDefault]
+    public bool Highlight { get; set; }
+    [IgnoreIfDefault]
+    public bool ClientHighlight { get; set; }
+    [IgnoreIfDefault]
+    public bool Unlink { get; set; }
 }
