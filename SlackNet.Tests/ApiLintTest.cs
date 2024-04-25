@@ -22,8 +22,8 @@ public class ApiLintTest
     public void Lint(Type api)
     {
         var client = new FakeClient();
-        var instance = api.GetConstructor(BindingFlags.Public | BindingFlags.Instance, new[] { typeof(ISlackApiClient), typeof(SlackJsonSettings) }) is not null
-            ? Activator.CreateInstance(api, client, Default.JsonSettings())
+        var instance = GetConstructor<SlackJsonSettings>(api) is not null ? Activator.CreateInstance(api, client, Default.JsonSettings())
+            : GetConstructor<IHttp>(api) is not null ? Activator.CreateInstance(api, client, new FakeHttp())
             : Activator.CreateInstance(api, client);
 
         var apiInterface = GetApiInterface(api);
@@ -46,6 +46,9 @@ public class ApiLintTest
             AllArgsShouldBeSnakeCase(client.Args, method);
         }
     }
+
+    private static ConstructorInfo GetConstructor<TExtraParam>(Type api) => 
+        api.GetConstructor(BindingFlags.Public | BindingFlags.Instance, [typeof(ISlackApiClient), typeof(TExtraParam)]);
 
     private static Type GetApiInterface(Type api)
     {
@@ -139,6 +142,9 @@ public class ApiLintTest
             { typeof(IDictionary<string, string>), _ => new Dictionary<string, string>() },
             { typeof(IEnumerable<WorkflowOutput>), _ => Enumerable.Empty<WorkflowOutput>() },
             { typeof(WorkflowError), _ => new WorkflowError() },
+            { typeof(IEnumerable<ExternalFileReference>), _ => Enumerable.Empty<ExternalFileReference>() },
+            { typeof(FileUpload), _ => new FileUpload(string.Empty, string.Empty) },
+            { typeof(IEnumerable<FileUpload>), _ => Enumerable.Empty<FileUpload>() },
             { typeof(CancellationToken?), _ => null },
         };
 
@@ -237,5 +243,10 @@ public class ApiLintTest
         public IUserProfileApi UserProfile { get; }
         public IViewsApi Views { get; }
         public IWorkflowsApi Workflows { get; }
+    }
+
+    class FakeHttp : IHttp
+    {
+        public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null) => Task.FromResult(Activator.CreateInstance<T>());
     }
 }

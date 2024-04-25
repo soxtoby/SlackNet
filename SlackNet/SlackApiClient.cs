@@ -170,7 +170,7 @@ public class SlackApiClient : ISlackApiClient
     public IDndApi Dnd => new DndApi(this);
     public IEmojiApi Emoji => new EmojiApi(this);
     public IFileCommentsApi FileComments => new FileCommentsApi(this);
-    public IFilesApi Files => new FilesApi(this);
+    public IFilesApi Files => new FilesApi(this, _http);
     public IMigrationApi Migration => new MigrationApi(this);
     public IOAuthApi OAuth => new OAuthApi(this);
     public IOAuthV2Api OAuthV2 => new OAuthV2Api(this);
