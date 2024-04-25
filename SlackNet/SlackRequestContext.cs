@@ -72,14 +72,11 @@ public class SlackRequestContext
         return new SlackRequestContextScope(this);
     }
 
-    class SlackRequestContextScope : IAsyncDisposable
+    class SlackRequestContextScope(SlackRequestContext requestContext) : IAsyncDisposable
     {
-        private readonly SlackRequestContext _requestContext;
-        public SlackRequestContextScope(SlackRequestContext requestContext) => _requestContext = requestContext;
-
         public async ValueTask DisposeAsync()
         {
-            foreach (var callback in _requestContext._onCompleteCallbacks)
+            foreach (var callback in requestContext._onCompleteCallbacks)
                 await callback().ConfigureAwait(false);
         }
     }

@@ -11,7 +11,7 @@ namespace SlackNetDemo;
 /// To use this demo, follow the steps at https://api.slack.com/workflows/steps,
 /// using the value of <see cref="StepCallbackId"/> as the Callback ID when you create the step for your Slack app.
 /// </summary>
-class WorkflowDemo : IWorkflowStepEditHandler, IViewSubmissionHandler, IEventHandler<WorkflowStepExecute>
+class WorkflowDemo(ISlackApiClient slack) : IWorkflowStepEditHandler, IViewSubmissionHandler, IEventHandler<WorkflowStepExecute>
 {
     public const string StepCallbackId = "test_step";
     public const string ConfigCallback = "test_step_config";
@@ -22,17 +22,14 @@ class WorkflowDemo : IWorkflowStepEditHandler, IViewSubmissionHandler, IEventHan
     private const string MessageTextInput = "message_text";
     private const string MessageTextOutput = "sent_message_text";
 
-    private readonly ISlackApiClient _slack;
-    public WorkflowDemo(ISlackApiClient slack) => _slack = slack;
-
     /// <summary>
     /// Shows a configuration dialog for editing the workflow step.
     /// </summary>
     public async Task Handle(WorkflowStepEdit workflowStepEdit)
     {
-        Console.WriteLine($"{(await _slack.Users.Info(workflowStepEdit.User.Id)).Name} opened the configuration dialog for the demo workflow step");
+        Console.WriteLine($"{(await slack.Users.Info(workflowStepEdit.User.Id)).Name} opened the configuration dialog for the demo workflow step");
         
-        await _slack.Views.Open(workflowStepEdit.TriggerId, new ConfigurationModalViewDefinition
+        await slack.Views.Open(workflowStepEdit.TriggerId, new ConfigurationModalViewDefinition
             {
                 CallbackId = ConfigCallback,
                 Blocks =
@@ -66,7 +63,7 @@ class WorkflowDemo : IWorkflowStepEditHandler, IViewSubmissionHandler, IEventHan
     {
         Console.WriteLine($"{viewSubmission.User.Name} submitted the configuration dialog for the demo workflow step");
         
-        await _slack.Workflows.UpdateStep(
+        await slack.Workflows.UpdateStep(
             viewSubmission.WorkflowStep.WorkflowStepEditId,
             new Dictionary<string, WorkflowInput>
                 {
@@ -94,15 +91,15 @@ class WorkflowDemo : IWorkflowStepEditHandler, IViewSubmissionHandler, IEventHan
         var user = slackEvent.WorkflowStep.Inputs[MessageUserInput].Value;
         var message = slackEvent.WorkflowStep.Inputs[MessageTextInput].Value;
         
-        Console.WriteLine($"Demo workflow step is sending a message to {(await _slack.Users.Info(user)).Name}");
+        Console.WriteLine($"Demo workflow step is sending a message to {(await slack.Users.Info(user)).Name}");
 
-        await _slack.Chat.PostMessage(new Message
+        await slack.Chat.PostMessage(new Message
             {
                 Channel = user,
                 Text = message
             });
 
-        await _slack.Workflows.StepCompleted(slackEvent.WorkflowStep.WorkflowStepExecuteId, new Dictionary<string, string>
+        await slack.Workflows.StepCompleted(slackEvent.WorkflowStep.WorkflowStepExecuteId, new Dictionary<string, string>
             {
                 { MessageUserOutput, user },
                 { MessageTextOutput, message }

@@ -7,18 +7,15 @@ namespace SlackNetDemo;
 /// <summary>
 /// Displays a list of things you can do with this demo when you open the app's home screen. 
 /// </summary>
-class AppHome : IEventHandler<AppHomeOpened>
+class AppHome(ISlackApiClient slack) : IEventHandler<AppHomeOpened>
 {
-    private readonly ISlackApiClient _slack;
-    public AppHome(ISlackApiClient slack) => _slack = slack;
-
     public async Task Handle(AppHomeOpened slackEvent)
     {
         if (slackEvent.Tab == AppHomeTab.Home)
         {
-            Console.WriteLine($"{(await _slack.Users.Info(slackEvent.User)).Name} opened the app's home view");
+            Console.WriteLine($"{(await slack.Users.Info(slackEvent.User)).Name} opened the app's home view");
             
-            await _slack.Views.Publish(slackEvent.User, new HomeViewDefinition
+            await slack.Views.Publish(slackEvent.User, new HomeViewDefinition
                 {
                     Blocks =
                         {

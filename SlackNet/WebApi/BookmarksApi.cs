@@ -64,11 +64,8 @@ public interface IBookmarksApi
     Task Remove(string bookmarkId, string channelId, CancellationToken? cancellationToken = null);
 }
 
-public class BookmarksApi : IBookmarksApi
+public class BookmarksApi(ISlackApiClient client) : IBookmarksApi
 {
-    private readonly ISlackApiClient _client;
-    public BookmarksApi(ISlackApiClient client) => _client = client;
-
     public async Task<Bookmark> Add(
         string channelId,
         string title,
@@ -79,7 +76,7 @@ public class BookmarksApi : IBookmarksApi
         string parentId = null,
         CancellationToken? cancellationToken = null
     ) =>
-        (await _client.Post<BookmarkResponse>("bookmarks.add", new Args
+        (await client.Post<BookmarkResponse>("bookmarks.add", new Args
             {
                 { "channel_id", channelId },
                 { "title", title },
@@ -98,7 +95,7 @@ public class BookmarksApi : IBookmarksApi
         string link = null,
         string title = null,
         CancellationToken? cancellationToken = null) =>
-        (await _client.Post<BookmarkResponse>("bookmarks.add", new Args
+        (await client.Post<BookmarkResponse>("bookmarks.add", new Args
             {
                 { "bookmark_id", bookmarkId },
                 { "channel_id", channelId },
@@ -109,10 +106,10 @@ public class BookmarksApi : IBookmarksApi
         .Bookmark;
 
     public Task<BookmarkListResponse> List(string channelId, CancellationToken? cancellationToken = null) =>
-        _client.Post<BookmarkListResponse>("bookmarks.list", new Args { { "channel_id", channelId } }, cancellationToken);
+        client.Post<BookmarkListResponse>("bookmarks.list", new Args { { "channel_id", channelId } }, cancellationToken);
 
     public Task Remove(string bookmarkId, string channelId, CancellationToken? cancellationToken = null) =>
-        _client.Post("bookmarks.remove", new Args
+        client.Post("bookmarks.remove", new Args
             {
                 { "bookmark_id", bookmarkId },
                 { "channel_id", channelId }

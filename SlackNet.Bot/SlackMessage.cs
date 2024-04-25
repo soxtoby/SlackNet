@@ -7,11 +7,8 @@ using SlackNet.Blocks;
 
 namespace SlackNet.Bot;
 
-public class SlackMessage : IMessage
+public class SlackMessage(ISlackBot bot) : IMessage
 {
-    private readonly ISlackBot _bot;
-    public SlackMessage(ISlackBot bot) => _bot = bot;
-
     public Conversation Conversation { get; set; }
     [Obsolete("Use Conversation instead")]
     public Hub Hub { get; set; }
@@ -31,8 +28,8 @@ public class SlackMessage : IMessage
     public bool IsInThread => ThreadTs != null;
 
     public bool MentionsBot =>
-        Text.IndexOf(_bot.Id, StringComparison.OrdinalIgnoreCase) >= 0
-        || Text.IndexOf(_bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
+        Text.IndexOf(bot.Id, StringComparison.OrdinalIgnoreCase) >= 0
+        || Text.IndexOf(bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
         || Conversation?.IsIm == true;
 
     public Task ReplyWith(string text, bool createThread = false, CancellationToken? cancellationToken = null) =>
@@ -40,7 +37,7 @@ public class SlackMessage : IMessage
 
     public async Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false, CancellationToken? cancellationToken = null)
     {
-        await _bot.WhileTyping(Conversation.Id, async () =>
+        await bot.WhileTyping(Conversation.Id, async () =>
             {
                 var reply = await createReply().ConfigureAwait(false);
                 if (reply != null)
@@ -54,6 +51,6 @@ public class SlackMessage : IMessage
 
         message.ReplyTo = this;
         message.CreateThread = createThread;
-        await _bot.Send(message, cancellationToken).ConfigureAwait(false);
+        await bot.Send(message, cancellationToken).ConfigureAwait(false);
     }
 }

@@ -20,11 +20,8 @@ public interface IEmojiApi
     Task<IReadOnlyDictionary<string, string>> List(CancellationToken? cancellationToken = null);
 }
 
-public class EmojiApi : IEmojiApi
+public class EmojiApi(ISlackApiClient client) : IEmojiApi
 {
-    private readonly ISlackApiClient _client;
-    public EmojiApi(ISlackApiClient client) => _client = client;
-
     public async Task<IReadOnlyDictionary<string, string>> List(CancellationToken? cancellationToken = null) =>
-        (await _client.Get<EmojiResponse>("emoji.list", new Args(), cancellationToken).ConfigureAwait(false)).Emoji;
+        (await client.Get<EmojiResponse>("emoji.list", new Args(), cancellationToken).ConfigureAwait(false)).Emoji;
 }

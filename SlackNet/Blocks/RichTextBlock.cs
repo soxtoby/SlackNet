@@ -8,80 +8,62 @@ namespace SlackNet.Blocks;
 /// </summary>
 /// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text">Slack documentation</a> for more information.</remarks>
 [SlackType("rich_text")]
-public class RichTextBlock : Block
+public class RichTextBlock() : Block("rich_text")
 {
-    public RichTextBlock() : base("rich_text") { }
-
     public IList<RichTextElement> Elements { get; set; } = [];
 }
 
-public abstract class RichTextElement
+public abstract class RichTextElement(string type)
 {
-    protected RichTextElement(string type) => Type = type;
-    
-    public string Type { get; set; }
+    public string Type { get; set; } = type;
 }
 
 /// <summary>
 /// Section element.
 /// </summary>
 /// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_section">Slack documentation</a> for more information.</remarks>
-public class RichTextSection : RichTextElement
+public class RichTextSection() : RichTextElement("rich_text_section")
 {
-    public RichTextSection(): base("rich_text_section") { }
-    
     public IList<RichTextSectionElement> Elements { get; set; } = [];
 }
 
-public abstract class RichTextSectionElement
+public abstract class RichTextSectionElement(string type)
 {
-    protected RichTextSectionElement(string type) => Type = type;
-    
-    public string Type { get; set; }
+    public string Type { get; set; } = type;
 }
 
 [SlackType("text")]
-public class RichTextText : RichTextSectionElement
+public class RichTextText() : RichTextSectionElement("text")
 {
-    public RichTextText() : base("text") { }
-    
     public string Text { get; set; }
     public RichTextStyle Style { get; set; } = new();
 }
 
 [SlackType("channel")]
-public class RichTextChannel : RichTextSectionElement
+public class RichTextChannel() : RichTextSectionElement("channel")
 {
-    public RichTextChannel() : base("channel") { }
-    
     public string ChannelId { get; set; }
     public RichTextStyle Style { get; set; } = new();
 }
 
 [SlackType("user")]
-public class RichTextUser : RichTextSectionElement
+public class RichTextUser() : RichTextSectionElement("user")
 {
-    public RichTextUser() : base("user") { }
-    
     public string UserId { get; set; }
     public RichTextStyle Style { get; set; } = new();
 }
 
 [SlackType("emoji")]
-public class RichTextEmoji : RichTextSectionElement
+public class RichTextEmoji() : RichTextSectionElement("emoji")
 {
-    public RichTextEmoji() : base("emoji") { }
-    
     public string Name { get; set; }
     public string Unicode { get; set; } 
     public int? SkinTone { get; set; }
 }
 
 [SlackType("link")]
-public class RichTextLink : RichTextSectionElement
+public class RichTextLink() : RichTextSectionElement("link")
 {
-    public RichTextLink() : base("link") { }
-    
     public string Url { get; set; }
     public string Text { get; set; }
     public RichTextStyle Style { get; set; } = new();
@@ -89,29 +71,23 @@ public class RichTextLink : RichTextSectionElement
 }
 
 [SlackType("team")]
-public class RichTextTeam : RichTextSectionElement
+public class RichTextTeam() : RichTextSectionElement("team")
 {
-    public RichTextTeam() : base("team") { }
-    
     public string TeamId { get; set; }
     public RichTextStyle Style { get; set; } = new();
 }
 
 [SlackType("usergroup")]
-public class RichTextUserGroup : RichTextSectionElement
+public class RichTextUserGroup() : RichTextSectionElement("usergroup")
 {
-    public RichTextUserGroup() : base("usergroup") { }
-    
     [JsonProperty("usergroup_id")]
     public string UserGroupId { get; set; }
     public RichTextStyle Style { get; set; } = new();
 }
 
 [SlackType("date")]
-public class RichTextDate : RichTextSectionElement
+public class RichTextDate() : RichTextSectionElement("date")
 {
-    public RichTextDate() : base("date") { }
-    
     public string Text { get; set; }
     public string Timestamp { get; set; }
     /// <summary>
@@ -122,10 +98,8 @@ public class RichTextDate : RichTextSectionElement
 }
 
 [SlackType("broadcast")]
-public class RichTextBroadcast : RichTextSectionElement
+public class RichTextBroadcast() : RichTextSectionElement("broadcast")
 {
-    public RichTextBroadcast() : base("broadcast") { }
-    
     public string Range { get; set; }
     public RichTextStyle Style { get; set; } = new();
 }
@@ -134,10 +108,8 @@ public class RichTextBroadcast : RichTextSectionElement
 /// List element.
 /// </summary>
 /// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_list">Slack documentation</a> for more information.</remarks>
-public class RichTextList : RichTextElement
+public class RichTextList() : RichTextElement("rich_text_list")
 {
-    public RichTextList() : base("rich_text_list") { }
-    
     /// <summary>
     /// An array of <see cref="RichTextSection"/> objects.
     /// </summary>
@@ -174,10 +146,8 @@ public enum RichTextListStyle
 /// Quote element.
 /// </summary>
 /// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_quote">Slack documentation</a> for more information.</remarks>
-public class RichTextQuote : RichTextElement
+public class RichTextQuote() : RichTextElement("rich_text_quote")
 {
-    public RichTextQuote() : base("rich_text_quote") { }
-    
     /// <summary>
     /// An array of rich text elements.
     /// </summary>
@@ -193,10 +163,8 @@ public class RichTextQuote : RichTextElement
 /// Preformatted code block element.
 /// </summary>
 /// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_preformatted">Slack documentation</a> for more information.</remarks>
-public class RichTextPreformatted : RichTextElement
+public class RichTextPreformatted() : RichTextElement("rich_text_preformatted")
 {
-    public RichTextPreformatted() : base("rich_text_preformatted") { }
-    
     /// <summary>
     /// An array of rich text elements.
     /// </summary>

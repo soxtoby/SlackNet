@@ -243,22 +243,13 @@ public interface IFilesApi
         CancellationToken? cancellationToken = null);
 }
 
-public class FilesApi : IFilesApi
+public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
 {
-    private readonly ISlackApiClient _client;
-    private readonly IHttp _http;
-
-    public FilesApi(ISlackApiClient client, IHttp http)
-    {
-        _client = client;
-        _http = http;
-    }
-
     public Task Delete(string fileId, CancellationToken? cancellationToken = null) =>
-        _client.Post("files.delete", new Args { { "file", fileId } }, cancellationToken);
+        client.Post("files.delete", new Args { { "file", fileId } }, cancellationToken);
 
     public Task<FileAndCommentsResponse> Info(string fileId, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null) =>
-        _client.Get<FileAndCommentsResponse>("files.info", new Args
+        client.Get<FileAndCommentsResponse>("files.info", new Args
             {
                 { "file", fileId },
                 { "count", count },
@@ -277,7 +268,7 @@ public class FilesApi : IFilesApi
         string cursor = null,
         CancellationToken? cancellationToken = null
     ) =>
-        _client.Get<FileListResponse>("files.list", new Args
+        client.Get<FileListResponse>("files.list", new Args
             {
                 { "user", userId },
                 { "channel", channelId },
@@ -290,10 +281,10 @@ public class FilesApi : IFilesApi
             }, cancellationToken);
 
     public Task<FileResponse> RevokePublicUrl(string fileId, CancellationToken? cancellationToken = null) =>
-        _client.Post<FileResponse>("files.revokePublicURL", new Args { { "file", fileId } }, cancellationToken);
+        client.Post<FileResponse>("files.revokePublicURL", new Args { { "file", fileId } }, cancellationToken);
 
     public Task<FileAndCommentsResponse> SharedPublicUrl(string fileId, CancellationToken? cancellationToken = null) =>
-        _client.Post<FileAndCommentsResponse>("files.sharedPublicURL", new Args { { "file", fileId } }, cancellationToken);
+        client.Post<FileAndCommentsResponse>("files.sharedPublicURL", new Args { { "file", fileId } }, cancellationToken);
 
     public async Task<FileResponse> Upload(
         string fileContents,
@@ -349,7 +340,7 @@ public class FilesApi : IFilesApi
         using var content = new MultipartFormDataContent();
         content.Add(fileContent, "file", fileName ?? "file");
 
-        return await _client.Post<FileResponse>("files.upload", new Args
+        return await client.Post<FileResponse>("files.upload", new Args
                 {
                     { "filetype", fileType },
                     { "filename", fileName },
@@ -372,7 +363,7 @@ public class FilesApi : IFilesApi
         IEnumerable<string> channels = null,
         CancellationToken? cancellationToken = null
     ) =>
-        _client.Post<FileResponse>("files.upload", new Args(), new SlackFormContent
+        client.Post<FileResponse>("files.upload", new Args(), new SlackFormContent
                 {
                     { "filetype", fileType },
                     { "filename", fileName },
@@ -400,7 +391,7 @@ public class FilesApi : IFilesApi
                     using var content = file.GetContent();
                     var length = content.HttpContent.Headers.ContentLength ?? throw new InvalidOperationException($"Couldn't get length of file {file.FileName}");
                     var uploadUrlResponse = await GetUploadUrlExternal(file.FileName, Convert.ToInt32(length), file.AltText, file.SnippetType, cancellationToken).ConfigureAwait(false);
-                    await _http.Execute<WebApiResponse>(new HttpRequestMessage(HttpMethod.Post, uploadUrlResponse.UploadUrl) { Content = content.HttpContent }, cancellationToken).ConfigureAwait(false);
+                    await http.Execute<WebApiResponse>(new HttpRequestMessage(HttpMethod.Post, uploadUrlResponse.UploadUrl) { Content = content.HttpContent }, cancellationToken).ConfigureAwait(false);
                     return new ExternalFileReference { Id = uploadUrlResponse.FileId, Title = file.Title };
                 })).ConfigureAwait(false);
 
@@ -414,7 +405,7 @@ public class FilesApi : IFilesApi
         string snippetType = null,
         CancellationToken? cancellationToken = null
     ) =>
-        _client.Get<UploadUrlExternalResponse>("files.getUploadURLExternal", new Args
+        client.Get<UploadUrlExternalResponse>("files.getUploadURLExternal", new Args
             {
                 { "filename", fileName },
                 { "length", length },
@@ -429,7 +420,7 @@ public class FilesApi : IFilesApi
         string initialComment = null,
         CancellationToken? cancellationToken = null
     ) =>
-        (await _client.Post<CompleteUploadExternalResponse>("files.completeUploadExternal", new Args
+        (await client.Post<CompleteUploadExternalResponse>("files.completeUploadExternal", new Args
             {
                 { "files", files },
                 { "channel_id", channelId },

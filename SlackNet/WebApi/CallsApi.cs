@@ -61,11 +61,8 @@ public interface ICallsApi
     Task<Call> Update(string id, string desktopAppJoinUrl = null, string joinUrl = null, string title = null, CancellationToken? cancellationToken = null);
 }
 
-public class CallsApi : ICallsApi
+public class CallsApi(ISlackApiClient client) : ICallsApi
 {
-    private readonly ISlackApiClient _client;
-    public CallsApi(ISlackApiClient client) => _client = client;
-
     public async Task<Call> Add(
         string externalUniqueId,
         string joinUrl,
@@ -77,7 +74,7 @@ public class CallsApi : ICallsApi
         IEnumerable<CallUser> users = null,
         CancellationToken? cancellationToken = null
     ) =>
-        (await _client.Post<CallResponse>("calls.add", new Args
+        (await client.Post<CallResponse>("calls.add", new Args
             {
                 { "external_unique_id", externalUniqueId },
                 { "join_url", joinUrl },
@@ -91,17 +88,17 @@ public class CallsApi : ICallsApi
         .Call;
 
     public Task End(string id, TimeSpan? duration = null, CancellationToken? cancellationToken = null) =>
-        _client.Post("calls.end", new Args
+        client.Post("calls.end", new Args
             {
                 { "id", id },
                 { "duration", duration?.TotalSeconds }
             }, cancellationToken);
 
     public async Task<Call> Info(string id, CancellationToken? cancellationToken = null) =>
-        (await _client.Post<CallResponse>("calls.info", new Args { { "id", id } }, cancellationToken).ConfigureAwait(false)).Call;
+        (await client.Post<CallResponse>("calls.info", new Args { { "id", id } }, cancellationToken).ConfigureAwait(false)).Call;
 
     public async Task<Call> Update(string id, string desktopAppJoinUrl = null, string joinUrl = null, string title = null, CancellationToken? cancellationToken = null) =>
-        (await _client.Post<CallResponse>("calls.update", new Args
+        (await client.Post<CallResponse>("calls.update", new Args
             {
                 { "id", id },
                 { "desktop_app_join_url", desktopAppJoinUrl },

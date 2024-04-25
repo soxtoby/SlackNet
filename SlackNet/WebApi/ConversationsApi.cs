@@ -279,13 +279,10 @@ public interface IConversationsApi
     Task Unarchive(string channelId, CancellationToken? cancellationToken = null);
 }
 
-public class ConversationsApi : IConversationsApi
+public class ConversationsApi(ISlackApiClient client) : IConversationsApi
 {
-    private readonly ISlackApiClient _client;
-    public ConversationsApi(ISlackApiClient client) => _client = client;
-
     public Task<AcceptSharedInviteResponse> AcceptSharedInvite(string channelName, string inviteId = null, string channelId = null, bool freeTrialAccepted = false, bool isPrivate = false, string teamId = null, CancellationToken? cancellationToken = null) =>
-        _client.Post<AcceptSharedInviteResponse>("conversations.acceptSharedInvite", new Args
+        client.Post<AcceptSharedInviteResponse>("conversations.acceptSharedInvite", new Args
             {
                 { "channel_name", channelName },
                 { "invite_id", inviteId },
@@ -296,20 +293,20 @@ public class ConversationsApi : IConversationsApi
             }, cancellationToken);
 
     public Task ApproveSharedInvite(string inviteId, string targetTeam = null, CancellationToken? cancellationToken = null) =>
-        _client.Post("conversations.approveSharedInvite", new Args
+        client.Post("conversations.approveSharedInvite", new Args
             {
                 { "invite_id", inviteId },
                 { "target_team", targetTeam }
             }, cancellationToken);
 
     public Task Archive(string channelId, CancellationToken? cancellationToken = null) =>
-        _client.Post("conversations.archive", new Args { { "channel", channelId } }, cancellationToken);
+        client.Post("conversations.archive", new Args { { "channel", channelId } }, cancellationToken);
 
     public Task Close(string channelId, CancellationToken? cancellationToken = null) =>
-        _client.Post("conversations.close", new Args { { "channel", channelId } }, cancellationToken);
+        client.Post("conversations.close", new Args { { "channel", channelId } }, cancellationToken);
 
     public async Task<Conversation> Create(string name, bool isPrivate, string teamId = null, CancellationToken? cancellationToken = null) =>
-        (await _client.Post<ConversationResponse>("conversations.create", new Args
+        (await client.Post<ConversationResponse>("conversations.create", new Args
             {
                 { "name", name },
                 { "is_private", isPrivate },
@@ -318,14 +315,14 @@ public class ConversationsApi : IConversationsApi
         .Channel;
 
     public Task DeclineSharedInvite(string inviteId, string targetTeam = null, CancellationToken? cancellationToken = null) =>
-        _client.Get("conversations.declineSharedInvite", new Args
+        client.Get("conversations.declineSharedInvite", new Args
             {
                 { "invite_id", inviteId },
                 { "target_team", targetTeam }
             }, cancellationToken);
 
     public Task<ConversationHistoryResponse> History(string channelId, string latestTs = null, string oldestTs = null, bool inclusive = false, int limit = 100, bool includeAllMetadata = false, string cursor = null, CancellationToken? cancellationToken = null) =>
-        _client.Get<ConversationHistoryResponse>("conversations.history", new Args
+        client.Get<ConversationHistoryResponse>("conversations.history", new Args
             {
                 { "channel", channelId },
                 { "cursor", cursor },
@@ -337,7 +334,7 @@ public class ConversationsApi : IConversationsApi
             }, cancellationToken);
 
     public async Task<Conversation> Info(string channelId, bool includeLocale = false, bool includeNumMembers = false, CancellationToken? cancellationToken = null) =>
-        (await _client.Get<ConversationResponse>("conversations.info", new Args
+        (await client.Get<ConversationResponse>("conversations.info", new Args
             {
                 { "channel", channelId },
                 { "include_locale", includeLocale },
@@ -346,7 +343,7 @@ public class ConversationsApi : IConversationsApi
         .Channel;
 
     public async Task<Conversation> Invite(string channelId, IEnumerable<string> userIds, CancellationToken? cancellationToken = null) =>
-        (await _client.Post<ConversationResponse>("conversations.invite", new Args
+        (await client.Post<ConversationResponse>("conversations.invite", new Args
             {
                 { "channel", channelId },
                 { "users", userIds }
@@ -354,7 +351,7 @@ public class ConversationsApi : IConversationsApi
         .Channel;
 
     public Task<InviteSharedResponse> InviteShared(string channelId, IEnumerable<string> emails, IEnumerable<string> userIds, bool externalLimited = true, CancellationToken? cancellationToken = null) =>
-        _client.Get<InviteSharedResponse>("conversations.inviteShared", new Args()
+        client.Get<InviteSharedResponse>("conversations.inviteShared", new Args()
             {
                 { "channel", channelId },
                 { "emails", emails },
@@ -363,20 +360,20 @@ public class ConversationsApi : IConversationsApi
             }, cancellationToken);
 
     public Task<ConversationJoinResponse> Join(string channelId, CancellationToken? cancellationToken = null) =>
-        _client.Post<ConversationJoinResponse>("conversations.join", new Args { { "channel", channelId } }, cancellationToken);
+        client.Post<ConversationJoinResponse>("conversations.join", new Args { { "channel", channelId } }, cancellationToken);
 
     public Task Kick(string channelId, string userId, CancellationToken? cancellationToken = null) =>
-        _client.Post("conversations.kick", new Args
+        client.Post("conversations.kick", new Args
             {
                 { "channel", channelId },
                 { "user", userId }
             }, cancellationToken);
 
     public Task Leave(string channelId, CancellationToken? cancellationToken = null) =>
-        _client.Post("conversations.leave", new Args { { "channel", channelId } }, cancellationToken);
+        client.Post("conversations.leave", new Args { { "channel", channelId } }, cancellationToken);
 
     public Task<ConversationListResponse> List(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string cursor = null, string teamId = null, CancellationToken? cancellationToken = null) =>
-        _client.Get<ConversationListResponse>("conversations.list", new Args
+        client.Get<ConversationListResponse>("conversations.list", new Args
             {
                 { "cursor", cursor },
                 { "exclude_archived", excludeArchived },
@@ -386,7 +383,7 @@ public class ConversationsApi : IConversationsApi
             }, cancellationToken);
 
     public Task<ConnectInvitesListResponse> ListConnectInvites(int count = 100, string cursor = null, string teamId = null, CancellationToken? cancellationToken = null) =>
-        _client.Post<ConnectInvitesListResponse>("conversations.listConnectInvites", new Args
+        client.Post<ConnectInvitesListResponse>("conversations.listConnectInvites", new Args
             {
                 { "count", count },
                 { "cursor", cursor },
@@ -394,14 +391,14 @@ public class ConversationsApi : IConversationsApi
             }, cancellationToken);
 
     public Task Mark(string channelId, string messageTs, CancellationToken? cancellationToken = null) =>
-        _client.Post("conversations.mark", new Args
+        client.Post("conversations.mark", new Args
             {
                 { "channel", channelId },
                 { "ts", messageTs }
             }, cancellationToken);
 
     public Task<ConversationMembersResponse> Members(string channelId, int limit = 100, string cursor = null, CancellationToken? cancellationToken = null) =>
-        _client.Get<ConversationMembersResponse>("conversations.members", new Args
+        client.Get<ConversationMembersResponse>("conversations.members", new Args
             {
                 { "channel", channelId },
                 { "cursor", cursor },
@@ -421,7 +418,7 @@ public class ConversationsApi : IConversationsApi
         Open<ConversationOpenResponse>(true, null, userIds, cancellationToken);
 
     private Task<T> Open<T>(bool returnIm, string channelId = null, IEnumerable<string> userIds = null, CancellationToken? cancellationToken = null) where T : class =>
-        _client.Post<T>("conversations.open", new Args
+        client.Post<T>("conversations.open", new Args
             {
                 { "channel", channelId },
                 { "return_im", returnIm },
@@ -429,7 +426,7 @@ public class ConversationsApi : IConversationsApi
             }, cancellationToken);
 
     public async Task<Conversation> Rename(string channelId, string name, CancellationToken? cancellationToken = null) =>
-        (await _client.Post<ConversationResponse>("conversations.rename", new Args
+        (await client.Post<ConversationResponse>("conversations.rename", new Args
             {
                 { "channel", channelId },
                 { "name", name }
@@ -437,7 +434,7 @@ public class ConversationsApi : IConversationsApi
         .Channel;
 
     public Task<ConversationMessagesResponse> Replies(string channelId, string threadTs, string latestTs = null, string oldestTs = null, bool inclusive = false, int limit = 10, string cursor = null, CancellationToken? cancellationToken = null) =>
-        _client.Get<ConversationMessagesResponse>("conversations.replies", new Args
+        client.Get<ConversationMessagesResponse>("conversations.replies", new Args
             {
                 { "channel", channelId },
                 { "ts", threadTs },
@@ -449,7 +446,7 @@ public class ConversationsApi : IConversationsApi
             }, cancellationToken);
 
     public async Task<string> SetPurpose(string channelId, string purpose, CancellationToken? cancellationToken = null) =>
-        (await _client.Post<PurposeResponse>("conversations.setPurpose", new Args
+        (await client.Post<PurposeResponse>("conversations.setPurpose", new Args
             {
                 { "channel", channelId },
                 { "purpose", purpose }
@@ -457,7 +454,7 @@ public class ConversationsApi : IConversationsApi
         .Purpose;
 
     public async Task<string> SetTopic(string channelId, string topic, CancellationToken? cancellationToken = null) =>
-        (await _client.Post<TopicResponse>("conversations.setTopic", new Args
+        (await client.Post<TopicResponse>("conversations.setTopic", new Args
             {
                 { "channel", channelId },
                 { "topic", topic }
@@ -465,5 +462,5 @@ public class ConversationsApi : IConversationsApi
         .Topic;
 
     public Task Unarchive(string channelId, CancellationToken? cancellationToken = null) =>
-        _client.Post("conversations.unarchive", new Args { { "channel", channelId } }, cancellationToken);
+        client.Post("conversations.unarchive", new Args { { "channel", channelId } }, cancellationToken);
 }

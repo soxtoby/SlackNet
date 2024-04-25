@@ -924,11 +924,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null) => throw new NotImplementedException();
     }
 
-    protected class TestJsonSettings : SlackJsonSettings
-    {
-        public TestJsonSettings()
-            : base(new JsonSerializerSettings()) { }
-    }
+    protected class TestJsonSettings() : SlackJsonSettings(new JsonSerializerSettings());
 
     protected class TestTypeResolver : ISlackTypeResolver
     {
@@ -1022,175 +1018,116 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public bool Connected { get; }
     }
 
-    protected class TestHandler<THandler> : TrackedClass where THandler : class
+    protected class TestHandler<THandler>(InstanceTracker tracker) : TrackedClass(tracker)
+        where THandler : class
     {
-        public TestHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         protected readonly THandler Inner = Substitute.For<THandler>();
         public THandler Received() => Inner.Received();
         public THandler DidNotReceive() => Inner.DidNotReceive();
     }
 
-    protected class TestEventHandler : TestHandler<IEventHandler>, IEventHandler
+    protected class TestEventHandler(InstanceTracker tracker) : TestHandler<IEventHandler>(tracker), IEventHandler
     {
-        public TestEventHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(EventCallback eventCallback) => Inner.Handle(eventCallback);
     }
 
-    protected class TestEventHandler<TEvent> : TestHandler<IEventHandler<TEvent>>, IEventHandler<TEvent> where TEvent : Event
+    protected class TestEventHandler<TEvent>(InstanceTracker tracker) : TestHandler<IEventHandler<TEvent>>(tracker), IEventHandler<TEvent>
+        where TEvent : Event
     {
-        public TestEventHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(TEvent slackEvent) => Inner.Handle(slackEvent);
     }
 
-    protected class TestBlockActionHandler : TestHandler<IBlockActionHandler>, IBlockActionHandler
+    protected class TestBlockActionHandler(InstanceTracker tracker) : TestHandler<IBlockActionHandler>(tracker), IBlockActionHandler
     {
-        public TestBlockActionHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(BlockActionRequest request) => Inner.Handle(request);
     }
 
-    protected class TestBlockActionHandler<TAction> : TestHandler<IBlockActionHandler<TAction>>, IBlockActionHandler<TAction> where TAction : BlockAction
+    protected class TestBlockActionHandler<TAction>(InstanceTracker tracker) : TestHandler<IBlockActionHandler<TAction>>(tracker), IBlockActionHandler<TAction>
+        where TAction : BlockAction
     {
-        public TestBlockActionHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(TAction action, BlockActionRequest request) => Inner.Handle(action, request);
     }
 
-    protected class TestAsyncBlockActionHandler : TestHandler<IAsyncBlockActionHandler>, IAsyncBlockActionHandler
+    protected class TestAsyncBlockActionHandler(InstanceTracker tracker) : TestHandler<IAsyncBlockActionHandler>(tracker), IAsyncBlockActionHandler
     {
-        public TestAsyncBlockActionHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(BlockActionRequest request, Responder respond) => Inner.Handle(request, respond);
     }
 
-    protected class TestAsyncBlockActionHandler<TAction> : TestHandler<IAsyncBlockActionHandler<TAction>>, IAsyncBlockActionHandler<TAction> where TAction : BlockAction
+    protected class TestAsyncBlockActionHandler<TAction>(InstanceTracker tracker) : TestHandler<IAsyncBlockActionHandler<TAction>>(tracker), IAsyncBlockActionHandler<TAction>
+        where TAction : BlockAction
     {
-        public TestAsyncBlockActionHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(TAction action, BlockActionRequest request, Responder respond) => Inner.Handle(action, request, respond);
     }
 
-    protected class TestBlockOptionProvider : TestHandler<IBlockOptionProvider>, IBlockOptionProvider
+    protected class TestBlockOptionProvider(InstanceTracker tracker) : TestHandler<IBlockOptionProvider>(tracker), IBlockOptionProvider
     {
-        public TestBlockOptionProvider(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task<BlockOptionsResponse> GetOptions(BlockOptionsRequest request) => Inner.GetOptions(request);
     }
 
-    protected class TestMessageShortcutHandler : TestHandler<IMessageShortcutHandler>, IMessageShortcutHandler
+    protected class TestMessageShortcutHandler(InstanceTracker tracker) : TestHandler<IMessageShortcutHandler>(tracker), IMessageShortcutHandler
     {
-        public TestMessageShortcutHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(MessageShortcut request) => Inner.Handle(request);
     }
 
-    protected class TestAsyncMessageShortcutHandler : TestHandler<IAsyncMessageShortcutHandler>, IAsyncMessageShortcutHandler
+    protected class TestAsyncMessageShortcutHandler(InstanceTracker tracker) : TestHandler<IAsyncMessageShortcutHandler>(tracker), IAsyncMessageShortcutHandler
     {
-        public TestAsyncMessageShortcutHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(MessageShortcut request, Responder respond) => Inner.Handle(request, respond);
     }
 
-    protected class TestGlobalShortcutHandler : TestHandler<IGlobalShortcutHandler>, IGlobalShortcutHandler
+    protected class TestGlobalShortcutHandler(InstanceTracker tracker) : TestHandler<IGlobalShortcutHandler>(tracker), IGlobalShortcutHandler
     {
-        public TestGlobalShortcutHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(GlobalShortcut request) => Inner.Handle(request);
     }
 
-    protected class TestAsyncGlobalShortcutHandler : TestHandler<IAsyncGlobalShortcutHandler>, IAsyncGlobalShortcutHandler
+    protected class TestAsyncGlobalShortcutHandler(InstanceTracker tracker) : TestHandler<IAsyncGlobalShortcutHandler>(tracker), IAsyncGlobalShortcutHandler
     {
-        public TestAsyncGlobalShortcutHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(GlobalShortcut request, Responder respond) => Inner.Handle(request, respond);
     }
 
-    protected class TestViewSubmissionHandler : TestHandler<IViewSubmissionHandler>, IViewSubmissionHandler
+    protected class TestViewSubmissionHandler(InstanceTracker tracker) : TestHandler<IViewSubmissionHandler>(tracker), IViewSubmissionHandler
     {
-        public TestViewSubmissionHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission) => Inner.Handle(viewSubmission);
         public Task HandleClose(ViewClosed viewClosed) => Inner.HandleClose(viewClosed);
     }
 
-    protected class TestAsyncViewSubmissionHandler : TestHandler<IAsyncViewSubmissionHandler>, IAsyncViewSubmissionHandler
+    protected class TestAsyncViewSubmissionHandler(InstanceTracker tracker) : TestHandler<IAsyncViewSubmissionHandler>(tracker), IAsyncViewSubmissionHandler
     {
-        public TestAsyncViewSubmissionHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(ViewSubmission viewSubmission, Responder<ViewSubmissionResponse> respond) => Inner.Handle(viewSubmission, respond);
         public Task HandleClose(ViewClosed viewClosed, Responder respond) => Inner.HandleClose(viewClosed, respond);
     }
 
-    protected class TestSlashCommandHandler : TestHandler<ISlashCommandHandler>, ISlashCommandHandler
+    protected class TestSlashCommandHandler(InstanceTracker tracker) : TestHandler<ISlashCommandHandler>(tracker), ISlashCommandHandler
     {
-        public TestSlashCommandHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task<SlashCommandResponse> Handle(SlashCommand command) => Inner.Handle(command);
     }
 
-    protected class TestAsyncSlashCommandHandler : TestHandler<IAsyncSlashCommandHandler>, IAsyncSlashCommandHandler
+    protected class TestAsyncSlashCommandHandler(InstanceTracker tracker) : TestHandler<IAsyncSlashCommandHandler>(tracker), IAsyncSlashCommandHandler
     {
-        public TestAsyncSlashCommandHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(SlashCommand command, Responder<SlashCommandResponse> respond) => Inner.Handle(command, respond);
     }
 
-    protected class TestWorkflowStepEditHandler : TestHandler<IWorkflowStepEditHandler>, IWorkflowStepEditHandler
+    protected class TestWorkflowStepEditHandler(InstanceTracker tracker) : TestHandler<IWorkflowStepEditHandler>(tracker), IWorkflowStepEditHandler
     {
-        public TestWorkflowStepEditHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(WorkflowStepEdit workflowStepEdit) => Inner.Handle(workflowStepEdit);
     }
 
-    protected class TestAsyncWorkflowStepEditHandler : TestHandler<IAsyncWorkflowStepEditHandler>, IAsyncWorkflowStepEditHandler
+    protected class TestAsyncWorkflowStepEditHandler(InstanceTracker tracker) : TestHandler<IAsyncWorkflowStepEditHandler>(tracker), IAsyncWorkflowStepEditHandler
     {
-        public TestAsyncWorkflowStepEditHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task Handle(WorkflowStepEdit workflowStepEdit, Responder respond) => Inner.Handle(workflowStepEdit, respond);
     }
 
-    protected class TestOptionProvider : TestHandler<IOptionProvider>, IOptionProvider
+    protected class TestOptionProvider(InstanceTracker tracker) : TestHandler<IOptionProvider>(tracker), IOptionProvider
     {
-        public TestOptionProvider(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task<OptionsResponse> GetOptions(OptionsRequest request) => Inner.GetOptions(request);
     }
 
-    protected class TestInteractiveMessageHandler : TestHandler<IInteractiveMessageHandler>, IInteractiveMessageHandler
+    protected class TestInteractiveMessageHandler(InstanceTracker tracker) : TestHandler<IInteractiveMessageHandler>(tracker), IInteractiveMessageHandler
     {
-        public TestInteractiveMessageHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task<MessageResponse> Handle(InteractiveMessage message) => Inner.Handle(message);
     }
 
-    protected class TestDialogSubmissionHandler : TestHandler<IDialogSubmissionHandler>, IDialogSubmissionHandler
+    protected class TestDialogSubmissionHandler(InstanceTracker tracker) : TestHandler<IDialogSubmissionHandler>(tracker), IDialogSubmissionHandler
     {
-        public TestDialogSubmissionHandler(InstanceTracker tracker)
-            : base(tracker) { }
-
         public Task<IEnumerable<DialogError>> Handle(DialogSubmission dialog) => Inner.Handle(dialog);
         public Task HandleCancel(DialogCancellation cancellation) => Inner.HandleCancel(cancellation);
     }

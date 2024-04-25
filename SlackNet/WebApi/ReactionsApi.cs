@@ -89,13 +89,10 @@ public interface IReactionsApi
     Task RemoveFromMessage(string name, string channelId, string ts, CancellationToken? cancellationToken = null);
 }
 
-public class ReactionsApi : IReactionsApi
+public class ReactionsApi(ISlackApiClient client) : IReactionsApi
 {
-    private readonly ISlackApiClient _client;
-    public ReactionsApi(ISlackApiClient client) => _client = client;
-
     public Task AddToMessage(string name, string channelId, string ts, CancellationToken? cancellationToken = null) =>
-        _client.Post("reactions.add", new Args
+        client.Post("reactions.add", new Args
             {
                 { "name", name },
                 { "channel", channelId },
@@ -103,7 +100,7 @@ public class ReactionsApi : IReactionsApi
             }, cancellationToken);
 
     public async Task<File> GetForFile(string fileId, bool full = false, CancellationToken? cancellationToken = null) =>
-        (await _client.Get<FileResponse>("reactions.get", new Args
+        (await client.Get<FileResponse>("reactions.get", new Args
             {
                 { "file", fileId },
                 { "full", full }
@@ -111,7 +108,7 @@ public class ReactionsApi : IReactionsApi
         .File;
 
     public async Task<FileComment> GetForFileComment(string fileCommentId, bool full = false, CancellationToken? cancellationToken = null) =>
-        (await _client.Get<FileCommentReactionsResponse>("reactions.get", new Args
+        (await client.Get<FileCommentReactionsResponse>("reactions.get", new Args
             {
                 { "file_comment", fileCommentId },
                 { "full", full }
@@ -119,7 +116,7 @@ public class ReactionsApi : IReactionsApi
         .Comment;
 
     public async Task<MessageEvent> GetForMessage(string channelId, string ts, bool full = false, CancellationToken? cancellationToken = null) =>
-        (await _client.Get<MessageReactionsResponse>("reactions.get", new Args
+        (await client.Get<MessageReactionsResponse>("reactions.get", new Args
             {
                 { "channel", channelId },
                 { "timestamp", ts },
@@ -128,7 +125,7 @@ public class ReactionsApi : IReactionsApi
         .Message;
 
     public Task<ReactionItemListResponse> List(string userId = null, bool full = false, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null) =>
-        _client.Get<ReactionItemListResponse>("reactions.list", new Args
+        client.Get<ReactionItemListResponse>("reactions.list", new Args
             {
                 { "user", userId },
                 { "full", full },
@@ -138,21 +135,21 @@ public class ReactionsApi : IReactionsApi
             }, cancellationToken);
 
     public Task RemoveFromFile(string name, string fileId, CancellationToken? cancellationToken = null) =>
-        _client.Post("reactions.remove", new Args
+        client.Post("reactions.remove", new Args
             {
                 { "name", name },
                 { "file", fileId }
             }, cancellationToken);
 
     public Task RemoveFromFileComment(string name, string fileCommentId, CancellationToken? cancellationToken = null) =>
-        _client.Post("reactions.remove", new Args
+        client.Post("reactions.remove", new Args
             {
                 { "name", name },
                 { "file_comment", fileCommentId }
             }, cancellationToken);
 
     public Task RemoveFromMessage(string name, string channelId, string ts, CancellationToken? cancellationToken = null) =>
-        _client.Post("reactions.remove", new Args
+        client.Post("reactions.remove", new Args
             {
                 { "name", name },
                 { "channel", channelId },

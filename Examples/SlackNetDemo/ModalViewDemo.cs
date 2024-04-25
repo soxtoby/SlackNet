@@ -12,7 +12,7 @@ namespace SlackNetDemo;
 /// <summary>
 /// Opens a modal view with a range of different inputs.
 /// </summary>
-class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAction>, IViewSubmissionHandler
+class ModalViewDemo(ISlackApiClient slack) : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAction>, IViewSubmissionHandler
 {
     public const string Trigger = "modal demo";
     public const string OpenModal = "open_modal";
@@ -28,16 +28,13 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
     private const string FileInputActionId = "file_input";
     public const string ModalCallbackId = "modal_demo";
 
-    private readonly ISlackApiClient _slack;
-    public ModalViewDemo(ISlackApiClient slack) => _slack = slack;
-
     public async Task Handle(MessageEvent slackEvent)
     {
         if (slackEvent.Text?.Contains(Trigger, StringComparison.OrdinalIgnoreCase) == true)
         {
-            Console.WriteLine($"{(await _slack.Users.Info(slackEvent.User)).Name} asked for a modal view demo in the {(await _slack.Conversations.Info(slackEvent.Channel)).Name} channel");
+            Console.WriteLine($"{(await slack.Users.Info(slackEvent.User)).Name} asked for a modal view demo in the {(await slack.Conversations.Info(slackEvent.Channel)).Name} channel");
 
-            await _slack.Chat.PostMessage(new Message
+            await slack.Chat.PostMessage(new Message
                 {
                     Channel = slackEvent.Channel,
                     Blocks =
@@ -63,7 +60,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
     {
         Console.WriteLine($"{request.User.Name} clicked the Open modal button in the {request.Channel.Name} channel");
 
-        await _slack.Views.Open(request.TriggerId, new ModalViewDefinition
+        await slack.Views.Open(request.TriggerId, new ModalViewDefinition
             {
                 Title = "Example Modal",
                 CallbackId = ModalCallbackId,
@@ -205,7 +202,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
         var richText = state.GetValue<RichTextInputValue>(RichTextActionId)?.RichTextValue
             ?? new RichTextBlock { Elements = { new RichTextSection { Elements = { new RichTextText { Text = "none" } } } } };
 
-        await _slack.Chat.PostMessage(new Message
+        await slack.Chat.PostMessage(new Message
             {
                 Channel = metadata.ChannelId,
                 Text = $"You entered: {state.GetValue<PlainTextInputValue>(InputActionId).Value}",
@@ -241,7 +238,7 @@ class ModalViewDemo : IEventHandler<MessageEvent>, IBlockActionHandler<ButtonAct
         var metadata = JsonSerializer.Deserialize<ModalMetadata>(viewClosed.View.PrivateMetadata)!;
         Console.WriteLine($"{viewClosed.User.Name} cancelled the demo modal view in the {metadata.ChannelName} channel");
 
-        await _slack.Chat.PostMessage(new Message
+        await slack.Chat.PostMessage(new Message
             {
                 Channel = metadata.ChannelId,
                 Text = "You cancelled the modal"

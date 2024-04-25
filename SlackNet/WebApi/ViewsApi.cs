@@ -57,20 +57,17 @@ public interface IViewsApi
     Task<ViewResponse> UpdateByViewId(ViewDefinition view, string viewId, string hash = null, CancellationToken? cancellationToken = null);
 }
 
-public class ViewsApi : IViewsApi
+public class ViewsApi(ISlackApiClient client) : IViewsApi
 {
-    private readonly ISlackApiClient _client;
-    public ViewsApi(ISlackApiClient client) => _client = client;
-
     public Task<ViewResponse> Open(string triggerId, ViewDefinition view, CancellationToken? cancellationToken = null) =>
-        _client.Post<ViewResponse>("views.open", new Args
+        client.Post<ViewResponse>("views.open", new Args
             {
                 { "trigger_id", triggerId },
                 { "view", view }
             }, cancellationToken);
 
     public Task<ViewResponse> Publish(string userId, HomeViewDefinition viewDefinition, string hash = null, CancellationToken? cancellationToken = null) =>
-        _client.Post<ViewResponse>("views.publish", new Args
+        client.Post<ViewResponse>("views.publish", new Args
             {
                 { "user_id", userId },
                 { "view", viewDefinition },
@@ -78,14 +75,14 @@ public class ViewsApi : IViewsApi
             }, cancellationToken);
 
     public Task<ViewResponse> Push(string triggerId, ViewDefinition view, CancellationToken? cancellationToken = null) =>
-        _client.Post<ViewResponse>("views.push", new Args
+        client.Post<ViewResponse>("views.push", new Args
             {
                 { "trigger_id", triggerId },
                 { "view", view }
             }, cancellationToken);
 
     public Task<ViewResponse> UpdateByExternalId(ViewDefinition view, string externalId, string hash = null, CancellationToken? cancellationToken = null) =>
-        _client.Post<ViewResponse>("views.update", new Args
+        client.Post<ViewResponse>("views.update", new Args
             {
                 { "view", view },
                 { "external_id", externalId },
@@ -93,7 +90,7 @@ public class ViewsApi : IViewsApi
             }, cancellationToken);
 
     public Task<ViewResponse> UpdateByViewId(ViewDefinition view, string viewId, string hash = null, CancellationToken? cancellationToken = null) =>
-        _client.Post<ViewResponse>("views.update", new Args
+        client.Post<ViewResponse>("views.update", new Args
             {
                 { "view", view },
                 { "view_id", viewId },
