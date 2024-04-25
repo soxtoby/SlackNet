@@ -49,8 +49,11 @@ class Http(Func<HttpClient> getHttpClient, SlackJsonSettings jsonSettings, ILogg
             : default;
     }
 
-    private async Task<T> Deserialize<T>(HttpResponseMessage response) =>
-        JsonSerializer.Create(jsonSettings.SerializerSettings).Deserialize<T>(new JsonTextReader(new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(false))));
+    private async Task<T> Deserialize<T>(HttpResponseMessage response)
+    {
+        using var jsonTextReader = new JsonTextReader(new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(false)));
+        return JsonSerializer.Create(jsonSettings.SerializerSettings).Deserialize<T>(jsonTextReader);
+    }
 }
 
 public class SlackRateLimitException(TimeSpan? retryAfter) : Exception

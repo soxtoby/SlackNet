@@ -295,7 +295,7 @@ public class FilesApi : IFilesApi
     public Task<FileAndCommentsResponse> SharedPublicUrl(string fileId, CancellationToken? cancellationToken = null) =>
         _client.Post<FileAndCommentsResponse>("files.sharedPublicURL", new Args { { "file", fileId } }, cancellationToken);
 
-    public Task<FileResponse> Upload(
+    public async Task<FileResponse> Upload(
         string fileContents,
         string fileType = null,
         string fileName = null,
@@ -303,11 +303,13 @@ public class FilesApi : IFilesApi
         string initialComment = null,
         string threadTs = null,
         IEnumerable<string> channels = null,
-        CancellationToken? cancellationToken = null
-    ) =>
-        Upload(new StringContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
+        CancellationToken? cancellationToken = null)
+    {
+        using var content = new StringContent(fileContents);
+        return await Upload(content, fileType, fileName, title, initialComment, threadTs, channels, cancellationToken).ConfigureAwait(false);
+    }
 
-    public Task<FileResponse> Upload(
+    public async Task<FileResponse> Upload(
         byte[] fileContents,
         string fileType = null,
         string fileName = null,
@@ -315,9 +317,11 @@ public class FilesApi : IFilesApi
         string initialComment = null,
         string threadTs = null,
         IEnumerable<string> channels = null,
-        CancellationToken? cancellationToken = null
-    ) =>
-        Upload(new ByteArrayContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
+        CancellationToken? cancellationToken = null)
+    {
+        using var content = new ByteArrayContent(fileContents);
+        return await Upload(content, fileType, fileName, title, initialComment, threadTs, channels, cancellationToken).ConfigureAwait(false);
+    }
 
     public Task<FileResponse> Upload(
         Stream fileContents,
@@ -331,7 +335,7 @@ public class FilesApi : IFilesApi
     ) =>
         Upload(new StreamContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
 
-    private Task<FileResponse> Upload(
+    private async Task<FileResponse> Upload(
         HttpContent fileContent,
         string fileType,
         string fileName,
@@ -340,8 +344,12 @@ public class FilesApi : IFilesApi
         string threadTs,
         IEnumerable<string> channels,
         CancellationToken? cancellationToken
-    ) =>
-        _client.Post<FileResponse>("files.upload", new Args
+    )
+    {
+        using var content = new MultipartFormDataContent();
+        content.Add(fileContent, "file", fileName ?? "file");
+
+        return await _client.Post<FileResponse>("files.upload", new Args
                 {
                     { "filetype", fileType },
                     { "filename", fileName },
@@ -350,8 +358,9 @@ public class FilesApi : IFilesApi
                     { "channels", channels },
                     { "thread_ts", threadTs }
                 },
-            new MultipartFormDataContent { { fileContent, "file", fileName ?? "file" } },
-            cancellationToken);
+            content,
+            cancellationToken).ConfigureAwait(false);
+    }
 
     public Task<FileResponse> UploadSnippet(
         string snippet,
