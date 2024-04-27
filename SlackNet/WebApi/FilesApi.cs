@@ -245,6 +245,9 @@ public interface IFilesApi
 
 public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
 {
+    [Obsolete("Include IHttp parameter.")]
+    public FilesApi(ISlackApiClient client) : this(client, Default.Http()) { }
+    
     public Task Delete(string fileId, CancellationToken? cancellationToken = null) =>
         client.Post("files.delete", new Args { { "file", fileId } }, cancellationToken);
 
