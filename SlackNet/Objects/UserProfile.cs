@@ -9,7 +9,7 @@ public class UserProfile
     public string Title { get; set; }
     public string AvatarHash { get; set; }
     public string StatusEmoji { get; set; }
-    public EmojiDisplayInfo StatusEmojiDisplayInfo { get; set; }
+    public IList<EmojiDisplayInfo> StatusEmojiDisplayInfo { get; set; } = [];
     public string StatusText { get; set; }
     public string StatusTextCanonical { get; set; }
     public long StatusExpiration { get; set; }
