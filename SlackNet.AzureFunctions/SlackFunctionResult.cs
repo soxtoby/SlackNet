@@ -16,7 +16,7 @@ public class SlackFunctionResult(SlackResult slackResult) : IActionResult
         // Request service provider is disposed before OnCompleted callbacks are called,
         // so we'll just need to wait for them to run before responding
         foreach (var callback in slackResult.RequestCompletedCallbacks)
-            await callback();
+            await callback().ConfigureAwait(false);
 
         if (slackResult.ContentType != null)
             response.ContentType = slackResult.ContentType;
@@ -28,6 +28,6 @@ public class SlackFunctionResult(SlackResult slackResult) : IActionResult
 
 public static class SlackResultExtensions
 {
-    public static async Task<SlackFunctionResult> FunctionResult(this Task<SlackResult> slackResult) => (await slackResult).FunctionResult();
+    public static async Task<SlackFunctionResult> FunctionResult(this Task<SlackResult> slackResult) => (await slackResult.ConfigureAwait(false)).FunctionResult();
     public static SlackFunctionResult FunctionResult(this SlackResult slackResult) => new(slackResult);
 }
