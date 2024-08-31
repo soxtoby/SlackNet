@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Core" Version="1.6.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Core" Version="1.17.0" />
   </ItemGroup>
 
 </Project>
