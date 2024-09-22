@@ -15,7 +15,7 @@ public static class Utils
     /// Converts a Slack timestamp string to a <see cref="DateTime"/>.
     /// </summary>
     /// <returns>If timestamp is null, empty or "0", returns null, otherwise a <see cref="DateTime"/>.</returns>
-    public static DateTime? ToDateTime(this string timestamp) =>
+    public static DateTime? ToDateTime(this string? timestamp) =>
         string.IsNullOrEmpty(timestamp)
             ? null
             : decimal.TryParse(timestamp, out var ts)
@@ -88,21 +88,36 @@ public static class Utils
     /// <paramref name="delayIncrease"/> each time, up to <paramref name="maxDelay"/>.
     /// Resets back to <paramref name="initialDelay"/> on next value.
     /// </summary>
+    [Obsolete("Will be removed in a future version.")]
     public static IObservable<T> RetryWithDelay<T>(this IObservable<T> source, TimeSpan initialDelay, TimeSpan delayIncrease, TimeSpan maxDelay, IScheduler? scheduler = null, Action<Exception, TimeSpan>? onError = null)
+    {
+        return source.RetryWithDelay(_ => true, initialDelay, delayIncrease, maxDelay, scheduler, onError);
+    }
+
+    /// <summary>
+    /// On error, resubscribes to <paramref name="source"/> after a delay,
+    /// starting with <paramref name="initialDelay"/> and then increasing by
+    /// <paramref name="delayIncrease"/> each time, up to <paramref name="maxDelay"/>.
+    /// Resets back to <paramref name="initialDelay"/> on next value.
+    /// </summary>
+    internal static IObservable<T> RetryWithDelay<T>(this IObservable<T> source, Func<Exception, bool> shouldRetry, TimeSpan initialDelay, TimeSpan delayIncrease, TimeSpan maxDelay, IScheduler? scheduler = null, Action<Exception, TimeSpan>? onError = null)
     {
         var currentDelay = initialDelay;
         return source
-            .Catch((Exception e) =>
-                {
-                    onError?.Invoke(e, currentDelay);
-                    var delay = Observable.Timer(currentDelay, scheduler ?? Scheduler.Default).SelectMany(Observable.Throw<T>(e));
-                    currentDelay += delayIncrease;
-                    if (currentDelay > maxDelay)
-                        currentDelay = maxDelay;
-                    return delay;
-                })
             .Do(_ => currentDelay = initialDelay)
-            .Retry();
+            .RetryWhen(es => es.SelectMany(e =>
+                {
+                    if (shouldRetry(e))
+                    {
+                        onError?.Invoke(e, currentDelay);
+                        var delay = Observable.Timer(currentDelay, scheduler ?? Scheduler.Default);
+                        currentDelay += delayIncrease;
+                        if (currentDelay > maxDelay)
+                            currentDelay = maxDelay;
+                        return delay;
+                    }
+                    return Observable.Throw<long>(e);
+                }));
     }
 
     internal static IObservable<T> WhereNotNull<T>(this IObservable<T?> source) => source.Where(v => v is not null)!;

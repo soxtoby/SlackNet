@@ -1,48 +1,41 @@
 ﻿using System;
-using System.Reactive;
 using System.Reactive.Linq;
-using SuperSocket.ClientEngine;
+using System.Threading;
+using System.Threading.Tasks;
 using WebSocket4Net;
 
 namespace SlackNet;
 
 public interface IWebSocket : IDisposable
 {
-    void Open();
+    Task<bool> Open(CancellationToken cancellationToken);
     void Send(string message);
     WebSocketState State { get; }
-    IObservable<Unit> Opened { get; }
-    IObservable<Unit> Closed { get; }
-    IObservable<Exception> Errors { get; }
+    Task Closed { get; }
     IObservable<string> Messages { get; }
 }
 
-public class WebSocketWrapper : IWebSocket
+public class WebSocketWrapper(WebSocket webSocket) : IWebSocket
 {
-    private readonly WebSocket _webSocket;
-
-    public WebSocketWrapper(WebSocket webSocket)
+    private readonly TaskCompletionSource<int> _closed = new();
+    
+    public async Task<bool> Open(CancellationToken cancellationToken)
     {
-        _webSocket = webSocket;
+        cancellationToken.Register(webSocket.Close);
+        var success = await webSocket.OpenAsync().ConfigureAwait(false);
+        if (success)
+            webSocket.Closed += (_, _) => _closed.TrySetResult(0);
+        return success;
     }
 
-    public void Open() => _webSocket.Open();
+    public void Send(string message) => webSocket.Send(message);
 
-    public void Send(string message) => _webSocket.Send(message);
+    public WebSocketState State => webSocket.State;
 
-    public WebSocketState State => _webSocket.State;
+    public Task Closed => _closed.Task;
 
-    public IObservable<Unit> Opened => Observable.FromEventPattern(h => _webSocket.Opened += h, h => _webSocket.Opened -= h)
-        .Select(_ => Unit.Default);
-
-    public IObservable<Unit> Closed => Observable.FromEventPattern(h => _webSocket.Closed += h, h => _webSocket.Closed -= h)
-        .Select(_ => Unit.Default);
-
-    public IObservable<Exception> Errors => Observable.FromEventPattern<ErrorEventArgs>(h => _webSocket.Error += h, h => _webSocket.Error -= h)
-        .Select(e => e.EventArgs.Exception);
-
-    public IObservable<string> Messages => Observable.FromEventPattern<MessageReceivedEventArgs>(h => _webSocket.MessageReceived += h, h => _webSocket.MessageReceived -= h)
+    public IObservable<string> Messages => Observable.FromEventPattern<MessageReceivedEventArgs>(h => webSocket.MessageReceived += h, h => webSocket.MessageReceived -= h)
         .Select(e => e.EventArgs.Message);
 
-    public void Dispose() => _webSocket.Dispose();
+    public void Dispose() => webSocket.Dispose();
 }

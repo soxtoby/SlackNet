@@ -69,16 +69,15 @@ public class UtilsTests
         var result = _scheduler.CreateObserver<int>();
 
         new[] { 1, 2, 3 }.ToObservable()
-            .RetryWithDelay(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), _scheduler)
+            .RetryWithDelay(_ => true, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), _scheduler)
             .Subscribe(result);
 
-        result.Messages.ShouldMatch(new[]
-            {
+        result.Messages.ShouldMatch([
                 OnNext(0, 1),
                 OnNext(0, 2),
                 OnNext(0, 3),
                 OnCompleted<int>(0)
-            });
+            ]);
     }
 
     [Test]
@@ -96,17 +95,16 @@ public class UtilsTests
             subscription6 = subscription5 + maxDelay + 1;
         var source = _scheduler.CreateColdObservable(OnError<int>(0));
 
-        _scheduler.Start(() => source.RetryWithDelay(TimeSpan.FromTicks(initialDelay), TimeSpan.FromTicks(delayIncrease), TimeSpan.FromTicks(maxDelay), _scheduler), 0, initialSubscription, subscription6 + 1);
+        _scheduler.Start(() => source.RetryWithDelay(_ => true, TimeSpan.FromTicks(initialDelay), TimeSpan.FromTicks(delayIncrease), TimeSpan.FromTicks(maxDelay), _scheduler), 0, initialSubscription, subscription6 + 1);
 
-        source.Subscriptions.ShouldMatch(new[]
-            {
+        source.Subscriptions.ShouldMatch([
                 new Subscription(subscription1, subscription1 + 1),
                 new Subscription(subscription2, subscription2 + 1),
                 new Subscription(subscription3, subscription3 + 1),
                 new Subscription(subscription4, subscription4 + 1),
                 new Subscription(subscription5, subscription5 + 1),
                 new Subscription(subscription6, subscription6 + 1)
-            });
+            ]);
     }
 
     [Test]
@@ -125,15 +123,36 @@ public class UtilsTests
             OnNext(subscription3 + 1, 0),
             OnError<int>(subscription3 + 1));
 
-        _scheduler.Start(() => source.RetryWithDelay(TimeSpan.FromTicks(initialDelay), TimeSpan.FromTicks(delayIncrease), TimeSpan.FromTicks(200), _scheduler), 0, 0, disposed);
+        _scheduler.Start(() => source.RetryWithDelay(_ => true, TimeSpan.FromTicks(initialDelay), TimeSpan.FromTicks(delayIncrease), TimeSpan.FromTicks(200), _scheduler), 0, 0, disposed);
 
-        source.Subscriptions.ShouldMatch(new[]
-            {
+        source.Subscriptions.ShouldMatch([
                 new Subscription(subscription1, subscription1 + 1),
                 new Subscription(subscription2, subscription2 + 1),
                 new Subscription(subscription3, subscription3 + 1),
                 new Subscription(subscription4, disposed)
-            });
+            ]);
+    }
+
+    [Test]
+    public void RetryWithDelay_ExceptionShouldNotBeRetried_Throws()
+    {
+        var initialDelay = 100;
+        var delayIncrease = 10;
+        var disposed = 2000;
+        var subscription1 = 1;
+        var expectedError = new Exception("Expected");
+        var source = _scheduler.CreateHotObservable(
+            OnError<int>(subscription1 + 1, expectedError)
+        );
+
+        var result = _scheduler.Start(() => source.RetryWithDelay(_ => false, TimeSpan.FromTicks(initialDelay), TimeSpan.FromTicks(delayIncrease), TimeSpan.FromTicks(200), _scheduler), 0, 0, disposed);
+
+        source.Subscriptions.ShouldMatch([
+                new Subscription(subscription1, subscription1 + 1)
+            ]);
+        result.Messages.ShouldMatch([
+                OnError<int>(subscription1 + 1, expectedError)
+            ]);
     }
 
     [Test]
@@ -141,10 +160,11 @@ public class UtilsTests
     {
         var source = Observable.Throw<int>(new Exception());
 
-        _scheduler.Start(() => source.RetryWithDelay(TimeSpan.FromTicks(1), TimeSpan.FromTicks(0), TimeSpan.FromTicks(1), _scheduler), 0, 0, 10000);
+        _scheduler.Start(() => source.RetryWithDelay(_ => true, TimeSpan.FromTicks(1), TimeSpan.FromTicks(0), TimeSpan.FromTicks(1), _scheduler), 0, 0, 10000);
     }
 
     private static Recorded<Notification<T>> OnNext<T>(long time, T value) => new(time, Notification.CreateOnNext(value));
     private static Recorded<Notification<T>> OnError<T>(long time) => new(time, Notification.CreateOnError<T>(new Exception()));
+    private static Recorded<Notification<T>> OnError<T>(long time, Exception exception) => new(time, Notification.CreateOnError<T>(exception));
     private static Recorded<Notification<T>> OnCompleted<T>(long time) => new(time, Notification.CreateOnCompleted<T>());
 }

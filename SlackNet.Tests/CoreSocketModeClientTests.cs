@@ -1,11 +1,9 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
+using System.Reactive.Threading.Tasks;
 using System.Threading;
 using EasyAssertions;
 using Newtonsoft.Json;
@@ -13,7 +11,6 @@ using NSubstitute;
 using NUnit.Framework;
 using SlackNet.SocketMode;
 using SlackNet.WebApi;
-using WebSocket4Net;
 
 namespace SlackNet.Tests;
 
@@ -48,9 +45,9 @@ public class CoreSocketModeClientTests
     [Test]
     public void Connected_ValidMessageReceived_OutputsMessage()
     {
-        Connect();
+        var socket = Connect();
 
-        _sockets.Created.Last().Receive(JsonConvert.SerializeObject(new Hello { Type = "hello" }, _jsonSettings.SerializerSettings));
+        socket.Receive(JsonConvert.SerializeObject(new Hello { Type = "hello" }, _jsonSettings.SerializerSettings));
 
         _messages.ShouldBeASingular<Hello>();
     }
@@ -58,9 +55,9 @@ public class CoreSocketModeClientTests
     [Test]
     public void Connected_NonJsonMessageReceived_IgnoresMessage()
     {
-        Connect();
+        var socket = Connect();
             
-        _sockets.Created.Last().Receive("not json");
+        socket.Receive("not json");
 
         _messages.ShouldBeEmpty();
         _logger.Events.ShouldContain("not json", (e, m) =>
@@ -68,63 +65,17 @@ public class CoreSocketModeClientTests
             && e.Properties["Message"] == m);
     }
 
-    private void Connect()
+    private TestWebSocket Connect()
     {
-        _sut.Connect(new SocketModeConnectionOptions { NumberOfConnections = 1 }).ShouldComplete();
-    }
-}
+        var socket = _sockets.Created.FirstAsync().ToTask();
 
-class TestWebSocketFactory : IWebSocketFactory
-{
-    public List<TestWebSocket> Created { get; } = new();
+        var connected = _sut.Connect(new SocketModeConnectionOptions { NumberOfConnections = 1 });
 
-    public IWebSocket Create(string uri)
-    {
-        var socket = new TestWebSocket(uri);
-        Created.Add(socket);
-        return socket;
-    }
-}
-
-class TestWebSocket(string uri) : IWebSocket
-{
-    private readonly Subject<Unit> _opened = new();
-    private readonly Subject<Unit> _closed = new();
-    private readonly Subject<string> _messages = new();
-
-    public string Uri { get; } = uri;
-
-    public List<string> Sent { get; } = new();
-
-    public void Open()
-    {
-        State = WebSocketState.Open;
-        _opened.OnNext(Unit.Default);
-    }
-
-    public void Send(string message) => Sent.Add(message);
-
-    public void Receive(string message) => _messages.OnNext(message);
-
-    public WebSocketState State { get; private set; }
-    public IObservable<Unit> Opened => _opened;
-    public IObservable<Unit> Closed => _closed;
-    public IObservable<Exception> Errors => Observable.Never<Exception>();
-    public IObservable<string> Messages => _messages;
-
-    public void Dispose()
-    {
-        _closed.OnNext(Unit.Default);
-    }
-}
-
-class TestLogger : ILogger
-{
-    public List<ILogEvent> Events { get; } = new();
+        socket.ShouldComplete();
+        socket.Result.Connection.SetResult(true);
         
-    public void Log(ILogEvent logEvent)
-    {
-        Events.Add(logEvent);
-        TestContext.WriteLine($"[{logEvent.Category}] {logEvent.FullMessage()}");
+        connected.ShouldComplete();
+
+        return socket.Result;
     }
 }
