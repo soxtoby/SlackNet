@@ -88,5 +88,5 @@ public class SlackEndpointConfiguration : ISlackRequestValidationConfiguration
     public bool VerifyEventUrl { get; private set; } = true;
     public bool SocketMode { get; private set; }
     public bool DelayedResponse { get; private set; }
-    public SocketModeConnectionOptions SocketModeConnectionOptions { get; set; }
+    public SocketModeConnectionOptions SocketModeConnectionOptions { get; [Obsolete("Pass options to UseSocketMode instead.")] set; }
 }

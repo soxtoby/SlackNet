@@ -24,17 +24,11 @@ public static class AspNetCoreExtensions
     /// </summary>
     public static IApplicationBuilder UseSlackNet(this IApplicationBuilder app, Action<SlackEndpointConfiguration> configure = null)
     {
-        var config = new SlackEndpointConfiguration();
+        var config = app.ApplicationServices.GetRequiredService<SlackEndpointConfiguration>();
         configure?.Invoke(config);
 
-        if (config.SocketMode)
-        {
-            app.ApplicationServices.GetRequiredService<ISlackSocketModeClient>().Connect();
-            return app;
-        }
-        else
-        {
-            return app.UseMiddleware<SlackRequestMiddleware>(config);
-        }
+        return config.SocketMode 
+            ? app // Nothing to do - SocketModeService manages the client
+            : app.UseMiddleware<SlackRequestMiddleware>(config);
     }
 }
