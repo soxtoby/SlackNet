@@ -4,7 +4,7 @@ using SlackNet.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var slackSettings = builder.Configuration.GetSection("Slack").Get<SlackSettings>();
+var slackSettings = builder.Configuration.GetSection("Slack").Get<SlackSettings>()!;
 
 builder.Services.AddSlackNet(c => c
     // Configure the tokens used to authenticate with Slack

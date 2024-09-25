@@ -144,9 +144,9 @@ public class SlackRtmClient : ISlackRtmClient
     /// <summary>
     /// Is the client connecting or has it connected.
     /// </summary>
-    public bool Connected =>
-        _webSocket?.State == WebSocketState.Connecting
-        || _webSocket?.State == WebSocketState.Open;
+    public bool Connected => _webSocket?.State
+        is WebSocketState.Connecting
+        or WebSocketState.Open;
 
     /// <summary>
     /// Send a simple message. For more complicated messages, use <see cref="ChatApi.PostMessage"/> instead.
