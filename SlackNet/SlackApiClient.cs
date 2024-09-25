@@ -246,7 +246,7 @@ public class SlackApiClient : ISlackApiClient
             }
             catch (SlackRateLimitException e) when (!DisableRetryOnRateLimit)
             {
-                await Task.Delay(e.RetryAfter ?? TimeSpan.FromSeconds(1)).ConfigureAwait(false);
+                await Task.Delay(e.RetryAfter ?? TimeSpan.FromSeconds(1), cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
             }
         }
     }
