@@ -86,5 +86,5 @@ public class BotMessage
     /// <summary>
     /// Allows message sending to be cancelled, if it hasn't already been sent.
     /// </summary>
-    public CancellationToken? CancellationToken { get; set; }
+    public CancellationToken CancellationToken { get; set; }
 }

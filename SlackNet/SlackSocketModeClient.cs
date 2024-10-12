@@ -18,7 +18,7 @@ namespace SlackNet;
 
 public interface ISlackSocketModeClient : IDisposable
 {
-    Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken? cancellationToken = null);
+    Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken cancellationToken = default);
 
     void Disconnect();
 
@@ -57,7 +57,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
             .Subscribe();
     }
 
-    public Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken? cancellationToken = null) =>
+    public Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken cancellationToken = default) =>
         _socket.Connect(connectionOptions, cancellationToken);
 
     public void Disconnect() => _socket.Disconnect();

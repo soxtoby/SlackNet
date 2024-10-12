@@ -32,9 +32,9 @@ class ReconnectingWebSocket : IDisposable
         _messages = Subject.Synchronize(_messagesSubject);
     }
 
-    public async Task Connect(Func<Task<string>> getWebSocketUrl, CancellationToken? cancellationToken = null)
+    public async Task Connect(Func<Task<string>> getWebSocketUrl, CancellationToken cancellationToken = default)
     {
-        using var cancel = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken ?? CancellationToken.None, _disposed.Token);
+        using var cancel = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _disposed.Token);
 
         // Retry as long as not cancelled and Slack doesn't return an error response
         await Observable.FromAsync(() => ConnectInternal(getWebSocketUrl, cancel.Token), _scheduler)

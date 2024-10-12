@@ -11,7 +11,7 @@ public interface ITeamPreferencesApi
     /// </summary>
     /// <remarks>See the <a href="https://api.slack.com/methods/team.preferences.list">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
-    Task<TeamPreferences> List(CancellationToken? cancellationToken = null);
+    Task<TeamPreferences> List(CancellationToken cancellationToken = default);
 }
 
 public class TeamPreferencesApi : ITeamPreferencesApi
@@ -19,6 +19,6 @@ public class TeamPreferencesApi : ITeamPreferencesApi
     private readonly ISlackApiClient _client;
     public TeamPreferencesApi(ISlackApiClient client) => _client = client;
 
-    public Task<TeamPreferences> List(CancellationToken? cancellationToken = null) => 
+    public Task<TeamPreferences> List(CancellationToken cancellationToken = default) => 
         _client.Get<TeamPreferences>("team.preferences.list", new Args(), cancellationToken);
 }

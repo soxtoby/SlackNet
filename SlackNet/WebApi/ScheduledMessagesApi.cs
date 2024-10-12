@@ -26,7 +26,7 @@ public interface IScheduledMessagesApi
         string oldestTs = null,
         int limit = 100,
         string cursor = null,
-        CancellationToken? cancellationToken = null);
+        CancellationToken cancellationToken = default);
 }
 
 public class ScheduledMessagesApi : IScheduledMessagesApi
@@ -40,7 +40,7 @@ public class ScheduledMessagesApi : IScheduledMessagesApi
         string oldestTs = null,
         int limit = 100,
         string cursor = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Post<ScheduledMessageListResponse>("chat.scheduledMessages.list", new Args
             {

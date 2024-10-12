@@ -26,7 +26,7 @@ public interface IBookmarksApi
         string entityId = null,
         string link = null,
         string parentId = null,
-        CancellationToken? cancellationToken = null);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Edit bookmark.
@@ -44,7 +44,7 @@ public interface IBookmarksApi
         string emoji = null,
         string link = null,
         string title = null,
-        CancellationToken? cancellationToken = null);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// List bookmarks for the channel.
@@ -52,7 +52,7 @@ public interface IBookmarksApi
     /// <remarks>See the <a href="https://api.slack.com/methods/bookmarks.list">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel to list bookmarks in.</param>
     /// <param name="cancellationToken"></param>
-    Task<BookmarkListResponse> List(string channelId, CancellationToken? cancellationToken = null);
+    Task<BookmarkListResponse> List(string channelId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Remove bookmark from the channel.
@@ -61,7 +61,7 @@ public interface IBookmarksApi
     /// <param name="bookmarkId">Bookmark to remove.</param>
     /// <param name="channelId">Channel to remove bookmark from.</param>
     /// <param name="cancellationToken"></param>
-    Task Remove(string bookmarkId, string channelId, CancellationToken? cancellationToken = null);
+    Task Remove(string bookmarkId, string channelId, CancellationToken cancellationToken = default);
 }
 
 public class BookmarksApi(ISlackApiClient client) : IBookmarksApi
@@ -74,7 +74,7 @@ public class BookmarksApi(ISlackApiClient client) : IBookmarksApi
         string entityId = null,
         string link = null,
         string parentId = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         (await client.Post<BookmarkResponse>("bookmarks.add", new Args
             {
@@ -94,7 +94,7 @@ public class BookmarksApi(ISlackApiClient client) : IBookmarksApi
         string emoji = null,
         string link = null,
         string title = null,
-        CancellationToken? cancellationToken = null) =>
+        CancellationToken cancellationToken = default) =>
         (await client.Post<BookmarkResponse>("bookmarks.add", new Args
             {
                 { "bookmark_id", bookmarkId },
@@ -105,10 +105,10 @@ public class BookmarksApi(ISlackApiClient client) : IBookmarksApi
             }, cancellationToken).ConfigureAwait(false))
         .Bookmark;
 
-    public Task<BookmarkListResponse> List(string channelId, CancellationToken? cancellationToken = null) =>
+    public Task<BookmarkListResponse> List(string channelId, CancellationToken cancellationToken = default) =>
         client.Post<BookmarkListResponse>("bookmarks.list", new Args { { "channel_id", channelId } }, cancellationToken);
 
-    public Task Remove(string bookmarkId, string channelId, CancellationToken? cancellationToken = null) =>
+    public Task Remove(string bookmarkId, string channelId, CancellationToken cancellationToken = default) =>
         client.Post("bookmarks.remove", new Args
             {
                 { "bookmark_id", bookmarkId },

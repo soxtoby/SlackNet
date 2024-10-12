@@ -9,14 +9,14 @@ namespace SlackNet;
 
 public interface IHttp
 {
-    Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null);
+    Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default);
 }
 
 class Http(Func<HttpClient> getHttpClient, SlackJsonSettings jsonSettings, ILogger logger) : IHttp
 {
     private readonly ILogger _log = logger.ForSource<Http>();
 
-    public async Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null)
+    public async Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default)
     {
         HttpResponseMessage response;
 
@@ -26,7 +26,7 @@ class Http(Func<HttpClient> getHttpClient, SlackJsonSettings jsonSettings, ILogg
 
         try
         {
-            response = await getHttpClient().SendAsync(requestMessage, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+            response = await getHttpClient().SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);
             requestLog
                 .WithContext("ResponseStatus", response.StatusCode)
                 .WithContext("ResponseReason", response.ReasonPhrase)

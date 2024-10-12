@@ -13,7 +13,7 @@ public interface IAppsConnectionsApi
     /// </summary>
     /// <remarks>See the <a href="https://api.slack.com/methods/apps.connections.open">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
-    Task<ConnectionOpenResponse> Open(CancellationToken? cancellationToken = null);
+    Task<ConnectionOpenResponse> Open(CancellationToken cancellationToken = default);
 }
 
 public class AppsConnectionsApi : IAppsConnectionsApi
@@ -21,6 +21,6 @@ public class AppsConnectionsApi : IAppsConnectionsApi
     private readonly ISlackApiClient _client;
     public AppsConnectionsApi(ISlackApiClient client) => _client = client;
 
-    public Task<ConnectionOpenResponse> Open(CancellationToken? cancellationToken = null) =>
+    public Task<ConnectionOpenResponse> Open(CancellationToken cancellationToken = default) =>
         _client.Post<ConnectionOpenResponse>("apps.connections.open", new Args(), cancellationToken);
 }

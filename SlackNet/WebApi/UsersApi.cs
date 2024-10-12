@@ -25,7 +25,7 @@ public interface IUsersApi
     /// Default value fetches the first "page" of the collection.
     /// </param>
     /// <param name="cancellationToken"></param>
-    Task<ConversationListResponse> Conversations(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string userId = null, string cursor = null, CancellationToken? cancellationToken = null);
+    Task<ConversationListResponse> Conversations(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string userId = null, string cursor = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Allows the user to delete their profile image. It will clear whatever image is currently set.
@@ -33,7 +33,7 @@ public interface IUsersApi
     /// </summary>
     /// <remarks>See the <a href="https://api.slack.com/methods/users.deletePhoto">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
-    Task DeletePhoto(CancellationToken? cancellationToken = null);
+    Task DeletePhoto(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Lets you find out information about a user's presence.
@@ -41,7 +41,7 @@ public interface IUsersApi
     /// <remarks>See the <a href="https://api.slack.com/methods/users.getPresence">Slack documentation</a> for more information.</remarks>
     /// <param name="userId">User to get presence info on. Defaults to the authed user.</param>
     /// <param name="cancellationToken"></param>
-    Task<Presence> GetPresence(string userId = null, CancellationToken? cancellationToken = null);
+    Task<Presence> GetPresence(string userId = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// After your Slack app is awarded an identity token through Sign in with Slack, use this method to retrieve a user's identity.
@@ -50,7 +50,7 @@ public interface IUsersApi
     /// </summary>
     /// <remarks>See the <a href="https://api.slack.com/methods/users.identity">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
-    Task<IdentityResponse> Identity(CancellationToken? cancellationToken = null);
+    Task<IdentityResponse> Identity(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns information about a team member.
@@ -59,7 +59,7 @@ public interface IUsersApi
     /// <param name="userId">User to get info on.</param>
     /// <param name="includeLocale">Set this to true to receive the locale for this user.</param>
     /// <param name="cancellationToken"></param>
-    Task<User> Info(string userId, bool includeLocale = false, CancellationToken? cancellationToken = null);
+    Task<User> Info(string userId, bool includeLocale = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns a list of all users in the team.
@@ -74,7 +74,7 @@ public interface IUsersApi
     /// <param name="includeLocale">Set this to true to receive the locale for users.</param>
     /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
     /// <param name="cancellationToken"></param>
-    Task<UserListResponse> List(string cursor = null, bool includeLocale = false, int limit = 0, CancellationToken? cancellationToken = null);
+    Task<UserListResponse> List(string cursor = null, bool includeLocale = false, int limit = 0, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Find a user with an email address.
@@ -82,7 +82,7 @@ public interface IUsersApi
     /// <remarks>See the <a href="https://api.slack.com/methods/users.lookupByEmail">Slack documentation</a> for more information.</remarks>
     /// <param name="email">An email address belonging to a user in the workspace.</param>
     /// <param name="cancellationToken"></param>
-    Task<User> LookupByEmail(string email, CancellationToken? cancellationToken = null);
+    Task<User> LookupByEmail(string email, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// This method allows the user to set their profile image.
@@ -99,7 +99,7 @@ public interface IUsersApi
     /// <param name="cropX">X coordinate of top-left corner of crop box.</param>
     /// <param name="cropY">Y coordinate of top-left corner of crop box.</param>
     /// <param name="cancellationToken"></param>
-    Task SetPhoto(byte[] imageContent, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null);
+    Task SetPhoto(byte[] imageContent, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// This method allows the user to set their profile image.
@@ -116,7 +116,7 @@ public interface IUsersApi
     /// <param name="cropX">X coordinate of top-left corner of crop box.</param>
     /// <param name="cropY">Y coordinate of top-left corner of crop box.</param>
     /// <param name="cancellationToken"></param>
-    Task SetPhoto(Stream image, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null);
+    Task SetPhoto(Stream image, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Lets you set the calling user's manual presence.
@@ -125,7 +125,7 @@ public interface IUsersApi
     /// <param name="presence">User's presence.</param>
     /// <param name="cancellationToken"></param>
     [Obsolete("Use SetPresence with RequestPresence enum instead")]
-    Task SetPresence(Presence presence, CancellationToken? cancellationToken = null);
+    Task SetPresence(Presence presence, CancellationToken cancellationToken = default);
         
     /// <summary>
     /// Lets you set the calling user's manual presence.
@@ -133,7 +133,7 @@ public interface IUsersApi
     /// <remarks>See the <a href="https://api.slack.com/methods/users.setPresence">Slack documentation</a> for more information.</remarks>
     /// <param name="presence">User's presence.</param>
     /// <param name="cancellationToken"></param>
-    Task SetPresence(RequestPresence presence, CancellationToken? cancellationToken = null);
+    Task SetPresence(RequestPresence presence, CancellationToken cancellationToken = default);
 }
 
 public class UsersApi : IUsersApi
@@ -141,7 +141,7 @@ public class UsersApi : IUsersApi
     private readonly ISlackApiClient _client;
     public UsersApi(ISlackApiClient client) => _client = client;
 
-    public Task<ConversationListResponse> Conversations(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string userId = null, string cursor = null, CancellationToken? cancellationToken = null) =>
+    public Task<ConversationListResponse> Conversations(bool excludeArchived = false, int limit = 100, IEnumerable<ConversationType> types = null, string userId = null, string cursor = null, CancellationToken cancellationToken = default) =>
         _client.Get<ConversationListResponse>("users.conversations", new Args
             {
                 { "cursor", cursor },
@@ -151,23 +151,23 @@ public class UsersApi : IUsersApi
                 { "user", userId }
             }, cancellationToken);
 
-    public Task DeletePhoto(CancellationToken? cancellationToken = null) =>
+    public Task DeletePhoto(CancellationToken cancellationToken = default) =>
         _client.Get("users.deletePhoto", new Args(), cancellationToken);
 
-    public async Task<Presence> GetPresence(string userId = null, CancellationToken? cancellationToken = null) =>
+    public async Task<Presence> GetPresence(string userId = null, CancellationToken cancellationToken = default) =>
         (await _client.Get<PresenceResponse>("users.getPresence", new Args { { "user", userId } }, cancellationToken).ConfigureAwait(false)).Presence;
 
-    public Task<IdentityResponse> Identity(CancellationToken? cancellationToken = null) =>
+    public Task<IdentityResponse> Identity(CancellationToken cancellationToken = default) =>
         _client.Get<IdentityResponse>("users.identity", new Args(), cancellationToken);
 
-    public async Task<User> Info(string userId, bool includeLocale = false, CancellationToken? cancellationToken = null) =>
+    public async Task<User> Info(string userId, bool includeLocale = false, CancellationToken cancellationToken = default) =>
         (await _client.Get<UserResponse>("users.info", new Args
             {
                 { "user", userId },
                 { "include_locale", includeLocale },
             }, cancellationToken).ConfigureAwait(false)).User;
 
-    public Task<UserListResponse> List(string cursor = null, bool includeLocale = false, int limit = 0, CancellationToken? cancellationToken = null) =>
+    public Task<UserListResponse> List(string cursor = null, bool includeLocale = false, int limit = 0, CancellationToken cancellationToken = default) =>
         _client.Get<UserListResponse>("users.list", new Args
             {
                 { "cursor", cursor },
@@ -175,10 +175,10 @@ public class UsersApi : IUsersApi
                 { "limit", limit }
             }, cancellationToken);
 
-    public async Task<User> LookupByEmail(string email, CancellationToken? cancellationToken = null) =>
+    public async Task<User> LookupByEmail(string email, CancellationToken cancellationToken = default) =>
         (await _client.Get<UserResponse>("users.lookupByEmail", new Args { { "email", email } }, cancellationToken).ConfigureAwait(false)).User;
 
-    public Task SetPhoto(byte[] imageContent, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null) =>
+    public Task SetPhoto(byte[] imageContent, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken cancellationToken = default) =>
         _client.Post("users.setPhoto", new Args
                 {
                     { "crop_w", cropW },
@@ -195,7 +195,7 @@ public class UsersApi : IUsersApi
                 },
             cancellationToken);
 
-    public Task SetPhoto(Stream image, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken? cancellationToken = null) =>
+    public Task SetPhoto(Stream image, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken cancellationToken = default) =>
         _client.Post("users.setPhoto", new Args
                 {
                     { "crop_w", cropW },
@@ -212,9 +212,9 @@ public class UsersApi : IUsersApi
                 },
             cancellationToken);
 
-    public Task SetPresence(Presence presence, CancellationToken? cancellationToken = null) =>
+    public Task SetPresence(Presence presence, CancellationToken cancellationToken = default) =>
         SetPresence(presence == Presence.Active ? RequestPresence.Auto : RequestPresence.Away, cancellationToken);
 
-    public Task SetPresence(RequestPresence presence, CancellationToken? cancellationToken = null) =>
+    public Task SetPresence(RequestPresence presence, CancellationToken cancellationToken = default) =>
         _client.Post("users.setPresence", new Args { { "presence", presence } }, cancellationToken);
 }

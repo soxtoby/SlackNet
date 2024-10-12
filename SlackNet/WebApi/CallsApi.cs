@@ -30,7 +30,7 @@ public interface ICallsApi
         string externalDisplayId = null,
         string title = null,
         IEnumerable<CallUser> users = null,
-        CancellationToken? cancellationToken = null);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Ends a Call.
@@ -39,7 +39,7 @@ public interface ICallsApi
     /// <param name="id"><see cref="Call.Id"/> returned when registering the call using the <see cref="Add"/> method.</param>
     /// <param name="duration">Call duration.</param>
     /// <param name="cancellationToken"></param>
-    Task End(string id, TimeSpan? duration = null, CancellationToken? cancellationToken = null);
+    Task End(string id, TimeSpan? duration = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns information about a Call.
@@ -47,7 +47,7 @@ public interface ICallsApi
     /// <remarks>See the <a href="https://api.slack.com/methods/calls.info">Slack documentation</a> for more information.</remarks>
     /// <param name="id"><see cref="Call.Id"/> returned by the <see cref="Add"/> method.</param>
     /// <param name="cancellationToken"></param>
-    Task<Call> Info(string id, CancellationToken? cancellationToken = null);
+    Task<Call> Info(string id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates information about a Call.
@@ -58,7 +58,7 @@ public interface ICallsApi
     /// <param name="joinUrl">The URL required for a client to join the Call.</param>
     /// <param name="title">The name of the Call.</param>
     /// <param name="cancellationToken"></param>
-    Task<Call> Update(string id, string desktopAppJoinUrl = null, string joinUrl = null, string title = null, CancellationToken? cancellationToken = null);
+    Task<Call> Update(string id, string desktopAppJoinUrl = null, string joinUrl = null, string title = null, CancellationToken cancellationToken = default);
 }
 
 public class CallsApi(ISlackApiClient client) : ICallsApi
@@ -72,7 +72,7 @@ public class CallsApi(ISlackApiClient client) : ICallsApi
         string externalDisplayId = null,
         string title = null,
         IEnumerable<CallUser> users = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         (await client.Post<CallResponse>("calls.add", new Args
             {
@@ -87,17 +87,17 @@ public class CallsApi(ISlackApiClient client) : ICallsApi
             }, cancellationToken).ConfigureAwait(false))
         .Call;
 
-    public Task End(string id, TimeSpan? duration = null, CancellationToken? cancellationToken = null) =>
+    public Task End(string id, TimeSpan? duration = null, CancellationToken cancellationToken = default) =>
         client.Post("calls.end", new Args
             {
                 { "id", id },
                 { "duration", duration?.TotalSeconds }
             }, cancellationToken);
 
-    public async Task<Call> Info(string id, CancellationToken? cancellationToken = null) =>
+    public async Task<Call> Info(string id, CancellationToken cancellationToken = default) =>
         (await client.Post<CallResponse>("calls.info", new Args { { "id", id } }, cancellationToken).ConfigureAwait(false)).Call;
 
-    public async Task<Call> Update(string id, string desktopAppJoinUrl = null, string joinUrl = null, string title = null, CancellationToken? cancellationToken = null) =>
+    public async Task<Call> Update(string id, string desktopAppJoinUrl = null, string joinUrl = null, string title = null, CancellationToken cancellationToken = default) =>
         (await client.Post<CallResponse>("calls.update", new Args
             {
                 { "id", id },

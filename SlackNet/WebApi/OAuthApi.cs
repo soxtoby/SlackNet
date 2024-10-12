@@ -15,7 +15,7 @@ public interface IOAuthApi
     /// <param name="code">The code param returned via the OAuth callback.</param>
     /// <param name="redirectUrl">This must match the originally submitted URI (if one was sent).</param>
     /// <param name="cancellationToken"></param>
-    Task<OauthAccessResponse> Access(string clientId, string clientSecret, string code, string redirectUrl, CancellationToken? cancellationToken = null);
+    Task<OauthAccessResponse> Access(string clientId, string clientSecret, string code, string redirectUrl, CancellationToken cancellationToken = default);
 }
 
 public class OAuthApi : IOAuthApi
@@ -23,7 +23,7 @@ public class OAuthApi : IOAuthApi
     private readonly ISlackApiClient _client;
     public OAuthApi(ISlackApiClient client) => _client = client;
 
-    public Task<OauthAccessResponse> Access(string clientId, string clientSecret, string code, string redirectUrl, CancellationToken? cancellationToken = null) =>
+    public Task<OauthAccessResponse> Access(string clientId, string clientSecret, string code, string redirectUrl, CancellationToken cancellationToken = default) =>
         _client.Get<OauthAccessResponse>("oauth.access", new Args
             {
                 { "client_id", clientId },

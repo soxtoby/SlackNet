@@ -32,10 +32,10 @@ public class SlackMessage(ISlackBot bot) : IMessage
         || Text.IndexOf(bot.Name, StringComparison.OrdinalIgnoreCase) >= 0
         || Conversation?.IsIm == true;
 
-    public Task ReplyWith(string text, bool createThread = false, CancellationToken? cancellationToken = null) =>
+    public Task ReplyWith(string text, bool createThread = false, CancellationToken cancellationToken = default) =>
         ReplyWith(new BotMessage { Text = text }, createThread, cancellationToken);
 
-    public async Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false, CancellationToken? cancellationToken = null)
+    public async Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false, CancellationToken cancellationToken = default)
     {
         await bot.WhileTyping(Conversation.Id, async () =>
             {
@@ -45,7 +45,7 @@ public class SlackMessage(ISlackBot bot) : IMessage
             }).ConfigureAwait(false);
     }
 
-    public async Task ReplyWith(BotMessage message, bool createThread = false, CancellationToken? cancellationToken = null)
+    public async Task ReplyWith(BotMessage message, bool createThread = false, CancellationToken cancellationToken = default)
     {
         if (message == null) throw new ArgumentNullException(nameof(message));
 

@@ -12,7 +12,7 @@ public interface ITeamProfileApi
     /// <remarks>See the <a href="https://api.slack.com/methods/team.profile.get">Slack documentation</a> for more information.</remarks>
     /// <param name="visibility">Filter by visibility.</param>
     /// <param name="cancellationToken"></param>
-    Task<TeamProfile> Get(ProfileFieldVisibility visibility = ProfileFieldVisibility.All, CancellationToken? cancellationToken = null);
+    Task<TeamProfile> Get(ProfileFieldVisibility visibility = ProfileFieldVisibility.All, CancellationToken cancellationToken = default);
 }
 
 public class TeamProfileApi : ITeamProfileApi
@@ -20,6 +20,6 @@ public class TeamProfileApi : ITeamProfileApi
     private readonly ISlackApiClient _client;
     public TeamProfileApi(ISlackApiClient client) => _client = client;
 
-    public async Task<TeamProfile> Get(ProfileFieldVisibility visibility = ProfileFieldVisibility.All, CancellationToken? cancellationToken = null) =>
+    public async Task<TeamProfile> Get(ProfileFieldVisibility visibility = ProfileFieldVisibility.All, CancellationToken cancellationToken = default) =>
         (await _client.Get<TeamProfileResponse>("team.profile.get", new Args { { "visibility", visibility } }, cancellationToken).ConfigureAwait(false)).Profile;
 }

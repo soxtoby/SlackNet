@@ -24,7 +24,7 @@ public interface ISearchApi
         bool highlight = false,
         int count = 20,
         int page = 1,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -45,7 +45,7 @@ public interface ISearchApi
         bool highlight = false,
         int count = 20,
         int page = 1,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -66,7 +66,7 @@ public interface ISearchApi
         bool highlight = false,
         int count = 20,
         int page = 1,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 }
 
@@ -82,7 +82,7 @@ public class SearchApi : ISearchApi
         bool highlight = false,
         int count = 20,
         int page = 1,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Get<SearchResponse>("search.all", new Args
                 {
@@ -102,7 +102,7 @@ public class SearchApi : ISearchApi
         bool highlight = false,
         int count = 20,
         int page = 1,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Get<FileSearchResponse>("search.files", new Args
                 {
@@ -122,7 +122,7 @@ public class SearchApi : ISearchApi
         bool highlight = false,
         int count = 20,
         int page = 1,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Get<MessageSearchResponse>("search.messages", new Args
                 {

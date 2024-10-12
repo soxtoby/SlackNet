@@ -25,7 +25,7 @@ public interface IWorkflowsApi
     /// <param name="stepImageUrl">An optional parameter that can be used to override app image that is shown in the Workflow Builder.</param>
     /// <param name="stepName">An optional parameter that can be used to override the step name that is shown in the Workflow Builder.</param>
     /// <param name="cancellationToken"></param>
-    Task UpdateStep(string workflowStepEditId, IDictionary<string, WorkflowInput> inputs, IEnumerable<WorkflowOutput> outputs, string stepImageUrl = null, string stepName = null, CancellationToken? cancellationToken = null);
+    Task UpdateStep(string workflowStepEditId, IDictionary<string, WorkflowInput> inputs, IEnumerable<WorkflowOutput> outputs, string stepImageUrl = null, string stepName = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Indicate that an app's step in a workflow completed execution.
@@ -37,7 +37,7 @@ public interface IWorkflowsApi
     /// Keys of this object reflect the <see cref="WorkflowOutput.Name"/>s of your outputs from your <see cref="WorkflowStep"/> object.
     /// </param>
     /// <param name="cancellationToken"></param>
-    Task StepCompleted(string workflowStepExecuteId, IDictionary<string, string> outputs, CancellationToken? cancellationToken = null);
+    Task StepCompleted(string workflowStepExecuteId, IDictionary<string, string> outputs, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Indicate that an app's step in a workflow failed to execute.
@@ -46,7 +46,7 @@ public interface IWorkflowsApi
     /// <param name="workflowStepExecuteId">The <see cref="WorkflowStep.WorkflowStepExecuteId"/> provided with a <see cref="WorkflowStepExecute"/> event.</param>
     /// <param name="error">An object with a message property that should contain a human readable error message.</param>
     /// <param name="cancellationToken"></param>
-    Task StepFailed(string workflowStepExecuteId, WorkflowError error, CancellationToken? cancellationToken = null);
+    Task StepFailed(string workflowStepExecuteId, WorkflowError error, CancellationToken cancellationToken = default);
 }
 
 public class WorkflowsApi : IWorkflowsApi
@@ -59,7 +59,7 @@ public class WorkflowsApi : IWorkflowsApi
         IEnumerable<WorkflowOutput> outputs,
         string stepImageUrl = null,
         string stepName = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Post("workflows.updateStep", new Args
             {
@@ -70,14 +70,14 @@ public class WorkflowsApi : IWorkflowsApi
                 { "step_name", stepName }
             }, cancellationToken);
 
-    public Task StepCompleted(string workflowStepExecuteId, IDictionary<string, string> outputs, CancellationToken? cancellationToken = null) =>
+    public Task StepCompleted(string workflowStepExecuteId, IDictionary<string, string> outputs, CancellationToken cancellationToken = default) =>
         _client.Get("workflows.stepCompleted", new Args
             {
                 { "workflow_step_execute_id", workflowStepExecuteId },
                 { "outputs", outputs }
             }, cancellationToken);
 
-    public Task StepFailed(string workflowStepExecuteId, WorkflowError error, CancellationToken? cancellationToken = null) =>
+    public Task StepFailed(string workflowStepExecuteId, WorkflowError error, CancellationToken cancellationToken = default) =>
         _client.Post("workflows.stepFailed", new Args
             {
                 { "workflow_step_execute_id", workflowStepExecuteId },

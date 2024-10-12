@@ -24,7 +24,7 @@ public interface IMessage
     IList<Block> Blocks { get; set; }
     bool IsInThread { get; }
     bool MentionsBot { get; }
-    Task ReplyWith(string text, bool createThread = false, CancellationToken? cancellationToken = null);
-    Task ReplyWith(BotMessage message, bool createThread = false, CancellationToken? cancellationToken = null);
-    Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false, CancellationToken? cancellationToken = null);
+    Task ReplyWith(string text, bool createThread = false, CancellationToken cancellationToken = default);
+    Task ReplyWith(BotMessage message, bool createThread = false, CancellationToken cancellationToken = default);
+    Task ReplyWith(Func<Task<BotMessage>> createReply, bool createThread = false, CancellationToken cancellationToken = default);
 }

@@ -57,7 +57,7 @@ public interface ISlackApiClient
     /// <param name="apiMethod">Name of Slack method.</param>
     /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
     /// <param name="cancellationToken"></param>
-    Task Get(string apiMethod, Args args, CancellationToken? cancellationToken);
+    Task Get(string apiMethod, Args args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Calls a Slack API method.
@@ -66,7 +66,7 @@ public interface ISlackApiClient
     /// <param name="apiMethod">Name of Slack method.</param>
     /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
     /// <param name="cancellationToken"></param>
-    Task<T> Get<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class;
+    Task<T> Get<T>(string apiMethod, Args args, CancellationToken cancellationToken) where T : class;
 
     /// <summary>
     /// Calls a Slack API that requires POST content.
@@ -74,7 +74,7 @@ public interface ISlackApiClient
     /// <param name="apiMethod">Name of Slack method.</param>
     /// <param name="args">Arguments to send to Slack. Authorization headers will be added automatically.</param>
     /// <param name="cancellationToken"></param>
-    Task Post(string apiMethod, Args args, CancellationToken? cancellationToken);
+    Task Post(string apiMethod, Args args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Calls a Slack API that requires POST content.
@@ -83,7 +83,7 @@ public interface ISlackApiClient
     /// <param name="apiMethod">Name of Slack method.</param>
     /// <param name="args">Arguments to send to Slack. Authorization headers will be added automatically.</param>
     /// <param name="cancellationToken"></param>
-    Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class;
+    Task<T> Post<T>(string apiMethod, Args args, CancellationToken cancellationToken) where T : class;
 
     /// <summary>
     /// Calls a Slack API that requires POST content.
@@ -92,7 +92,7 @@ public interface ISlackApiClient
     /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
     /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
     /// <param name="cancellationToken"></param>
-    Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken);
+    Task Post(string apiMethod, Args args, HttpContent content, CancellationToken cancellationToken);
 
     /// <summary>
     /// Calls a Slack API that requires POST content.
@@ -102,7 +102,7 @@ public interface ISlackApiClient
     /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
     /// <param name="content">POST body content. Should be either <see cref="FormUrlEncodedContent"/> or <see cref="MultipartFormDataContent"/>.</param>
     /// <param name="cancellationToken"></param>
-    Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) where T : class;
+    Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken cancellationToken) where T : class;
 
     /// <summary>
     /// Posts a message to a response URL provided by e.g. <see cref="InteractionRequest"/> or <see cref="SlashCommand"/>.
@@ -110,7 +110,7 @@ public interface ISlackApiClient
     /// <param name="responseUrl">A temporary webhook that can be used to send messages in response to interactions.</param>
     /// <param name="message">The message to respond with.</param>
     /// <param name="cancellationToken"></param>
-    Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken);
+    Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken cancellationToken);
 
     /// <summary>
     /// Posts a message to an incoming webhook.
@@ -119,7 +119,7 @@ public interface ISlackApiClient
     /// <param name="message">The message to send to the incoming webhook.</param>
     /// <param name="cancellationToken"></param>
     /// <remarks>See the <a href="https://api.slack.com/messaging/webhooks">Slack documentation</a> for more information.</remarks>
-    Task PostToWebhook(string webhookUrl, Message message, CancellationToken? cancellationToken = null);
+    Task PostToWebhook(string webhookUrl, Message message, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns a copy of the client using a different access token.
@@ -193,33 +193,33 @@ public class SlackApiClient : ISlackApiClient
     public IViewsApi Views => new ViewsApi(this);
     public IWorkflowsApi Workflows => new WorkflowsApi(this);
 
-    public Task Get(string apiMethod, Args args, CancellationToken? cancellationToken) =>
+    public Task Get(string apiMethod, Args args, CancellationToken cancellationToken) =>
         Get<object>(apiMethod, args, cancellationToken);
 
-    public Task<T> Get<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class =>
+    public Task<T> Get<T>(string apiMethod, Args args, CancellationToken cancellationToken) where T : class =>
         WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Get, Url(apiMethod, args)), cancellationToken);
 
-    public Task Post(string apiMethod, Args args, CancellationToken? cancellationToken) =>
+    public Task Post(string apiMethod, Args args, CancellationToken cancellationToken) =>
         Post<object>(apiMethod, args, cancellationToken);
 
-    public Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class =>
+    public Task<T> Post<T>(string apiMethod, Args args, CancellationToken cancellationToken) where T : class =>
         Post<T>(Url(apiMethod), (object)StripNullArgs(args), cancellationToken);
 
-    public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) =>
+    public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken cancellationToken) =>
         Post<object>(apiMethod, args, content, cancellationToken);
 
-    public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) where T : class =>
+    public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken cancellationToken) where T : class =>
         WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, Url(apiMethod, args)) { Content = content }, cancellationToken);
 
-    public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken) =>
+    public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken cancellationToken) =>
         Post<object>(responseUrl, message, cancellationToken);
 
-    public Task PostToWebhook(string webhookUrl, Message message, CancellationToken? cancellationToken = null) =>
+    public Task PostToWebhook(string webhookUrl, Message message, CancellationToken cancellationToken = default) =>
         string.IsNullOrEmpty(_token)
             ? Post<object>(webhookUrl, message, cancellationToken)
             : WithAccessToken(string.Empty).PostToWebhook(webhookUrl, message, cancellationToken);
 
-    private Task<T> Post<T>(string requestUri, object body, CancellationToken? cancellationToken) where T : class =>
+    private Task<T> Post<T>(string requestUri, object body, CancellationToken cancellationToken) where T : class =>
         WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, requestUri)
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(body, _jsonSettings.SerializerSettings), Encoding.UTF8, "application/json")
@@ -229,7 +229,7 @@ public class SlackApiClient : ISlackApiClient
     private string Url(string apiMethod, Args args = null) =>
         _urlBuilder.Url(apiMethod, args ?? new Args());
 
-    private async Task<T> WebApiRequest<T>(Func<HttpRequestMessage> createRequest, CancellationToken? cancellationToken) where T : class
+    private async Task<T> WebApiRequest<T>(Func<HttpRequestMessage> createRequest, CancellationToken cancellationToken) where T : class
     {
         while (true)
         {
@@ -239,14 +239,14 @@ public class SlackApiClient : ISlackApiClient
                 if (!string.IsNullOrEmpty(_token)) // Token is cleared by methods that don't require authentication (e.g. OAuthV2Api.Access)
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
 
-                var response = await _http.Execute<WebApiResponse>(request, cancellationToken ?? CancellationToken.None).ConfigureAwait(false)
+                var response = await _http.Execute<WebApiResponse>(request, cancellationToken).ConfigureAwait(false)
                     ?? new WebApiResponse { Ok = true };
 
                 return Deserialize<T>(response);
             }
             catch (SlackRateLimitException e) when (!DisableRetryOnRateLimit)
             {
-                await Task.Delay(e.RetryAfter ?? TimeSpan.FromSeconds(1), cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+                await Task.Delay(e.RetryAfter ?? TimeSpan.FromSeconds(1), cancellationToken).ConfigureAwait(false);
             }
         }
     }

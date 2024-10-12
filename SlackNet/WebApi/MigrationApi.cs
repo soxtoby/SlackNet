@@ -14,7 +14,7 @@ public interface IMigrationApi
     /// <param name="userIds">List of user ids, up to 400 per request.</param>
     /// <param name="toOld">Specify true to convert W global user IDs to workspace-specific U IDs. Defaults to False.</param>
     /// <param name="cancellationToken"></param>
-    Task<MigrationResponse> Exchange(IEnumerable<string> userIds, bool toOld = false, CancellationToken? cancellationToken = null);
+    Task<MigrationResponse> Exchange(IEnumerable<string> userIds, bool toOld = false, CancellationToken cancellationToken = default);
 }
 
 public class MigrationApi : IMigrationApi
@@ -22,7 +22,7 @@ public class MigrationApi : IMigrationApi
     private readonly ISlackApiClient _client;
     public MigrationApi(ISlackApiClient client) => _client = client;
 
-    public Task<MigrationResponse> Exchange(IEnumerable<string> userIds, bool toOld = false, CancellationToken? cancellationToken = null) =>
+    public Task<MigrationResponse> Exchange(IEnumerable<string> userIds, bool toOld = false, CancellationToken cancellationToken = default) =>
         _client.Get<MigrationResponse>("migration.exchange", new Args
             {
                 { "users", userIds },

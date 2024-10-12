@@ -80,7 +80,7 @@ public class SlackBotTests
 
         _sut.OnNext(new BotMessage { Text = "foo" });
 
-        await _api.Chat.Received().PostMessage(Arg.Is<Message>(m => m.Text == "foo++"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
+        await _api.Chat.Received().PostMessage(Arg.Is<Message>(m => m.Text == "foo++"), Arg.Any<CancellationToken>()).ConfigureAwait(false);
     }
 
     [Test]
@@ -162,7 +162,7 @@ public class SlackBotTests
         _incomingMessages.OnNext(new MessageEvent());
         await observer.Messages[0].Value.Value.ReplyWith("foo").ConfigureAwait(false);
 
-        await _api.Chat.Received().PostMessage(Arg.Is<Message>(m => m.Text == "foo"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
+        await _api.Chat.Received().PostMessage(Arg.Is<Message>(m => m.Text == "foo"), Arg.Any<CancellationToken>()).ConfigureAwait(false);
     }
 
     [Test]
@@ -372,7 +372,7 @@ public class SlackBotTests
 
         await _sut.Send(new BotMessage { ReplyTo = slackMessage, CreateThread = false }).ConfigureAwait(false);
 
-        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == null), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
+        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == null), Arg.Any<CancellationToken>()).ConfigureAwait(false);
     }
 
     [Test]
@@ -388,7 +388,7 @@ public class SlackBotTests
 
         await _sut.Send(new BotMessage { ReplyTo = slackMessage, CreateThread = false }).ConfigureAwait(false);
 
-        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == slackMessage.ThreadTs), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
+        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == slackMessage.ThreadTs), Arg.Any<CancellationToken>()).ConfigureAwait(false);
     }
 
     [Test]
@@ -403,7 +403,7 @@ public class SlackBotTests
 
         await _sut.Send(new BotMessage { ReplyTo = slackMessage, CreateThread = true }).ConfigureAwait(false);
 
-        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == slackMessage.Ts), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
+        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == slackMessage.Ts), Arg.Any<CancellationToken>()).ConfigureAwait(false);
     }
 
     [Test]
@@ -419,7 +419,7 @@ public class SlackBotTests
 
         await _sut.Send(new BotMessage { ReplyTo = slackMessage, Conversation = new Conversation { Id = "other_channel" } }).ConfigureAwait(false);
 
-        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == null && message.Channel == "other_channel"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
+        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.ThreadTs == null && message.Channel == "other_channel"), Arg.Any<CancellationToken>()).ConfigureAwait(false);
     }
 
     [Test]
@@ -430,19 +430,19 @@ public class SlackBotTests
         var sent1 = _sut.Send(new BotMessage { Text = "foo" });
         var sent2 = _sut.Send(new BotMessage { Text = "bar" });
 
-        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.Text == "foo"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
-        await _api.Chat.DidNotReceive().PostMessage(Arg.Is<Message>(message => message.Text == "bar"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
+        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.Text == "foo"), Arg.Any<CancellationToken>()).ConfigureAwait(false);
+        await _api.Chat.DidNotReceive().PostMessage(Arg.Is<Message>(message => message.Text == "bar"), Arg.Any<CancellationToken>()).ConfigureAwait(false);
 
         _scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
 
-        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.Text == "bar"), Arg.Any<CancellationToken?>()).ConfigureAwait(false);
+        await _api.Chat.Received().PostMessage(Arg.Is<Message>(message => message.Text == "bar"), Arg.Any<CancellationToken>()).ConfigureAwait(false);
     }
 
     [Test]
     public async Task Send_PostMessageFails_ExceptionPropagated()
     {
         var expectedException = new SlackException(new ErrorResponse());
-        _api.Chat.PostMessage(Arg.Any<Message>(), Arg.Any<CancellationToken?>()).Throws(expectedException);
+        _api.Chat.PostMessage(Arg.Any<Message>(), Arg.Any<CancellationToken>()).Throws(expectedException);
         await Connect().ConfigureAwait(false);
 
         _sut.Send(new BotMessage())

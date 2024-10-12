@@ -26,7 +26,7 @@ public interface IRemoteFilesApi
         string title,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -47,7 +47,7 @@ public interface IRemoteFilesApi
         byte[] previewImage,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -68,7 +68,7 @@ public interface IRemoteFilesApi
         Stream previewImage,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -77,7 +77,7 @@ public interface IRemoteFilesApi
     /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.info">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="cancellationToken"></param>
-    Task<FileResponse> InfoByExternalId(string externalId, CancellationToken? cancellationToken = null);
+    Task<FileResponse> InfoByExternalId(string externalId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieve information about a remote file added to Slack.
@@ -85,7 +85,7 @@ public interface IRemoteFilesApi
     /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.info">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">Specify a file by providing its ID.</param>
     /// <param name="cancellationToken"></param>
-    Task<FileResponse> InfoByFileId(string fileId, CancellationToken? cancellationToken = null);
+    Task<FileResponse> InfoByFileId(string fileId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Lists remote files visible to the token that calls it.
@@ -107,7 +107,7 @@ public interface IRemoteFilesApi
         string tsFrom = null,
         string tsTo = null,
         string cursor = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -116,7 +116,7 @@ public interface IRemoteFilesApi
     /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.remove">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="cancellationToken"></param>
-    Task RemoveByExternalId(string externalId, CancellationToken? cancellationToken = null);
+    Task RemoveByExternalId(string externalId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes a remote file from Slack. It does not delete the file from its external host.
@@ -124,7 +124,7 @@ public interface IRemoteFilesApi
     /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.remove">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">Specify a file by providing its ID.</param>
     /// <param name="cancellationToken"></param>
-    Task RemoveByFileId(string fileId, CancellationToken? cancellationToken = null);
+    Task RemoveByFileId(string fileId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Share a remote file into a channel.
@@ -133,7 +133,7 @@ public interface IRemoteFilesApi
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="channelIds">List of channel IDs where the file will be shared.</param>
     /// <param name="cancellationToken"></param>
-    Task<FileResponse> ShareByExternalId(string externalId, IEnumerable<string> channelIds, CancellationToken? cancellationToken = null);
+    Task<FileResponse> ShareByExternalId(string externalId, IEnumerable<string> channelIds, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Share a remote file into a channel.
@@ -142,7 +142,7 @@ public interface IRemoteFilesApi
     /// <param name="fileId">Specify a file by providing its ID.</param>
     /// <param name="channelIds">List of channel IDs where the file will be shared.</param>
     /// <param name="cancellationToken"></param>
-    Task<FileResponse> ShareByFileId(string fileId, IEnumerable<string> channelIds, CancellationToken? cancellationToken = null);
+    Task<FileResponse> ShareByFileId(string fileId, IEnumerable<string> channelIds, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates an existing remote file.
@@ -160,7 +160,7 @@ public interface IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -179,7 +179,7 @@ public interface IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -200,7 +200,7 @@ public interface IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -221,7 +221,7 @@ public interface IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -242,7 +242,7 @@ public interface IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -263,7 +263,7 @@ public interface IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 }
 
@@ -278,7 +278,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string title,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         Add(externalId, externalUrl, title, filetype, indexableFileContents, null, cancellationToken);
 
@@ -289,7 +289,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         byte[] previewImage,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         Add(externalId, externalUrl, title, filetype, indexableFileContents, new ByteArrayContent(previewImage), cancellationToken);
 
@@ -300,7 +300,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         Stream previewImage,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         Add(externalId, externalUrl, title, filetype, indexableFileContents, new StreamContent(previewImage), cancellationToken);
 
@@ -311,7 +311,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string filetype,
         string indexableFileContents,
         HttpContent previewContent,
-        CancellationToken? cancellationToken
+        CancellationToken cancellationToken
     ) =>
         AddOrUpdate("files.remote.add", new Args
             {
@@ -321,10 +321,10 @@ public class RemoteFilesApi : IRemoteFilesApi
                 { "filetype", filetype }
             }, indexableFileContents, previewContent, cancellationToken);
 
-    public Task<FileResponse> InfoByExternalId(string externalId, CancellationToken? cancellationToken = null) =>
+    public Task<FileResponse> InfoByExternalId(string externalId, CancellationToken cancellationToken = default) =>
         _client.Get<FileResponse>("files.remote.info", new Args { { "external_id", externalId } }, cancellationToken);
 
-    public Task<FileResponse> InfoByFileId(string fileId, CancellationToken? cancellationToken = null) =>
+    public Task<FileResponse> InfoByFileId(string fileId, CancellationToken cancellationToken = default) =>
         _client.Get<FileResponse>("files.remote.info", new Args { { "file", fileId } }, cancellationToken);
 
     public Task<FileListResponse> List(
@@ -333,7 +333,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string tsFrom = null,
         string tsTo = null,
         string cursor = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Get<FileListResponse>("files.remote.list", new Args
             {
@@ -344,16 +344,16 @@ public class RemoteFilesApi : IRemoteFilesApi
                 { "cursor", cursor }
             }, cancellationToken);
 
-    public Task RemoveByExternalId(string externalId, CancellationToken? cancellationToken = null) =>
+    public Task RemoveByExternalId(string externalId, CancellationToken cancellationToken = default) =>
         _client.Get("files.remote.remove", new Args { { "external_id", externalId } }, cancellationToken);
 
-    public Task RemoveByFileId(string fileId, CancellationToken? cancellationToken = null) =>
+    public Task RemoveByFileId(string fileId, CancellationToken cancellationToken = default) =>
         _client.Get("files.remote.remove", new Args { { "file", fileId } }, cancellationToken);
 
-    public Task<FileResponse> ShareByExternalId(string externalId, IEnumerable<string> channelIds, CancellationToken? cancellationToken = null) =>
+    public Task<FileResponse> ShareByExternalId(string externalId, IEnumerable<string> channelIds, CancellationToken cancellationToken = default) =>
         _client.Get<FileResponse>("files.remote.share", new Args { { "external_id", externalId }, { "channels", channelIds } }, cancellationToken);
 
-    public Task<FileResponse> ShareByFileId(string fileId, IEnumerable<string> channelIds, CancellationToken? cancellationToken = null) =>
+    public Task<FileResponse> ShareByFileId(string fileId, IEnumerable<string> channelIds, CancellationToken cancellationToken = default) =>
         _client.Get<FileResponse>("files.remote.share", new Args { { "file", fileId }, { "channels", channelIds } }, cancellationToken);
 
     public Task<FileResponse> UpdateByExternalId(
@@ -362,7 +362,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         Update(externalId, null, externalUrl, title, filetype, indexableFileContents, null, cancellationToken);
 
@@ -372,7 +372,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         Update(null, fileId, externalUrl, title, filetype, indexableFileContents, null, cancellationToken);
 
@@ -383,7 +383,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         Update(externalId, null, externalUrl, title, filetype, indexableFileContents, new ByteArrayContent(previewImage), cancellationToken);
 
@@ -394,7 +394,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         Update(null, fileId, externalUrl, title, filetype, indexableFileContents, new ByteArrayContent(previewImage), cancellationToken);
 
@@ -405,7 +405,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         Update(externalId, null, externalUrl, title, filetype, indexableFileContents, new StreamContent(previewImage), cancellationToken);
 
@@ -416,7 +416,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string title = null,
         string filetype = null,
         string indexableFileContents = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         Update(null, fileId, externalUrl, title, filetype, indexableFileContents, new StreamContent(previewImage), cancellationToken);
 
@@ -428,7 +428,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string filetype,
         string indexableFileContents,
         HttpContent previewContent,
-        CancellationToken? cancellationToken
+        CancellationToken cancellationToken
     ) =>
         AddOrUpdate("files.remote.update", new Args
             {
@@ -439,7 +439,7 @@ public class RemoteFilesApi : IRemoteFilesApi
                 { "filetype", filetype }
             }, indexableFileContents, previewContent, cancellationToken);
 
-    private Task<FileResponse> AddOrUpdate(string slackMethod, Args args, string indexableFileContents, HttpContent previewContent, CancellationToken? cancellationToken)
+    private Task<FileResponse> AddOrUpdate(string slackMethod, Args args, string indexableFileContents, HttpContent previewContent, CancellationToken cancellationToken)
     {
         var content = new MultipartFormDataContent();
 

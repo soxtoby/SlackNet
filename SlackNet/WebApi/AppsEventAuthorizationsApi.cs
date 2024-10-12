@@ -22,7 +22,7 @@ public interface IAppsEventAuthorizationsApi
         string eventContext,
         int limit = 100,
         string cursor = null,
-        CancellationToken? cancellationToken = null);
+        CancellationToken cancellationToken = default);
 }
 
 public class AppsEventAuthorizationsApi : IAppsEventAuthorizationsApi
@@ -34,7 +34,7 @@ public class AppsEventAuthorizationsApi : IAppsEventAuthorizationsApi
         string eventContext,
         int limit = 100,
         string cursor = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Post<AppsEventsAuthorizationsListResponse>("apps.event.authorizations.list", new Args
                 {

@@ -14,7 +14,7 @@ public interface IBotsApi
     /// <remarks>See the <a href="https://api.slack.com/methods/bots.info">Slack documentation</a> for more information.</remarks>
     /// <param name="botId">Bot user to get info on.</param>
     /// <param name="cancellationToken"></param>
-    Task<BotInfo> Info(string botId, CancellationToken? cancellationToken = null);
+    Task<BotInfo> Info(string botId, CancellationToken cancellationToken = default);
 }
 
 public class BotsApi : IBotsApi
@@ -22,6 +22,6 @@ public class BotsApi : IBotsApi
     private readonly ISlackApiClient _client;
     public BotsApi(ISlackApiClient client) => _client = client;
 
-    public async Task<BotInfo> Info(string botId, CancellationToken? cancellationToken = null) =>
+    public async Task<BotInfo> Info(string botId, CancellationToken cancellationToken = default) =>
         (await _client.Get<BotsInfoResponse>("bots.info", new Args { { "bot", botId } }, cancellationToken).ConfigureAwait(false)).Bot;
 }

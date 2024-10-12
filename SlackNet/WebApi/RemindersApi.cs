@@ -16,7 +16,7 @@ public interface IRemindersApi
     /// <param name="time">When this reminder should happen (up to five years from now).</param>
     /// <param name="userId">The user who will receive the reminder. If no user is specified, the reminder will go to user who created it.</param>
     /// <param name="cancellationToken"></param>
-    Task<Reminder> Add(string text, DateTime time, string userId = null, CancellationToken? cancellationToken = null);
+    Task<Reminder> Add(string text, DateTime time, string userId = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates a reminder.
@@ -26,7 +26,7 @@ public interface IRemindersApi
     /// <param name="time">When this reminder should happen (up to 24 hours from now).</param>
     /// <param name="userId">The user who will receive the reminder. If no user is specified, the reminder will go to user who created it.</param>
     /// <param name="cancellationToken"></param>
-    Task<Reminder> Add(string text, TimeSpan time, string userId = null, CancellationToken? cancellationToken = null);
+    Task<Reminder> Add(string text, TimeSpan time, string userId = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates a reminder.
@@ -40,7 +40,7 @@ public interface IRemindersApi
     /// </param>
     /// <param name="userId">The user who will receive the reminder. If no user is specified, the reminder will go to user who created it.</param>
     /// <param name="cancellationToken"></param>
-    Task<Reminder> Add(string text, string time, string userId = null, CancellationToken? cancellationToken = null);
+    Task<Reminder> Add(string text, string time, string userId = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Completes a reminder.
@@ -48,7 +48,7 @@ public interface IRemindersApi
     /// <remarks>See the <a href="https://api.slack.com/methods/reminders.complete">Slack documentation</a> for more information.</remarks>
     /// <param name="reminderId">The ID of the reminder to be marked as complete.</param>
     /// <param name="cancellationToken"></param>
-    Task Complete(string reminderId, CancellationToken? cancellationToken = null);
+    Task Complete(string reminderId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Deletes a reminder.
@@ -56,7 +56,7 @@ public interface IRemindersApi
     /// <remarks>See the <a href="https://api.slack.com/methods/reminders.delete">Slack documentation</a> for more information.</remarks>
     /// <param name="reminderId">The ID of the reminder.</param>
     /// <param name="cancellationToken"></param>
-    Task Delete(string reminderId, CancellationToken? cancellationToken);
+    Task Delete(string reminderId, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns information about a reminder.
@@ -64,14 +64,14 @@ public interface IRemindersApi
     /// <remarks>See the <a href="https://api.slack.com/methods/reminders.info">Slack documentation</a> for more information.</remarks>
     /// <param name="reminderId">The ID of the reminder.</param>
     /// <param name="cancellationToken"></param>
-    Task<Reminder> Info(string reminderId, CancellationToken? cancellationToken = null);
+    Task<Reminder> Info(string reminderId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Lists all reminders created by or for the user.
     /// </summary>
     /// <remarks>See the <a href="https://api.slack.com/methods/reminders.list">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
-    Task<IReadOnlyList<Reminder>> List(CancellationToken? cancellationToken = null);
+    Task<IReadOnlyList<Reminder>> List(CancellationToken cancellationToken = default);
 }
 
 public class RemindersApi : IRemindersApi
@@ -79,7 +79,7 @@ public class RemindersApi : IRemindersApi
     private readonly ISlackApiClient _client;
     public RemindersApi(ISlackApiClient client) => _client = client;
 
-    public async Task<Reminder> Add(string text, DateTime time, string userId = null, CancellationToken? cancellationToken = null) =>
+    public async Task<Reminder> Add(string text, DateTime time, string userId = null, CancellationToken cancellationToken = default) =>
         (await _client.Post<ReminderResponse>("reminders.add", new Args
             {
                 { "text", text },
@@ -88,7 +88,7 @@ public class RemindersApi : IRemindersApi
             }, cancellationToken).ConfigureAwait(false))
         .Reminder;
 
-    public async Task<Reminder> Add(string text, TimeSpan time, string userId = null, CancellationToken? cancellationToken = null) =>
+    public async Task<Reminder> Add(string text, TimeSpan time, string userId = null, CancellationToken cancellationToken = default) =>
         (await _client.Post<ReminderResponse>("reminders.add", new Args
             {
                 { "text", text },
@@ -97,7 +97,7 @@ public class RemindersApi : IRemindersApi
             }, cancellationToken).ConfigureAwait(false))
         .Reminder;
 
-    public async Task<Reminder> Add(string text, string time, string userId = null, CancellationToken? cancellationToken = null) =>
+    public async Task<Reminder> Add(string text, string time, string userId = null, CancellationToken cancellationToken = default) =>
         (await _client.Post<ReminderResponse>("reminders.add", new Args
             {
                 { "text", text },
@@ -106,15 +106,15 @@ public class RemindersApi : IRemindersApi
             }, cancellationToken).ConfigureAwait(false))
         .Reminder;
 
-    public Task Complete(string reminderId, CancellationToken? cancellationToken = null) =>
+    public Task Complete(string reminderId, CancellationToken cancellationToken = default) =>
         _client.Post("reminders.complete", new Args { { "reminder", reminderId } }, cancellationToken);
 
-    public Task Delete(string reminderId, CancellationToken? cancellationToken = null) =>
+    public Task Delete(string reminderId, CancellationToken cancellationToken = default) =>
         _client.Post("reminders.delete", new Args { { "reminder", reminderId } }, cancellationToken);
 
-    public async Task<Reminder> Info(string reminderId, CancellationToken? cancellationToken = null) =>
+    public async Task<Reminder> Info(string reminderId, CancellationToken cancellationToken = default) =>
         (await _client.Get<ReminderResponse>("reminders.info", new Args { { "reminder", reminderId } }, cancellationToken).ConfigureAwait(false)).Reminder;
 
-    public async Task<IReadOnlyList<Reminder>> List(CancellationToken? cancellationToken = null) =>
+    public async Task<IReadOnlyList<Reminder>> List(CancellationToken cancellationToken = default) =>
         (await _client.Get<ReminderListResponse>("reminders.list", new Args(), cancellationToken).ConfigureAwait(false)).Reminders;
 }

@@ -18,7 +18,7 @@ public interface IFilesApi
     /// <remarks>See the <a href="https://api.slack.com/methods/files.delete">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">ID of file to delete.</param>
     /// <param name="cancellationToken"></param>
-    Task Delete(string fileId, CancellationToken? cancellationToken = null);
+    Task Delete(string fileId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns information about a file in your team.
@@ -32,7 +32,7 @@ public interface IFilesApi
     /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="FileAndCommentsResponse.ResponseMetadata"/>.
     /// </param>
     /// <param name="cancellationToken"></param>
-    Task<FileAndCommentsResponse> Info(string fileId, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null);
+    Task<FileAndCommentsResponse> Info(string fileId, int count = 100, int page = 1, string cursor = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns a list of files within the team. It can be filtered and sliced in various ways.
@@ -59,7 +59,7 @@ public interface IFilesApi
         int count = 100,
         int page = 1,
         string cursor = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -68,7 +68,7 @@ public interface IFilesApi
     /// <remarks>See the <a href="https://api.slack.com/methods/files.revokePublicURL">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">File to revoke</param>
     /// <param name="cancellationToken"></param>
-    Task<FileResponse> RevokePublicUrl(string fileId, CancellationToken? cancellationToken = null);
+    Task<FileResponse> RevokePublicUrl(string fileId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Enables public/external sharing for a file.
@@ -76,7 +76,7 @@ public interface IFilesApi
     /// <remarks>See the <a href="https://api.slack.com/methods/files.sharedPublicURL">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">File to share.</param>
     /// <param name="cancellationToken"></param>
-    Task<FileAndCommentsResponse> SharedPublicUrl(string fileId, CancellationToken? cancellationToken = null);
+    Task<FileAndCommentsResponse> SharedPublicUrl(string fileId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Allows you to create or upload an existing file.
@@ -99,7 +99,7 @@ public interface IFilesApi
         string initialComment = null,
         string threadTs = null,
         IEnumerable<string> channels = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -123,7 +123,7 @@ public interface IFilesApi
         string initialComment = null,
         string threadTs = null,
         IEnumerable<string> channels = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -147,7 +147,7 @@ public interface IFilesApi
         string initialComment = null,
         string threadTs = null,
         IEnumerable<string> channels = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -173,7 +173,7 @@ public interface IFilesApi
         string initialComment = null,
         string threadTs = null,
         IEnumerable<string> channels = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -190,7 +190,7 @@ public interface IFilesApi
         string channelId = null,
         string threadTs = null,
         string initialComment = null,
-        CancellationToken? cancellationToken = null);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Uploads external files.
@@ -206,7 +206,7 @@ public interface IFilesApi
         string channelId = null,
         string threadTs = null,
         string initialComment = null,
-        CancellationToken? cancellationToken = null);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets a URL for an edge external file upload.
@@ -223,7 +223,7 @@ public interface IFilesApi
         int length,
         string altText = null,
         string snippetType = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -240,7 +240,7 @@ public interface IFilesApi
         string channelId = null,
         string initialComment = null,
         string threadTs = null,
-        CancellationToken? cancellationToken = null);
+        CancellationToken cancellationToken = default);
 }
 
 public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
@@ -248,10 +248,10 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
     [Obsolete("Include IHttp parameter.")]
     public FilesApi(ISlackApiClient client) : this(client, Default.Http()) { }
     
-    public Task Delete(string fileId, CancellationToken? cancellationToken = null) =>
+    public Task Delete(string fileId, CancellationToken cancellationToken = default) =>
         client.Post("files.delete", new Args { { "file", fileId } }, cancellationToken);
 
-    public Task<FileAndCommentsResponse> Info(string fileId, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null) =>
+    public Task<FileAndCommentsResponse> Info(string fileId, int count = 100, int page = 1, string cursor = null, CancellationToken cancellationToken = default) =>
         client.Get<FileAndCommentsResponse>("files.info", new Args
             {
                 { "file", fileId },
@@ -269,7 +269,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
         int count = 100,
         int page = 1,
         string cursor = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         client.Get<FileListResponse>("files.list", new Args
             {
@@ -283,10 +283,10 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
                 { "cursor", cursor }
             }, cancellationToken);
 
-    public Task<FileResponse> RevokePublicUrl(string fileId, CancellationToken? cancellationToken = null) =>
+    public Task<FileResponse> RevokePublicUrl(string fileId, CancellationToken cancellationToken = default) =>
         client.Post<FileResponse>("files.revokePublicURL", new Args { { "file", fileId } }, cancellationToken);
 
-    public Task<FileAndCommentsResponse> SharedPublicUrl(string fileId, CancellationToken? cancellationToken = null) =>
+    public Task<FileAndCommentsResponse> SharedPublicUrl(string fileId, CancellationToken cancellationToken = default) =>
         client.Post<FileAndCommentsResponse>("files.sharedPublicURL", new Args { { "file", fileId } }, cancellationToken);
 
     public async Task<FileResponse> Upload(
@@ -297,7 +297,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
         string initialComment = null,
         string threadTs = null,
         IEnumerable<string> channels = null,
-        CancellationToken? cancellationToken = null)
+        CancellationToken cancellationToken = default)
     {
         using var content = new StringContent(fileContents);
         return await Upload(content, fileType, fileName, title, initialComment, threadTs, channels, cancellationToken).ConfigureAwait(false);
@@ -311,7 +311,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
         string initialComment = null,
         string threadTs = null,
         IEnumerable<string> channels = null,
-        CancellationToken? cancellationToken = null)
+        CancellationToken cancellationToken = default)
     {
         using var content = new ByteArrayContent(fileContents);
         return await Upload(content, fileType, fileName, title, initialComment, threadTs, channels, cancellationToken).ConfigureAwait(false);
@@ -325,7 +325,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
         string initialComment = null,
         string threadTs = null,
         IEnumerable<string> channels = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         Upload(new StreamContent(fileContents), fileType, fileName, title, initialComment, threadTs, channels, cancellationToken);
 
@@ -337,7 +337,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
         string initialComment,
         string threadTs,
         IEnumerable<string> channels,
-        CancellationToken? cancellationToken
+        CancellationToken cancellationToken
     )
     {
         using var content = new MultipartFormDataContent();
@@ -364,7 +364,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
         string initialComment = null,
         string threadTs = null,
         IEnumerable<string> channels = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         client.Post<FileResponse>("files.upload", new Args(), new SlackFormContent
                 {
@@ -383,10 +383,10 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
         string channelId = null,
         string threadTs = null,
         string initialComment = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) => (await Upload([fileUpload], channelId, threadTs, initialComment, cancellationToken).ConfigureAwait(false)).Single();
 
-    public async Task<IList<ExternalFileReference>> Upload(IEnumerable<FileUpload> files, string channelId = null, string threadTs = null, string initialComment = null, CancellationToken? cancellationToken = null)
+    public async Task<IList<ExternalFileReference>> Upload(IEnumerable<FileUpload> files, string channelId = null, string threadTs = null, string initialComment = null, CancellationToken cancellationToken = default)
     {
         var fileReferences = await Task.WhenAll(files
             .Select(async file =>
@@ -406,7 +406,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
         int length,
         string altText = null,
         string snippetType = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         client.Get<UploadUrlExternalResponse>("files.getUploadURLExternal", new Args
             {
@@ -421,7 +421,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
         string channelId = null,
         string threadTs = null,
         string initialComment = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         (await client.Post<CompleteUploadExternalResponse>("files.completeUploadExternal", new Args
             {

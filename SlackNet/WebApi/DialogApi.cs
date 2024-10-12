@@ -14,7 +14,7 @@ public interface IDialogApi
     /// <param name="triggerId">Exchange a trigger to post to the user.</param>
     /// <param name="dialog">The dialog definition.</param>
     /// <param name="cancellationToken"></param>
-    Task Open(string triggerId, Dialog dialog, CancellationToken? cancellationToken = null);
+    Task Open(string triggerId, Dialog dialog, CancellationToken cancellationToken = default);
 }
 
 public class DialogApi : IDialogApi
@@ -22,7 +22,7 @@ public class DialogApi : IDialogApi
     private readonly ISlackApiClient _client;
     public DialogApi(ISlackApiClient client) => _client = client;
 
-    public Task Open(string triggerId, Dialog dialog, CancellationToken? cancellationToken = null) =>
+    public Task Open(string triggerId, Dialog dialog, CancellationToken cancellationToken = default) =>
         _client.Post("dialog.open", new Args
             {
                 { "dialog", dialog },

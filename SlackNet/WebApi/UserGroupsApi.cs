@@ -23,7 +23,7 @@ public interface IUserGroupsApi
         string description = null,
         string handle = null,
         bool includeCount = false,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
@@ -33,7 +33,7 @@ public interface IUserGroupsApi
     /// <param name="userGroupId">ID of the User Group to disable.</param>
     /// <param name="includeCount">Include the number of users in the User Group.</param>
     /// <param name="cancellationToken"></param>
-    Task<UserGroup> Disable(string userGroupId, bool includeCount = false, CancellationToken? cancellationToken = null);
+    Task<UserGroup> Disable(string userGroupId, bool includeCount = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Enables a User Group which was previously disabled.
@@ -42,7 +42,7 @@ public interface IUserGroupsApi
     /// <param name="userGroupId">ID of the User Group to enable.</param>
     /// <param name="includeCount">Include the number of users in the User Group.</param>
     /// <param name="cancellationToken"></param>
-    Task<UserGroup> Enable(string userGroupId, bool includeCount = false, CancellationToken? cancellationToken = null);
+    Task<UserGroup> Enable(string userGroupId, bool includeCount = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns a list of all User Groups in the team. This can optionally include disabled User Groups.
@@ -52,7 +52,7 @@ public interface IUserGroupsApi
     /// <param name="includeDisabled">Include disabled User Groups.</param>
     /// <param name="includeUsers">Include the list of users for each User Group.</param>
     /// <param name="cancellationToken"></param>
-    Task<IList<UserGroup>> List(bool includeCount = false, bool includeDisabled = false, bool includeUsers = false, CancellationToken? cancellationToken = null);
+    Task<IList<UserGroup>> List(bool includeCount = false, bool includeDisabled = false, bool includeUsers = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates the properties of an existing User Group.
@@ -72,7 +72,7 @@ public interface IUserGroupsApi
         string handle = null,
         bool includeCount = false,
         string name = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 }
 
@@ -87,7 +87,7 @@ public class UserGroupsApi : IUserGroupsApi
         string description = null,
         string handle = null,
         bool includeCount = false,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         (await _client.Post<UserGroupResponse>("usergroups.create", new Args
             {
@@ -99,7 +99,7 @@ public class UserGroupsApi : IUserGroupsApi
             }, cancellationToken).ConfigureAwait(false))
         .Usergroup;
 
-    public async Task<UserGroup> Disable(string userGroupId, bool includeCount = false, CancellationToken? cancellationToken = null) =>
+    public async Task<UserGroup> Disable(string userGroupId, bool includeCount = false, CancellationToken cancellationToken = default) =>
         (await _client.Post<UserGroupResponse>("usergroups.disable", new Args
             {
                 { "usergroup", userGroupId },
@@ -107,7 +107,7 @@ public class UserGroupsApi : IUserGroupsApi
             }, cancellationToken).ConfigureAwait(false))
         .Usergroup;
 
-    public async Task<UserGroup> Enable(string userGroupId, bool includeCount = false, CancellationToken? cancellationToken = null) =>
+    public async Task<UserGroup> Enable(string userGroupId, bool includeCount = false, CancellationToken cancellationToken = default) =>
         (await _client.Post<UserGroupResponse>("usergroups.enable", new Args
             {
                 { "usergroup", userGroupId },
@@ -115,7 +115,7 @@ public class UserGroupsApi : IUserGroupsApi
             }, cancellationToken).ConfigureAwait(false))
         .Usergroup;
 
-    public async Task<IList<UserGroup>> List(bool includeCount = false, bool includeDisabled = false, bool includeUsers = false, CancellationToken? cancellationToken = null) =>
+    public async Task<IList<UserGroup>> List(bool includeCount = false, bool includeDisabled = false, bool includeUsers = false, CancellationToken cancellationToken = default) =>
         (await _client.Get<UserGroupListResponse>("usergroups.list", new Args
             {
                 { "include_count", includeCount },
@@ -131,7 +131,7 @@ public class UserGroupsApi : IUserGroupsApi
         string handle = null,
         bool includeCount = false,
         string name = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         (await _client.Post<UserGroupResponse>("usergroups.update", new Args
             {

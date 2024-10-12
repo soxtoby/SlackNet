@@ -921,7 +921,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
 
     protected class TestHttp : IHttp
     {
-        public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null) => throw new NotImplementedException();
+        public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => throw new NotImplementedException();
     }
 
     protected class TestJsonSettings() : SlackJsonSettings(new JsonSerializerSettings());
@@ -999,21 +999,21 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IUserProfileApi UserProfile { get; }
         public IViewsApi Views { get; }
         public IWorkflowsApi Workflows { get; }
-        public Task Get(string apiMethod, Dictionary<string, object> args, CancellationToken? cancellationToken) => throw new NotImplementedException();
-        public Task<T> Get<T>(string apiMethod, Dictionary<string, object> args, CancellationToken? cancellationToken) where T : class => throw new NotImplementedException();
-        public Task Post(string apiMethod, Dictionary<string, object> args, CancellationToken? cancellationToken) => throw new NotImplementedException();
-        public Task<T> Post<T>(string apiMethod, Dictionary<string, object> args, CancellationToken? cancellationToken) where T : class => throw new NotImplementedException();
-        public Task Post(string apiMethod, Dictionary<string, object> args, HttpContent content, CancellationToken? cancellationToken) => throw new NotImplementedException();
-        public Task<T> Post<T>(string apiMethod, Dictionary<string, object> args, HttpContent content, CancellationToken? cancellationToken) where T : class => throw new NotImplementedException();
-        public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken) => throw new NotImplementedException();
-        public Task PostToWebhook(string webhookUrl, Message message, CancellationToken? cancellationToken) => throw new NotImplementedException();
+        public Task Get(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task<T> Get<T>(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) where T : class => throw new NotImplementedException();
+        public Task Post(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task<T> Post<T>(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) where T : class => throw new NotImplementedException();
+        public Task Post(string apiMethod, Dictionary<string, object> args, HttpContent content, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task<T> Post<T>(string apiMethod, Dictionary<string, object> args, HttpContent content, CancellationToken cancellationToken) where T : class => throw new NotImplementedException();
+        public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task PostToWebhook(string webhookUrl, Message message, CancellationToken cancellationToken) => throw new NotImplementedException();
         public ISlackApiClient WithAccessToken(string accessToken) => throw new NotImplementedException();
     }
 
     protected class TestSocketModeClient : ISlackSocketModeClient
     {
         public void Dispose() => throw new NotImplementedException();
-        public Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken? cancellationToken = null) => throw new NotImplementedException();
+        public Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public void Disconnect() { throw new NotImplementedException(); }
         public bool Connected { get; }
     }

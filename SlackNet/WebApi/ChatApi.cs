@@ -18,7 +18,7 @@ public interface IChatApi
     /// <param name="channelId">Channel containing the message to be deleted.</param>
     /// <param name="asUser">Pass True to delete the message as the authed user. Bot users in this context are considered authed users.</param>
     /// <param name="cancellationToken"></param>
-    Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken? cancellationToken = null);
+    Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Sends a /me message to a channel from the calling user.
@@ -27,7 +27,7 @@ public interface IChatApi
     /// <param name="channel">Channel to send message to. Can be a public channel, private group or IM channel. Can be an encoded ID, or a name.</param>
     /// <param name="text">Text of the message to send.</param>
     /// <param name="cancellationToken"></param>
-    Task<MessageTsResponse> MeMessage(string channel, string text, CancellationToken? cancellationToken = null);
+    Task<MessageTsResponse> MeMessage(string channel, string text, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Posts a message to a public channel, private channel, or direct message/IM channel.
@@ -35,7 +35,7 @@ public interface IChatApi
     /// <remarks>See the <a href="https://api.slack.com/methods/chat.postMessage">Slack documentation</a> for more information.</remarks>
     /// <param name="message">The message to post</param>
     /// <param name="cancellationToken"></param>
-    Task<PostMessageResponse> PostMessage(Message message, CancellationToken? cancellationToken = null);
+    Task<PostMessageResponse> PostMessage(Message message, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Schedules a message for delivery to a public channel, private channel, or direct message/IM channel at a specified time in the future.
@@ -44,7 +44,7 @@ public interface IChatApi
     /// <param name="message">The message to post.</param>
     /// <param name="postAt">Time in the future to send the message.</param>
     /// <param name="cancellationToken"></param>
-    Task<ScheduleMessageResponse> ScheduleMessage(Message message, DateTime postAt, CancellationToken? cancellationToken = null);
+    Task<ScheduleMessageResponse> ScheduleMessage(Message message, DateTime postAt, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Deletes a scheduled message.
@@ -54,7 +54,7 @@ public interface IChatApi
     /// <param name="channelId">The channel ID of the scheduled message.</param>
     /// <param name="asUser">Pass True to delete the message as the authed user. Bot users in this context are considered authed users.</param>
     /// <param name="cancellationToken"></param>
-    Task DeleteScheduledMessage(string messageId, string channelId, bool? asUser = null, CancellationToken? cancellationToken = null);
+    Task DeleteScheduledMessage(string messageId, string channelId, bool? asUser = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Sends an ephemeral message to a user in a channel.
@@ -63,7 +63,7 @@ public interface IChatApi
     /// <param name="userId">ID of the user who will receive the ephemeral message. The user should be in the channel specified by the channel argument.</param>
     /// <param name="message">The message to post. Not all message properties are supported by <c>PostEphemeral</c>.</param>
     /// <param name="cancellationToken"></param>
-    Task<PostEphemeralResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null);
+    Task<PostEphemeralResponse> PostEphemeral(string userId, Message message, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Attaches Slack app unfurl behavior to a specified and relevant message.
@@ -94,7 +94,7 @@ public interface IChatApi
         IEnumerable<Block> userAuthBlocks = null,
         string userAuthMessage = null,
         string userAuthUrl = null,
-        CancellationToken? cancellationToken = null);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Attaches Slack app unfurl behavior to a specified and relevant message.
@@ -125,7 +125,7 @@ public interface IChatApi
         IEnumerable<Block> userAuthBlocks = null,
         string userAuthMessage = null,
         string userAuthUrl = null,
-        CancellationToken? cancellationToken = null);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates a message in a channel.
@@ -133,7 +133,7 @@ public interface IChatApi
     /// <param name="messageUpdate">Message to update.</param>
     /// <param name="cancellationToken"></param>
     /// <remarks>See the <a href="https://api.slack.com/methods/chat.update">Slack documentation</a> for more information.</remarks>
-    Task<MessageUpdateResponse> Update(MessageUpdate messageUpdate, CancellationToken? cancellationToken = null);
+    Task<MessageUpdateResponse> Update(MessageUpdate messageUpdate, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieve a permalink URL for a specific extant message.
@@ -142,7 +142,7 @@ public interface IChatApi
     /// <param name="channelId">The ID of the conversation or channel containing the message.</param>
     /// <param name="messageTs">A message's timestamp, uniquely identifying it within a channel.</param>
     /// <param name="cancellationToken"></param>
-    Task<PermalinkResponse> GetPermalink(string channelId, string messageTs, CancellationToken? cancellationToken = null);
+    Task<PermalinkResponse> GetPermalink(string channelId, string messageTs, CancellationToken cancellationToken = default);
 }
 
 public class ChatApi : IChatApi
@@ -156,7 +156,7 @@ public class ChatApi : IChatApi
         _jsonSettings = jsonSettings;
     }
 
-    public Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken? cancellationToken = null) =>
+    public Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken cancellationToken = default) =>
         _client.Post<MessageTsResponse>("chat.delete", new Args
             {
                 { "ts", ts },
@@ -164,25 +164,25 @@ public class ChatApi : IChatApi
                 { "as_user", asUser }
             }, cancellationToken);
 
-    public Task<PermalinkResponse> GetPermalink(string channelId, string messageTs, CancellationToken? cancellationToken = null) =>
+    public Task<PermalinkResponse> GetPermalink(string channelId, string messageTs, CancellationToken cancellationToken = default) =>
         _client.Get<PermalinkResponse>("chat.getPermalink", new Args
             {
                 { "channel", channelId },
                 { "message_ts", messageTs }
             }, cancellationToken);
 
-    public Task<MessageTsResponse> MeMessage(string channel, string text, CancellationToken? cancellationToken = null) =>
+    public Task<MessageTsResponse> MeMessage(string channel, string text, CancellationToken cancellationToken = default) =>
         _client.Post<MessageTsResponse>("chat.meMessage", new Args
             {
                 { "channel", channel },
                 { "text", text }
             }, cancellationToken);
 
-    public Task<PostMessageResponse> PostMessage(Message message, CancellationToken? cancellationToken = null) =>
+    public Task<PostMessageResponse> PostMessage(Message message, CancellationToken cancellationToken = default) =>
         _client.Post<PostMessageResponse>("chat.postMessage", PopulateMessageArgs(message, new Args()),
             cancellationToken);
 
-    public Task<ScheduleMessageResponse> ScheduleMessage(Message message, DateTime postAt, CancellationToken? cancellationToken = null) =>
+    public Task<ScheduleMessageResponse> ScheduleMessage(Message message, DateTime postAt, CancellationToken cancellationToken = default) =>
         _client.Post<ScheduleMessageResponse>("chat.scheduleMessage", PopulateMessageArgs(message, new Args
                 {
                     { "post_at", postAt.ToTimestamp() }
@@ -209,7 +209,7 @@ public class ChatApi : IChatApi
         return args;
     }
 
-    public Task DeleteScheduledMessage(string messageId, string channelId, bool? asUser = null, CancellationToken? cancellationToken = null) =>
+    public Task DeleteScheduledMessage(string messageId, string channelId, bool? asUser = null, CancellationToken cancellationToken = default) =>
         _client.Post("chat.deleteScheduledMessage", new Args
                 {
                     { "scheduled_message_id", messageId },
@@ -218,7 +218,7 @@ public class ChatApi : IChatApi
                 },
             cancellationToken);
 
-    public Task<PostEphemeralResponse> PostEphemeral(string userId, Message message, CancellationToken? cancellationToken = null) =>
+    public Task<PostEphemeralResponse> PostEphemeral(string userId, Message message, CancellationToken cancellationToken = default) =>
         _client.Post<PostEphemeralResponse>("chat.postEphemeral", new Args
                 {
                     { "channel", message.Channel },
@@ -241,7 +241,7 @@ public class ChatApi : IChatApi
         IEnumerable<Block> userAuthBlocks = null,
         string userAuthMessage = null,
         string userAuthUrl = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Post("chat.unfurl", new Args
             {
@@ -262,7 +262,7 @@ public class ChatApi : IChatApi
         IEnumerable<Block> userAuthBlocks = null,
         string userAuthMessage = null,
         string userAuthUrl = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Post("chat.unfurl", new Args
             {
@@ -275,7 +275,7 @@ public class ChatApi : IChatApi
                 { "user_auth_url", userAuthUrl }
             }, cancellationToken);
 
-    public Task<MessageUpdateResponse> Update(MessageUpdate messageUpdate, CancellationToken? cancellationToken = null) =>
+    public Task<MessageUpdateResponse> Update(MessageUpdate messageUpdate, CancellationToken cancellationToken = default) =>
         _client.Post<MessageUpdateResponse>("chat.update", new Args
                 {
                     { "ts", messageUpdate.Ts },

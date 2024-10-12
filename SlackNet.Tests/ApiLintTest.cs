@@ -84,7 +84,7 @@ public class ApiLintTest
     private static void LastParamShouldBeOptionalCancellationToken(MethodInfo method)
     {
         var lastParam = method.GetParameters().Last();
-        lastParam.ParameterType.ShouldBe(typeof(CancellationToken?), $"{method.DeclaringType!.Name}.{method.Name} is missing CancellationToken param");
+        lastParam.ParameterType.ShouldBe(typeof(CancellationToken), $"{method.DeclaringType!.Name}.{method.Name} is missing CancellationToken param");
         lastParam.DefaultValue.ShouldBeNull($"{method.DeclaringType.Name}.{method.Name} CancellationToken param isn't null by default");
     }
 
@@ -145,7 +145,7 @@ public class ApiLintTest
             { typeof(IEnumerable<ExternalFileReference>), _ => Enumerable.Empty<ExternalFileReference>() },
             { typeof(FileUpload), _ => new FileUpload(string.Empty, string.Empty) },
             { typeof(IEnumerable<FileUpload>), _ => Enumerable.Empty<FileUpload>() },
-            { typeof(CancellationToken?), _ => null },
+            { typeof(CancellationToken), _ => null },
         };
 
     private static IEnumerable<Type> ApiClasses => typeof(ApiApi).Assembly
@@ -163,47 +163,47 @@ public class ApiLintTest
             Args = null;
         }
 
-        public Task Get(string apiMethod, Args args, CancellationToken? cancellationToken)
+        public Task Get(string apiMethod, Args args, CancellationToken cancellationToken)
         {
             SlackMethod = apiMethod;
             Args = args;
             return Task.FromResult(0);
         }
 
-        public Task<T> Get<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class
+        public Task<T> Get<T>(string apiMethod, Args args, CancellationToken cancellationToken) where T : class
         {
             SlackMethod = apiMethod;
             Args = args;
             return Task.FromResult(Activator.CreateInstance<T>());
         }
 
-        public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken)
+        public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken cancellationToken)
         {
             SlackMethod = apiMethod;
             Args = args;
             return Task.FromResult(0);
         }
 
-        public Task Post(string apiMethod, Args args, CancellationToken? cancellationToken) =>
+        public Task Post(string apiMethod, Args args, CancellationToken cancellationToken) =>
             Post<object>(apiMethod, args, cancellationToken);
 
-        public Task<T> Post<T>(string apiMethod, Args args, CancellationToken? cancellationToken) where T : class
+        public Task<T> Post<T>(string apiMethod, Args args, CancellationToken cancellationToken) where T : class
         {
             SlackMethod = apiMethod;
             Args = args;
             return Task.FromResult(Activator.CreateInstance<T>());
         }
 
-        public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken? cancellationToken) where T : class
+        public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken cancellationToken) where T : class
         {
             SlackMethod = apiMethod;
             Args = args;
             return Task.FromResult(Activator.CreateInstance<T>());
         }
 
-        public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken? cancellationToken) => throw new NotImplementedException();
+        public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken cancellationToken) => throw new NotImplementedException();
 
-        public Task PostToWebhook(string webhookUrl, Message message, CancellationToken? cancellationToken) => throw new NotImplementedException();
+        public Task PostToWebhook(string webhookUrl, Message message, CancellationToken cancellationToken) => throw new NotImplementedException();
 
         public ISlackApiClient WithAccessToken(string accessToken) => this;
 
@@ -247,6 +247,6 @@ public class ApiLintTest
 
     class FakeHttp : IHttp
     {
-        public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken? cancellationToken = null) => Task.FromResult(Activator.CreateInstance<T>());
+        public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => Task.FromResult(Activator.CreateInstance<T>());
     }
 }

@@ -32,7 +32,7 @@ namespace SlackNet.Bot
         /// <summary>
         /// Connect to Slack.
         /// </summary>
-        Task Connect(CancellationToken? cancellationToken = null);
+        Task Connect(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Transform stream of incoming messages.
@@ -98,7 +98,7 @@ namespace SlackNet.Bot
         /// <summary>
         /// Send a message to Slack as the bot.
         /// </summary>
-        Task Send(BotMessage message, CancellationToken? cancellationToken = null);
+        Task Send(BotMessage message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Show typing indicator in Slack while performing some action.
@@ -210,7 +210,7 @@ namespace SlackNet.Bot
                 .Where(m => m.User != Id)
                 .SelectMany(CreateSlackMessage);
             _outgoingWithMiddlewareApplied = _outgoingMessages
-                .LimitFrequency(TimeSpan.FromSeconds(1), m => m.CancellationToken ?? CancellationToken.None, _scheduler);
+                .LimitFrequency(TimeSpan.FromSeconds(1), m => m.CancellationToken, _scheduler);
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace SlackNet.Bot
         /// <summary>
         /// Connect to Slack.
         /// </summary>
-        public async Task Connect(CancellationToken? cancellationToken = null)
+        public async Task Connect(CancellationToken cancellationToken = default)
         {
             // If already connected, client will throw
             var connection = _rtm.Connect(cancellationToken: cancellationToken);
@@ -451,11 +451,9 @@ namespace SlackNet.Bot
         /// <summary>
         /// Send a message to Slack as the bot.
         /// </summary>
-        public async Task Send(BotMessage message, CancellationToken? cancellationToken = null)
+        public async Task Send(BotMessage message, CancellationToken cancellationToken = default)
         {
-            var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
-                message.CancellationToken ?? CancellationToken.None,
-                cancellationToken ?? CancellationToken.None);
+            var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(message.CancellationToken, cancellationToken);
             message.CancellationToken = linkedTokenSource.Token;
 
             var sent = _sentMessages.FirstOrDefaultAsync(m => m.Message == message)

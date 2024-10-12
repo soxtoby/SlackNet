@@ -14,7 +14,7 @@ public interface ICallParticipantsApi
     /// <param name="id"><see cref="Call.Id"/> returned by the <see cref="Add"/> method.</param>
     /// <param name="users">The list of users to add as participants in the Call.</param>
     /// <param name="cancellationToken"></param>
-    Task Add(string id, IEnumerable<CallUser> users, CancellationToken? cancellationToken = null);
+    Task Add(string id, IEnumerable<CallUser> users, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Registers participants removed from a Call.
@@ -23,7 +23,7 @@ public interface ICallParticipantsApi
     /// <param name="id"><see cref="Call.Id"/> returned by the <see cref="Add"/> method.</param>
     /// <param name="users">The list of users to remove as participants in the Call.</param>
     /// <param name="cancellationToken"></param>
-    Task Remove(string id, IEnumerable<CallUser> users, CancellationToken? cancellationToken = null);
+    Task Remove(string id, IEnumerable<CallUser> users, CancellationToken cancellationToken = default);
 }
 
 public class CallParticipantsApi : ICallParticipantsApi
@@ -31,14 +31,14 @@ public class CallParticipantsApi : ICallParticipantsApi
     private readonly ISlackApiClient _client;
     public CallParticipantsApi(ISlackApiClient client) => _client = client;
 
-    public Task Add(string id, IEnumerable<CallUser> users, CancellationToken? cancellationToken = null) =>
+    public Task Add(string id, IEnumerable<CallUser> users, CancellationToken cancellationToken = default) =>
         _client.Post("calls.participants.add", new Args
             {
                 { "id", id },
                 { "users", users }
             }, cancellationToken);
 
-    public Task Remove(string id, IEnumerable<CallUser> users, CancellationToken? cancellationToken = null) =>
+    public Task Remove(string id, IEnumerable<CallUser> users, CancellationToken cancellationToken = default) =>
         _client.Post("calls.participants.remove", new Args
             {
                 { "id", id },

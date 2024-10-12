@@ -20,7 +20,7 @@ public interface ITeamApi
     /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="ReactionItemListResponse.ResponseMetadata"/>.
     /// </param>
     /// <param name="cancellationToken"></param>
-    Task<AccessLogsResponse> AccessLogs(DateTime before, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null);
+    Task<AccessLogsResponse> AccessLogs(DateTime before, int count = 100, int page = 1, string cursor = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Used to get the access logs for users on a team.
@@ -34,7 +34,7 @@ public interface ITeamApi
     /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="ReactionItemListResponse.ResponseMetadata"/>.
     /// </param>
     /// <param name="cancellationToken"></param>
-    Task<AccessLogsResponse> AccessLogs(int? before = null, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null);
+    Task<AccessLogsResponse> AccessLogs(int? before = null, int count = 100, int page = 1, string cursor = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Lists billable information for each user on the team.
@@ -43,14 +43,14 @@ public interface ITeamApi
     /// <remarks>See the <a href="https://api.slack.com/methods/team.billableInfo">Slack documentation</a> for more information.</remarks>
     /// <param name="userId">A user to retrieve the billable information for. Defaults to all users.</param>
     /// <param name="cancellationToken"></param>
-    Task<IList<BillableInfo>> BillableInfo(string userId = null, CancellationToken? cancellationToken = null);
+    Task<IList<BillableInfo>> BillableInfo(string userId = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Provides information about your team.
     /// </summary>
     /// <remarks>See the <a href="https://api.slack.com/methods/team.info">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
-    Task<Team> Info(CancellationToken? cancellationToken = null);
+    Task<Team> Info(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Lists the integration activity logs for a team, including when integrations are added, modified and removed.
@@ -71,7 +71,7 @@ public interface ITeamApi
         int page = 1,
         string serviceId = null,
         string userId = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 }
 
@@ -80,7 +80,7 @@ public class TeamApi : ITeamApi
     private readonly ISlackApiClient _client;
     public TeamApi(ISlackApiClient client) => _client = client;
 
-    public Task<AccessLogsResponse> AccessLogs(DateTime before, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null) =>
+    public Task<AccessLogsResponse> AccessLogs(DateTime before, int count = 100, int page = 1, string cursor = null, CancellationToken cancellationToken = default) =>
         _client.Get<AccessLogsResponse>("team.accessLogs", new Args
             {
                 { "before", before.ToTimestamp() },
@@ -89,7 +89,7 @@ public class TeamApi : ITeamApi
                 { "cursor", cursor }
             }, cancellationToken);
 
-    public Task<AccessLogsResponse> AccessLogs(int? before = null, int count = 100, int page = 1, string cursor = null, CancellationToken? cancellationToken = null) =>
+    public Task<AccessLogsResponse> AccessLogs(int? before = null, int count = 100, int page = 1, string cursor = null, CancellationToken cancellationToken = default) =>
         _client.Get<AccessLogsResponse>("team.accessLogs", new Args
             {
                 { "before", before },
@@ -98,10 +98,10 @@ public class TeamApi : ITeamApi
                 { "cursor", cursor }
             }, cancellationToken);
 
-    public async Task<IList<BillableInfo>> BillableInfo(string userId = null, CancellationToken? cancellationToken = null) =>
+    public async Task<IList<BillableInfo>> BillableInfo(string userId = null, CancellationToken cancellationToken = default) =>
         (await _client.Get<BillableInfoResponse>("team.billableInfo", new Args { { "user", userId } }, cancellationToken).ConfigureAwait(false)).BillableInfo;
 
-    public async Task<Team> Info(CancellationToken? cancellationToken = null) =>
+    public async Task<Team> Info(CancellationToken cancellationToken = default) =>
         (await _client.Get<TeamResponse>("team.info", new Args(), cancellationToken).ConfigureAwait(false)).Team;
 
     public Task<IntegrationLogsResponse> IntegrationLogs(
@@ -111,7 +111,7 @@ public class TeamApi : ITeamApi
         int page = 1,
         string serviceId = null,
         string userId = null,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Get<IntegrationLogsResponse>("team.integrationLogs", new Args
                 {

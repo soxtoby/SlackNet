@@ -27,7 +27,7 @@ public interface IOAuthV2Api
         string? redirectUrl,
         string? refreshToken,
 #nullable disable
-        CancellationToken? cancellationToken
+        CancellationToken cancellationToken
     );
 
 }
@@ -46,7 +46,7 @@ public class OAuthV2Api : IOAuthV2Api
         string? redirectUrl,
         string? refreshToken,
 #nullable disable
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.WithAccessToken(string.Empty) // Since this endpoint is for getting an access token, it doesn't make sense to include an existing token in the request
             .Post<OauthV2AccessResponse>("oauth.v2.access", new Args(), new SlackFormContent

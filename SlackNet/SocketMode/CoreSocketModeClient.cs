@@ -14,7 +14,7 @@ namespace SlackNet.SocketMode;
 
 public interface ICoreSocketModeClient : IDisposable
 {
-    Task Connect(SocketModeConnectionOptions? connectionOptions = null, CancellationToken? cancellationToken = null);
+    Task Connect(SocketModeConnectionOptions? connectionOptions = null, CancellationToken cancellationToken = default);
     void Disconnect();
 
     /// <summary>
@@ -110,7 +110,7 @@ public class CoreSocketModeClient : ICoreSocketModeClient
         }
     }
 
-    public async Task Connect(SocketModeConnectionOptions? connectionOptions = null, CancellationToken? cancellationToken = null)
+    public async Task Connect(SocketModeConnectionOptions? connectionOptions = null, CancellationToken cancellationToken = default)
     {
         if (Connected)
             throw new InvalidOperationException("Already connecting or connected");
@@ -123,7 +123,7 @@ public class CoreSocketModeClient : ICoreSocketModeClient
         Disconnect();
 
         _disconnectCancellation = new CancellationTokenSource();
-        _connectionCancelled = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken ?? CancellationToken.None, _disconnectCancellation.Token);
+        _connectionCancelled = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _disconnectCancellation.Token);
 
         _webSockets = Enumerable.Range(0, connectionOptions.NumberOfConnections)
             .Select(i => new ReconnectingWebSocket(_webSocketFactory, _scheduler, _log, i))

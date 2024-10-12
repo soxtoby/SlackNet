@@ -17,11 +17,11 @@ public interface IEmojiApi
     /// The alias: pseudo-protocol will be used where the emoji is an alias,
     /// the string following the colon is the name of the other emoji this emoji is an alias to.
     /// </returns>
-    Task<IReadOnlyDictionary<string, string>> List(CancellationToken? cancellationToken = null);
+    Task<IReadOnlyDictionary<string, string>> List(CancellationToken cancellationToken = default);
 }
 
 public class EmojiApi(ISlackApiClient client) : IEmojiApi
 {
-    public async Task<IReadOnlyDictionary<string, string>> List(CancellationToken? cancellationToken = null) =>
+    public async Task<IReadOnlyDictionary<string, string>> List(CancellationToken cancellationToken = default) =>
         (await client.Get<EmojiResponse>("emoji.list", new Args(), cancellationToken).ConfigureAwait(false)).Emoji;
 }

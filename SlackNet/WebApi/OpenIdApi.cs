@@ -27,7 +27,7 @@ public interface IOpenIdApi
         string? redirectUrl,
         string? refreshToken,
 #nullable disable
-        CancellationToken? cancellationToken
+        CancellationToken cancellationToken
     );
 
     /// <summary>
@@ -38,7 +38,7 @@ public interface IOpenIdApi
     /// </summary>
     /// <remarks>See the <a href="https://api.slack.com/methods/openid.connect.userInfo">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
-    Task<OpenIdUserInfoResponse> UserInfo(CancellationToken? cancellationToken);
+    Task<OpenIdUserInfoResponse> UserInfo(CancellationToken cancellationToken);
 }
 
 public class OpenIdApi : IOpenIdApi
@@ -55,7 +55,7 @@ public class OpenIdApi : IOpenIdApi
         string? redirectUrl = null,
         string? refreshToken = null,
 #nullable disable
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Post<OpenIdTokenResponse>("openid.connect.token", new Args(), new SlackFormContent
                 {
@@ -68,6 +68,6 @@ public class OpenIdApi : IOpenIdApi
                 }
             , cancellationToken);
 
-    public Task<OpenIdUserInfoResponse> UserInfo(CancellationToken? cancellationToken = null) =>
+    public Task<OpenIdUserInfoResponse> UserInfo(CancellationToken cancellationToken = default) =>
         _client.Post<OpenIdUserInfoResponse>("openid.connect.userInfo", new Args(), cancellationToken);
 }

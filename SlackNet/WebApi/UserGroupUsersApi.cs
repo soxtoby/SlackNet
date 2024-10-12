@@ -14,7 +14,7 @@ public interface IUserGroupUsersApi
     /// <param name="userGroupId">ID of the User Group to update.</param>
     /// <param name="includeDisabled">Allow results that involve disabled User Groups.</param>
     /// <param name="cancellationToken"></param>
-    Task<IReadOnlyList<string>> List(string userGroupId, bool includeDisabled = false, CancellationToken? cancellationToken = null);
+    Task<IReadOnlyList<string>> List(string userGroupId, bool includeDisabled = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates the list of users that belong to a User Group.
@@ -25,7 +25,7 @@ public interface IUserGroupUsersApi
     /// <param name="userIds">User IDs that represent the entire list of users for the User Group.</param>
     /// <param name="includeCount">Include the number of users in the User Group.</param>
     /// <param name="cancellationToken"></param>
-    Task<UserGroup> Update(string userGroupId, IEnumerable<string> userIds, bool includeCount = false, CancellationToken? cancellationToken = null);
+    Task<UserGroup> Update(string userGroupId, IEnumerable<string> userIds, bool includeCount = false, CancellationToken cancellationToken = default);
 }
 
 public class UserGroupUsersApi : IUserGroupUsersApi
@@ -33,7 +33,7 @@ public class UserGroupUsersApi : IUserGroupUsersApi
     private readonly ISlackApiClient _client;
     public UserGroupUsersApi(ISlackApiClient client) => _client = client;
 
-    public async Task<IReadOnlyList<string>> List(string userGroupId, bool includeDisabled = false, CancellationToken? cancellationToken = null) =>
+    public async Task<IReadOnlyList<string>> List(string userGroupId, bool includeDisabled = false, CancellationToken cancellationToken = default) =>
         (await _client.Get<MembershipResponse>("usergroups.users.list", new Args
             {
                 { "usergroup", userGroupId },
@@ -41,7 +41,7 @@ public class UserGroupUsersApi : IUserGroupUsersApi
             }, cancellationToken).ConfigureAwait(false))
         .Users;
 
-    public async Task<UserGroup> Update(string userGroupId, IEnumerable<string> userIds, bool includeCount = false, CancellationToken? cancellationToken = null) =>
+    public async Task<UserGroup> Update(string userGroupId, IEnumerable<string> userIds, bool includeCount = false, CancellationToken cancellationToken = default) =>
         (await _client.Post<UserGroupResponse>("usergroups.users.update", new Args
             {
                 { "usergroup", userGroupId },

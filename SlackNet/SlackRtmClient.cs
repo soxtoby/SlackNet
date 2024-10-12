@@ -40,7 +40,7 @@ public interface ISlackRtmClient : IDisposable
     /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
     /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
     /// <param name="cancellationToken"></param>
-    Task<ConnectResponse> Connect(bool batchPresenceAware = false, bool manualPresenceSubscription = false, CancellationToken? cancellationToken = null);
+    Task<ConnectResponse> Connect(bool batchPresenceAware = false, bool manualPresenceSubscription = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Send a simple message. For more complicated messages, use <see cref="ChatApi.PostMessage"/> instead.
@@ -123,7 +123,7 @@ public class SlackRtmClient : ISlackRtmClient
     /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
     /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
     /// <param name="cancellationToken"></param>
-    public async Task<ConnectResponse> Connect(bool batchPresenceAware = false, bool manualPresenceSubscription = false, CancellationToken? cancellationToken = null)
+    public async Task<ConnectResponse> Connect(bool batchPresenceAware = false, bool manualPresenceSubscription = false, CancellationToken cancellationToken = default)
     {
         if (Connected)
             throw new InvalidOperationException("Already connecting or connected");

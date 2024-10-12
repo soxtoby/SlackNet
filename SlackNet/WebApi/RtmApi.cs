@@ -15,7 +15,7 @@ public interface IRtmApi
     /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
     /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
     /// <param name="cancellationToken"></param>
-    Task<ConnectResponse> Connect(bool manualPresenceSubscription = false, bool batchPresenceAware = false, CancellationToken? cancellationToken = null);
+    Task<ConnectResponse> Connect(bool manualPresenceSubscription = false, bool batchPresenceAware = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Begins a Real Time Messaging API session and reserves your application a specific URL with which to connect via websocket.
@@ -39,7 +39,7 @@ public interface IRtmApi
         bool batchPresenceAware = false,
         bool includeLocale = false,
         bool noLatest = false,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     );
 }
 
@@ -48,7 +48,7 @@ public class RtmApi : IRtmApi
     private readonly ISlackApiClient _client;
     public RtmApi(ISlackApiClient client) => _client = client;
 
-    public Task<ConnectResponse> Connect(bool manualPresenceSubscription = false, bool batchPresenceAware = false, CancellationToken? cancellationToken = null) =>
+    public Task<ConnectResponse> Connect(bool manualPresenceSubscription = false, bool batchPresenceAware = false, CancellationToken cancellationToken = default) =>
         _client.Get<ConnectResponse>("rtm.connect", new Args { { "presence_sub", manualPresenceSubscription }, { "batch_presence_aware", batchPresenceAware } }, cancellationToken);
 
     public Task<StartResponse> Start(
@@ -59,7 +59,7 @@ public class RtmApi : IRtmApi
         bool batchPresenceAware = false,
         bool includeLocale = false,
         bool noLatest = false,
-        CancellationToken? cancellationToken = null
+        CancellationToken cancellationToken = default
     ) =>
         _client.Get<StartResponse>("rtm.start", new Args
                 {
