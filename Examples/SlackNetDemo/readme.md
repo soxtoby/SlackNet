@@ -10,6 +10,7 @@ Check out the [other example projects](../) to see how to configure SlackNet wit
 2. [Request the bot token scopes](https://api.slack.com/authentication/basics#scopes) required by the demo:
    - `users:read` `channels:read` `groups:read` `im:read` `mpim:read` for getting user & conversation info.
    - `chat:write` for posting messages.
+   - `files:read` for uploading files.
 3. [Install the app to your workspace](https://api.slack.com/authentication/basics#installing) and copy the bot user OAuth token from your app's OAuth & Permissions page into the demo's [appsettings.json](./appsettings.json) file for the value of the `ApiToken`.
 4. [Enable socket mode](https://api.slack.com/apis/connections/socket#toggling) for your app. You'll be required to generate an app-level token - copy this into [appsettings.json](./appsettings.json) for the value of the `AppLevelToken`.
 5. [Enable the home tab](https://api.slack.com/surfaces/app-home#enabling) for your app.
