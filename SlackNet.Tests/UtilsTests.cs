@@ -34,6 +34,7 @@ public class UtilsTests
     public void ToDateTime_FromTimestampString_ValidTimestamp_ReturnsDateTime()
     {
         "42".ToDateTime().ShouldBe(new DateTime(1970, 1, 1, 0, 0, 42));
+        "42.123456".ToDateTime().ShouldBe(new DateTime(1970, 1, 1, 0, 0, 42, 123, 456));
         "-42".ToDateTime().ShouldBe(new DateTime(1969, 12, 31, 23, 59, 18));
     }
 
@@ -60,6 +61,7 @@ public class UtilsTests
     public void ToDateTime_FromDecimal_NonZero_ReturnsDateTime()
     {
         42m.ToDateTime().ShouldBe(new DateTime(1970, 1, 1, 0, 0, 42));
+        42.123456m.ToDateTime().ShouldBe(new DateTime(1970, 1, 1, 0, 0, 42, 123, 456));
         (-42m).ToDateTime().ShouldBe(new DateTime(1969, 12, 31, 23, 59, 18));
     }
 

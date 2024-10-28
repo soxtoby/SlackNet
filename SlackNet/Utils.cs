@@ -34,7 +34,9 @@ public static class Utils
     /// <returns>If timestamp is 0, returns null, otherwise a DateTime.</returns>
     public static DateTime? ToDateTime(this decimal timestamp) =>
         timestamp != 0
-            ? DateTimeOffset.FromUnixTimeMilliseconds((long)(timestamp * 1000)).UtcDateTime
+            ? DateTimeOffset.FromUnixTimeMilliseconds((long)(timestamp * 1000))
+                .AddTicks((long)(timestamp * 1_000_000 % 1000 * 10)) // 10 ticks per microsecond
+                .UtcDateTime
             : null;
 
     /// <summary>
