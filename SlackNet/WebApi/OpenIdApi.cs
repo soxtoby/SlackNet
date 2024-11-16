@@ -15,7 +15,7 @@ public interface IOpenIdApi
     /// <param name="clientSecret">Issued when you created your application.</param>
     /// <param name="code">The code param returned via the OAuth callback.</param>
     /// <param name="grantType">The grant_type param as described in the OAuth spec.</param>
-    /// <param name="redirectUrl">This must match the originally submitted URI (if one was sent).</param>
+    /// <param name="redirectUri">This must match the originally submitted URI (if one was sent).</param>
     /// <param name="refreshToken">The refresh_token param as described in the OAuth spec.</param>
     /// <param name="cancellationToken"></param>
     Task<OpenIdTokenResponse> Token(
@@ -24,7 +24,7 @@ public interface IOpenIdApi
 #nullable enable
         string? code,
         string? grantType,
-        string? redirectUrl,
+        string? redirectUri,
         string? refreshToken,
 #nullable disable
         CancellationToken cancellationToken
@@ -52,7 +52,7 @@ public class OpenIdApi : IOpenIdApi
 #nullable enable
         string? code = null,
         string? grantType = null,
-        string? redirectUrl = null,
+        string? redirectUri = null,
         string? refreshToken = null,
 #nullable disable
         CancellationToken cancellationToken = default
@@ -63,7 +63,7 @@ public class OpenIdApi : IOpenIdApi
                     { "client_secret", clientSecret },
                     { "code", code },
                     { "grant_type", grantType },
-                    { "redirect_url", redirectUrl },
+                    { "redirect_uri", redirectUri },
                     { "refresh_token", refreshToken },
                 }
             , cancellationToken);
