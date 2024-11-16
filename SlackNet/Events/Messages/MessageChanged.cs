@@ -6,5 +6,6 @@
 public class MessageChanged : MessageEvent
 {
     public override bool Hidden => true;
+    public MessageEvent PreviousMessage { get; set; }
     public MessageEvent Message { get; set; }
 }
