@@ -966,6 +966,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IApiApi Api { get; }
         public IAppsConnectionsApi AppsConnectionsApi { get; }
         public IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
+        public IAssistantThreadsApi AssistantThreads { get; }
         public IAuthApi Auth { get; }
         public IBookmarksApi Bookmarks { get; }
         public IBotsApi Bots { get; }

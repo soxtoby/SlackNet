@@ -145,6 +145,7 @@ public class ApiLintTest
             { typeof(IEnumerable<ExternalFileReference>), _ => Enumerable.Empty<ExternalFileReference>() },
             { typeof(FileUpload), _ => new FileUpload(string.Empty, string.Empty) },
             { typeof(IEnumerable<FileUpload>), _ => Enumerable.Empty<FileUpload>() },
+            { typeof(IEnumerable<AssistantPrompt>), _ => Enumerable.Empty<AssistantPrompt>() },
             { typeof(CancellationToken), _ => null },
         };
 
@@ -210,6 +211,7 @@ public class ApiLintTest
         public IApiApi Api { get; }
         public IAppsConnectionsApi AppsConnectionsApi { get; }
         public IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
+        public IAssistantThreadsApi AssistantThreads { get; }
         public IAuthApi Auth { get; }
         public IBookmarksApi Bookmarks { get; }
         public IBotsApi Bots { get; }
