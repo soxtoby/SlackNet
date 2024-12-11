@@ -398,7 +398,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
                     return new ExternalFileReference { Id = uploadUrlResponse.FileId, Title = file.Title };
                 })).ConfigureAwait(false);
 
-        return await CompleteUploadExternal(fileReferences, channelId, threadTs, initialComment, cancellationToken).ConfigureAwait(false);
+        return await CompleteUploadExternal(fileReferences, channelId, initialComment, threadTs, cancellationToken).ConfigureAwait(false);
     }
 
     public Task<UploadUrlExternalResponse> GetUploadUrlExternal(
@@ -419,8 +419,8 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
     public async Task<IList<ExternalFileReference>> CompleteUploadExternal(
         IEnumerable<ExternalFileReference> files,
         string channelId = null,
-        string threadTs = null,
         string initialComment = null,
+        string threadTs = null,
         CancellationToken cancellationToken = default
     ) =>
         (await client.Post<CompleteUploadExternalResponse>("files.completeUploadExternal", new Args
