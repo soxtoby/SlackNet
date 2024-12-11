@@ -90,7 +90,7 @@ public interface IFilesApi
     /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
     /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
     /// <param name="cancellationToken"></param>
-    [Obsolete("Use the overload that takes an ExternalFile instead.")]
+    [Obsolete("Use the overload that takes a FileUpload instead.")]
     Task<FileResponse> Upload(
         string fileContents,
         string fileType = null,
@@ -114,7 +114,7 @@ public interface IFilesApi
     /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
     /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
     /// <param name="cancellationToken"></param>
-    [Obsolete("Use the overload that takes an ExternalFile instead.")]
+    [Obsolete("Use the overload that takes a FileUpload instead.")]
     Task<FileResponse> Upload(
         byte[] fileContents,
         string fileType = null,
@@ -138,7 +138,7 @@ public interface IFilesApi
     /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
     /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
     /// <param name="cancellationToken"></param>
-    [Obsolete("Use the overload that takes an ExternalFile instead.")]
+    [Obsolete("Use the overload that takes a FileUpload instead.")]
     Task<FileResponse> Upload(
         Stream fileContents,
         string fileType = null,
@@ -164,7 +164,7 @@ public interface IFilesApi
     /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
     /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
     /// <param name="cancellationToken"></param>
-    [Obsolete("Use the overload of Upload that takes an ExternalFile instead.")]
+    [Obsolete("Use the overload of Upload that takes a FileUpload instead.")]
     Task<FileResponse> UploadSnippet(
         string snippet,
         string fileType = null,
