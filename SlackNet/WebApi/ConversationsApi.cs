@@ -244,13 +244,23 @@ public interface IConversationsApi
     /// <param name="oldestTs">Start of time range of messages to include in results.</param>
     /// <param name="inclusive">Include messages with latest or oldest timestamp in results only when either timestamp is specified.</param>
     /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
+    /// <param name="includeAllMetadata">Return all metadata associated with this message.</param>
     /// <param name="cursor">
     /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
     /// returned by a previous request's <see cref="ConversationMessagesResponse.ResponseMetadata"/>.
     /// Default value fetches the first "page" of the collection.
     /// </param>
     /// <param name="cancellationToken"></param>
-    Task<ConversationMessagesResponse> Replies(string channelId, string threadTs, string latestTs = null, string oldestTs = null, bool inclusive = false, int limit = 10, string cursor = null, CancellationToken cancellationToken = default);
+    Task<ConversationMessagesResponse> Replies(
+        string channelId,
+        string threadTs,
+        string latestTs = null,
+        string oldestTs = null,
+        bool inclusive = false,
+        int limit = 10,
+        bool includeAllMetadata = false,
+        string cursor = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Sets the purpose for a conversation.
@@ -433,7 +443,17 @@ public class ConversationsApi(ISlackApiClient client) : IConversationsApi
             }, cancellationToken).ConfigureAwait(false))
         .Channel;
 
-    public Task<ConversationMessagesResponse> Replies(string channelId, string threadTs, string latestTs = null, string oldestTs = null, bool inclusive = false, int limit = 10, string cursor = null, CancellationToken cancellationToken = default) =>
+    public Task<ConversationMessagesResponse> Replies(
+        string channelId,
+        string threadTs,
+        string latestTs = null,
+        string oldestTs = null,
+        bool inclusive = false,
+        int limit = 10,
+        bool includeAllMetadata = false,
+        string cursor = null,
+        CancellationToken cancellationToken = default
+    ) =>
         client.Get<ConversationMessagesResponse>("conversations.replies", new Args
             {
                 { "channel", channelId },
@@ -442,6 +462,7 @@ public class ConversationsApi(ISlackApiClient client) : IConversationsApi
                 { "inclusive", inclusive },
                 { "latest", latestTs },
                 { "limit", limit },
+                { "include_all_metadata", includeAllMetadata },
                 { "oldest", oldestTs }
             }, cancellationToken);
 
