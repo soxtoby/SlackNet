@@ -1,8 +1,10 @@
 ﻿namespace SlackNet.Blocks;
 
 /// <summary>
+/// Displays an image.<br />
 /// A simple image block, designed to make those cat photos really pop.
 /// </summary>
+/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#image">Slack documentation</a> for more information.</remarks>
 [SlackType("image")]
 public class ImageBlock : Block
 {

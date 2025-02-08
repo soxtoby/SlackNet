@@ -1,7 +1,7 @@
 ﻿namespace SlackNet.Blocks;
 
 /// <summary>
-/// Displays formatted markdown.
+/// Displays formatted markdown.<br />
 /// This block can be used with AI apps when you expect a markdown response from an LLM that can get lost in translation rendering in Slack.
 /// Providing it in a markdown block leaves the translating to Slack to ensure your message appears as intended.
 /// Note that passing a single block may result in multiple blocks after translation.

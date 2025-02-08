@@ -3,8 +3,9 @@
 namespace SlackNet.Blocks;
 
 /// <summary>
-/// Displays message context, which can include both images and text.
+/// Displays contextual info, which can include both images and text.
 /// </summary>
+/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#context">Slack documentation</a> for more information.</remarks>
 [SlackType("context")]
 public class ContextBlock : Block
 {

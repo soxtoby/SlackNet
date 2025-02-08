@@ -1,8 +1,10 @@
 ﻿namespace SlackNet.Blocks;
 
 /// <summary>
-/// A video block is designed to embed videos.
+/// Displays an embedded video player.<br />
+/// A video block is designed to embed videos in all app surfaces (e.g. link unfurls, messages, modals, App Home).
 /// </summary>
+/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#video">Slack documentation</a> for more information.</remarks>
 [SlackType("video")]
 public class VideoBlock : Block
 {

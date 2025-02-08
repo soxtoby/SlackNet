@@ -4,7 +4,11 @@ using Newtonsoft.Json;
 namespace SlackNet.Blocks;
 
 /// <summary>
-/// Displays formatted, structured representation of text.
+/// Displays formatted, structured representation of text.<br />
+/// It is also the output of the Slack client's WYSIWYG message composer,
+/// so all messages sent by end-users will have this format.
+/// Use this block to include user-defined formatted text in your Block Kit payload.
+/// While it is possible to format text with <see cref="Markdown"/>, <see cref="RichTextBlock"/> is strongly preferred and allows greater flexibility.
 /// </summary>
 /// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text">Slack documentation</a> for more information.</remarks>
 [SlackType("rich_text")]

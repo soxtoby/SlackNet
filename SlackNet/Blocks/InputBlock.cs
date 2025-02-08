@@ -3,6 +3,7 @@ namespace SlackNet.Blocks;
 /// <summary>
 /// A block that collects information from users.
 /// </summary>
+/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#input">Slack documentation</a> for more information.</remarks>
 [SlackType("input")] 
 public class InputBlock : Block
 {

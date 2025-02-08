@@ -3,9 +3,10 @@
 namespace SlackNet.Blocks;
 
 /// <summary>
-/// A section is one of the most flexible blocks available - it can be used as a simple text block,
-/// in combination with text fields, or side-by-side with any of the available block elements.
+/// Displays text, possibly alongside block elements.<br />
+/// A section can be used as a text block, in combination with text fields, or side-by-side with certain block elements.
 /// </summary>
+/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#section">Slack documentation</a> for more information.</remarks>
 [SlackType("section")]
 public class SectionBlock : Block
 {
