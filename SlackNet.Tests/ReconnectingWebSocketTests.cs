@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Net.WebSockets;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
@@ -7,7 +8,6 @@ using System.Threading.Tasks;
 using EasyAssertions;
 using Microsoft.Reactive.Testing;
 using NUnit.Framework;
-using WebSocket4Net;
 
 namespace SlackNet.Tests;
 

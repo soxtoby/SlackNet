@@ -1,5 +1,5 @@
-﻿using System.Security.Authentication;
-using WebSocket4Net;
+﻿using System.Net.WebSockets;
+using System.Security.Authentication;
 
 namespace SlackNet;
 
@@ -10,5 +10,6 @@ public interface IWebSocketFactory
 
 class WebSocketFactory : IWebSocketFactory
 {
-    public IWebSocket Create(string uri) => new WebSocketWrapper(new WebSocket(uri, sslProtocols: SslProtocols.Tls12));
+    
+    public IWebSocket Create(string uri) => new WebSocketWrapper(new ClientWebSocket(), uri);
 }

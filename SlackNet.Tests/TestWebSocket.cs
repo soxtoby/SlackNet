@@ -1,11 +1,11 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Net.WebSockets;
 using System.Reactive;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using WebSocket4Net;
 
 namespace SlackNet.Tests;
 

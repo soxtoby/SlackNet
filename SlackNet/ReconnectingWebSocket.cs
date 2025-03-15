@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.WebSockets;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -6,7 +7,6 @@ using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using SlackNet.SocketMode;
-using WebSocket4Net;
 
 namespace SlackNet;
 
@@ -38,7 +38,12 @@ class ReconnectingWebSocket : IDisposable
 
         // Retry as long as not cancelled and Slack doesn't return an error response
         await Observable.FromAsync(() => ConnectInternal(getWebSocketUrl, cancel.Token), _scheduler)
-            .RetryWithDelay(e => e is not SlackException and not TaskCanceledException, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromMinutes(5), _scheduler,
+            .RetryWithDelay(
+                e => e is not SlackException and not TaskCanceledException,
+                TimeSpan.FromSeconds(1),
+                TimeSpan.FromSeconds(5),
+                TimeSpan.FromMinutes(5),
+                _scheduler,
                 (e, d) => _log.Internal(e, "Error connecting socket {SocketId} - retrying in {RetryDelay}", _id, d))
             .FirstAsync()
             .ToTask(cancel.Token)
@@ -62,8 +67,16 @@ class ReconnectingWebSocket : IDisposable
             .Subscribe(_messages);
 
         _log.Internal("Opening socket {SocketId}", _id);
-        if (!await _webSocket.Open(cancellationToken).ConfigureAwait(false))
-            throw new ConnectionFailedException(_id, State);
+
+        try
+        {
+            if (!await _webSocket.Open(cancellationToken).ConfigureAwait(false))
+                throw new ConnectionFailedException(_id, _webSocket.State);
+        }
+        catch (Exception e)
+        {
+            throw new ConnectionFailedException(_id, State, e);
+        }
 
         _log.WithContext("Url", url)
             .Internal("Socket {SocketId} opened", _id);
@@ -74,9 +87,9 @@ class ReconnectingWebSocket : IDisposable
     private async Task ReconnectOnClose(Func<Task<string>> getWebSocketUrl, CancellationToken cancellationToken)
     {
         await _webSocket.Closed.ConfigureAwait(false);
-        
+
         _log.Internal("Socket {SocketId} closed", _id);
-        
+
         if (!cancellationToken.IsCancellationRequested)
             await Connect(getWebSocketUrl, cancellationToken).ConfigureAwait(false);
     }
@@ -97,4 +110,5 @@ class ReconnectingWebSocket : IDisposable
     }
 }
 
-class ConnectionFailedException(int socketId, WebSocketState state) : Exception($"Failed to open socket {socketId}; socket in {state} state.");
+class ConnectionFailedException(int socketId, WebSocketState state, Exception exception = null)
+    : Exception($"Failed to open socket {socketId}; socket in {state} state.", exception);

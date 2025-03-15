@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
@@ -11,7 +12,6 @@ using Newtonsoft.Json.Linq;
 using SlackNet.Events;
 using SlackNet.Rtm;
 using SlackNet.WebApi;
-using WebSocket4Net;
 using Reply = SlackNet.Rtm.Reply;
 
 namespace SlackNet;
