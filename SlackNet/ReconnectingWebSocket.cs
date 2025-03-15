@@ -98,7 +98,7 @@ class ReconnectingWebSocket : IDisposable
 
     public IObservable<RawSocketMessage> Messages => _messages.AsObservable();
 
-    public void Send(string message) => _webSocket.Send(message);
+    public Task Send(string message) => _webSocket.Send(message);
 
     public void Dispose()
     {

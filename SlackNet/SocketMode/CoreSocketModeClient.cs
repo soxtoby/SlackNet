@@ -30,14 +30,14 @@ public interface ICoreSocketModeClient : IDisposable
     /// Sends an acknowledgement response, with an optional payload, back to Slack.
     /// </summary>
     /// <param name="socketId">
-    /// The ID of the web socket to send the acknowledgement on.
-    /// Must be the same as the web socket that received the message being acknowledged.
+    ///     The ID of the web socket to send the acknowledgement on.
+    ///     Must be the same as the web socket that received the message being acknowledged.
     /// </param>
     /// <param name="acknowledgement">
-    /// The response to send to Slack.
-    /// Should contain the <see cref="SocketEnvelope.EnvelopeId"/> of the message being responded to.
+    ///     The response to send to Slack.
+    ///     Should contain the <see cref="SocketEnvelope.EnvelopeId"/> of the message being responded to.
     /// </param>
-    void Send(int socketId, Acknowledgement acknowledgement);
+    Task Send(int socketId, Acknowledgement acknowledgement);
 }
 
 public class CoreSocketModeClient : ICoreSocketModeClient
@@ -178,15 +178,18 @@ public class CoreSocketModeClient : ICoreSocketModeClient
     /// Sends an acknowledgement response, with an optional payload, back to Slack.
     /// </summary>
     /// <param name="socketId">
-    /// The ID of the web socket to send the acknowledgement on.
-    /// Must be the same as the web socket that received the message being acknowledged.
+    ///     The ID of the web socket to send the acknowledgement on.
+    ///     Must be the same as the web socket that received the message being acknowledged.
     /// </param>
     /// <param name="acknowledgement">
-    /// The response to send to Slack.
-    /// Should contain the <see cref="SocketEnvelope.EnvelopeId"/> of the message being responded to.
+    ///     The response to send to Slack.
+    ///     Should contain the <see cref="SocketEnvelope.EnvelopeId"/> of the message being responded to.
     /// </param>
-    public void Send(int socketId, Acknowledgement acknowledgement) =>
-        _webSockets.ElementAtOrDefault(socketId)?.Send(JsonConvert.SerializeObject(acknowledgement, _jsonSettings.SerializerSettings));
+    public async Task Send(int socketId, Acknowledgement acknowledgement)
+    {
+        if (_webSockets.ElementAtOrDefault(socketId) is ReconnectingWebSocket socket)
+            await socket.Send(JsonConvert.SerializeObject(acknowledgement, _jsonSettings.SerializerSettings)).ConfigureAwait(false);
+    }
 
     public void Dispose()
     {

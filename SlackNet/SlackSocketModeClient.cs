@@ -88,10 +88,10 @@ public class SlackSocketModeClient : ISlackSocketModeClient
                 finally
                 {
                     if (!responded)
-                        Respond(null);
+                        await Respond(null).ConfigureAwait(false);
                 }
 
-                void Respond(object payload)
+                async Task Respond(object payload)
                 {
                     responded = true;
                     Acknowledgement ack;
@@ -107,7 +107,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
                             .Request("Responding with {PayloadType}", payload.GetType());
                     }
                     ack.EnvelopeId = envelope.EnvelopeId;
-                    Send(envelope.SocketId, ack);
+                    await Send(envelope.SocketId, ack).ConfigureAwait(false);
                 }
             }
         }
@@ -119,7 +119,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
         return Unit.Default;
     }
 
-    private Task HandleSpecificRequest(SlackRequestContext requestContext, SocketEnvelope envelope, Action<object> respond) =>
+    private Task HandleSpecificRequest(SlackRequestContext requestContext, SocketEnvelope envelope, Func<object, Task> respond) =>
         envelope switch
             {
                 EventEnvelope eventEnvelope => HandleEvent(requestContext, eventEnvelope.Payload, respond),
@@ -141,15 +141,15 @@ public class SlackSocketModeClient : ISlackSocketModeClient
     private T DeserializePayload<T>(JObject payload) =>
         payload.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings));
 
-    private async Task HandleEvent(SlackRequestContext requestContext, EventCallback eventCallback, Action<object> respond)
+    private async Task HandleEvent(SlackRequestContext requestContext, EventCallback eventCallback, Func<object, Task> respond)
     {
-        respond(null);
+        await respond(null).ConfigureAwait(false);
         var handler = _handlerFactory.CreateEventHandler(requestContext);
         _log.RequestHandler(handler, eventCallback, "Handling {EventType} event", eventCallback.Event.Type);
         await handler.Handle(eventCallback).ConfigureAwait(false);
     }
 
-    private Task HandleInteraction(SlackRequestContext requestContext, InteractionRequest interaction, Action<object> respond) =>
+    private Task HandleInteraction(SlackRequestContext requestContext, InteractionRequest interaction, Func<object, Task> respond) =>
         interaction switch
             {
                 BlockActionRequest blockActions => HandleBlockActions(requestContext, blockActions, respond),
@@ -164,28 +164,28 @@ public class SlackSocketModeClient : ISlackSocketModeClient
                 _ => Task.CompletedTask
             };
 
-    private async Task HandleBlockActions(SlackRequestContext requestContext, BlockActionRequest blockActions, Action<object> respond)
+    private async Task HandleBlockActions(SlackRequestContext requestContext, BlockActionRequest blockActions, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateBlockActionHandler(requestContext);
         _log.RequestHandler(handler, blockActions, "Handling {BlockActionType} block action", blockActions.Action.Type);
         await handler.Handle(blockActions, Responder(respond)).ConfigureAwait(false);
     }
 
-    private async Task HandleInteractiveMessage(SlackRequestContext requestContext, InteractiveMessage interactiveMessage, Action<object> respond)
+    private async Task HandleInteractiveMessage(SlackRequestContext requestContext, InteractiveMessage interactiveMessage, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateLegacyInteractiveMessageHandler(requestContext);
         _log.RequestHandler(handler, interactiveMessage, "Handling {InteractiveMessageName} interactive message", interactiveMessage.Action.Name);
         var response = await handler.Handle(interactiveMessage).ConfigureAwait(false);
 
         if (response == null)
-            respond(null);
+            await respond(null).ConfigureAwait(false);
         else if (interactiveMessage.IsAppUnfurl)
-            respond(new AttachmentUpdateResponse(response));
+            await respond(new AttachmentUpdateResponse(response)).ConfigureAwait(false);
         else
-            respond(new MessageUpdateResponse(response));
+            await respond(new MessageUpdateResponse(response)).ConfigureAwait(false);
     }
 
-    private async Task HandleDialogSubmission(SlackRequestContext requestContext, DialogSubmission dialogSubmission, Action<object> respond)
+    private async Task HandleDialogSubmission(SlackRequestContext requestContext, DialogSubmission dialogSubmission, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateLegacyDialogSubmissionHandler(requestContext);
         _log.RequestHandler(handler, dialogSubmission, "Handling dialog submission for {CallbackId}", dialogSubmission.CallbackId);
@@ -193,7 +193,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
             ?? [];
 
         if (errors.Any())
-            respond(new DialogErrorResponse { Errors = errors });
+            await respond(new DialogErrorResponse { Errors = errors }).ConfigureAwait(false);
     }
 
     private async Task HandleDialogCancellation(SlackRequestContext requestContext, DialogCancellation dialogCancellation)
@@ -203,21 +203,21 @@ public class SlackSocketModeClient : ISlackSocketModeClient
         await handler.HandleCancel(dialogCancellation).ConfigureAwait(false);
     }
 
-    private async Task HandleMessageShortcut(SlackRequestContext requestContext, MessageShortcut messageShortcut, Action<object> respond)
+    private async Task HandleMessageShortcut(SlackRequestContext requestContext, MessageShortcut messageShortcut, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateMessageShortcutHandler(requestContext);
         _log.RequestHandler(handler, messageShortcut, "Handling message shortcut for {CallbackId}", messageShortcut.CallbackId);
         await handler.Handle(messageShortcut, Responder(respond)).ConfigureAwait(false);
     }
 
-    private async Task HandleGlobalShortcut(SlackRequestContext requestContext, GlobalShortcut globalShortcut, Action<object> respond)
+    private async Task HandleGlobalShortcut(SlackRequestContext requestContext, GlobalShortcut globalShortcut, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateGlobalShortcutHandler(requestContext);
         _log.RequestHandler(handler, globalShortcut, "Handling global shortcut for {CallbackId}", globalShortcut.CallbackId);
         await handler.Handle(globalShortcut, Responder(respond)).ConfigureAwait(false);
     }
 
-    private async Task HandleViewSubmission(SlackRequestContext requestContext, ViewSubmission viewSubmission, Action<object> respond)
+    private async Task HandleViewSubmission(SlackRequestContext requestContext, ViewSubmission viewSubmission, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateViewSubmissionHandler(requestContext);
         _log.RequestHandler(handler, viewSubmission, "Handling view submission for {CallbackId}", viewSubmission.View.CallbackId);
@@ -229,37 +229,37 @@ public class SlackSocketModeClient : ISlackSocketModeClient
                 }).ConfigureAwait(false);
     }
 
-    private async Task HandleViewClosed(SlackRequestContext requestContext, ViewClosed viewClosed, Action<object> respond)
+    private async Task HandleViewClosed(SlackRequestContext requestContext, ViewClosed viewClosed, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateViewSubmissionHandler(requestContext);
         _log.RequestHandler(handler, viewClosed, "Handling view close for {CallbackId}", viewClosed.View.CallbackId);
         await handler.HandleClose(viewClosed, Responder(respond)).ConfigureAwait(false);
     }
 
-    private async Task HandleWorkflowStepEdit(SlackRequestContext requestContext, WorkflowStepEdit workflowStepEdit, Action<object> respond)
+    private async Task HandleWorkflowStepEdit(SlackRequestContext requestContext, WorkflowStepEdit workflowStepEdit, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateWorkflowStepEditHandler(requestContext);
         _log.RequestHandler(handler, workflowStepEdit, "Handling workflow step edit for {CallbackId}", workflowStepEdit.CallbackId);
         await handler.Handle(workflowStepEdit, Responder(respond)).ConfigureAwait(false);
     }
 
-    private async Task HandleBlockOptionsRequest(SlackRequestContext requestContext, BlockOptionsRequest blockOptionsRequest, Action<object> respond)
+    private async Task HandleBlockOptionsRequest(SlackRequestContext requestContext, BlockOptionsRequest blockOptionsRequest, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateBlockOptionProvider(requestContext);
         _log.RequestHandler(handler, blockOptionsRequest, "Handling block options request for {ActionId}", blockOptionsRequest.ActionId);
         var blockOptionsResponse = await handler.GetOptions(blockOptionsRequest).ConfigureAwait(false);
-        respond(blockOptionsResponse);
+        await respond(blockOptionsResponse).ConfigureAwait(false);
     }
 
-    private async Task HandleLegacyOptionsRequest(SlackRequestContext requestContext, OptionsRequest optionsRequest, Action<object> respond)
+    private async Task HandleLegacyOptionsRequest(SlackRequestContext requestContext, OptionsRequest optionsRequest, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateLegacyOptionProvider(requestContext);
         _log.RequestHandler(handler, optionsRequest, "Handling options request for {RequestName}", optionsRequest.Name);
         var optionsResponse = await handler.GetOptions(optionsRequest).ConfigureAwait(false);
-        respond(optionsResponse);
+        await respond(optionsResponse).ConfigureAwait(false);
     }
 
-    private async Task HandleSlashCommand(SlackRequestContext requestContext, SlashCommand slashCommand, Action<object> respond)
+    private async Task HandleSlashCommand(SlackRequestContext requestContext, SlashCommand slashCommand, Func<object, Task> respond)
     {
         var handler = _handlerFactory.CreateSlashCommandHandler(requestContext);
         _log.RequestHandler(handler, slashCommand, "Handling slash command {SlashCommand}", slashCommand.Command);
@@ -271,13 +271,9 @@ public class SlackSocketModeClient : ISlackSocketModeClient
                 }).ConfigureAwait(false);
     }
 
-    private static Responder Responder(Action<object> respond) => () =>
-        {
-            respond(null);
-            return Task.CompletedTask;
-        };
+    private static Responder Responder(Func<object, Task> respond) => () => respond(null);
 
-    private void Send(int socketId, Acknowledgement acknowledgement) =>
+    private Task Send(int socketId, Acknowledgement acknowledgement) =>
         _socket.Send(socketId, acknowledgement);
 
     public void Dispose()

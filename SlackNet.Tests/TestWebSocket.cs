@@ -28,7 +28,7 @@ class TestWebSocket(string uri) : IWebSocket
         return connected;
     }
 
-    public void Send(string message) => Sent.Add(message);
+    public async Task Send(string message) => Sent.Add(message);
 
     public void Receive(string message) => _messages.OnNext(message);
 

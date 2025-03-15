@@ -11,7 +11,7 @@ namespace SlackNet;
 public interface IWebSocket : IDisposable
 {
     Task<bool> Open(CancellationToken cancellationToken);
-    void Send(string message);
+    Task Send(string message);
     WebSocketState State { get; }
     Task Closed { get; }
     IObservable<string> Messages { get; }
@@ -77,7 +77,7 @@ public class WebSocketWrapper(ClientWebSocket webSocket, string uri) : IWebSocke
         _closed.SetResult(0);
     }
 
-    public void Send(string message) => webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(message)), WebSocketMessageType.Text, true, CancellationToken.None);
+    public Task Send(string message) => webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(message)), WebSocketMessageType.Text, true, CancellationToken.None);
 
     public WebSocketState State => webSocket.State;
 
