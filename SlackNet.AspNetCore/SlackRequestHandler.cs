@@ -45,7 +45,7 @@ class SlackRequestHandler(
                         return EmptyResult(HttpStatusCode.MethodNotAllowed);
                     }
 
-                    if (request.ContentType != "application/json")
+                    if (request.ContentType?.Split([';'], StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() != "application/json")
                     {
                         _log.Internal("Request Content-Type {ContentType} blocked - only application/json is allowed", request.ContentType);
                         return EmptyResult(HttpStatusCode.UnsupportedMediaType);
