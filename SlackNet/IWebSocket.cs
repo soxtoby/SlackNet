@@ -19,7 +19,7 @@ public interface IWebSocket : IDisposable
 
 public class WebSocketWrapper(ClientWebSocket webSocket, string uri) : IWebSocket
 {
-    private readonly TaskCompletionSource<int> _closed = new();
+    private readonly TaskCompletionSource<object> _closed = new();
     private readonly Subject<string> _messages = new();
 
     public int InitialBufferBytes { get; set; } = 1024;
@@ -27,7 +27,7 @@ public class WebSocketWrapper(ClientWebSocket webSocket, string uri) : IWebSocke
     public async Task<bool> Open(CancellationToken cancellationToken)
     {
         await webSocket.ConnectAsync(new Uri(uri), cancellationToken).ConfigureAwait(false);
-        
+
         if (webSocket.State == WebSocketState.Open)
         {
             _ = Task.Run(ReceiveLoop, CancellationToken.None);
@@ -44,36 +44,45 @@ public class WebSocketWrapper(ClientWebSocket webSocket, string uri) : IWebSocke
         var buffer = new byte[InitialBufferBytes];
         var bufferSegment = new ArraySegment<byte>(buffer);
 
-        while (webSocket.State == WebSocketState.Open)
+        try
         {
-            var result = await webSocket.ReceiveAsync(bufferSegment, CancellationToken.None).ConfigureAwait(false);
-
-            switch (result.MessageType)
+            while (webSocket.State == WebSocketState.Open)
             {
-                case WebSocketMessageType.Text when result.EndOfMessage:
-                    var message = Encoding.UTF8.GetString(buffer, 0, bufferSegment.Offset + result.Count);
-                    _messages.OnNext(message);
-                    bufferSegment = new ArraySegment<byte>(buffer);
-                    break;
-                
-                case WebSocketMessageType.Text:
-                    if (result.Count == bufferSegment.Count)
-                        Array.Resize(ref buffer, buffer.Length * 2);
+                var result = await webSocket.ReceiveAsync(bufferSegment, CancellationToken.None).ConfigureAwait(false);
 
-                    bufferSegment = new ArraySegment<byte>(buffer, bufferSegment.Offset + result.Count, buffer.Length - bufferSegment.Offset - result.Count);
-                    break;
-                
-                case WebSocketMessageType.Close:
-                    await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Close requested by server", CancellationToken.None).ConfigureAwait(false);
-                    break;
-                
-                case WebSocketMessageType.Binary:
-                default:
-                    // Ignored
-                    break;
+                switch (result.MessageType)
+                {
+                    case WebSocketMessageType.Text when result.EndOfMessage:
+                        var message = Encoding.UTF8.GetString(buffer, 0, bufferSegment.Offset + result.Count);
+                        _messages.OnNext(message);
+                        bufferSegment = new ArraySegment<byte>(buffer);
+                        break;
+
+                    case WebSocketMessageType.Text:
+                        if (result.Count == bufferSegment.Count)
+                            Array.Resize(ref buffer, buffer.Length * 2);
+
+                        bufferSegment = new ArraySegment<byte>(buffer, bufferSegment.Offset + result.Count, buffer.Length - bufferSegment.Offset - result.Count);
+                        break;
+
+                    case WebSocketMessageType.Close:
+                        await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Close requested by server", CancellationToken.None).ConfigureAwait(false);
+                        break;
+
+                    case WebSocketMessageType.Binary:
+                    default:
+                        // Ignored
+                        break;
+                }
             }
         }
-        
+        catch (Exception e)
+        {
+            _closed.SetResult(e);
+            if (webSocket.State == WebSocketState.Open)
+                await webSocket.CloseAsync(WebSocketCloseStatus.InternalServerError, "Error receiving from websocket", CancellationToken.None).ConfigureAwait(false);
+        }
+
         _closed.SetResult(0);
     }
 

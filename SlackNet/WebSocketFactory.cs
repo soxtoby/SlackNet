@@ -10,6 +10,5 @@ public interface IWebSocketFactory
 
 class WebSocketFactory : IWebSocketFactory
 {
-    
     public IWebSocket Create(string uri) => new WebSocketWrapper(new ClientWebSocket(), uri);
 }

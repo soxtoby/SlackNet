@@ -6,6 +6,7 @@ using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using SlackNet.SocketMode;
 
 namespace SlackNet;
@@ -86,12 +87,28 @@ class ReconnectingWebSocket : IDisposable
 
     private async Task ReconnectOnClose(Func<Task<string>> getWebSocketUrl, CancellationToken cancellationToken)
     {
-        await _webSocket.Closed.ConfigureAwait(false);
-
-        _log.Internal("Socket {SocketId} closed", _id);
+        var result = await ClosedResult().ConfigureAwait(false);
+        if (result is Exception e)
+            _log.Internal(e, "Socket {SocketId} closed", _id);
+        else
+            _log.Internal("Socket {SocketId} closed", _id);
 
         if (!cancellationToken.IsCancellationRequested)
             await Connect(getWebSocketUrl, cancellationToken).ConfigureAwait(false);
+    }
+
+    [ItemCanBeNull]
+    async Task<object> ClosedResult()
+    {
+        if (_webSocket.Closed is Task<object> closedResult)
+        {
+            return await closedResult.ConfigureAwait(false) as Exception;
+        }
+        else
+        {
+            await _webSocket.Closed.ConfigureAwait(false);
+            return null;
+        }
     }
 
     public WebSocketState State => _webSocket?.State ?? WebSocketState.None;
