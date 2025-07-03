@@ -107,7 +107,7 @@ namespace SlackNet
             value switch
                 {
                     IEnumerable enumerable and not (string or HttpResponseHeaders) => FormatEnumerable(enumerable),
-                    _ => Convert.ToString(value)
+                    _ => Convert.ToString(value)!
                 };
 
         private static string FormatEnumerable(IEnumerable enumerable)
