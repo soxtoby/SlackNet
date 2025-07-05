@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <Authors>Simon Oxtoby</Authors>
     <Description>ASP.NET Core integration for receiving requests from Slack</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -9,7 +9,6 @@
     <RepositoryUrl>https://github.com/soxtoby/SlackNet.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Slack API RTM Events AspNetCore</PackageTags>
-    <UserSecretsId>841b14b1-9d6a-4ab7-9e1f-c1b2c227bb5f</UserSecretsId>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <NoWarn>0618;1591;1701;1702</NoWarn>
     <LangVersion>12</LangVersion>
@@ -24,13 +23,17 @@
     <DocumentationFile>bin\Release\$(TargetFramework)\SlackNet.xml</DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.22" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="System.Text.Encodings.Web" Version="4.5.1" />
+  </ItemGroup>
+    
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
