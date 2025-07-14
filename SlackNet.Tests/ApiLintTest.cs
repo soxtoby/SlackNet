@@ -90,12 +90,20 @@ public class ApiLintTest
 
     private static void AllMethodsShouldUseSameSlackMethodGroup(FakeClient client, MethodInfo method, ref string slackMethodGroup)
     {
+        if (MethodGroupExceptions.TryGetValue(method.DeclaringType!, out var exceptions) && exceptions.Contains(client.SlackMethod))
+            return;
+        
         var methodGroup = string.Join('.', client.SlackMethod.Split('.').SkipLast(1));
         if (slackMethodGroup == null)
             slackMethodGroup = methodGroup;
         else
             methodGroup.ShouldBe(slackMethodGroup, $"{method.DeclaringType!.Name}.{method.Name} uses a different API method group than other methods");
     }
+
+    private static readonly Dictionary<Type, string[]> MethodGroupExceptions = new()
+        {
+            [typeof(AuthApi)] = ["auth.teams.list"]
+        };
 
     private static void AllArgsShouldBeSnakeCase(Args args, MethodInfo method) =>
         args.Keys.AllItemsSatisfy(arg => arg.ShouldMatch("[a-z_]", $"{method.DeclaringType!.Name}.{method.Name} has incorrect casing for argument {arg}"));

@@ -75,6 +75,8 @@ public class WebSocketWrapper(ClientWebSocket webSocket, string uri) : IWebSocke
                         break;
                 }
             }
+
+            _closed.SetResult(0);
         }
         catch (Exception e)
         {
@@ -82,8 +84,6 @@ public class WebSocketWrapper(ClientWebSocket webSocket, string uri) : IWebSocke
             if (webSocket.State == WebSocketState.Open)
                 await webSocket.CloseAsync(WebSocketCloseStatus.InternalServerError, "Error receiving from websocket", CancellationToken.None).ConfigureAwait(false);
         }
-
-        _closed.SetResult(0);
     }
 
     public Task Send(string message) => webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(message)), WebSocketMessageType.Text, true, CancellationToken.None);
