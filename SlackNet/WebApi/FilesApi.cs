@@ -50,6 +50,7 @@ public interface IFilesApi
     /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="ReactionItemListResponse.ResponseMetadata"/>.
     /// </param>
     /// <param name="teamId">Encoded team id to list files in, required if org token is used.</param>
+    /// <param name="showFilesHiddenByLimit">Show truncated file info for files hidden due to being too old, and the team who owns the file being over the file limit.</param>
     /// <param name="cancellationToken"></param>
     Task<FileListResponse> List(
         string userId = null,
@@ -61,6 +62,7 @@ public interface IFilesApi
         int page = 1,
         string cursor = null,
         string teamId = null,
+        bool showFilesHiddenByLimit = false,
         CancellationToken cancellationToken = default
     );
 
@@ -272,6 +274,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
         int page = 1,
         string cursor = null,
         string teamId = null,
+        bool showFilesHiddenByLimit = false,
         CancellationToken cancellationToken = default
     ) =>
         client.Get<FileListResponse>("files.list", new Args
@@ -284,7 +287,8 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
                 { "count", count },
                 { "page", page },
                 { "cursor", cursor },
-                { "team_id", teamId }
+                { "team_id", teamId },
+                { "show_files_hidden_by_limit", showFilesHiddenByLimit }
             }, cancellationToken);
 
     public Task<FileResponse> RevokePublicUrl(string fileId, CancellationToken cancellationToken = default) =>
