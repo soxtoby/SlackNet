@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,9 +23,7 @@ public class ApiLintTest
     public void Lint(Type api)
     {
         var client = new FakeClient();
-        var instance = GetConstructor<SlackJsonSettings>(api) is not null ? Activator.CreateInstance(api, client, Default.JsonSettings())
-            : GetConstructor<IHttp>(api) is not null ? Activator.CreateInstance(api, client, new FakeHttp())
-            : Activator.CreateInstance(api, client);
+        var instance = CreateApiInstance(api, client);
 
         var apiInterface = GetApiInterface(api);
 
@@ -47,7 +46,41 @@ public class ApiLintTest
         }
     }
 
-    private static ConstructorInfo GetConstructor<TExtraParam>(Type api) => 
+    [Test]
+    [Explicit]
+    public async Task MissingApis()
+    {
+        using var http = new HttpClient();
+        var methodList = await http.GetFromJsonAsync<ApiMethod[]>("https://docs.slack.dev/methods/all-methods.json");
+        var allApiMethods = methodList.Select(m => m.Name).ToHashSet();
+        allApiMethods.ShouldNotBeEmpty();
+
+        var implementedApiMethods = new HashSet<string>();
+        var client = new FakeClient();
+        foreach (var api in ApiClasses)
+        {
+            var instance = CreateApiInstance(api, client);
+            foreach (var method in api.GetMethods(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance))
+            {
+                method.Invoke(instance, method.GetParameters().Select(DummyValue).ToArray());
+                implementedApiMethods.Add(client.SlackMethod);
+            }
+        }
+        
+        var missingApiMethods = allApiMethods
+            .Where(m => !m.StartsWith("admin.") && !m.StartsWith("apps.")) // Not supported for now, but should be
+            .Except(implementedApiMethods);
+        missingApiMethods.ShouldBeEmpty();
+    }
+
+    private static object CreateApiInstance(Type api, FakeClient client)
+    {
+        return GetConstructor<SlackJsonSettings>(api) is not null ? Activator.CreateInstance(api, client, Default.JsonSettings())
+            : GetConstructor<IHttp>(api) is not null ? Activator.CreateInstance(api, client, new FakeHttp())
+            : Activator.CreateInstance(api, client);
+    }
+
+    private static ConstructorInfo GetConstructor<TExtraParam>(Type api) =>
         api.GetConstructor(BindingFlags.Public | BindingFlags.Instance, [typeof(ISlackApiClient), typeof(TExtraParam)]);
 
     private static Type GetApiInterface(Type api)
@@ -92,7 +125,7 @@ public class ApiLintTest
     {
         if (MethodGroupExceptions.TryGetValue(method.DeclaringType!, out var exceptions) && exceptions.Contains(client.SlackMethod))
             return;
-        
+
         var methodGroup = string.Join('.', client.SlackMethod.Split('.').SkipLast(1));
         if (slackMethodGroup == null)
             slackMethodGroup = methodGroup;
@@ -259,4 +292,10 @@ public class ApiLintTest
     {
         public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => Task.FromResult(Activator.CreateInstance<T>());
     }
+
+    record ApiMethod(
+        string Name,
+        string Description,
+        string[] Family
+    );
 }
