@@ -21,7 +21,7 @@ class Build : NukeBuild
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
     [Solution] readonly Solution Solution = null!;
-    [GitVersion(Framework = "net6.0")] readonly GitVersion GitVersion = null!;
+    [GitVersion(Framework = "net9.0")] readonly GitVersion GitVersion = null!;
 
     AbsolutePath OutputDirectory => RootDirectory / "output";
 
