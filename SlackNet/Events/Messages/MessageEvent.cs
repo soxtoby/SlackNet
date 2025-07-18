@@ -25,6 +25,7 @@ public class MessageEvent : MessageEventBase
     public string BotId { get; set; }
     public string AppId { get; set; }
     public BotInfo BotProfile { get; set; }
+    public string ActionToken { get; set; }
 }
 
 public class PinnedInfo

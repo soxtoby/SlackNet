@@ -171,6 +171,7 @@ public class ApiLintTest
             { typeof(IEnumerable<ConversationType>), _ => Enumerable.Empty<ConversationType>() },
             { typeof(IEnumerable<FileType>), _ => Enumerable.Empty<FileType>() },
             { typeof(IEnumerable<Block>), _ => Enumerable.Empty<Block>() },
+            { typeof(IEnumerable<ContentType>), _ => Enumerable.Empty<ContentType>() },
             { typeof(UserProfile), _ => new UserProfile() },
             { typeof(ViewDefinition), _ => new ModalViewDefinition() },
             { typeof(HomeViewDefinition), _ => new HomeViewDefinition() },
@@ -252,6 +253,7 @@ public class ApiLintTest
         public IApiApi Api { get; }
         public IAppsConnectionsApi AppsConnectionsApi { get; }
         public IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
+        public IAssistantSearchApi AssistantSearch { get; }
         public IAssistantThreadsApi AssistantThreads { get; }
         public IAuthApi Auth { get; }
         public IBookmarksApi Bookmarks { get; }
