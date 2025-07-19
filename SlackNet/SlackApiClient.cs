@@ -36,6 +36,7 @@ public interface ISlackApiClient
     IFileCommentsApi FileComments { get; }
     IFilesApi Files { get; }
     IFunctionsApi Functions { get; }
+    IFunctionDistributionPermissionsApi FunctionDistributionPermissions { get; }
     IListApi List { get; }
     IListDownloadApi ListDownload { get; }
     IListItemsApi ListItems { get; }
@@ -194,6 +195,7 @@ public class SlackApiClient : ISlackApiClient
     public IFileCommentsApi FileComments => new FileCommentsApi(this);
     public IFilesApi Files => new FilesApi(this, _http);
     public IFunctionsApi Functions => new FunctionsApi(this);
+    public IFunctionDistributionPermissionsApi FunctionDistributionPermissions => new FunctionDistributionPermissionsApi(this);
     public IListApi List => new ListApi(this);
     public IListDownloadApi ListDownload => new ListDownloadApi(this);
     public IListItemsApi ListItems => new ListItemsApi(this);

@@ -211,6 +211,7 @@ public class ApiLintTests
             { typeof(Presence), _ => Presence.Active },
             { typeof(RequestPresence), _ => RequestPresence.Auto },
             { typeof(BookmarkType), _ => BookmarkType.Link },
+            { typeof(FunctionPermissionType?), _ => FunctionPermissionType.Everyone },
             { typeof(ChangeType?), _ => null },
             { typeof(LinkSource), _ => LinkSource.Composer },
             { typeof(AccessLevel), _ => AccessLevel.Read },
@@ -334,6 +335,7 @@ public class ApiLintTests
         public IFileCommentsApi FileComments { get; }
         public IFilesApi Files { get; }
         public IFunctionsApi Functions { get; }
+        public IFunctionDistributionPermissionsApi FunctionDistributionPermissions { get; }
         public IListApi List { get; }
         public IListDownloadApi ListDownload { get; }
         public IListItemsApi ListItems { get; }
