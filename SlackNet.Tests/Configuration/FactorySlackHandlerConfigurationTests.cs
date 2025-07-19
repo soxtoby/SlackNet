@@ -975,6 +975,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public ICallsApi Calls { get; }
         public ICanvasesAccessApi CanvasesAccess { get; }
         public ICanvasesApi Canvases { get; }
+        public ICanvasesSectionsApi CanvasesSections { get; }
         public IChatApi Chat { get; }
         public IConversationsApi Conversations { get; }
         public IDialogApi Dialog { get; }
