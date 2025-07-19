@@ -901,6 +901,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IFilesApi Files { get; }
         public IFunctionsApi Functions { get; }
         public IFunctionDistributionPermissionsApi FunctionDistributionPermissions { get; }
+        public IFunctionWorkflowStepsApi FunctionWorkflowSteps { get; }
         public IListApi List { get; }
         public IListDownloadApi ListDownload { get; }
         public IListItemsApi ListItems { get; }
