@@ -273,6 +273,16 @@ public interface IConversationsApi
         bool includeAllMetadata = false,
         string cursor = null,
         CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Upgrade or downgrade Slack Connect channel permissions between 'can post only' and 'can post and invite'.
+    /// </summary>
+    /// <remarks>See the <a href="https://api.slack.com/methods/conversations.externalInvitePermissions.set">Slack documentation</a> for more information.</remarks>
+    /// <param name="channelId">The channel ID to change external invite permissions for.</param>
+    /// <param name="targetTeamId">The team ID of the target team. Must be in the specified channel.</param>
+    /// <param name="action">Type of action to be taken: upgrade or downgrade.</param>
+    /// <param name="cancellationToken"></param>
+    Task SetExternalInvitePermissions(string channelId, string targetTeamId, PermissionAction action, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Sets the purpose for a conversation.
@@ -487,6 +497,14 @@ public class ConversationsApi(ISlackApiClient client) : IConversationsApi
                 { "limit", limit },
                 { "include_all_metadata", includeAllMetadata },
                 { "oldest", oldestTs }
+            }, cancellationToken);
+
+    public Task SetExternalInvitePermissions(string channelId, string targetTeamId, PermissionAction action, CancellationToken cancellationToken = default) =>
+        client.Post("conversations.externalInvitePermissions.set", new Args
+            {
+                { "channel", channelId },
+                { "target_team", targetTeamId },
+                { "action", action }
             }, cancellationToken);
 
     public async Task<string> SetPurpose(string channelId, string purpose, CancellationToken cancellationToken = default) =>

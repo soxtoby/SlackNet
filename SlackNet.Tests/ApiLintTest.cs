@@ -136,7 +136,7 @@ public class ApiLintTest
     private static readonly Dictionary<Type, string[]> MethodGroupExceptions = new()
         {
             [typeof(AuthApi)] = ["auth.teams.list"],
-            [typeof(ConversationsApi)] = ["conversations.canvases.create"]
+            [typeof(ConversationsApi)] = ["conversations.canvases.create", "conversations.externalInvitePermissions.set"]
         };
 
     private static void AllArgsShouldBeSnakeCase(Args args, MethodInfo method) =>
@@ -170,6 +170,7 @@ public class ApiLintTest
             { typeof(ChangeType?), _ => null },
             { typeof(LinkSource), _ => LinkSource.Composer },
             { typeof(AccessLevel), _ => AccessLevel.Read },
+            { typeof(PermissionAction), _ => PermissionAction.Upgrade },
             { typeof(IEnumerable<ConversationType>), _ => Enumerable.Empty<ConversationType>() },
             { typeof(IEnumerable<FileType>), _ => Enumerable.Empty<FileType>() },
             { typeof(IEnumerable<Block>), _ => Enumerable.Empty<Block>() },
