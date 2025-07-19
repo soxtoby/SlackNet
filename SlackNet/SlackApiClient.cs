@@ -24,6 +24,7 @@ public interface ISlackApiClient
     IBotsApi Bots { get; }
     ICallParticipantsApi CallParticipants { get; }
     ICallsApi Calls { get; }
+    ICanvasesAccessApi CanvasesAccess { get; }
     IChatApi Chat { get; }
     IConversationsApi Conversations { get; }
     IDialogApi Dialog { get; }
@@ -168,6 +169,7 @@ public class SlackApiClient : ISlackApiClient
     public IBotsApi Bots => new BotsApi(this);
     public ICallParticipantsApi CallParticipants => new CallParticipantsApi(this);
     public ICallsApi Calls => new CallsApi(this);
+    public ICanvasesAccessApi CanvasesAccess => new CanvasesAccessApi(this);
     public IChatApi Chat => new ChatApi(this, _jsonSettings);
     public IConversationsApi Conversations => new ConversationsApi(this);
     public IDialogApi Dialog => new DialogApi(this);

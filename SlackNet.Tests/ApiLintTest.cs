@@ -168,6 +168,7 @@ public class ApiLintTest
             { typeof(BookmarkType), _ => BookmarkType.Link },
             { typeof(ChangeType?), _ => null },
             { typeof(LinkSource), _ => LinkSource.Composer },
+            { typeof(AccessLevel), _ => AccessLevel.Read },
             { typeof(IEnumerable<ConversationType>), _ => Enumerable.Empty<ConversationType>() },
             { typeof(IEnumerable<FileType>), _ => Enumerable.Empty<FileType>() },
             { typeof(IEnumerable<Block>), _ => Enumerable.Empty<Block>() },
@@ -260,6 +261,7 @@ public class ApiLintTest
         public IBotsApi Bots { get; }
         public ICallParticipantsApi CallParticipants { get; }
         public ICallsApi Calls { get; }
+        public ICanvasesAccessApi CanvasesAccess { get; }
         public IChatApi Chat { get; }
         public IConversationsApi Conversations { get; }
         public IDialogApi Dialog { get; }
