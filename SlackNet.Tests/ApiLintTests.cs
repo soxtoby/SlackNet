@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyAssertions;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SlackNet.Blocks;
 using SlackNet.Events;
@@ -101,9 +102,22 @@ public class ApiLintTests
     private static void ApiClientHasAPropertyForApi(Type api, Type apiInterface)
     {
         typeof(ISlackApiClient).GetProperties()
-            .Any(p => p.PropertyType == apiInterface)
-            .ShouldBe(true, $"{api.Name} doesn't have a property on {nameof(ISlackApiClient)}");
+            .SingleOrDefault(p => p.PropertyType == apiInterface)
+            .ShouldNotBeNull($"{api.Name} doesn't have a property on {nameof(ISlackApiClient)}").And(property =>
+                {
+                    if (!ApiPropertyNameExceptions.Contains(property.Name))
+                        property.Name.ShouldNotContain("Api");
+                });
     }
+
+    private static readonly string[] ApiPropertyNameExceptions =
+        [
+            "Api",
+            
+            // These are wrong, but they've already been shipped :'(
+            "AppsConnectionsApi",
+            "OpenIdApi"
+        ];
 
     private static void AllPublicMethodsAreExposedOnInterface(Type apiInterface, MethodInfo[] apiMethods)
     {
@@ -235,7 +249,8 @@ public class ApiLintTests
             { typeof(AgentSessionStatus), _ => AgentSessionStatus.Active },
             { typeof(AgentSessionStatus?), _ => null },
             { typeof(TaskDisplayMode?), _ => null },
-            { typeof(CancellationToken), _ => null },
+            { typeof(JObject), _ => new JObject() },
+            { typeof(CancellationToken), _ => null }
         };
 
     private static IEnumerable<Type> ApiClasses => typeof(ApiApi).Assembly
@@ -318,6 +333,7 @@ public class ApiLintTests
         public IExternalTeamsApi ExternalTeams { get; }
         public IFileCommentsApi FileComments { get; }
         public IFilesApi Files { get; }
+        public IFunctionsApi Functions { get; }
         public IListApi List { get; }
         public IListDownloadApi ListDownload { get; }
         public IListItemsApi ListItems { get; }
