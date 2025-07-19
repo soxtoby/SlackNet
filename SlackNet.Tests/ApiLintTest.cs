@@ -189,6 +189,8 @@ public class ApiLintTest
             { typeof(FileUpload), _ => new FileUpload(string.Empty, string.Empty) },
             { typeof(IEnumerable<FileUpload>), _ => Enumerable.Empty<FileUpload>() },
             { typeof(IEnumerable<AssistantPrompt>), _ => Enumerable.Empty<AssistantPrompt>() },
+            { typeof(IEnumerable<CanvasChange>), _ => Enumerable.Empty<CanvasChange>() },
+            { typeof(DocumentContent), _ => new DocumentContent { Markdown = string.Empty } },
             { typeof(CancellationToken), _ => null },
         };
 
@@ -262,6 +264,7 @@ public class ApiLintTest
         public ICallParticipantsApi CallParticipants { get; }
         public ICallsApi Calls { get; }
         public ICanvasesAccessApi CanvasesAccess { get; }
+        public ICanvasesApi Canvases { get; }
         public IChatApi Chat { get; }
         public IConversationsApi Conversations { get; }
         public IDialogApi Dialog { get; }
