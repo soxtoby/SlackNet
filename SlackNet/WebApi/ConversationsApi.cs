@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.WebApi;
@@ -36,6 +37,17 @@ public interface IConversationsApi
     /// <param name="channelId">ID of conversation to archive.</param>
     /// <param name="cancellationToken"></param>
     Task Archive(string channelId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Create a channel canvas for a channel.
+    /// </summary>
+    /// <remarks>See the <a href="https://api.slack.com/methods/conversations.canvases.create">Slack documentation</a> for more information.</remarks>
+    /// <param name="channelId">Channel ID of the channel the canvas will be tabbed in.</param>
+    /// <param name="documentContent">Structure describing the type and value of the content to create.</param>
+    /// <param name="title">Title of the newly created canvas.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The ID of the newly created canvas.</returns>
+    Task<string> CreateCanvas(string channelId, [CanBeNull] DocumentContent documentContent = null, [CanBeNull] string title = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Closes a direct message or multi-person direct message.
@@ -311,6 +323,17 @@ public class ConversationsApi(ISlackApiClient client) : IConversationsApi
 
     public Task Archive(string channelId, CancellationToken cancellationToken = default) =>
         client.Post("conversations.archive", new Args { { "channel", channelId } }, cancellationToken);
+
+    public async Task<string> CreateCanvas(string channelId, DocumentContent documentContent = null, string title = null, CancellationToken cancellationToken = default) =>
+        (await client.Post<CanvasCreationResponse>("conversations.canvases.create",
+            new Args
+                {
+                    { "channel_id", channelId },
+                    { "document_content", documentContent },
+                    { "title", title }
+                },
+            cancellationToken).ConfigureAwait(false))
+        .CanvasId;
 
     public Task Close(string channelId, CancellationToken cancellationToken = default) =>
         client.Post("conversations.close", new Args { { "channel", channelId } }, cancellationToken);

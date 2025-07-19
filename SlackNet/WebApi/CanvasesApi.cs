@@ -58,8 +58,3 @@ public class CanvasesApi(ISlackApiClient client) : ICanvasesApi
                 { "changes", changes }
             }, cancellationToken);
 }
-
-class CanvasCreationResponse
-{
-    public string CanvasId { get; set; } = null!;
-}
