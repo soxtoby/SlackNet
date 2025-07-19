@@ -29,6 +29,7 @@ public interface ISlackApiClient
     ICanvasesSectionsApi CanvasesSections { get; }
     IChatApi Chat { get; }
     IConversationsApi Conversations { get; }
+    IConversationsRequestSharedInviteApi ConversationsRequestSharedInvite { get; }
     IDialogApi Dialog { get; }
     IDndApi Dnd { get; }
     IEmojiApi Emoji { get; }
@@ -176,6 +177,7 @@ public class SlackApiClient : ISlackApiClient
     public ICanvasesSectionsApi CanvasesSections => new CanvasesSectionsApi(this);
     public IChatApi Chat => new ChatApi(this, _jsonSettings);
     public IConversationsApi Conversations => new ConversationsApi(this);
+    public IConversationsRequestSharedInviteApi ConversationsRequestSharedInvite => new ConversationsRequestSharedInviteApi(this);
     public IDialogApi Dialog => new DialogApi(this);
     public IDndApi Dnd => new DndApi(this);
     public IEmojiApi Emoji => new EmojiApi(this);

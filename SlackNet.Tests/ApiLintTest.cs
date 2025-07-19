@@ -194,6 +194,7 @@ public class ApiLintTest
             { typeof(IEnumerable<CanvasChange>), _ => Enumerable.Empty<CanvasChange>() },
             { typeof(DocumentContent), _ => new DocumentContent { Markdown = string.Empty } },
             { typeof(LookupCriteria), _ => new LookupCriteria() },
+            { typeof(ApprovalMessage), _ => new ApprovalMessage() },
             { typeof(CancellationToken), _ => null },
         };
 
@@ -271,6 +272,7 @@ public class ApiLintTest
         public ICanvasesSectionsApi CanvasesSections { get; }
         public IChatApi Chat { get; }
         public IConversationsApi Conversations { get; }
+        public IConversationsRequestSharedInviteApi ConversationsRequestSharedInvite { get; }
         public IDialogApi Dialog { get; }
         public IDndApi Dnd { get; }
         public IEmojiApi Emoji { get; }
