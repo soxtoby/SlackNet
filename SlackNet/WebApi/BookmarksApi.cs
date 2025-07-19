@@ -94,8 +94,9 @@ public class BookmarksApi(ISlackApiClient client) : IBookmarksApi
         string emoji = null,
         string link = null,
         string title = null,
-        CancellationToken cancellationToken = default) =>
-        (await client.Post<BookmarkResponse>("bookmarks.add", new Args
+        CancellationToken cancellationToken = default
+    ) =>
+        (await client.Post<BookmarkResponse>("bookmarks.edit", new Args
             {
                 { "bookmark_id", bookmarkId },
                 { "channel_id", channelId },
