@@ -76,11 +76,8 @@ public interface IUserGroupsApi
     );
 }
 
-public class UserGroupsApi : IUserGroupsApi
+public class UserGroupsApi(ISlackApiClient client) : IUserGroupsApi
 {
-    private readonly ISlackApiClient _client;
-    public UserGroupsApi(ISlackApiClient client) => _client = client;
-
     public async Task<UserGroup> Create(
         string name,
         IEnumerable<string> channelIds = null,
@@ -89,7 +86,7 @@ public class UserGroupsApi : IUserGroupsApi
         bool includeCount = false,
         CancellationToken cancellationToken = default
     ) =>
-        (await _client.Post<UserGroupResponse>("usergroups.create", new Args
+        (await client.Post<UserGroupResponse>("usergroups.create", new Args
             {
                 { "name", name },
                 { "channels", channelIds },
@@ -100,7 +97,7 @@ public class UserGroupsApi : IUserGroupsApi
         .Usergroup;
 
     public async Task<UserGroup> Disable(string userGroupId, bool includeCount = false, CancellationToken cancellationToken = default) =>
-        (await _client.Post<UserGroupResponse>("usergroups.disable", new Args
+        (await client.Post<UserGroupResponse>("usergroups.disable", new Args
             {
                 { "usergroup", userGroupId },
                 { "include_count", includeCount }
@@ -108,7 +105,7 @@ public class UserGroupsApi : IUserGroupsApi
         .Usergroup;
 
     public async Task<UserGroup> Enable(string userGroupId, bool includeCount = false, CancellationToken cancellationToken = default) =>
-        (await _client.Post<UserGroupResponse>("usergroups.enable", new Args
+        (await client.Post<UserGroupResponse>("usergroups.enable", new Args
             {
                 { "usergroup", userGroupId },
                 { "include_count", includeCount }
@@ -116,7 +113,7 @@ public class UserGroupsApi : IUserGroupsApi
         .Usergroup;
 
     public async Task<IList<UserGroup>> List(bool includeCount = false, bool includeDisabled = false, bool includeUsers = false, CancellationToken cancellationToken = default) =>
-        (await _client.Get<UserGroupListResponse>("usergroups.list", new Args
+        (await client.Get<UserGroupListResponse>("usergroups.list", new Args
             {
                 { "include_count", includeCount },
                 { "include_disabled", includeDisabled },
@@ -133,7 +130,7 @@ public class UserGroupsApi : IUserGroupsApi
         string name = null,
         CancellationToken cancellationToken = default
     ) =>
-        (await _client.Post<UserGroupResponse>("usergroups.update", new Args
+        (await client.Post<UserGroupResponse>("usergroups.update", new Args
             {
                 { "usergroup", userGroupId },
                 { "channels", channelIds },

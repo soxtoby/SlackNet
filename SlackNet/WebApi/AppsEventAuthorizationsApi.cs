@@ -25,18 +25,15 @@ public interface IAppsEventAuthorizationsApi
         CancellationToken cancellationToken = default);
 }
 
-public class AppsEventAuthorizationsApi : IAppsEventAuthorizationsApi
+public class AppsEventAuthorizationsApi(ISlackApiClient client) : IAppsEventAuthorizationsApi
 {
-    private readonly ISlackApiClient _client;
-    public AppsEventAuthorizationsApi(ISlackApiClient client) => _client = client;
-
     public Task<AppsEventsAuthorizationsListResponse> List(
         string eventContext,
         int limit = 100,
         string cursor = null,
         CancellationToken cancellationToken = default
     ) =>
-        _client.Post<AppsEventsAuthorizationsListResponse>("apps.event.authorizations.list", new Args
+        client.Post<AppsEventsAuthorizationsListResponse>("apps.event.authorizations.list", new Args
                 {
                     { "event_context", eventContext },
                     { "cursor", cursor },

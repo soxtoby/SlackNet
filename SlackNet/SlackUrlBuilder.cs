@@ -12,11 +12,8 @@ public interface ISlackUrlBuilder
     string Url(string apiMethod, Args args);
 }
 
-class SlackUrlBuilder : ISlackUrlBuilder
+class SlackUrlBuilder(SlackJsonSettings jsonSettings) : ISlackUrlBuilder
 {
-    private readonly SlackJsonSettings _jsonSettings;
-    public SlackUrlBuilder(SlackJsonSettings jsonSettings) => _jsonSettings = jsonSettings;
-
     public string Url(string apiMethod, Args args) =>
         $"https://slack.com/api/{apiMethod}{Query(args)}";
 
@@ -41,5 +38,5 @@ class SlackUrlBuilder : ISlackUrlBuilder
         string.Join(",", enumerable.Cast<object>().Select(SerializeObject));
 
     private string SerializeObject(object value) => 
-        JsonConvert.SerializeObject(value, _jsonSettings.SerializerSettings).Trim('"');
+        JsonConvert.SerializeObject(value, jsonSettings.SerializerSettings).Trim('"');
 }

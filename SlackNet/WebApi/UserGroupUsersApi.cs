@@ -28,13 +28,10 @@ public interface IUserGroupUsersApi
     Task<UserGroup> Update(string userGroupId, IEnumerable<string> userIds, bool includeCount = false, CancellationToken cancellationToken = default);
 }
 
-public class UserGroupUsersApi : IUserGroupUsersApi
+public class UserGroupUsersApi(ISlackApiClient client) : IUserGroupUsersApi
 {
-    private readonly ISlackApiClient _client;
-    public UserGroupUsersApi(ISlackApiClient client) => _client = client;
-
     public async Task<IReadOnlyList<string>> List(string userGroupId, bool includeDisabled = false, CancellationToken cancellationToken = default) =>
-        (await _client.Get<MembershipResponse>("usergroups.users.list", new Args
+        (await client.Get<MembershipResponse>("usergroups.users.list", new Args
             {
                 { "usergroup", userGroupId },
                 { "include_disabled", includeDisabled }
@@ -42,7 +39,7 @@ public class UserGroupUsersApi : IUserGroupUsersApi
         .Users;
 
     public async Task<UserGroup> Update(string userGroupId, IEnumerable<string> userIds, bool includeCount = false, CancellationToken cancellationToken = default) =>
-        (await _client.Post<UserGroupResponse>("usergroups.users.update", new Args
+        (await client.Post<UserGroupResponse>("usergroups.users.update", new Args
             {
                 { "usergroup", userGroupId },
                 { "users", userIds },

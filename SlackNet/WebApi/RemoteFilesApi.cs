@@ -267,11 +267,8 @@ public interface IRemoteFilesApi
     );
 }
 
-public class RemoteFilesApi : IRemoteFilesApi
+public class RemoteFilesApi(ISlackApiClient client) : IRemoteFilesApi
 {
-    private readonly ISlackApiClient _client;
-    public RemoteFilesApi(ISlackApiClient client) => _client = client;
-
     public Task<FileResponse> Add(
         string externalId,
         string externalUrl,
@@ -322,10 +319,10 @@ public class RemoteFilesApi : IRemoteFilesApi
             }, indexableFileContents, previewContent, cancellationToken);
 
     public Task<FileResponse> InfoByExternalId(string externalId, CancellationToken cancellationToken = default) =>
-        _client.Get<FileResponse>("files.remote.info", new Args { { "external_id", externalId } }, cancellationToken);
+        client.Get<FileResponse>("files.remote.info", new Args { { "external_id", externalId } }, cancellationToken);
 
     public Task<FileResponse> InfoByFileId(string fileId, CancellationToken cancellationToken = default) =>
-        _client.Get<FileResponse>("files.remote.info", new Args { { "file", fileId } }, cancellationToken);
+        client.Get<FileResponse>("files.remote.info", new Args { { "file", fileId } }, cancellationToken);
 
     public Task<FileListResponse> List(
         string channelId = null,
@@ -335,7 +332,7 @@ public class RemoteFilesApi : IRemoteFilesApi
         string cursor = null,
         CancellationToken cancellationToken = default
     ) =>
-        _client.Get<FileListResponse>("files.remote.list", new Args
+        client.Get<FileListResponse>("files.remote.list", new Args
             {
                 { "channel", channelId },
                 { "limit", limit },
@@ -345,16 +342,16 @@ public class RemoteFilesApi : IRemoteFilesApi
             }, cancellationToken);
 
     public Task RemoveByExternalId(string externalId, CancellationToken cancellationToken = default) =>
-        _client.Get("files.remote.remove", new Args { { "external_id", externalId } }, cancellationToken);
+        client.Get("files.remote.remove", new Args { { "external_id", externalId } }, cancellationToken);
 
     public Task RemoveByFileId(string fileId, CancellationToken cancellationToken = default) =>
-        _client.Get("files.remote.remove", new Args { { "file", fileId } }, cancellationToken);
+        client.Get("files.remote.remove", new Args { { "file", fileId } }, cancellationToken);
 
     public Task<FileResponse> ShareByExternalId(string externalId, IEnumerable<string> channelIds, CancellationToken cancellationToken = default) =>
-        _client.Get<FileResponse>("files.remote.share", new Args { { "external_id", externalId }, { "channels", channelIds } }, cancellationToken);
+        client.Get<FileResponse>("files.remote.share", new Args { { "external_id", externalId }, { "channels", channelIds } }, cancellationToken);
 
     public Task<FileResponse> ShareByFileId(string fileId, IEnumerable<string> channelIds, CancellationToken cancellationToken = default) =>
-        _client.Get<FileResponse>("files.remote.share", new Args { { "file", fileId }, { "channels", channelIds } }, cancellationToken);
+        client.Get<FileResponse>("files.remote.share", new Args { { "file", fileId }, { "channels", channelIds } }, cancellationToken);
 
     public Task<FileResponse> UpdateByExternalId(
         string externalId,
@@ -450,7 +447,7 @@ public class RemoteFilesApi : IRemoteFilesApi
             content.Add(previewContent, "preview_image", "preview");
 
         return content.Any()
-            ? _client.Post<FileResponse>(slackMethod, args, content, cancellationToken)
-            : _client.Get<FileResponse>(slackMethod, args, cancellationToken);
+            ? client.Post<FileResponse>(slackMethod, args, content, cancellationToken)
+            : client.Get<FileResponse>(slackMethod, args, cancellationToken);
     }
 }

@@ -29,11 +29,8 @@ public interface IScheduledMessagesApi
         CancellationToken cancellationToken = default);
 }
 
-public class ScheduledMessagesApi : IScheduledMessagesApi
+public class ScheduledMessagesApi(ISlackApiClient client) : IScheduledMessagesApi
 {
-    private readonly ISlackApiClient _client;
-    public ScheduledMessagesApi(ISlackApiClient client) => _client = client;
-
     public Task<ScheduledMessageListResponse> List(
         string channelId = null,
         string latestTs = null,
@@ -42,7 +39,7 @@ public class ScheduledMessagesApi : IScheduledMessagesApi
         string cursor = null,
         CancellationToken cancellationToken = default
     ) =>
-        _client.Post<ScheduledMessageListResponse>("chat.scheduledMessages.list", new Args
+        client.Post<ScheduledMessageListResponse>("chat.scheduledMessages.list", new Args
             {
                 { "channel", channelId },
                 { "latest", latestTs },

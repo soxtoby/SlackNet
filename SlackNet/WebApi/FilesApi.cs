@@ -49,7 +49,7 @@ public interface IFilesApi
     /// Parameter for pagination.
     /// Set cursor equal to the <see cref="ResponseMetadata.NextCursor"/> returned by the previous request's <see cref="ReactionItemListResponse.ResponseMetadata"/>.
     /// </param>
-    /// <param name="teamId">Encoded team id to list files in, required if org token is used.</param>
+    /// <param name="teamId">Team ID to list files in, required if org token is used.</param>
     /// <param name="showFilesHiddenByLimit">Show truncated file info for files hidden due to being too old, and the team who owns the file being over the file limit.</param>
     /// <param name="cancellationToken"></param>
     Task<FileListResponse> List(

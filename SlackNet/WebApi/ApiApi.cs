@@ -21,14 +21,11 @@ public interface IApiApi
     Task<IReadOnlyDictionary<string, string>> Test(string error, Args args, CancellationToken cancellationToken = default);
 }
 
-public class ApiApi : IApiApi
+public class ApiApi(ISlackApiClient client) : IApiApi
 {
-    private readonly ISlackApiClient _client;
-    public ApiApi(ISlackApiClient client) => _client = client;
-
     public async Task<IReadOnlyDictionary<string, string>> Test(string error, Args args, CancellationToken cancellationToken = default)
     {
         var query = new Args(args) { ["error"] = error };
-        return (await _client.Post<TestResponse>("api.test", query, cancellationToken).ConfigureAwait(false)).Args;
+        return (await client.Post<TestResponse>("api.test", query, cancellationToken).ConfigureAwait(false)).Args;
     }
 }

@@ -70,11 +70,8 @@ public interface ISearchApi
     );
 }
 
-public class SearchApi : ISearchApi
+public class SearchApi(ISlackApiClient client) : ISearchApi
 {
-    private readonly ISlackApiClient _client;
-    public SearchApi(ISlackApiClient client) => _client = client;
-
     public Task<SearchResponse> All(
         string query,
         SortBy sort = SortBy.Score,
@@ -84,7 +81,7 @@ public class SearchApi : ISearchApi
         int page = 1,
         CancellationToken cancellationToken = default
     ) =>
-        _client.Get<SearchResponse>("search.all", new Args
+        client.Get<SearchResponse>("search.all", new Args
                 {
                     { "query", query },
                     { "sort", sort },
@@ -104,7 +101,7 @@ public class SearchApi : ISearchApi
         int page = 1,
         CancellationToken cancellationToken = default
     ) =>
-        _client.Get<FileSearchResponse>("search.files", new Args
+        client.Get<FileSearchResponse>("search.files", new Args
                 {
                     { "query", query },
                     { "sort", sort },
@@ -124,7 +121,7 @@ public class SearchApi : ISearchApi
         int page = 1,
         CancellationToken cancellationToken = default
     ) =>
-        _client.Get<MessageSearchResponse>("search.messages", new Args
+        client.Get<MessageSearchResponse>("search.messages", new Args
                 {
                     { "query", query },
                     { "sort", sort },

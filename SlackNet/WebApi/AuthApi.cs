@@ -34,19 +34,16 @@ public interface IAuthApi
     Task<AuthTeamsListResponse> TeamsList(string cursor = null, bool includeIcon = false, int limit = 100, CancellationToken cancellationToken = default);
 }
 
-public class AuthApi : IAuthApi
+public class AuthApi(ISlackApiClient client) : IAuthApi
 {
-    private readonly ISlackApiClient _client;
-    public AuthApi(ISlackApiClient client) => _client = client;
-
     public async Task<bool> Revoke(bool test, CancellationToken cancellationToken = default) =>
-        (await _client.Get<RevokeResponse>("auth.revoke", new Args { { "test", test } }, cancellationToken).ConfigureAwait(false)).Revoked;
+        (await client.Get<RevokeResponse>("auth.revoke", new Args { { "test", test } }, cancellationToken).ConfigureAwait(false)).Revoked;
 
     public Task<AuthTestResponse> Test(CancellationToken cancellationToken = default) =>
-        _client.Post<AuthTestResponse>("auth.test", new Args(), cancellationToken);
+        client.Post<AuthTestResponse>("auth.test", new Args(), cancellationToken);
 
     public Task<AuthTeamsListResponse> TeamsList(string cursor = null, bool includeIcon = false, int limit = 100, CancellationToken cancellationToken = default) =>
-        _client.Get<AuthTeamsListResponse>("auth.teams.list", new Args
+        client.Get<AuthTeamsListResponse>("auth.teams.list", new Args
             {
                 { "cursor", cursor },
                 { "include_icon", includeIcon },

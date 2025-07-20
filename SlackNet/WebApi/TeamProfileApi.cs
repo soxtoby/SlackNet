@@ -15,11 +15,8 @@ public interface ITeamProfileApi
     Task<TeamProfile> Get(ProfileFieldVisibility visibility = ProfileFieldVisibility.All, CancellationToken cancellationToken = default);
 }
 
-public class TeamProfileApi : ITeamProfileApi
+public class TeamProfileApi(ISlackApiClient client) : ITeamProfileApi
 {
-    private readonly ISlackApiClient _client;
-    public TeamProfileApi(ISlackApiClient client) => _client = client;
-
     public async Task<TeamProfile> Get(ProfileFieldVisibility visibility = ProfileFieldVisibility.All, CancellationToken cancellationToken = default) =>
-        (await _client.Get<TeamProfileResponse>("team.profile.get", new Args { { "visibility", visibility } }, cancellationToken).ConfigureAwait(false)).Profile;
+        (await client.Get<TeamProfileResponse>("team.profile.get", new Args { { "visibility", visibility } }, cancellationToken).ConfigureAwait(false)).Profile;
 }

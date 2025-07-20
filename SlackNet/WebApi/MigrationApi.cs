@@ -17,13 +17,10 @@ public interface IMigrationApi
     Task<MigrationResponse> Exchange(IEnumerable<string> userIds, bool toOld = false, CancellationToken cancellationToken = default);
 }
 
-public class MigrationApi : IMigrationApi
+public class MigrationApi(ISlackApiClient client) : IMigrationApi
 {
-    private readonly ISlackApiClient _client;
-    public MigrationApi(ISlackApiClient client) => _client = client;
-
     public Task<MigrationResponse> Exchange(IEnumerable<string> userIds, bool toOld = false, CancellationToken cancellationToken = default) =>
-        _client.Get<MigrationResponse>("migration.exchange", new Args
+        client.Get<MigrationResponse>("migration.exchange", new Args
             {
                 { "users", userIds },
                 { "to_old", toOld }

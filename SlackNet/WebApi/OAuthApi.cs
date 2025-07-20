@@ -18,13 +18,10 @@ public interface IOAuthApi
     Task<OauthAccessResponse> Access(string clientId, string clientSecret, string code, string redirectUrl, CancellationToken cancellationToken = default);
 }
 
-public class OAuthApi : IOAuthApi
+public class OAuthApi(ISlackApiClient client) : IOAuthApi
 {
-    private readonly ISlackApiClient _client;
-    public OAuthApi(ISlackApiClient client) => _client = client;
-
     public Task<OauthAccessResponse> Access(string clientId, string clientSecret, string code, string redirectUrl, CancellationToken cancellationToken = default) =>
-        _client.Get<OauthAccessResponse>("oauth.access", new Args
+        client.Get<OauthAccessResponse>("oauth.access", new Args
             {
                 { "client_id", clientId },
                 { "client_secret", clientSecret },

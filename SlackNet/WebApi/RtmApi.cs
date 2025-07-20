@@ -43,13 +43,10 @@ public interface IRtmApi
     );
 }
 
-public class RtmApi : IRtmApi
+public class RtmApi(ISlackApiClient client) : IRtmApi
 {
-    private readonly ISlackApiClient _client;
-    public RtmApi(ISlackApiClient client) => _client = client;
-
     public Task<ConnectResponse> Connect(bool manualPresenceSubscription = false, bool batchPresenceAware = false, CancellationToken cancellationToken = default) =>
-        _client.Get<ConnectResponse>("rtm.connect", new Args { { "presence_sub", manualPresenceSubscription }, { "batch_presence_aware", batchPresenceAware } }, cancellationToken);
+        client.Get<ConnectResponse>("rtm.connect", new Args { { "presence_sub", manualPresenceSubscription }, { "batch_presence_aware", batchPresenceAware } }, cancellationToken);
 
     public Task<StartResponse> Start(
         bool simpleLatest = false,
@@ -61,7 +58,7 @@ public class RtmApi : IRtmApi
         bool noLatest = false,
         CancellationToken cancellationToken = default
     ) =>
-        _client.Get<StartResponse>("rtm.start", new Args
+        client.Get<StartResponse>("rtm.start", new Args
                 {
                     { "simple_latest", simpleLatest },
                     { "no_unreads", noUnreads },

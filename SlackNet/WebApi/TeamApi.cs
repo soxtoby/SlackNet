@@ -75,13 +75,10 @@ public interface ITeamApi
     );
 }
 
-public class TeamApi : ITeamApi
+public class TeamApi(ISlackApiClient client) : ITeamApi
 {
-    private readonly ISlackApiClient _client;
-    public TeamApi(ISlackApiClient client) => _client = client;
-
     public Task<AccessLogsResponse> AccessLogs(DateTime before, int count = 100, int page = 1, string cursor = null, CancellationToken cancellationToken = default) =>
-        _client.Get<AccessLogsResponse>("team.accessLogs", new Args
+        client.Get<AccessLogsResponse>("team.accessLogs", new Args
             {
                 { "before", before.ToTimestamp() },
                 { "count", count },
@@ -90,7 +87,7 @@ public class TeamApi : ITeamApi
             }, cancellationToken);
 
     public Task<AccessLogsResponse> AccessLogs(int? before = null, int count = 100, int page = 1, string cursor = null, CancellationToken cancellationToken = default) =>
-        _client.Get<AccessLogsResponse>("team.accessLogs", new Args
+        client.Get<AccessLogsResponse>("team.accessLogs", new Args
             {
                 { "before", before },
                 { "count", count },
@@ -99,10 +96,10 @@ public class TeamApi : ITeamApi
             }, cancellationToken);
 
     public async Task<IList<BillableInfo>> BillableInfo(string userId = null, CancellationToken cancellationToken = default) =>
-        (await _client.Get<BillableInfoResponse>("team.billableInfo", new Args { { "user", userId } }, cancellationToken).ConfigureAwait(false)).BillableInfo;
+        (await client.Get<BillableInfoResponse>("team.billableInfo", new Args { { "user", userId } }, cancellationToken).ConfigureAwait(false)).BillableInfo;
 
     public async Task<Team> Info(CancellationToken cancellationToken = default) =>
-        (await _client.Get<TeamResponse>("team.info", new Args(), cancellationToken).ConfigureAwait(false)).Team;
+        (await client.Get<TeamResponse>("team.info", new Args(), cancellationToken).ConfigureAwait(false)).Team;
 
     public Task<IntegrationLogsResponse> IntegrationLogs(
         string appId = null,
@@ -113,7 +110,7 @@ public class TeamApi : ITeamApi
         string userId = null,
         CancellationToken cancellationToken = default
     ) =>
-        _client.Get<IntegrationLogsResponse>("team.integrationLogs", new Args
+        client.Get<IntegrationLogsResponse>("team.integrationLogs", new Args
                 {
                     { "app_id", appId },
                     { "change_type", changeType },

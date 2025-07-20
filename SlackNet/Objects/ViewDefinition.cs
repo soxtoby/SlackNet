@@ -4,11 +4,9 @@ using SlackNet.Interaction;
 
 namespace SlackNet;
 
-public abstract class ViewDefinition
+public abstract class ViewDefinition(string type)
 {
-    protected ViewDefinition(string type) => Type = type;
-        
-    public string Type { get; set; }
+    public string Type { get; set; } = type;
 
     /// <summary>
     /// A list of blocks that defines the content of the view.

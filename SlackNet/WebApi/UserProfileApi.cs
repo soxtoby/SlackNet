@@ -35,13 +35,10 @@ public interface IUserProfileApi
     Task<UserProfile> Set(UserProfile profile, string userId = null, CancellationToken cancellationToken = default);
 }
 
-public class UserProfileApi : IUserProfileApi
+public class UserProfileApi(ISlackApiClient client) : IUserProfileApi
 {
-    private readonly ISlackApiClient _client;
-    public UserProfileApi(ISlackApiClient client) => _client = client;
-
     public async Task<UserProfile> Get(bool includeLabels = false, string userId = null, CancellationToken cancellationToken = default) =>
-        (await _client.Get<UserProfileResponse>("users.profile.get", new Args
+        (await client.Get<UserProfileResponse>("users.profile.get", new Args
             {
                 { "include_labels", includeLabels },
                 { "user", userId }
@@ -49,7 +46,7 @@ public class UserProfileApi : IUserProfileApi
         .Profile;
 
     public async Task<UserProfile> Set(string name, string value, string userId = null, CancellationToken cancellationToken = default) =>
-        (await _client.Post<UserProfileResponse>("users.profile.set", new Args
+        (await client.Post<UserProfileResponse>("users.profile.set", new Args
             {
                 { "name", name },
                 { "value", value },
@@ -58,7 +55,7 @@ public class UserProfileApi : IUserProfileApi
         .Profile;
 
     public async Task<UserProfile> Set(UserProfile profile, string userId = null, CancellationToken cancellationToken = default) =>
-        (await _client.Post<UserProfileResponse>("users.profile.set", new Args
+        (await client.Post<UserProfileResponse>("users.profile.set", new Args
             {
                 { "profile", profile },
                 { "user", userId }

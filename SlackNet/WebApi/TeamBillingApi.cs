@@ -14,11 +14,8 @@ public interface ITeamBillingApi
     Task<BillingInfo> Info(CancellationToken cancellationToken = default);
 }
 
-public class TeamBillingApi : ITeamBillingApi
+public class TeamBillingApi(ISlackApiClient client) : ITeamBillingApi
 {
-    private readonly ISlackApiClient _client;
-    public TeamBillingApi(ISlackApiClient client) => _client = client;
-
     public Task<BillingInfo> Info(CancellationToken cancellationToken = default) => 
-        _client.Get<BillingInfo>("team.billing.info", new Args(), cancellationToken);
+        client.Get<BillingInfo>("team.billing.info", new Args(), cancellationToken);
 }

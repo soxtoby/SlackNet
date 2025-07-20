@@ -52,37 +52,34 @@ public interface IPinsApi
     Task RemoveMessage(string channelId, string ts, CancellationToken cancellationToken = default);
 }
 
-public class PinsApi : IPinsApi
+public class PinsApi(ISlackApiClient client) : IPinsApi
 {
-    private readonly ISlackApiClient _client;
-    public PinsApi(ISlackApiClient client) => _client = client;
-
     public Task AddMessage(string channelId, string ts = null, CancellationToken cancellationToken = default) =>
-        _client.Post("pins.add", new Args
+        client.Post("pins.add", new Args
             {
                 { "channel", channelId },
                 { "timestamp", ts }
             }, cancellationToken);
 
     public async Task<IReadOnlyList<PinnedItem>> List(string channelId, CancellationToken cancellationToken = default) =>
-        (await _client.Get<PinnedItemListResponse>("pins.list", new Args { { "channel", channelId } }, cancellationToken).ConfigureAwait(false)).Items;
+        (await client.Get<PinnedItemListResponse>("pins.list", new Args { { "channel", channelId } }, cancellationToken).ConfigureAwait(false)).Items;
 
     public Task RemoveFile(string channelId, string fileId, CancellationToken cancellationToken = default) =>
-        _client.Post("pins.remove", new Args
+        client.Post("pins.remove", new Args
             {
                 { "channel", channelId },
                 { "file", fileId }
             }, cancellationToken);
 
     public Task RemoveFileComment(string channelId, string fileCommentId, CancellationToken cancellationToken = default) =>
-        _client.Post("pins.remove", new Args
+        client.Post("pins.remove", new Args
             {
                 { "channel", channelId },
                 { "file_comment", fileCommentId }
             }, cancellationToken);
 
     public Task RemoveMessage(string channelId, string ts, CancellationToken cancellationToken = default) =>
-        _client.Post("pins.remove", new Args
+        client.Post("pins.remove", new Args
             {
                 { "channel", channelId },
                 { "timestamp", ts }

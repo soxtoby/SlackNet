@@ -17,13 +17,10 @@ public interface IFileCommentsApi
     Task Delete(string fileId, string commentId, CancellationToken cancellationToken = default);
 }
 
-public class FileCommentsApi : IFileCommentsApi
+public class FileCommentsApi(ISlackApiClient client) : IFileCommentsApi
 {
-    private readonly ISlackApiClient _client;
-    public FileCommentsApi(ISlackApiClient client) => _client = client;
-
     public Task Delete(string fileId, string commentId, CancellationToken cancellationToken = default) =>
-        _client.Post("files.comments.delete", new Args
+        client.Post("files.comments.delete", new Args
             {
                 { "file", fileId },
                 { "id", commentId }

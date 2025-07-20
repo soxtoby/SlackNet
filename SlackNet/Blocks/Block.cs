@@ -1,10 +1,8 @@
 ﻿namespace SlackNet.Blocks;
 
-public abstract class Block
+public abstract class Block(string type)
 {
-    protected Block(string type) => Type = type;
-
-    public string Type { get; }
+    public string Type { get; } = type;
 
     /// <summary>
     /// A string acting as a unique identifier for a block. You can use this when you receive an interaction payload
