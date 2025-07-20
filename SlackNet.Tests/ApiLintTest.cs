@@ -68,11 +68,17 @@ public class ApiLintTest
         }
         
         var missingApiMethods = allApiMethods
-            .Where(m => !m.StartsWith("admin.") && !m.StartsWith("apps.") // Not supported for now, but should be
-                && !m.StartsWith("stars.")) // Deprecated
+            .Where(m => MissingApiMethodExceptions.All(e => !m.StartsWith(e)))
             .Except(implementedApiMethods);
         missingApiMethods.ShouldBeEmpty();
     }
+
+    private static readonly string[] MissingApiMethodExceptions = [
+            "admin.", // Not supported for now, but should be
+            "apps.", // Not supported for now, but should be
+            "stars.", // Deprecated
+            "users.setActive", // Deprecated
+        ];
 
     private static object CreateApiInstance(Type api, FakeClient client)
     {
