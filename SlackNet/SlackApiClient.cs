@@ -24,9 +24,7 @@ public interface ISlackApiClient
     IBotsApi Bots { get; }
     ICallParticipantsApi CallParticipants { get; }
     ICallsApi Calls { get; }
-    ICanvasesAccessApi CanvasesAccess { get; }
     ICanvasesApi Canvases { get; }
-    ICanvasesSectionsApi CanvasesSections { get; }
     IChatApi Chat { get; }
     IConversationsApi Conversations { get; }
     IConversationsRequestSharedInviteApi ConversationsRequestSharedInvite { get; }
@@ -173,9 +171,7 @@ public class SlackApiClient : ISlackApiClient
     public IBotsApi Bots => new BotsApi(this);
     public ICallParticipantsApi CallParticipants => new CallParticipantsApi(this);
     public ICallsApi Calls => new CallsApi(this);
-    public ICanvasesAccessApi CanvasesAccess => new CanvasesAccessApi(this);
     public ICanvasesApi Canvases => new CanvasesApi(this);
-    public ICanvasesSectionsApi CanvasesSections => new CanvasesSectionsApi(this);
     public IChatApi Chat => new ChatApi(this, _jsonSettings);
     public IConversationsApi Conversations => new ConversationsApi(this);
     public IConversationsRequestSharedInviteApi ConversationsRequestSharedInvite => new ConversationsRequestSharedInviteApi(this);

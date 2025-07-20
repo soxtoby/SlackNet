@@ -143,6 +143,7 @@ public class ApiLintTest
     private static readonly Dictionary<Type, string[]> MethodGroupExceptions = new()
         {
             [typeof(AuthApi)] = ["auth.teams.list"],
+            [typeof(CanvasesApi)] = ["canvases.access.delete", "canvases.sections.lookup", "canvases.access.set"],
             [typeof(ConversationsApi)] = ["conversations.canvases.create", "conversations.externalInvitePermissions.set"],
             [typeof(UsersApi)] = ["users.discoverableContacts.lookup"]
         };
@@ -273,9 +274,7 @@ public class ApiLintTest
         public IBotsApi Bots { get; }
         public ICallParticipantsApi CallParticipants { get; }
         public ICallsApi Calls { get; }
-        public ICanvasesAccessApi CanvasesAccess { get; }
         public ICanvasesApi Canvases { get; }
-        public ICanvasesSectionsApi CanvasesSections { get; }
         public IChatApi Chat { get; }
         public IConversationsApi Conversations { get; }
         public IConversationsRequestSharedInviteApi ConversationsRequestSharedInvite { get; }
