@@ -137,7 +137,8 @@ public class ApiLintTest
     private static readonly Dictionary<Type, string[]> MethodGroupExceptions = new()
         {
             [typeof(AuthApi)] = ["auth.teams.list"],
-            [typeof(ConversationsApi)] = ["conversations.canvases.create", "conversations.externalInvitePermissions.set"]
+            [typeof(ConversationsApi)] = ["conversations.canvases.create", "conversations.externalInvitePermissions.set"],
+            [typeof(UsersApi)] = ["users.discoverableContacts.lookup"]
         };
 
     private static void AllArgsShouldBeSnakeCase(Args args, MethodInfo method) =>

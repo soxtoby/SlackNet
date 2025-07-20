@@ -83,6 +83,14 @@ public interface IUsersApi
     /// <param name="email">An email address belonging to a user in the workspace.</param>
     /// <param name="cancellationToken"></param>
     Task<User> LookupByEmail(string email, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Look up an email address to see if someone is discoverable on Slack.
+    /// </summary>
+    /// <remarks>See the <a href="https://api.slack.com/methods/users.discoverableContacts.lookup">Slack documentation</a> for more information.</remarks>
+    /// <param name="email">The email address to look up.</param>
+    /// <param name="cancellationToken"></param>
+    Task<bool> LookupDiscoverableContact(string email, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// This method allows the user to set their profile image.
@@ -177,6 +185,9 @@ public class UsersApi : IUsersApi
 
     public async Task<User> LookupByEmail(string email, CancellationToken cancellationToken = default) =>
         (await _client.Get<UserResponse>("users.lookupByEmail", new Args { { "email", email } }, cancellationToken).ConfigureAwait(false)).User;
+
+    public async Task<bool> LookupDiscoverableContact(string email, CancellationToken cancellationToken = default) =>
+        (await _client.Get<DiscoverableContactResponse>("users.discoverableContacts.lookup", new Args { { "email", email } }, cancellationToken).ConfigureAwait(false)).IsDiscoverable;
 
     public Task SetPhoto(byte[] imageContent, string contentType, string fileName = "photo", int? cropW = null, int? cropX = null, int? cropY = null, CancellationToken cancellationToken = default) =>
         _client.Post("users.setPhoto", new Args
