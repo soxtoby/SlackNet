@@ -27,16 +27,26 @@ public interface IOAuthV2Api
         string? redirectUrl,
         string? refreshToken,
 #nullable disable
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = default
     );
 
+    /// <summary>
+    /// Exchanges a legacy access token for a new expiring access token and refresh token.
+    /// </summary>
+    /// <param name="clientId">Issued when you created your application.</param>
+    /// <param name="clientSecret">Issued when you created your application.</param>
+    /// <param name="token">The legacy xoxb or xoxp token being migrated to use token rotation.</param>
+    /// <param name="cancellationToken"></param>
+    Task<OauthV2AccessResponse> Exchange(
+        string clientId,
+        string clientSecret,
+        string token,
+        CancellationToken cancellationToken = default
+    );
 }
 
-public class OAuthV2Api : IOAuthV2Api
+public class OAuthV2Api(ISlackApiClient client) : IOAuthV2Api
 {
-    private readonly ISlackApiClient _client;
-    public OAuthV2Api(ISlackApiClient client) => _client = client;
-
     public Task<OauthV2AccessResponse> Access(
         string clientId,
         string clientSecret,
@@ -48,7 +58,7 @@ public class OAuthV2Api : IOAuthV2Api
 #nullable disable
         CancellationToken cancellationToken = default
     ) =>
-        _client.WithAccessToken(string.Empty) // Since this endpoint is for getting an access token, it doesn't make sense to include an existing token in the request
+        client.WithAccessToken(string.Empty) // Since this endpoint is for getting an access token, it doesn't make sense to include an existing token in the request
             .Post<OauthV2AccessResponse>("oauth.v2.access", new Args(), new SlackFormContent
                     {
                         { "client_id", clientId },
@@ -57,6 +67,16 @@ public class OAuthV2Api : IOAuthV2Api
                         { "grant_type", grantType },
                         { "redirect_uri", redirectUrl },
                         { "refresh_token", refreshToken }
+                    },
+                cancellationToken);
+
+    public Task<OauthV2AccessResponse> Exchange(string clientId, string clientSecret, string token, CancellationToken cancellationToken = default) =>
+        client.WithAccessToken(string.Empty) // Since this endpoint is for exchanging an access token, it doesn't make sense to include an existing token in the request
+            .Post<OauthV2AccessResponse>("oauth.v2.exchange", new Args(), new SlackFormContent
+                    {
+                        { "client_id", clientId },
+                        { "client_secret", clientSecret },
+                        { "token", token }
                     },
                 cancellationToken);
 }
