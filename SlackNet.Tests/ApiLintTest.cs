@@ -278,6 +278,7 @@ public class ApiLintTest
         public IEmojiApi Emoji { get; }
         public IFileCommentsApi FileComments { get; }
         public IFilesApi Files { get; }
+        public IListItemsApi ListItems { get; }
         public IMigrationApi Migration { get; }
         public IOAuthApi OAuth { get; }
         public IOAuthV2Api OAuthV2 { get; }
