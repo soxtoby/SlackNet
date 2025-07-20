@@ -68,7 +68,8 @@ public class ApiLintTest
         }
         
         var missingApiMethods = allApiMethods
-            .Where(m => !m.StartsWith("admin.") && !m.StartsWith("apps.")) // Not supported for now, but should be
+            .Where(m => !m.StartsWith("admin.") && !m.StartsWith("apps.") // Not supported for now, but should be
+                && !m.StartsWith("stars.")) // Deprecated
             .Except(implementedApiMethods);
         missingApiMethods.ShouldBeEmpty();
     }
@@ -192,6 +193,7 @@ public class ApiLintTest
             { typeof(IEnumerable<FileUpload>), _ => Enumerable.Empty<FileUpload>() },
             { typeof(IEnumerable<AssistantPrompt>), _ => Enumerable.Empty<AssistantPrompt>() },
             { typeof(IEnumerable<CanvasChange>), _ => Enumerable.Empty<CanvasChange>() },
+            { typeof(IEnumerable<SlackConnectPref>), _ => Enumerable.Empty<SlackConnectPref>() },
             { typeof(DocumentContent), _ => new DocumentContent { Markdown = string.Empty } },
             { typeof(LookupCriteria), _ => new LookupCriteria() },
             { typeof(ApprovalMessage), _ => new ApprovalMessage() },
@@ -276,6 +278,7 @@ public class ApiLintTest
         public IDialogApi Dialog { get; }
         public IDndApi Dnd { get; }
         public IEmojiApi Emoji { get; }
+        public IExternalTeamsApi ExternalTeams { get; }
         public IFileCommentsApi FileComments { get; }
         public IFilesApi Files { get; }
         public IListItemsApi ListItems { get; }

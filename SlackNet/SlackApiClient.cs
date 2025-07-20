@@ -33,6 +33,7 @@ public interface ISlackApiClient
     IDialogApi Dialog { get; }
     IDndApi Dnd { get; }
     IEmojiApi Emoji { get; }
+    IExternalTeamsApi ExternalTeams { get; }
     IFileCommentsApi FileComments { get; }
     IFilesApi Files { get; }
     IListItemsApi ListItems { get; }
@@ -182,6 +183,7 @@ public class SlackApiClient : ISlackApiClient
     public IDialogApi Dialog => new DialogApi(this);
     public IDndApi Dnd => new DndApi(this);
     public IEmojiApi Emoji => new EmojiApi(this);
+    public IExternalTeamsApi ExternalTeams => new ExternalTeamsApi(this);
     public IFileCommentsApi FileComments => new FileCommentsApi(this);
     public IFilesApi Files => new FilesApi(this, _http);
     public IListItemsApi ListItems => new ListItemsApi(this);
