@@ -142,10 +142,28 @@ public class ApiLintTest
 
     private static readonly Dictionary<Type, string[]> MethodGroupExceptions = new()
         {
-            [typeof(AuthApi)] = ["auth.teams.list"],
-            [typeof(CanvasesApi)] = ["canvases.access.delete", "canvases.sections.lookup", "canvases.access.set"],
-            [typeof(ConversationsApi)] = ["conversations.canvases.create", "conversations.externalInvitePermissions.set"],
-            [typeof(UsersApi)] = ["users.discoverableContacts.lookup"]
+            [typeof(AuthApi)] =
+                [
+                    "auth.teams.list"
+                ],
+            [typeof(CanvasesApi)] =
+                [
+                    "canvases.access.delete",
+                    "canvases.sections.lookup",
+                    "canvases.access.set"
+                ],
+            [typeof(ConversationsApi)] =
+                [
+                    "conversations.canvases.create",
+                    "conversations.externalInvitePermissions.set",
+                    "conversations.requestSharedInvite.approve",
+                    "conversations.requestSharedInvite.deny",
+                    "conversations.requestSharedInvite.list"
+                ],
+            [typeof(UsersApi)] =
+                [
+                    "users.discoverableContacts.lookup"
+                ]
         };
 
     private static void AllArgsShouldBeSnakeCase(Args args, MethodInfo method) =>
@@ -277,7 +295,6 @@ public class ApiLintTest
         public ICanvasesApi Canvases { get; }
         public IChatApi Chat { get; }
         public IConversationsApi Conversations { get; }
-        public IConversationsRequestSharedInviteApi ConversationsRequestSharedInvite { get; }
         public IDialogApi Dialog { get; }
         public IDndApi Dnd { get; }
         public IEmojiApi Emoji { get; }
