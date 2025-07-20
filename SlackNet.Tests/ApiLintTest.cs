@@ -191,10 +191,7 @@ public class ApiLintTest
             { typeof(Stream), _ => Stream.Null },
             { typeof(Args), _ => new Args() },
             { typeof(IDictionary<string, Attachment>), _ => new Dictionary<string, Attachment>() },
-            { typeof(IDictionary<string, WorkflowInput>), _ => new Dictionary<string, WorkflowInput>() },
             { typeof(IDictionary<string, string>), _ => new Dictionary<string, string>() },
-            { typeof(IEnumerable<WorkflowOutput>), _ => Enumerable.Empty<WorkflowOutput>() },
-            { typeof(WorkflowError), _ => new WorkflowError() },
             { typeof(IEnumerable<ExternalFileReference>), _ => Enumerable.Empty<ExternalFileReference>() },
             { typeof(FileUpload), _ => new FileUpload(string.Empty, string.Empty) },
             { typeof(IEnumerable<FileUpload>), _ => Enumerable.Empty<FileUpload>() },
@@ -309,7 +306,6 @@ public class ApiLintTest
         public IUsersApi Users { get; }
         public IUserProfileApi UserProfile { get; }
         public IViewsApi Views { get; }
-        public IWorkflowsApi Workflows { get; }
     }
 
     class FakeHttp : IHttp

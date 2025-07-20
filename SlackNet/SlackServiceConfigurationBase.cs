@@ -32,7 +32,6 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     private readonly List<Func<SlackRequestContext, IAsyncGlobalShortcutHandler>> _globalShortcutHandlers = new();
     private readonly Dictionary<string, Func<SlackRequestContext, IAsyncViewSubmissionHandler>> _viewSubmissionHandlers = new();
     private readonly Dictionary<string, Func<SlackRequestContext, IAsyncSlashCommandHandler>> _slashCommandHandlers = new();
-    private readonly List<Func<SlackRequestContext, IAsyncWorkflowStepEditHandler>> _workflowStepEditHandlers = new();
 
     private readonly Dictionary<string, Func<SlackRequestContext, IInteractiveMessageHandler>> _legacyInteractiveMessageHandlers = new();
     private readonly Dictionary<string, Func<SlackRequestContext, IOptionProvider>> _legacyOptionProviders = new();
@@ -45,7 +44,6 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     private Func<SlackRequestContext, IAsyncGlobalShortcutHandler> _globalShortcutHandlerFactory = ctx => new CompositeGlobalShortcutHandler(ctx.GlobalShortcutHandlers);
     private Func<SlackRequestContext, IAsyncViewSubmissionHandler> _viewSubmissionHandlerFactory = ctx => new SwitchingViewSubmissionHandler(ctx.ViewSubmissionHandlers);
     private Func<SlackRequestContext, IAsyncSlashCommandHandler> _slashCommandHandlerFactory = ctx => new SwitchingSlashCommandHandler(ctx.SlashCommandHandlers);
-    private Func<SlackRequestContext, IAsyncWorkflowStepEditHandler> _workflowStepEditHandlerFactory = ctx => new CompositeWorkflowStepEditHandler(ctx.WorkflowStepEditHandlers);
 
     private Func<SlackRequestContext, IInteractiveMessageHandler> _legacyInteractiveMessageHandlerFactory = ctx => new SwitchingInteractiveMessageHandler(ctx.LegacyInteractiveMessageHandlers);
     private Func<SlackRequestContext, IOptionProvider> _legacyOptionProviderFactory = ctx => new SwitchingOptionProvider(ctx.LegacyOptionProviders);
@@ -103,7 +101,6 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
             _globalShortcutHandlerFactory,
             _viewSubmissionHandlerFactory,
             _slashCommandHandlerFactory,
-            _workflowStepEditHandlerFactory,
             _legacyInteractiveMessageHandlerFactory,
             _legacyOptionProviderFactory,
             _legacyDialogSubmissionHandlerFactory);
@@ -138,7 +135,6 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
             _globalShortcutHandlers,
             _viewSubmissionHandlers,
             _slashCommandHandlers,
-            _workflowStepEditHandlers,
             _legacyInteractiveMessageHandlers,
             _legacyOptionProviders,
             _legacyDialogSubmissionHandlers);
@@ -177,11 +173,6 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     /// Take over all slash command handling with your own handler.
     /// </summary>
     public TConfig ReplaceSlashCommandHandling(Func<SlackRequestContext, IAsyncSlashCommandHandler> handlerFactory) => Chain(() => _slashCommandHandlerFactory = handlerFactory);
-
-    /// <summary>
-    /// Take over all workflow Step Edit handling with your own handler.
-    /// </summary>
-    public TConfig ReplaceWorkflowStepEditHandling(Func<SlackRequestContext, IAsyncWorkflowStepEditHandler> handlerFactory) => Chain(() => _workflowStepEditHandlerFactory = handlerFactory);
 
     /// <summary>
     /// Take over all interactive message handling with your own handler.
@@ -269,20 +260,6 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     [Obsolete(Warning.Experimental)]
     public TConfig RegisterAsyncSlashCommandHandler(string command, IAsyncSlashCommandHandler handler) =>
         RegisterAsyncSlashCommandHandler(command, _ => handler);
-
-    public TConfig RegisterWorkflowStepEditHandler(string callbackId, IWorkflowStepEditHandler handler) =>
-        RegisterWorkflowStepEditHandler(callbackId, _ => handler);
-
-    public TConfig RegisterWorkflowStepEditHandler(IWorkflowStepEditHandler handler) =>
-        RegisterWorkflowStepEditHandler(_ => handler);
-
-    [Obsolete(Warning.Experimental)]
-    public TConfig RegisterAsyncWorkflowStepEditHandler(string callbackId, IAsyncWorkflowStepEditHandler handler) =>
-        RegisterAsyncWorkflowStepEditHandler(callbackId, _ => handler);
-
-    [Obsolete(Warning.Experimental)]
-    public TConfig RegisterAsyncWorkflowStepEditHandler(IAsyncWorkflowStepEditHandler handler) =>
-        RegisterAsyncWorkflowStepEditHandler(_ => handler);
 
     public TConfig RegisterInteractiveMessageHandler(string actionName, IInteractiveMessageHandler handler) =>
         RegisterInteractiveMessageHandler(actionName, _ => handler);
@@ -373,20 +350,6 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
         if (!command.StartsWith("/"))
             throw new ArgumentException("Command must start with '/'", nameof(command));
     }
-
-    public TConfig RegisterWorkflowStepEditHandler(string callbackId, Func<SlackRequestContext, IWorkflowStepEditHandler> getHandler) =>
-        RegisterAsyncWorkflowStepEditHandler(callbackId, ctx => getHandler(ctx).ToWorkflowStepEditHandler());
-
-    public TConfig RegisterWorkflowStepEditHandler(Func<SlackRequestContext, IWorkflowStepEditHandler> getHandler) =>
-        RegisterAsyncWorkflowStepEditHandler(ctx => getHandler(ctx).ToWorkflowStepEditHandler());
-
-    [Obsolete(Warning.Experimental)]
-    public TConfig RegisterAsyncWorkflowStepEditHandler(string callbackId, Func<SlackRequestContext, IAsyncWorkflowStepEditHandler> getHandler) =>
-        RegisterAsyncWorkflowStepEditHandler(ctx => getHandler(ctx).ToWorkflowStepEditHandler(callbackId));
-
-    [Obsolete(Warning.Experimental)]
-    public TConfig RegisterAsyncWorkflowStepEditHandler(Func<SlackRequestContext, IAsyncWorkflowStepEditHandler> getHandler) =>
-        Chain(() => _workflowStepEditHandlers.Add(getHandler));
 
     public TConfig RegisterInteractiveMessageHandler(string actionName, Func<SlackRequestContext, IInteractiveMessageHandler> getHandler) =>
         Chain(() => _legacyInteractiveMessageHandlers.Add(actionName, getHandler));

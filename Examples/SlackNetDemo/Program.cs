@@ -38,11 +38,6 @@ serviceCollection.AddSlackNet(c => c
 
     // Echo demo - a slash command for telling you what you already know
     .RegisterSlashCommandHandler<EchoDemo>(EchoDemo.SlashCommand)
-
-    // Workflow demo - posts a simple message to a user as part of a workflow
-    .RegisterWorkflowStepEditHandler<WorkflowDemo>(WorkflowDemo.StepCallbackId)
-    .RegisterViewSubmissionHandler<WorkflowDemo>(WorkflowDemo.ConfigCallback)
-    .RegisterEventHandler<WorkflowStepExecute, WorkflowDemo>()
 );
 var services = serviceCollection.BuildServiceProvider();
 

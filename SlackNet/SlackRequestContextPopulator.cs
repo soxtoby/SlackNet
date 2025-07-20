@@ -16,7 +16,6 @@ class SlackRequestContextPopulator : ISlackRequestListener
     private readonly IReadOnlyCollection<Func<SlackRequestContext, IAsyncGlobalShortcutHandler>> _globalShortcutHandlers;
     private readonly IReadOnlyDictionary<string, Func<SlackRequestContext, IAsyncViewSubmissionHandler>> _viewSubmissionHandlers;
     private readonly IReadOnlyDictionary<string, Func<SlackRequestContext, IAsyncSlashCommandHandler>> _slashCommandHandlers;
-    private readonly IReadOnlyCollection<Func<SlackRequestContext, IAsyncWorkflowStepEditHandler>> _workflowStepEditHandlers;
 
     private readonly IReadOnlyDictionary<string, Func<SlackRequestContext, IInteractiveMessageHandler>> _legacyInteractiveMessageHandlers;
     private readonly IReadOnlyDictionary<string, Func<SlackRequestContext, IOptionProvider>> _legacyOptionProviders;
@@ -31,7 +30,6 @@ class SlackRequestContextPopulator : ISlackRequestListener
         IReadOnlyCollection<Func<SlackRequestContext, IAsyncGlobalShortcutHandler>> globalShortcutHandlers,
         IReadOnlyDictionary<string, Func<SlackRequestContext, IAsyncViewSubmissionHandler>> viewSubmissionHandlers,
         IReadOnlyDictionary<string, Func<SlackRequestContext, IAsyncSlashCommandHandler>> slashCommandHandlers,
-        IReadOnlyCollection<Func<SlackRequestContext, IAsyncWorkflowStepEditHandler>> workflowStepEditHandlers,
         IReadOnlyDictionary<string, Func<SlackRequestContext, IInteractiveMessageHandler>> legacyInteractiveMessageHandlers,
         IReadOnlyDictionary<string, Func<SlackRequestContext, IOptionProvider>> legacyOptionProviders,
         IReadOnlyDictionary<string, Func<SlackRequestContext, IDialogSubmissionHandler>> legacyDialogSubmissionHandlers)
@@ -44,7 +42,6 @@ class SlackRequestContextPopulator : ISlackRequestListener
         _globalShortcutHandlers = globalShortcutHandlers;
         _viewSubmissionHandlers = viewSubmissionHandlers;
         _slashCommandHandlers = slashCommandHandlers;
-        _workflowStepEditHandlers = workflowStepEditHandlers;
         _legacyInteractiveMessageHandlers = legacyInteractiveMessageHandlers;
         _legacyOptionProviders = legacyOptionProviders;
         _legacyDialogSubmissionHandlers = legacyDialogSubmissionHandlers;
@@ -60,7 +57,6 @@ class SlackRequestContextPopulator : ISlackRequestListener
         context[nameof(SlackRequestContext.GlobalShortcutHandlers)] = new HandlerCollection<IAsyncGlobalShortcutHandler>(context, _globalShortcutHandlers);
         context[nameof(SlackRequestContext.ViewSubmissionHandlers)] = new HandlerIndex<IAsyncViewSubmissionHandler>(context, _viewSubmissionHandlers);
         context[nameof(SlackRequestContext.SlashCommandHandlers)] = new HandlerIndex<IAsyncSlashCommandHandler>(context, _slashCommandHandlers);
-        context[nameof(SlackRequestContext.WorkflowStepEditHandlers)] = new HandlerCollection<IAsyncWorkflowStepEditHandler>(context, _workflowStepEditHandlers);
         context[nameof(SlackRequestContext.LegacyInteractiveMessageHandlers)] = new HandlerIndex<IInteractiveMessageHandler>(context, _legacyInteractiveMessageHandlers);
         context[nameof(SlackRequestContext.LegacyOptionProviders)] = new HandlerIndex<IOptionProvider>(context, _legacyOptionProviders);
         context[nameof(SlackRequestContext.LegacyDialogSubmissionHandlers)] = new HandlerIndex<IDialogSubmissionHandler>(context, _legacyDialogSubmissionHandlers);

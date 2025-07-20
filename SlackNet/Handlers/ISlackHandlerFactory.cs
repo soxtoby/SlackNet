@@ -12,7 +12,6 @@ public interface ISlackHandlerFactory
     IAsyncGlobalShortcutHandler CreateGlobalShortcutHandler(SlackRequestContext context);
     IAsyncViewSubmissionHandler CreateViewSubmissionHandler(SlackRequestContext context);
     IAsyncSlashCommandHandler CreateSlashCommandHandler(SlackRequestContext context);
-    IAsyncWorkflowStepEditHandler CreateWorkflowStepEditHandler(SlackRequestContext context);
 
     IInteractiveMessageHandler CreateLegacyInteractiveMessageHandler(SlackRequestContext context);
     IOptionProvider CreateLegacyOptionProvider(SlackRequestContext context);

@@ -21,12 +21,13 @@ class AppHome(ISlackApiClient slack) : IEventHandler<AppHomeOpened>
                         {
                             new SectionBlock
                                 {
-                                    Text = new Markdown($@"Welcome to the SlackNet example. Here's what you can do:
-• Say ""{PingDemo.Trigger}"" to get back a pong
-• Say ""{CounterDemo.Trigger}"" to get the counter demo
-• Say ""{ModalViewDemo.Trigger}"" to open then modal view demo
-• Use the `{EchoDemo.SlashCommand}` slash command to see an echo
-• Set up a {Link.Url("https://api.slack.com/workflows", "workflow")} to automate sending messages to people")
+                                    Text = new Markdown($"""
+                                        Welcome to the SlackNet example. Here's what you can do:
+                                        • Say "{PingDemo.Trigger}" to get back a pong
+                                        • Say "{CounterDemo.Trigger}" to get the counter demo
+                                        • Say "{ModalViewDemo.Trigger}" to open then modal view demo
+                                        • Use the `{EchoDemo.SlashCommand}` slash command to see an echo
+                                        """)
                                 }
                         }
                 }, slackEvent.View?.Hash);

@@ -63,12 +63,6 @@ public abstract class FactorySlackServiceConfiguration<TConfig> : SlackServiceCo
         ReplaceSlashCommandHandling(GetRequestHandlerFactory<IAsyncSlashCommandHandler, THandler>());
 
     /// <summary>
-    /// Take over all workflow Step Edit handling with your own handler type.
-    /// </summary>
-    public TConfig ReplaceWorkflowStepEditHandling<THandler>() where THandler : class, IAsyncWorkflowStepEditHandler =>
-        ReplaceWorkflowStepEditHandling(GetRequestHandlerFactory<IAsyncWorkflowStepEditHandler, THandler>());
-
-    /// <summary>
     /// Take over all interactive message handling with your own handler type.
     /// </summary>
     public TConfig ReplaceLegacyInteractiveMessageHandling<THandler>() where THandler : class, IInteractiveMessageHandler =>
@@ -183,24 +177,6 @@ public abstract class FactorySlackServiceConfiguration<TConfig> : SlackServiceCo
     public TConfig RegisterSlashCommandHandler<THandler>(string command)
         where THandler : class, ISlashCommandHandler =>
         RegisterSlashCommandHandler(command, GetRegisteredHandlerFactory<THandler>());
-
-    [Obsolete(Warning.Experimental)]
-    public TConfig RegisterAsyncWorkflowStepEditHandler<THandler>()
-        where THandler : class, IAsyncWorkflowStepEditHandler =>
-        RegisterAsyncWorkflowStepEditHandler(GetRegisteredHandlerFactory<THandler>());
-
-    [Obsolete(Warning.Experimental)]
-    public TConfig RegisterAsyncWorkflowStepEditHandler<THandler>(string callbackId)
-        where THandler : class, IAsyncWorkflowStepEditHandler =>
-        RegisterAsyncWorkflowStepEditHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
-
-    public TConfig RegisterWorkflowStepEditHandler<THandler>()
-        where THandler : class, IWorkflowStepEditHandler =>
-        RegisterWorkflowStepEditHandler(GetRegisteredHandlerFactory<THandler>());
-
-    public TConfig RegisterWorkflowStepEditHandler<THandler>(string callbackId)
-        where THandler : class, IWorkflowStepEditHandler =>
-        RegisterWorkflowStepEditHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
 
     public TConfig RegisterInteractiveMessageHandler<THandler>(string actionName)
         where THandler : class, IInteractiveMessageHandler =>

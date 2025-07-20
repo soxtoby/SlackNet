@@ -148,14 +148,6 @@ public abstract class FactorySlackHandlerConfigurationWithDependencyResolverTest
     }
 
     [Test]
-    public void ReplaceWorkflowStepEditHandling_WithFactory()
-    {
-        ReplaceRequestHandling<IAsyncWorkflowStepEditHandler, TestAsyncWorkflowStepEditHandler>(
-            c => c.ReplaceWorkflowStepEditHandling(r => new TestAsyncWorkflowStepEditHandler(ResolveDependency<InstanceTracker>(r))),
-            (hf, ctx) => hf.CreateWorkflowStepEditHandler(ctx));
-    }
-
-    [Test]
     public void ReplaceLegacyInteractiveMessageHandling_WithFactory()
     {
         ReplaceRequestHandling<IInteractiveMessageHandler, TestInteractiveMessageHandler>(
@@ -268,22 +260,6 @@ public abstract class FactorySlackHandlerConfigurationWithDependencyResolverTest
         RegisterSlashCommandHandler(
             registerHandler: (c, command) => c.RegisterSlashCommandHandler(command, r => new TestSlashCommandHandler(ResolveDependency<InstanceTracker>(r))),
             registerAsyncHandler: (c, command) => c.RegisterAsyncSlashCommandHandler(command, r => new TestAsyncSlashCommandHandler(ResolveDependency<InstanceTracker>(r))));
-    }
-
-    [Test]
-    public void RegisterWorkflowStepEditHandlerFactory()
-    {
-        RegisterWorkflowStepEditHandler(
-            registerHandler: c => c.RegisterWorkflowStepEditHandler(r => new TestWorkflowStepEditHandler(ResolveDependency<InstanceTracker>(r))),
-            registerAsyncHandler: c => c.RegisterAsyncWorkflowStepEditHandler(r => new TestAsyncWorkflowStepEditHandler(ResolveDependency<InstanceTracker>(r))));
-    }
-
-    [Test]
-    public void RegisterWorkflowStepEditHandlerFactory_Keyed()
-    {
-        RegisterWorkflowStepEditHandler_Keyed(
-            registerHandler: (c, key) => c.RegisterWorkflowStepEditHandler(key, r => new TestWorkflowStepEditHandler(ResolveDependency<InstanceTracker>(r))),
-            registerAsyncHandler: (c, key) => c.RegisterAsyncWorkflowStepEditHandler(key, r => new TestAsyncWorkflowStepEditHandler(ResolveDependency<InstanceTracker>(r))));
     }
 
     [Test]

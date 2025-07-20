@@ -52,7 +52,6 @@ public class SlackRequestContext
     public IEnumerable<IAsyncGlobalShortcutHandler> GlobalShortcutHandlers => (IEnumerable<IAsyncGlobalShortcutHandler>)_items[nameof(GlobalShortcutHandlers)];
     public IHandlerIndex<IAsyncViewSubmissionHandler> ViewSubmissionHandlers => (IHandlerIndex<IAsyncViewSubmissionHandler>)_items[nameof(ViewSubmissionHandlers)];
     public IHandlerIndex<IAsyncSlashCommandHandler> SlashCommandHandlers => (IHandlerIndex<IAsyncSlashCommandHandler>)_items[nameof(SlashCommandHandlers)];
-    public IEnumerable<IAsyncWorkflowStepEditHandler> WorkflowStepEditHandlers => (IEnumerable<IAsyncWorkflowStepEditHandler>)_items[nameof(WorkflowStepEditHandlers)];
     public IHandlerIndex<IInteractiveMessageHandler> LegacyInteractiveMessageHandlers => (IHandlerIndex<IInteractiveMessageHandler>)_items[nameof(LegacyInteractiveMessageHandlers)];
     public IHandlerIndex<IOptionProvider> LegacyOptionProviders => (IHandlerIndex<IOptionProvider>)_items[nameof(LegacyOptionProviders)];
     public IHandlerIndex<IDialogSubmissionHandler> LegacyDialogSubmissionHandlers => (IHandlerIndex<IDialogSubmissionHandler>)_items[nameof(LegacyDialogSubmissionHandlers)];

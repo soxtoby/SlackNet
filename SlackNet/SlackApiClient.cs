@@ -57,7 +57,6 @@ public interface ISlackApiClient
     IUsersApi Users { get; }
     IUserProfileApi UserProfile { get; }
     IViewsApi Views { get; }
-    IWorkflowsApi Workflows { get; }
 
     /// <summary>
     /// Calls a Slack API method.
@@ -207,7 +206,6 @@ public class SlackApiClient : ISlackApiClient
     public IUsersApi Users => new UsersApi(this);
     public IUserProfileApi UserProfile => new UserProfileApi(this);
     public IViewsApi Views => new ViewsApi(this);
-    public IWorkflowsApi Workflows => new WorkflowsApi(this);
 
     public Task Get(string apiMethod, Args args, CancellationToken cancellationToken) =>
         Get<object>(apiMethod, args, cancellationToken);

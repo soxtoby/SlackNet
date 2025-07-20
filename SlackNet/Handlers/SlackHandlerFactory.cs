@@ -14,7 +14,6 @@ class SlackHandlerFactory : ISlackHandlerFactory
     private readonly Func<SlackRequestContext, IAsyncGlobalShortcutHandler> _globalShortcutHandler;
     private readonly Func<SlackRequestContext, IAsyncViewSubmissionHandler> _viewSubmissionHandler;
     private readonly Func<SlackRequestContext, IAsyncSlashCommandHandler> _slashCommandHandler;
-    private readonly Func<SlackRequestContext, IAsyncWorkflowStepEditHandler> _workflowStepEditHandler;
     private readonly Func<SlackRequestContext, IInteractiveMessageHandler> _legacyInteractiveMessageHandler;
     private readonly Func<SlackRequestContext, IOptionProvider> _legacyOptionProvider;
     private readonly Func<SlackRequestContext, IDialogSubmissionHandler> _legacyDialogSubmissionHandler;
@@ -27,7 +26,6 @@ class SlackHandlerFactory : ISlackHandlerFactory
         Func<SlackRequestContext, IAsyncGlobalShortcutHandler> globalShortcutHandler,
         Func<SlackRequestContext, IAsyncViewSubmissionHandler> viewSubmissionHandler,
         Func<SlackRequestContext, IAsyncSlashCommandHandler> slashCommandHandler,
-        Func<SlackRequestContext, IAsyncWorkflowStepEditHandler> workflowStepEditHandler,
         Func<SlackRequestContext, IInteractiveMessageHandler> legacyInteractiveMessageHandler,
         Func<SlackRequestContext, IOptionProvider> legacyOptionProvider,
         Func<SlackRequestContext, IDialogSubmissionHandler> legacyDialogSubmissionHandler)
@@ -39,7 +37,6 @@ class SlackHandlerFactory : ISlackHandlerFactory
         _globalShortcutHandler = globalShortcutHandler;
         _viewSubmissionHandler = viewSubmissionHandler;
         _slashCommandHandler = slashCommandHandler;
-        _workflowStepEditHandler = workflowStepEditHandler;
         _legacyInteractiveMessageHandler = legacyInteractiveMessageHandler;
         _legacyOptionProvider = legacyOptionProvider;
         _legacyDialogSubmissionHandler = legacyDialogSubmissionHandler;
@@ -52,7 +49,6 @@ class SlackHandlerFactory : ISlackHandlerFactory
     public IAsyncGlobalShortcutHandler CreateGlobalShortcutHandler(SlackRequestContext context) => CreateHandler(context, _globalShortcutHandler);
     public IAsyncViewSubmissionHandler CreateViewSubmissionHandler(SlackRequestContext context) => CreateHandler(context, _viewSubmissionHandler);
     public IAsyncSlashCommandHandler CreateSlashCommandHandler(SlackRequestContext context) => CreateHandler(context, _slashCommandHandler);
-    public IAsyncWorkflowStepEditHandler CreateWorkflowStepEditHandler(SlackRequestContext context) => CreateHandler(context, _workflowStepEditHandler);
     public IInteractiveMessageHandler CreateLegacyInteractiveMessageHandler(SlackRequestContext context) => CreateHandler(context, _legacyInteractiveMessageHandler);
     public IOptionProvider CreateLegacyOptionProvider(SlackRequestContext context) => CreateHandler(context, _legacyOptionProvider);
     public IDialogSubmissionHandler CreateLegacyDialogSubmissionHandler(SlackRequestContext context) => CreateHandler(context, _legacyDialogSubmissionHandler);

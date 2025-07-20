@@ -147,14 +147,6 @@ public abstract class FactorySlackHandlerConfigurationWithExternalDependencyReso
     }
 
     [Test]
-    public void ReplaceWorkflowStepEditHandling_WithFactory()
-    {
-        ReplaceRequestHandling<IAsyncWorkflowStepEditHandler, TestAsyncWorkflowStepEditHandler>(
-            c => c.ReplaceWorkflowStepEditHandling(() => new TestAsyncWorkflowStepEditHandler(ResolveDependency<InstanceTracker>())),
-            (hf, ctx) => hf.CreateWorkflowStepEditHandler(ctx));
-    }
-
-    [Test]
     public void ReplaceLegacyInteractiveMessageHandling_WithFactory()
     {
         ReplaceRequestHandling<IInteractiveMessageHandler, TestInteractiveMessageHandler>(
@@ -267,22 +259,6 @@ public abstract class FactorySlackHandlerConfigurationWithExternalDependencyReso
         RegisterSlashCommandHandler(
             registerHandler: (c, command) => c.RegisterSlashCommandHandler(command, () => new TestSlashCommandHandler(ResolveDependency<InstanceTracker>())),
             registerAsyncHandler: (c, command) => c.RegisterAsyncSlashCommandHandler(command, () => new TestAsyncSlashCommandHandler(ResolveDependency<InstanceTracker>())));
-    }
-
-    [Test]
-    public void RegisterWorkflowStepEditHandlerFactory()
-    {
-        RegisterWorkflowStepEditHandler(
-            registerHandler: c => c.RegisterWorkflowStepEditHandler(() => new TestWorkflowStepEditHandler(ResolveDependency<InstanceTracker>())),
-            registerAsyncHandler: c => c.RegisterAsyncWorkflowStepEditHandler(() => new TestAsyncWorkflowStepEditHandler(ResolveDependency<InstanceTracker>())));
-    }
-
-    [Test]
-    public void RegisterWorkflowStepEditHandlerFactory_Keyed()
-    {
-        RegisterWorkflowStepEditHandler_Keyed(
-            registerHandler: (c, key) => c.RegisterWorkflowStepEditHandler(key, () => new TestWorkflowStepEditHandler(ResolveDependency<InstanceTracker>())),
-            registerAsyncHandler: (c, key) => c.RegisterAsyncWorkflowStepEditHandler(key, () => new TestAsyncWorkflowStepEditHandler(ResolveDependency<InstanceTracker>())));
     }
 
     [Test]

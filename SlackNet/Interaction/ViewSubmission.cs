@@ -15,13 +15,4 @@ public class ViewSubmission : InteractionRequest
     /// This should be used to ensure the correct view is being updated when updates are happening asynchronously.
     /// </summary>
     public string Hash { get; set; }
-
-    public EditedWorkflowStep WorkflowStep { get; set; }
-}
-
-public class EditedWorkflowStep
-{
-    public string WorkflowStepEditId { get; set; }
-    public string WorkflowStepId { get; set; }
-    public string StepId { get; set; }
 }

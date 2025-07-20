@@ -134,7 +134,6 @@ class SlackRequestHandler(
                 GlobalShortcut globalShortcut => HandleGlobalShortcut(requestContext, globalShortcut),
                 ViewSubmission viewSubmission => HandleViewSubmission(requestContext, viewSubmission),
                 ViewClosed viewClosed => HandleViewClosed(requestContext, viewClosed),
-                WorkflowStepEdit workflowStepEdit => HandleWorkflowStepEdit(requestContext, workflowStepEdit),
                 _ => UnrecognizedInteractionRequestType(interactionRequest)
             };
 
@@ -214,14 +213,6 @@ class SlackRequestHandler(
                 var handler = handlerFactory.CreateViewSubmissionHandler(requestContext);
                 _log.RequestHandler(handler, viewClosed, "Handling view close for {CallbackId}", viewClosed.View.CallbackId);
                 return handler.HandleClose(viewClosed, r);
-            });
-
-    private Task<SlackResult> HandleWorkflowStepEdit(SlackRequestContext requestContext, WorkflowStepEdit workflowStepEdit) =>
-        RespondAsync(r =>
-            {
-                var handler = handlerFactory.CreateWorkflowStepEditHandler(requestContext);
-                _log.RequestHandler(handler, workflowStepEdit, "Handling workflow step edit for {CallbackId}", workflowStepEdit.CallbackId);
-                return handler.Handle(workflowStepEdit, r);
             });
 
     private Task<SlackResult> UnrecognizedInteractionRequestType(InteractionRequest interactionRequest)

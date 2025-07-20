@@ -48,13 +48,4 @@ public static class HandlerAdaptor
 
     public static IAsyncSlashCommandHandler ToSlashCommandHandler(this ISlashCommandHandler handler) =>
         new SlashCommandHandlerAsyncWrapper(handler);
-
-    public static IAsyncWorkflowStepEditHandler ToWorkflowStepEditHandler(this IWorkflowStepEditHandler handler) =>
-        new WorkflowStepEditHandlerAsyncWrapper(handler);
-
-    public static IAsyncWorkflowStepEditHandler ToWorkflowStepEditHandler(this IWorkflowStepEditHandler handler, string callbackId) =>
-        new WorkflowStepEditHandlerAsyncWrapper(handler).ToWorkflowStepEditHandler(callbackId);
-
-    public static IAsyncWorkflowStepEditHandler ToWorkflowStepEditHandler(this IAsyncWorkflowStepEditHandler handler, string callbackId) =>
-        new SpecificWorkflowStepEditHandler(callbackId, handler);
 }

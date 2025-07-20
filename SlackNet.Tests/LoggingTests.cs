@@ -307,13 +307,6 @@ public class LoggingTests
                 ["sync"] = new TestViewSubmissionHandler().ToViewSubmissionHandler()
             });
 
-        var workflowStepEditHandler = new CompositeWorkflowStepEditHandler(new[]
-            {
-                new TestAsyncWorkflowStepEditHandler(),
-                new TestWorkflowStepEditHandler().ToWorkflowStepEditHandler(),
-                new TestSpecificWorkflowStepEditHandler().ToWorkflowStepEditHandler("matching")
-            });
-
         var blockOptionProvider = new SwitchingBlockOptionProvider(new TestHandlerIndex<IBlockOptionProvider>
             {
                 ["matching"] = new TestBlockOptionProvider()
@@ -386,12 +379,6 @@ public class LoggingTests
 
         _sut.RequestHandler(viewSubmissionHandler, new ViewClosed { View = new HomeViewInfo { CallbackId = "sync" } }, "Handled");
         _sut.Event.FullMessage().ShouldBe($"Handled with {typeof(TestViewSubmissionHandler).FullName}");
-
-        _sut.RequestHandler(workflowStepEditHandler, new WorkflowStepEdit { CallbackId = "other" }, "Handled");
-        _sut.Event.FullMessage().ShouldBe($"Handled with {typeof(TestAsyncWorkflowStepEditHandler).FullName}, {typeof(TestWorkflowStepEditHandler).FullName}");
-
-        _sut.RequestHandler(workflowStepEditHandler, new WorkflowStepEdit { CallbackId = "matching" }, "Handled");
-        _sut.Event.FullMessage().ShouldBe($"Handled with {typeof(TestAsyncWorkflowStepEditHandler).FullName}, {typeof(TestWorkflowStepEditHandler).FullName}, {typeof(TestSpecificWorkflowStepEditHandler).FullName}");
 
         _sut.RequestHandler(blockOptionProvider, new BlockOptionsRequest { ActionId = "other" }, "Handled");
         _sut.Event.FullMessage().ShouldBe("Handled with <none>");
@@ -510,21 +497,6 @@ public class LoggingTests
     {
         public async Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission) => new ClearViewsResponse();
         public async Task HandleClose(ViewClosed viewClosed) { }
-    }
-
-    class TestAsyncWorkflowStepEditHandler : IAsyncWorkflowStepEditHandler
-    {
-        public async Task Handle(WorkflowStepEdit workflowStepEdit, Responder respond) { }
-    }
-
-    class TestWorkflowStepEditHandler : IWorkflowStepEditHandler
-    {
-        public async Task Handle(WorkflowStepEdit workflowStepEdit) { }
-    }
-
-    class TestSpecificWorkflowStepEditHandler : IAsyncWorkflowStepEditHandler
-    {
-        public async Task Handle(WorkflowStepEdit workflowStepEdit, Responder respond) { }
     }
 
     class TestBlockOptionProvider : IBlockOptionProvider

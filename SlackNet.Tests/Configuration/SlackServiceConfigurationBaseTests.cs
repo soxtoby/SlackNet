@@ -187,14 +187,6 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
     }
 
     [Test]
-    public void ReplaceWorkflowStepEditHandling()
-    {
-        ReplaceRequestHandling(
-            (c, sp) => c.ReplaceWorkflowStepEditHandling(sp),
-            (hf, ctx) => hf.CreateWorkflowStepEditHandler(ctx));
-    }
-
-    [Test]
     public void ReplaceLegacyInteractiveMessageHandling()
     {
         ReplaceRequestHandling(
@@ -484,41 +476,6 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
     }
 
     [Test]
-    public void RegisterWorkflowStepEditHandler()
-    {
-        // Arrange
-        var keyedHandler = Substitute.For<IWorkflowStepEditHandler>();
-        var genericHandler = Substitute.For<IWorkflowStepEditHandler>();
-        var keyedAsyncHandler = Substitute.For<IAsyncWorkflowStepEditHandler>();
-        var genericAsyncHandler = Substitute.For<IAsyncWorkflowStepEditHandler>();
-        var otherShortcut = new WorkflowStepEdit { CallbackId = "other" };
-        var shortcut = new WorkflowStepEdit { CallbackId = "key" };
-        var responder = Substitute.For<Responder>();
-
-        var sut = Configure(c => c
-            .RegisterWorkflowStepEditHandler("key", keyedHandler)
-            .RegisterWorkflowStepEditHandler(genericHandler)
-            .RegisterAsyncWorkflowStepEditHandler("key", keyedAsyncHandler)
-            .RegisterAsyncWorkflowStepEditHandler(genericAsyncHandler));
-
-        // Act
-        HandleWorkflowStepEdits(sut, responder, new[] { otherShortcut, shortcut });
-
-        // Assert
-        keyedHandler.DidNotReceive().Handle(otherShortcut);
-        keyedHandler.Received().Handle(shortcut);
-
-        genericHandler.Received().Handle(otherShortcut);
-        genericHandler.Received().Handle(shortcut);
-
-        keyedAsyncHandler.DidNotReceive().Handle(otherShortcut, responder);
-        keyedAsyncHandler.Received().Handle(shortcut, responder);
-
-        genericAsyncHandler.Received().Handle(otherShortcut, responder);
-        genericAsyncHandler.Received().Handle(shortcut, responder);
-    }
-
-    [Test]
     public void RegisterInteractiveMessageHandler()
     {
         // Arrange
@@ -633,9 +590,6 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
 
     protected void HandleSlashCommands(ISlackServiceProvider services, Responder<SlashCommandResponse> responder, SlashCommand[] commands) =>
         HandleInRequest(services, (hf, ctx) => hf.CreateSlashCommandHandler(ctx), (h, c) => h.Handle(c, responder), commands);
-
-    protected void HandleWorkflowStepEdits(ISlackServiceProvider services, Responder responder, WorkflowStepEdit[] edits) =>
-        HandleInRequest(services, (hf, ctx) => hf.CreateWorkflowStepEditHandler(ctx), (h, e) => h.Handle(e, responder), edits);
 
     protected void HandleLegacyInteractiveMessages(ISlackServiceProvider services, InteractiveMessage[] messages) =>
         HandleInRequest(services, (hf, ctx) => hf.CreateLegacyInteractiveMessageHandler(ctx), (h, m) => h.Handle(m), messages);

@@ -27,7 +27,6 @@ public abstract class FactorySlackServiceConfigurationWithExternalDependencyReso
     public TConfig ReplaceGlobalShortcutHandling(Func<IAsyncGlobalShortcutHandler> handlerFactory) => ReplaceGlobalShortcutHandling(GetRequestHandlerFactory(handlerFactory));
     public TConfig ReplaceViewSubmissionHandling(Func<IAsyncViewSubmissionHandler> handlerFactory) => ReplaceViewSubmissionHandling(GetRequestHandlerFactory(handlerFactory));
     public TConfig ReplaceSlashCommandHandling(Func<IAsyncSlashCommandHandler> handlerFactory) => ReplaceSlashCommandHandling(GetRequestHandlerFactory(handlerFactory));
-    public TConfig ReplaceWorkflowStepEditHandling(Func<IAsyncWorkflowStepEditHandler> handlerFactory) => ReplaceWorkflowStepEditHandling(GetRequestHandlerFactory(handlerFactory));
     public TConfig ReplaceLegacyInteractiveMessageHandling(Func<IInteractiveMessageHandler> handlerFactory) => ReplaceLegacyInteractiveMessageHandling(GetRequestHandlerFactory(handlerFactory));
     public TConfig ReplaceLegacyOptionProviding(Func<IOptionProvider> providerFactory) => ReplaceLegacyOptionProviding(GetRequestHandlerFactory(providerFactory));
     public TConfig ReplaceLegacyDialogSubmissionHandling(Func<IDialogSubmissionHandler> handlerFactory) => ReplaceLegacyDialogSubmissionHandling(GetRequestHandlerFactory(handlerFactory));
@@ -103,20 +102,6 @@ public abstract class FactorySlackServiceConfigurationWithExternalDependencyReso
     [Obsolete(Warning.Experimental)]
     public TConfig RegisterAsyncSlashCommandHandler(string command, Func<IAsyncSlashCommandHandler> getHandler) =>
         RegisterAsyncSlashCommandHandler(command, GetRequestHandlerFactory(getHandler));
-
-    public TConfig RegisterWorkflowStepEditHandler(string callbackId, Func<IWorkflowStepEditHandler> getHandler) =>
-        RegisterWorkflowStepEditHandler(callbackId, GetRequestHandlerFactory(getHandler));
-
-    public TConfig RegisterWorkflowStepEditHandler(Func<IWorkflowStepEditHandler> getHandler) =>
-        RegisterWorkflowStepEditHandler(GetRequestHandlerFactory(getHandler));
-
-    [Obsolete(Warning.Experimental)]
-    public TConfig RegisterAsyncWorkflowStepEditHandler(string callbackId, Func<IAsyncWorkflowStepEditHandler> getHandler) =>
-        RegisterAsyncWorkflowStepEditHandler(callbackId, GetRequestHandlerFactory(getHandler));
-
-    [Obsolete(Warning.Experimental)]
-    public TConfig RegisterAsyncWorkflowStepEditHandler(Func<IAsyncWorkflowStepEditHandler> handlerFactory) =>
-        RegisterAsyncWorkflowStepEditHandler(GetRequestHandlerFactory(handlerFactory));
 
     public TConfig RegisterInteractiveMessageHandler(string actionName, Func<IInteractiveMessageHandler> getHandler) =>
         RegisterInteractiveMessageHandler(actionName, GetRequestHandlerFactory(getHandler));

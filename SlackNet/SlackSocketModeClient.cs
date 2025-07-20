@@ -160,7 +160,6 @@ public class SlackSocketModeClient : ISlackSocketModeClient
                 GlobalShortcut globalShortcut => HandleGlobalShortcut(requestContext, globalShortcut, respond),
                 ViewSubmission viewSubmission => HandleViewSubmission(requestContext, viewSubmission, respond),
                 ViewClosed viewClosed => HandleViewClosed(requestContext, viewClosed, respond),
-                WorkflowStepEdit workflowStepEdit => HandleWorkflowStepEdit(requestContext, workflowStepEdit, respond),
                 _ => Task.CompletedTask
             };
 
@@ -234,13 +233,6 @@ public class SlackSocketModeClient : ISlackSocketModeClient
         var handler = _handlerFactory.CreateViewSubmissionHandler(requestContext);
         _log.RequestHandler(handler, viewClosed, "Handling view close for {CallbackId}", viewClosed.View.CallbackId);
         await handler.HandleClose(viewClosed, Responder(respond)).ConfigureAwait(false);
-    }
-
-    private async Task HandleWorkflowStepEdit(SlackRequestContext requestContext, WorkflowStepEdit workflowStepEdit, Func<object, Task> respond)
-    {
-        var handler = _handlerFactory.CreateWorkflowStepEditHandler(requestContext);
-        _log.RequestHandler(handler, workflowStepEdit, "Handling workflow step edit for {CallbackId}", workflowStepEdit.CallbackId);
-        await handler.Handle(workflowStepEdit, Responder(respond)).ConfigureAwait(false);
     }
 
     private async Task HandleBlockOptionsRequest(SlackRequestContext requestContext, BlockOptionsRequest blockOptionsRequest, Func<object, Task> respond)

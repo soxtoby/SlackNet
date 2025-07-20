@@ -188,14 +188,6 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     }
 
     [Test]
-    public void ReplaceWorkflowStepEditHandling_WithType()
-    {
-        ReplaceRequestHandling<IAsyncWorkflowStepEditHandler, TestAsyncWorkflowStepEditHandler>(
-            c => c.ReplaceWorkflowStepEditHandling<TestAsyncWorkflowStepEditHandler>(),
-            (hf, ctx) => hf.CreateWorkflowStepEditHandler(ctx));
-    }
-
-    [Test]
     public void ReplaceLegacyInteractiveMessageHandling_WithType()
     {
         ReplaceRequestHandling<IInteractiveMessageHandler, TestInteractiveMessageHandler>(
@@ -689,82 +681,6 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     }
 
     [Test]
-    public void RegisterWorkflowStepEditHandlerType()
-    {
-        RegisterWorkflowStepEditHandler(
-            registerHandler: c => c.RegisterWorkflowStepEditHandler<TestWorkflowStepEditHandler>(),
-            registerAsyncHandler: c => c.RegisterAsyncWorkflowStepEditHandler<TestAsyncWorkflowStepEditHandler>());
-    }
-
-    protected void RegisterWorkflowStepEditHandler(
-        Action<TConfig> registerHandler,
-        Action<TConfig> registerAsyncHandler)
-    {
-        var stepEdit1 = new WorkflowStepEdit();
-        var stepEdit2 = new WorkflowStepEdit();
-        var responder = Substitute.For<Responder>();
-
-        var sut = Configure(c =>
-            {
-                registerHandler(c);
-                registerAsyncHandler(c);
-            });
-
-        // First request
-        HandleWorkflowStepEdits(sut, responder, new[] { stepEdit1 });
-
-        FirstRequestInstance<TestWorkflowStepEditHandler>().Received().Handle(stepEdit1);
-        FirstRequestInstance<TestAsyncWorkflowStepEditHandler>().Received().Handle(stepEdit1, responder);
-
-        // Second request
-        HandleWorkflowStepEdits(sut, responder, new[] { stepEdit2 });
-
-        SecondRequestInstance<TestWorkflowStepEditHandler>().Received().Handle(stepEdit2);
-        SecondRequestInstance<TestAsyncWorkflowStepEditHandler>().Received().Handle(stepEdit2, responder);
-    }
-
-    [Test]
-    public void RegisterWorkflowStepEditHandlerType_Keyed()
-    {
-        RegisterWorkflowStepEditHandler_Keyed(
-            registerHandler: (c, key) => c.RegisterWorkflowStepEditHandler<TestWorkflowStepEditHandler>(key),
-            registerAsyncHandler: (c, key) => c.RegisterAsyncWorkflowStepEditHandler<TestAsyncWorkflowStepEditHandler>(key));
-    }
-
-    protected void RegisterWorkflowStepEditHandler_Keyed(
-        Action<TConfig, string> registerHandler,
-        Action<TConfig, string> registerAsyncHandler)
-    {
-        var otherStepEdit = new WorkflowStepEdit { CallbackId = "other" };
-        var stepEdit1 = new WorkflowStepEdit { CallbackId = "key" };
-        var stepEdit2 = new WorkflowStepEdit { CallbackId = "key" };
-        var responder = Substitute.For<Responder>();
-
-        var sut = Configure(c =>
-            {
-                registerHandler(c, "key");
-                registerAsyncHandler(c, "key");
-            });
-
-        // First request
-        HandleWorkflowStepEdits(sut, responder, new[] { otherStepEdit, stepEdit1 });
-
-        var handler = FirstRequestInstance<TestWorkflowStepEditHandler>();
-        handler.DidNotReceive().Handle(otherStepEdit);
-        handler.Received().Handle(stepEdit1);
-
-        var asyncHandler = FirstRequestInstance<TestAsyncWorkflowStepEditHandler>();
-        asyncHandler.DidNotReceive().Handle(otherStepEdit, responder);
-        asyncHandler.Received().Handle(stepEdit1, responder);
-
-        // Second request
-        HandleWorkflowStepEdits(sut, responder, new[] { stepEdit2 });
-
-        SecondRequestInstance<TestWorkflowStepEditHandler>().Received().Handle(stepEdit2);
-        SecondRequestInstance<TestAsyncWorkflowStepEditHandler>().Received().Handle(stepEdit2, responder);
-    }
-
-    [Test]
     public void RegisterInteractiveMessageHandlerType()
     {
         RegisterInteractiveMessageHandler(
@@ -955,7 +871,6 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IAsyncGlobalShortcutHandler CreateGlobalShortcutHandler(SlackRequestContext context) => throw new NotImplementedException();
         public IAsyncViewSubmissionHandler CreateViewSubmissionHandler(SlackRequestContext context) => throw new NotImplementedException();
         public IAsyncSlashCommandHandler CreateSlashCommandHandler(SlackRequestContext context) => throw new NotImplementedException();
-        public IAsyncWorkflowStepEditHandler CreateWorkflowStepEditHandler(SlackRequestContext context) => throw new NotImplementedException();
         public IInteractiveMessageHandler CreateLegacyInteractiveMessageHandler(SlackRequestContext context) => throw new NotImplementedException();
         public IOptionProvider CreateLegacyOptionProvider(SlackRequestContext context) => throw new NotImplementedException();
         public IDialogSubmissionHandler CreateLegacyDialogSubmissionHandler(SlackRequestContext context) => throw new NotImplementedException();
@@ -1006,7 +921,6 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IUsersApi Users { get; }
         public IUserProfileApi UserProfile { get; }
         public IViewsApi Views { get; }
-        public IWorkflowsApi Workflows { get; }
         public Task Get(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) => throw new NotImplementedException();
         public Task<T> Get<T>(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) where T : class => throw new NotImplementedException();
         public Task Post(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) => throw new NotImplementedException();
@@ -1112,16 +1026,6 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     protected class TestAsyncSlashCommandHandler(InstanceTracker tracker) : TestHandler<IAsyncSlashCommandHandler>(tracker), IAsyncSlashCommandHandler
     {
         public Task Handle(SlashCommand command, Responder<SlashCommandResponse> respond) => Inner.Handle(command, respond);
-    }
-
-    protected class TestWorkflowStepEditHandler(InstanceTracker tracker) : TestHandler<IWorkflowStepEditHandler>(tracker), IWorkflowStepEditHandler
-    {
-        public Task Handle(WorkflowStepEdit workflowStepEdit) => Inner.Handle(workflowStepEdit);
-    }
-
-    protected class TestAsyncWorkflowStepEditHandler(InstanceTracker tracker) : TestHandler<IAsyncWorkflowStepEditHandler>(tracker), IAsyncWorkflowStepEditHandler
-    {
-        public Task Handle(WorkflowStepEdit workflowStepEdit, Responder respond) => Inner.Handle(workflowStepEdit, respond);
     }
 
     protected class TestOptionProvider(InstanceTracker tracker) : TestHandler<IOptionProvider>(tracker), IOptionProvider

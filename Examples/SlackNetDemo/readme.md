@@ -18,7 +18,7 @@ Check out the [other example projects](../) to see how to configure SlackNet wit
    - `app_home_opened` for showing app home tab.
    - `message.channels` `message.groups` `message.im` `message.mpim` for receiving messages.
 7. Add your app to any channels/groups etc. you want it to respond to. 
-8. Optionally configure the slash command and workflow step (see below).
+8. Optionally configure the slash command (see below).
 9. Run the demo.
 
 ## Basic Demos
@@ -33,14 +33,3 @@ The [echo demo](./EchoDemo.cs) handles a `/echo` slash command and sends back th
 Follow Slack's [Creating a Slash Command](https://api.slack.com/interactivity/slash-commands#creating_commands) instructions to create the slash command in your app, and make sure the command is set to `/echo`, to match up with the demo code.
 
 After this is configured and the demo is running, you should be able to type `/echo test` into Slack and receive a message saying "test".
-
-## Workflow Step Demo
-The [workflow demo](./WorkflowDemo.cs) allows you to set up a [workflow](https://api.slack.com/workflows) step that sends a predefined message to a user in Slack.
-
->  Workflows are only available to paid Slack workspaces.
-
-1. [Create a workflow step](https://api.slack.com/workflows/steps#create). You can name the step anything you like, but make sure to use the value of the `StepCallbackId` field in the [WorkflowDemo](./WorkflowDemo.cs) class as the Callback ID when you create the step.
-2. Reinstall your app to your workspace.
-3. [Set up a workflow in Slack](https://slack.com/intl/en-au/help/articles/360053571454-Set-up-a-workflow-in-Slack), choose a trigger, then add and configure your new workflow step.
-
-When the workflow is triggered while the demo is running, it should send your message to the specified user.
