@@ -29,5 +29,9 @@ public enum FileType
     /// <summary>
     /// PDF files
     /// </summary>
-    Pdfs
+    Pdfs,
+    /// <summary>
+    /// Canvas
+    /// </summary>
+    Canvas,
 }
