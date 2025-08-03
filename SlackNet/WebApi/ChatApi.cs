@@ -16,9 +16,8 @@ public interface IChatApi
     /// <remarks>See the <a href="https://api.slack.com/methods/chat.delete">Slack documentation</a> for more information.</remarks>
     /// <param name="ts">Timestamp of the message to be deleted.</param>
     /// <param name="channelId">Channel containing the message to be deleted.</param>
-    /// <param name="asUser">Pass True to delete the message as the authed user. Bot users in this context are considered authed users.</param>
     /// <param name="cancellationToken"></param>
-    Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken cancellationToken = default);
+    Task<MessageTsResponse> Delete(string ts, string channelId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Sends a /me message to a channel from the calling user.
@@ -147,12 +146,11 @@ public interface IChatApi
 
 public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : IChatApi
 {
-    public Task<MessageTsResponse> Delete(string ts, string channelId, bool asUser = false, CancellationToken cancellationToken = default) =>
+    public Task<MessageTsResponse> Delete(string ts, string channelId, CancellationToken cancellationToken = default) =>
         client.Post<MessageTsResponse>("chat.delete", new Args
             {
                 { "ts", ts },
-                { "channel", channelId },
-                { "as_user", asUser }
+                { "channel", channelId }
             }, cancellationToken);
 
     public Task<PermalinkResponse> GetPermalink(string channelId, string messageTs, CancellationToken cancellationToken = default) =>
