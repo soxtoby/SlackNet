@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace SlackNet.Blocks;
@@ -93,7 +94,15 @@ public class RichTextUserGroup() : RichTextSectionElement("usergroup")
 public class RichTextDate() : RichTextSectionElement("date")
 {
     public string Text { get; set; }
-    public string Timestamp { get; set; }
+    public long Timestamp { get; set; }
+
+    [JsonIgnore]
+    public DateTime? Date
+    {
+        get => Timestamp.ToDateTime();
+        set => Timestamp = value?.ToTimestampNumber() ?? 0;
+    }
+    
     /// <summary>
     /// See https://api.slack.com/reference/surfaces/formatting#date-formatting for more information.
     /// </summary>
