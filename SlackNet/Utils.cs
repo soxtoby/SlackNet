@@ -32,6 +32,12 @@ public static class Utils
     /// Converts a Slack timestamp number to a <see cref="DateTime"/>.
     /// </summary>
     /// <returns>If timestamp is 0, returns null, otherwise a DateTime.</returns>
+    public static DateTime? ToDateTime(this long timestamp) => ToDateTime((decimal)timestamp);
+
+    /// <summary>
+    /// Converts a Slack timestamp number to a <see cref="DateTime"/>.
+    /// </summary>
+    /// <returns>If timestamp is 0, returns null, otherwise a DateTime.</returns>
     public static DateTime? ToDateTime(this decimal timestamp) =>
         timestamp != 0
             ? DateTimeOffset.FromUnixTimeMilliseconds((long)(timestamp * 1000))
@@ -44,7 +50,10 @@ public static class Utils
     /// Do not use this for identifying messages; always use the message's Ts string.
     /// </summary>
     public static string ToTimestamp(this DateTime dateTime) =>
-        new DateTimeOffset(dateTime).ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
+        dateTime.ToTimestampNumber().ToString(CultureInfo.InvariantCulture);
+
+    public static long ToTimestampNumber(this DateTime dateTime) => 
+        new DateTimeOffset(dateTime).ToUnixTimeSeconds();
 
     /// <summary>
     /// Converts a <see cref="TimeSpan"/> to a Slack time offset, up to a specified limit.
