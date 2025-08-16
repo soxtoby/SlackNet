@@ -13,5 +13,7 @@ public class ErrorResponse
     [JsonExtensionData]
     private readonly IDictionary<string, JToken> _info = new Dictionary<string, JToken>();
     
-    public IReadOnlyDictionary<string, string> Info => _info.ToDictionary(e => e.Key, e => e.Value.ToObject<string>());
+    public IReadOnlyDictionary<string, string> Info => _info
+        .Where(i => i.Value.Type == JTokenType.String)
+        .ToDictionary(e => e.Key, e => e.Value.ToObject<string>());
 }
