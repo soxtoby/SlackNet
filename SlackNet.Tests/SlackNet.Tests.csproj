@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+	<SignAssembly>true</SignAssembly>
     <IsPackable>false</IsPackable>
     <LangVersion>12</LangVersion>
   </PropertyGroup>

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+	<SignAssembly>true</SignAssembly>
     <Authors>Simon Oxtoby</Authors>
     <Description>Easy-to-use API for writing Slack bots</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

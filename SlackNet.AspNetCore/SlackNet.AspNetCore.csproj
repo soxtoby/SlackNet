@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+	<SignAssembly>true</SignAssembly>
     <Authors>Simon Oxtoby</Authors>
     <Description>ASP.NET Core integration for receiving requests from Slack</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
