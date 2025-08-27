@@ -22,13 +22,17 @@ class SlackRequestMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        if (context.Request.Path == $"/{_configuration.RoutePrefix}/event")
+        var root = _configuration.RoutePrefix == string.Empty
+            ? string.Empty
+            : $"/{_configuration.RoutePrefix}";
+        
+        if (context.Request.Path == $"{root}/event")
             await Respond(context.Response, await _requestHandler.HandleEventRequest(context.Request).ConfigureAwait(false)).ConfigureAwait(false);
-        else if (context.Request.Path == $"/{_configuration.RoutePrefix}/action")
+        else if (context.Request.Path == $"{root}/action")
             await Respond(context.Response, await _requestHandler.HandleActionRequest(context.Request).ConfigureAwait(false)).ConfigureAwait(false);
-        else if (context.Request.Path == $"/{_configuration.RoutePrefix}/options")
+        else if (context.Request.Path == $"{root}/options")
             await Respond(context.Response, await _requestHandler.HandleOptionsRequest(context.Request).ConfigureAwait(false)).ConfigureAwait(false);
-        else if (context.Request.Path == $"/{_configuration.RoutePrefix}/command")
+        else if (context.Request.Path == $"{root}/command")
             await Respond(context.Response, await _requestHandler.HandleSlashCommandRequest(context.Request).ConfigureAwait(false)).ConfigureAwait(false);
         else
             await _next(context).ConfigureAwait(false);
