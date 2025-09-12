@@ -10,7 +10,7 @@ public interface IReactionsApi
     /// <summary>
     /// Adds a reaction (emoji) to a message.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reactions.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reactions.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="name">Reaction (emoji) name.</param>
     /// <param name="channelId">Channel where the message to add reaction to was posted.</param>
     /// <param name="ts">Timestamp of the message to add reaction to.</param>
@@ -20,7 +20,7 @@ public interface IReactionsApi
     /// <summary>
     /// Returns a list of all reactions for a single file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reactions.get">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reactions.get/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">File to get reactions for.</param>
     /// <param name="full">If true always return the complete reaction list.</param>
     /// <param name="cancellationToken"></param>
@@ -29,7 +29,7 @@ public interface IReactionsApi
     /// <summary>
     /// Returns a list of all reactions for a single file comment.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reactions.get">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reactions.get/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileCommentId">File comment to get reactions for.</param>
     /// <param name="full">If true always return the complete reaction list.</param>
     /// <param name="cancellationToken"></param>
@@ -38,7 +38,7 @@ public interface IReactionsApi
     /// <summary>
     /// Returns a list of all reactions for a single message.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reactions.get">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reactions.get/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel where the message to get reactions for was posted.</param>
     /// <param name="ts">Timestamp of the message to get reactions for.</param>
     /// <param name="full">If true always return the complete reaction list.</param>
@@ -48,7 +48,7 @@ public interface IReactionsApi
     /// <summary>
     /// Returns a list of all items (file, file comment, channel message, group message, or direct message) reacted to by a user.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reactions.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reactions.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="userId">Show reactions made by this user. Defaults to the authed user.</param>
     /// <param name="full">If true always return the complete reaction list.</param>
     /// <param name="count">Number of items to return per page.</param>
@@ -63,7 +63,7 @@ public interface IReactionsApi
     /// <summary>
     /// Removes a reaction (emoji) from a file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reactions.remove">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reactions.remove/">Slack documentation</a> for more information.</remarks>
     /// <param name="name">Reaction (emoji) name.</param>
     /// <param name="fileId">File to remove reaction from.</param>
     /// <param name="cancellationToken"></param>
@@ -72,7 +72,7 @@ public interface IReactionsApi
     /// <summary>
     /// Removes a reaction (emoji) from a file comment.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reactions.remove">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reactions.remove/">Slack documentation</a> for more information.</remarks>
     /// <param name="name">Reaction (emoji) name.</param>
     /// <param name="fileCommentId">File comment to remove reaction from.</param>
     /// <param name="cancellationToken"></param>
@@ -81,7 +81,7 @@ public interface IReactionsApi
     /// <summary>
     /// Removes a reaction (emoji) from a message.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reactions.remove">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reactions.remove/">Slack documentation</a> for more information.</remarks>
     /// <param name="name">Reaction (emoji) name.</param>
     /// <param name="channelId">Channel where the message to remove reaction from was posted.</param>
     /// <param name="ts">Timestamp of the message to remove reaction from.</param>

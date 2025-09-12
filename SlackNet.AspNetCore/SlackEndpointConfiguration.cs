@@ -55,13 +55,13 @@ public class SlackEndpointConfiguration : ISlackRequestValidationConfiguration
     }
 
     /// <summary>
-    /// Use a <a href="https://api.slack.com/apis/connections/socket">socket mode</a> client instead of ASP.NET middleware.
+    /// Use a <a href="https://docs.slack.dev/apis/events-api/using-socket-mode/">socket mode</a> client instead of ASP.NET middleware.
     /// Use this for testing your app without needing to host it publicly.
     /// </summary>
     public SlackEndpointConfiguration UseSocketMode(SocketModeConnectionOptions connectionOptions = null) => UseSocketMode(true, connectionOptions);
 
     /// <summary>
-    /// Use a <a href="https://api.slack.com/apis/connections/socket">socket mode</a> client instead of ASP.NET middleware.
+    /// Use a <a href="https://docs.slack.dev/apis/events-api/using-socket-mode/">socket mode</a> client instead of ASP.NET middleware.
     /// Use this for testing your app without needing to host it publicly.
     /// </summary>
     public SlackEndpointConfiguration UseSocketMode(bool useSocketMode = true, SocketModeConnectionOptions connectionOptions = null)

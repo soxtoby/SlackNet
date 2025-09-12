@@ -13,7 +13,7 @@ public interface IChatApi
     /// <summary>
     /// Deletes a message from a channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/chat.delete">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.delete/">Slack documentation</a> for more information.</remarks>
     /// <param name="ts">Timestamp of the message to be deleted.</param>
     /// <param name="channelId">Channel containing the message to be deleted.</param>
     /// <param name="cancellationToken"></param>
@@ -22,7 +22,7 @@ public interface IChatApi
     /// <summary>
     /// Sends a /me message to a channel from the calling user.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/chat.meMessage">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.meMessage/">Slack documentation</a> for more information.</remarks>
     /// <param name="channel">Channel to send message to. Can be a public channel, private group or IM channel. Can be an encoded ID, or a name.</param>
     /// <param name="text">Text of the message to send.</param>
     /// <param name="cancellationToken"></param>
@@ -31,7 +31,7 @@ public interface IChatApi
     /// <summary>
     /// Posts a message to a public channel, private channel, or direct message/IM channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/chat.postMessage">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.postMessage/">Slack documentation</a> for more information.</remarks>
     /// <param name="message">The message to post</param>
     /// <param name="cancellationToken"></param>
     Task<PostMessageResponse> PostMessage(Message message, CancellationToken cancellationToken = default);
@@ -39,7 +39,7 @@ public interface IChatApi
     /// <summary>
     /// Schedules a message for delivery to a public channel, private channel, or direct message/IM channel at a specified time in the future.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/chat.scheduleMessage">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.scheduleMessage/">Slack documentation</a> for more information.</remarks>
     /// <param name="message">The message to post.</param>
     /// <param name="postAt">Time in the future to send the message.</param>
     /// <param name="cancellationToken"></param>
@@ -48,7 +48,7 @@ public interface IChatApi
     /// <summary>
     /// Deletes a scheduled message.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/chat.deleteScheduledMessage">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.deleteScheduledMessage/">Slack documentation</a> for more information.</remarks>
     /// <param name="messageId">The ID of the scheduled message.</param>
     /// <param name="channelId">The channel ID of the scheduled message.</param>
     /// <param name="asUser">Pass True to delete the message as the authed user. Bot users in this context are considered authed users.</param>
@@ -58,7 +58,7 @@ public interface IChatApi
     /// <summary>
     /// Sends an ephemeral message to a user in a channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/chat.postEphemeral">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.postEphemeral/">Slack documentation</a> for more information.</remarks>
     /// <param name="userId">ID of the user who will receive the ephemeral message. The user should be in the channel specified by the channel argument.</param>
     /// <param name="message">The message to post. Not all message properties are supported by <c>PostEphemeral</c>.</param>
     /// <param name="cancellationToken"></param>
@@ -82,7 +82,7 @@ public interface IChatApi
     /// Subsequent attempts with the same <paramref name="ts"/> and <paramref name="channelId"/> values will modify the same attachments, rather than adding more.
     /// </para>
     /// <para>
-    /// See the <a href="https://api.slack.com/methods/chat.unfurl">Slack documentation</a> for more information.
+    /// See the <a href="https://docs.slack.dev/reference/methods/chat.unfurl/">Slack documentation</a> for more information.
     /// </para>
     /// </remarks>
     Task Unfurl(
@@ -113,7 +113,7 @@ public interface IChatApi
     /// Subsequent attempts with the same <paramref name="source"/> and <paramref name="unfurlId"/> values will modify the same attachments, rather than adding more.
     /// </para>
     /// <para>
-    /// See the <a href="https://api.slack.com/methods/chat.unfurl">Slack documentation</a> for more information.
+    /// See the <a href="https://docs.slack.dev/reference/methods/chat.unfurl/">Slack documentation</a> for more information.
     /// </para>
     /// </remarks>
     Task Unfurl(
@@ -131,13 +131,13 @@ public interface IChatApi
     /// </summary>
     /// <param name="messageUpdate">Message to update.</param>
     /// <param name="cancellationToken"></param>
-    /// <remarks>See the <a href="https://api.slack.com/methods/chat.update">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.update/">Slack documentation</a> for more information.</remarks>
     Task<MessageUpdateResponse> Update(MessageUpdate messageUpdate, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieve a permalink URL for a specific extant message.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/chat.getPermalink">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.getPermalink/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">The ID of the conversation or channel containing the message.</param>
     /// <param name="messageTs">A message's timestamp, uniquely identifying it within a channel.</param>
     /// <param name="cancellationToken"></param>

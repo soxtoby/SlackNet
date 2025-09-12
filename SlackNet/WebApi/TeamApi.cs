@@ -11,7 +11,7 @@ public interface ITeamApi
     /// <summary>
     /// Used to get the access logs for users on a team.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/team.accessLogs">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/team.accessLogs/">Slack documentation</a> for more information.</remarks>
     /// <param name="before">End of time range of logs to include in results (inclusive).</param>
     /// <param name="count">Number of items to return per page.</param>
     /// <param name="page">Page number of results to return.</param>
@@ -25,7 +25,7 @@ public interface ITeamApi
     /// <summary>
     /// Used to get the access logs for users on a team.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/team.accessLogs">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/team.accessLogs/">Slack documentation</a> for more information.</remarks>
     /// <param name="before">End of time range of logs to include in results (inclusive).</param>
     /// <param name="count">Number of items to return per page.</param>
     /// <param name="page">Page number of results to return.</param>
@@ -40,7 +40,7 @@ public interface ITeamApi
     /// Lists billable information for each user on the team.
     /// Currently this consists solely of whether the user is subject to billing per Slack's Fair Billing policy.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/team.billableInfo">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/team.billableInfo/">Slack documentation</a> for more information.</remarks>
     /// <param name="userId">A user to retrieve the billable information for. Defaults to all users.</param>
     /// <param name="cancellationToken"></param>
     Task<IList<BillableInfo>> BillableInfo(string userId = null, CancellationToken cancellationToken = default);
@@ -48,7 +48,7 @@ public interface ITeamApi
     /// <summary>
     /// Provides information about your team.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/team.info">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/team.info/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task<Team> Info(CancellationToken cancellationToken = default);
 
@@ -56,7 +56,7 @@ public interface ITeamApi
     /// Lists the integration activity logs for a team, including when integrations are added, modified and removed.
     /// This method can only be called by Admins.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/team.integrationLogs">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/team.integrationLogs/">Slack documentation</a> for more information.</remarks>
     /// <param name="appId">Filter logs to this Slack app. Defaults to all logs.</param>
     /// <param name="changeType">Filter logs with this change type. Defaults to all logs.</param>
     /// <param name="count">Number of items to return per page.</param>

@@ -11,7 +11,7 @@ public interface ICallsApi
     /// <summary>
     /// Registers a new Call.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/calls.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/calls.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="externalUniqueId">An ID supplied by the 3rd-party Call provider. It must be unique across all Calls from that service.</param>
     /// <param name="joinUrl">The URL required for a client to join the Call.</param>
     /// <param name="createdByUserId">The valid Slack user ID of the user who created this Call. When this method is called with a user token, the <see cref="createdByUserId"/> parameter is optional and defaults to the authed user of the token. Otherwise, the field is required.</param>
@@ -35,7 +35,7 @@ public interface ICallsApi
     /// <summary>
     /// Ends a Call.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/calls.end">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/calls.end/">Slack documentation</a> for more information.</remarks>
     /// <param name="id"><see cref="Call.Id"/> returned when registering the call using the <see cref="Add"/> method.</param>
     /// <param name="duration">Call duration.</param>
     /// <param name="cancellationToken"></param>
@@ -44,7 +44,7 @@ public interface ICallsApi
     /// <summary>
     /// Returns information about a Call.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/calls.info">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/calls.info/">Slack documentation</a> for more information.</remarks>
     /// <param name="id"><see cref="Call.Id"/> returned by the <see cref="Add"/> method.</param>
     /// <param name="cancellationToken"></param>
     Task<Call> Info(string id, CancellationToken cancellationToken = default);
@@ -52,7 +52,7 @@ public interface ICallsApi
     /// <summary>
     /// Updates information about a Call.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/calls.update">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/calls.update/">Slack documentation</a> for more information.</remarks>
     /// <param name="id"><see cref="Call.Id"/> returned by the <see cref="Add"/> method.</param>
     /// <param name="desktopAppJoinUrl">When supplied, available Slack clients will attempt to directly launch the 3rd-party Call with this URL.</param>
     /// <param name="joinUrl">The URL required for a client to join the Call.</param>

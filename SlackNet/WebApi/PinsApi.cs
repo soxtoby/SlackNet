@@ -10,7 +10,7 @@ public interface IPinsApi
     /// <summary>
     /// Pins a message to a particular channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/pins.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/pins.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel to pin the message in.</param>
     /// <param name="ts">Timestamp of the message to pin.</param>
     /// <param name="cancellationToken"></param>
@@ -19,7 +19,7 @@ public interface IPinsApi
     /// <summary>
     /// Lists the items pinned to a channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/pins.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/pins.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel to get pinned items for.</param>
     /// <param name="cancellationToken"></param>
     Task<IReadOnlyList<PinnedItem>> List(string channelId, CancellationToken cancellationToken = default);
@@ -27,7 +27,7 @@ public interface IPinsApi
     /// <summary>
     /// Un-pins a file from a channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/pins.remove">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/pins.remove/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel where the file is pinned to.</param>
     /// <param name="fileId">File to un-pin.</param>
     /// <param name="cancellationToken"></param>
@@ -36,7 +36,7 @@ public interface IPinsApi
     /// <summary>
     /// Un-pins a file comment from a channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/pins.remove">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/pins.remove/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel where the file comment is pinned to.</param>
     /// <param name="fileCommentId">File comment to un-pin.</param>
     /// <param name="cancellationToken"></param>
@@ -45,7 +45,7 @@ public interface IPinsApi
     /// <summary>
     /// Un-pins a message from a channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/pins.remove">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/pins.remove/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel where the message is pinned to.</param>
     /// <param name="ts">Timestamp of the message to un-pin.</param>
     /// <param name="cancellationToken"></param>

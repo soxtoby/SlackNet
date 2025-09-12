@@ -9,7 +9,7 @@ public interface IOAuthApi
     /// <summary>
     /// Allows you to exchange a temporary OAuth code for an API access token. This is used as part of the OAuth authentication flow.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/oauth.access">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/oauth.access/">Slack documentation</a> for more information.</remarks>
     /// <param name="clientId">Issued when you created your application.</param>
     /// <param name="clientSecret">Issued when you created your application.</param>
     /// <param name="code">The code param returned via the OAuth callback.</param>

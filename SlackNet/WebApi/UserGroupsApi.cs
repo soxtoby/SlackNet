@@ -10,7 +10,7 @@ public interface IUserGroupsApi
     /// <summary>
     /// Used to create a User Group.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/usergroups.create">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/usergroups.create/">Slack documentation</a> for more information.</remarks>
     /// <param name="name">A name for the User Group. Must be unique among User Groups.</param>
     /// <param name="channelIds">Channel IDs for which the User Group uses as a default.</param>
     /// <param name="description">A short description of the User Group.</param>
@@ -29,7 +29,7 @@ public interface IUserGroupsApi
     /// <summary>
     /// Disables an existing User Group.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/usergroups.disable">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/usergroups.disable/">Slack documentation</a> for more information.</remarks>
     /// <param name="userGroupId">ID of the User Group to disable.</param>
     /// <param name="includeCount">Include the number of users in the User Group.</param>
     /// <param name="cancellationToken"></param>
@@ -38,7 +38,7 @@ public interface IUserGroupsApi
     /// <summary>
     /// Enables a User Group which was previously disabled.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/usergroups.enable">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/usergroups.enable/">Slack documentation</a> for more information.</remarks>
     /// <param name="userGroupId">ID of the User Group to enable.</param>
     /// <param name="includeCount">Include the number of users in the User Group.</param>
     /// <param name="cancellationToken"></param>
@@ -47,7 +47,7 @@ public interface IUserGroupsApi
     /// <summary>
     /// Returns a list of all User Groups in the team. This can optionally include disabled User Groups.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/usergroups.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/usergroups.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="includeCount">Include the number of users in each User Group.</param>
     /// <param name="includeDisabled">Include disabled User Groups.</param>
     /// <param name="includeUsers">Include the list of users for each User Group.</param>
@@ -57,7 +57,7 @@ public interface IUserGroupsApi
     /// <summary>
     /// Updates the properties of an existing User Group.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/usergroups.update">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/usergroups.update/">Slack documentation</a> for more information.</remarks>
     /// <param name="userGroupId">ID of the User Group to update.</param>
     /// <param name="channelIds">Channel IDs for which the User Group uses as a default.</param>
     /// <param name="description">A short description of the User Group.</param>

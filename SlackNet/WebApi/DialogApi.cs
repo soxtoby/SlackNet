@@ -10,7 +10,7 @@ public interface IDialogApi
     /// <summary>
     /// Open a dialog with a user.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/dialog.open">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/dialog.open/">Slack documentation</a> for more information.</remarks>
     /// <param name="triggerId">Exchange a trigger to post to the user.</param>
     /// <param name="dialog">The dialog definition.</param>
     /// <param name="cancellationToken"></param>

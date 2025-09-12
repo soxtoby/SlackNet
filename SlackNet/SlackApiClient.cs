@@ -122,7 +122,7 @@ public interface ISlackApiClient
     /// <param name="webhookUrl">URL for the incoming webhook.</param>
     /// <param name="message">The message to send to the incoming webhook.</param>
     /// <param name="cancellationToken"></param>
-    /// <remarks>See the <a href="https://api.slack.com/messaging/webhooks">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/">Slack documentation</a> for more information.</remarks>
     Task PostToWebhook(string webhookUrl, Message message, CancellationToken cancellationToken = default);
 
     /// <summary>

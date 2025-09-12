@@ -9,7 +9,7 @@ public interface ITeamProfileApi
     /// <summary>
     /// Used to get the profile field definitions for this team.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/team.profile.get">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/team.profile.get/">Slack documentation</a> for more information.</remarks>
     /// <param name="visibility">Filter by visibility.</param>
     /// <param name="cancellationToken"></param>
     Task<TeamProfile> Get(ProfileFieldVisibility visibility = ProfileFieldVisibility.All, CancellationToken cancellationToken = default);

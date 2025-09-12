@@ -10,28 +10,28 @@ public interface IDndApi
     /// <summary>
     /// Ends the user's currently scheduled Do Not Disturb session immediately.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/dnd.endDnd">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/dnd.endDnd/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task EndDnd(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Ends the current user's snooze mode immediately.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/dnd.endSnooze">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/dnd.endSnooze/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task<DndResponse> EndSnooze(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Provides information about the current user's Do Not Disturb settings.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/dnd.info">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/dnd.info/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task<OwnDndResponse> Info(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Provides information about a user's current Do Not Disturb settings.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/dnd.info">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/dnd.info/">Slack documentation</a> for more information.</remarks>
     /// <param name="userId">User to fetch status for.</param>
     /// <param name="cancellationToken"></param>
     Task<DndResponse> Info(string userId, CancellationToken cancellationToken = default);
@@ -40,7 +40,7 @@ public interface IDndApi
     /// Adjusts the snooze duration for a user's Do Not Disturb settings.
     /// If a snooze session is not already active for the user, invoking this method will begin one for the specified duration.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/dnd.setSnooze">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/dnd.setSnooze/">Slack documentation</a> for more information.</remarks>
     /// <param name="numMinutes">Number of minutes, from now, to snooze until.</param>
     /// <param name="cancellationToken"></param>
     Task<SnoozeResponse> SetSnooze(int numMinutes, CancellationToken cancellationToken);
@@ -48,7 +48,7 @@ public interface IDndApi
     /// <summary>
     /// Provides information about the current Do Not Disturb settings for users of a Slack team.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/dnd.teamInfo">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/dnd.teamInfo/">Slack documentation</a> for more information.</remarks>
     /// <param name="userIds">List of users to fetch Do Not Disturb status for (defaults to entire team).</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Mapping of user to DnD status.</returns>

@@ -10,7 +10,7 @@ public interface IUserGroupUsersApi
     /// <summary>
     /// Returns a list of all users within a User Group.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/usergroups.users.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/usergroups.users.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="userGroupId">ID of the User Group to update.</param>
     /// <param name="includeDisabled">Allow results that involve disabled User Groups.</param>
     /// <param name="cancellationToken"></param>
@@ -20,7 +20,7 @@ public interface IUserGroupUsersApi
     /// Updates the list of users that belong to a User Group.
     /// This method replaces all users in a User Group with the list of users provided in the <paramref name="userIds"/> parameter.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/usergroups.users.update">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/usergroups.users.update/">Slack documentation</a> for more information.</remarks>
     /// <param name="userGroupId">ID of the User Group to update.</param>
     /// <param name="userIds">User IDs that represent the entire list of users for the User Group.</param>
     /// <param name="includeCount">Include the number of users in the User Group.</param>

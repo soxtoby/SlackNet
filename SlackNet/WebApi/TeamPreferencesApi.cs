@@ -9,7 +9,7 @@ public interface ITeamPreferencesApi
     /// <summary>
     /// Retrieve a list of a workspace's team preferences.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/team.preferences.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/team.preferences.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task<TeamPreferences> List(CancellationToken cancellationToken = default);
 }

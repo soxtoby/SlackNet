@@ -11,7 +11,7 @@ public interface ICanvasesApi
     /// <summary>
     /// Create canvas for a user.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/canvases.create">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/canvases.create/">Slack documentation</a> for more information.</remarks>
     /// <param name="title">Title of the newly created canvas.</param>
     /// <param name="documentContent">Structure describing the type and value of the content to create.</param>
     /// <param name="channelId">Channel ID of the channel the canvas will be tabbed in. This is a required field for free teams.</param>
@@ -22,7 +22,7 @@ public interface ICanvasesApi
     /// <summary>
     /// Deletes a canvas.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/canvases.delete">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/canvases.delete/">Slack documentation</a> for more information.</remarks>
     /// <param name="canvasId">ID of the canvas.</param>
     /// <param name="cancellationToken"></param>
     Task Delete(string canvasId, CancellationToken cancellationToken = default);
@@ -30,7 +30,7 @@ public interface ICanvasesApi
     /// <summary>
     /// Remove access to a canvas for specified entities.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/canvases.access.delete">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/canvases.access.delete/">Slack documentation</a> for more information.</remarks>
     /// <param name="canvasId">ID of the canvas.</param>
     /// <param name="channelIds">List of channels you wish to update access for.</param>
     /// <param name="userIds">.List of users you wish to update access for</param>
@@ -48,7 +48,7 @@ public interface ICanvasesApi
     /// <summary>
     /// Find sections matching the provided criteria.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/canvases.sections.lookup">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/canvases.sections.lookup/">Slack documentation</a> for more information.</remarks>
     /// <param name="canvasId">ID of the canvas.</param>
     /// <param name="criteria">Filtering criteria.</param>
     /// <param name="cancellationToken"></param>
@@ -57,7 +57,7 @@ public interface ICanvasesApi
     /// <summary>
     /// Sets the access level to a canvas for specified entities.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/canvases.acccess.set">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/canvases.acccess.set/">Slack documentation</a> for more information.</remarks>
     /// <param name="accessLevel">Desired level of access.</param>
     /// <param name="canvasId">ID of the canvas.</param>
     /// <param name="channelIds">List of channels you wish to update access for. Can only be used if <see cref="userIds"/> is not provided.</param>

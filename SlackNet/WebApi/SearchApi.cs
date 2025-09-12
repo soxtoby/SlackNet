@@ -9,7 +9,7 @@ public interface ISearchApi
     /// <summary>
     /// Allows users and applications to search both messages and files in a single call.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/search.all">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/search.all/">Slack documentation</a> for more information.</remarks>
     /// <param name="query">Search query. May contains booleans, etc.</param>
     /// <param name="sort">Return matches sorted by either score or timestamp.</param>
     /// <param name="sortDirection">Change sort direction to ascending or descending</param>
@@ -30,7 +30,7 @@ public interface ISearchApi
     /// <summary>
     /// Returns files matching a search query.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/search.files">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/search.files/">Slack documentation</a> for more information.</remarks>
     /// <param name="query">Search query. May contains booleans, etc.</param>
     /// <param name="sort">Return matches sorted by either score or timestamp.</param>
     /// <param name="sortDirection">Change sort direction to ascending or descending</param>
@@ -51,7 +51,7 @@ public interface ISearchApi
     /// <summary>
     /// Returns messages matching a search query.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/search.messages">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/search.messages/">Slack documentation</a> for more information.</remarks>
     /// <param name="query">Search query. May contains booleans, etc.</param>
     /// <param name="sort">Return matches sorted by either score or timestamp.</param>
     /// <param name="sortDirection">Change sort direction to ascending or descending</param>

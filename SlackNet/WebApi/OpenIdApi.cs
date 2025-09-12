@@ -8,9 +8,9 @@ public interface IOpenIdApi
 {
     /// <summary>
     /// Exchanges a temporary OAuth verifier code for an access token for Sign in with Slack.
-    /// See https://api.slack.com/methods/openid.connect.token for more information.
+    /// See https://docs.slack.dev/reference/methods/openid.connect.token for more information.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/openid.connect.token">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/openid.connect.token/">Slack documentation</a> for more information.</remarks>
     /// <param name="clientId">Issued when you created your application.</param>
     /// <param name="clientSecret">Issued when you created your application.</param>
     /// <param name="code">The code param returned via the OAuth callback.</param>
@@ -32,11 +32,11 @@ public interface IOpenIdApi
 
     /// <summary>
     /// Get the identity of a user who has authorized Sign in with Slack.
-    /// See https://api.slack.com/methods/openid.connect.userInfo for more information.
+    /// See https://docs.slack.dev/reference/methods/openid.connect.userInfo for more information.
     /// Note: that this method uses an Authentication token passed in the header.
     /// Use <c>SlackApiClient.WithAccessToken</c> to specify a token.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/openid.connect.userInfo">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/openid.connect.userInfo/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task<OpenIdUserInfoResponse> UserInfo(CancellationToken cancellationToken);
 }

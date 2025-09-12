@@ -11,7 +11,7 @@ public interface IAppsConnectionsApi
     /// This API method uses an app-level token to generate a dynamic WebSocket URL.
     /// Use it with your app in Socket Mode to receive events and interactive feature payloads to the URL, rather than a public HTTP Request URL.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/apps.connections.open">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/apps.connections.open/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task<ConnectionOpenResponse> Open(CancellationToken cancellationToken = default);
 }

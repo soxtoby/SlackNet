@@ -11,7 +11,7 @@ public interface IRtmApi
     /// Begins a Real Time Messaging API session and reserves your application a specific URL with which to connect via websocket.
     /// Unlike <see cref="RtmApi.Start"/>, this method is focused only on connecting to the RTM API.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/rtm.connect">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/rtm.connect/">Slack documentation</a> for more information.</remarks>
     /// <param name="manualPresenceSubscription">Only deliver presence events when requested by subscription.</param>
     /// <param name="batchPresenceAware">Group presence change notices in <see cref="PresenceChange"/> events when possible.</param>
     /// <param name="cancellationToken"></param>
@@ -22,7 +22,7 @@ public interface IRtmApi
     /// This method also returns a smorgasbord of data about the team, its channels, and members. Some times more information than can be provided in a timely or helpful manner.
     /// Please use <see cref="RtmApi.Connect"/> instead, especially when connecting on behalf of an Enterprise Grid customer.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/rtm.start">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/rtm.start/">Slack documentation</a> for more information.</remarks>
     /// <param name="simpleLatest">Return timestamp only for latest message object of each channel (improves performance).</param>
     /// <param name="noUnreads">Skip unread counts for each channel (improves performance).</param>
     /// <param name="mpimAware">Returns MPIMs to the client in the API response.</param>

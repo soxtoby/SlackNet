@@ -11,7 +11,7 @@ public interface IAssistantThreadsApi
     /// <summary>
     /// Set the status for an AI assistant thread.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/assistant.threads.setStatus">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/assistant.threads.setStatus/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel ID containing the assistant thread.</param>
     /// <param name="threadTs">Message timestamp of the thread of where to set the status.</param>
     /// <param name="status">Status of the specified bot user, e.g. "is thinking..."</param>
@@ -21,7 +21,7 @@ public interface IAssistantThreadsApi
     /// <summary>
     /// Set suggested prompts for the given assistant thread.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/assistant.threads.setSuggestedPrompts">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/assistant.threads.setSuggestedPrompts/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel ID containing the assistant thread.</param>
     /// <param name="threadTs">Message timestamp of the thread to set suggested prompts for.</param>
     /// <param name="prompts">Each prompt should be supplied with its <see cref="AssistantPrompt.Title"/> and <see cref="AssistantPrompt.Message"/> properties.</param>
@@ -32,7 +32,7 @@ public interface IAssistantThreadsApi
     /// <summary>
     /// Set the title for the given assistant thread.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/assistant.threads.setTitle">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/assistant.threads.setTitle/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel ID containing the assistant thread.</param>
     /// <param name="threadTs">Message timestamp of the thread to set suggested prompts for.</param>
     /// <param name="title">The title to use for the thread.</param>

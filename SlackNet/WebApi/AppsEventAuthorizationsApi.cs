@@ -10,7 +10,7 @@ public interface IAppsEventAuthorizationsApi
     /// <summary>
     /// Get a list of authorizations for the given event context. Should always be used with app token type.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/apps.event.authorizations.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/apps.event.authorizations.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="eventContext">The <see cref="EventCallback.EventContext"/> from an event.</param>
     /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn't been reached.</param>
     /// <param name="cursor">

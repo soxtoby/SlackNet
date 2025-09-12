@@ -9,7 +9,7 @@ public interface IBookmarksApi
     /// <summary>
     /// Add bookmark to a channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/bookmarks.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/bookmarks.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel to add bookmark in.</param>
     /// <param name="title">Title for the bookmark.</param>
     /// <param name="type">Type of the bookmark.</param>
@@ -31,7 +31,7 @@ public interface IBookmarksApi
     /// <summary>
     /// Edit bookmark.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/bookmarks.edit">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/bookmarks.edit/">Slack documentation</a> for more information.</remarks>
     /// <param name="bookmarkId">Bookmark to update.</param>
     /// <param name="channelId">Channel to update bookmark in.</param>
     /// <param name="emoji">Emoji tag to apply to the link.</param>
@@ -49,7 +49,7 @@ public interface IBookmarksApi
     /// <summary>
     /// List bookmarks for the channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/bookmarks.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/bookmarks.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Channel to list bookmarks in.</param>
     /// <param name="cancellationToken"></param>
     Task<BookmarkListResponse> List(string channelId, CancellationToken cancellationToken = default);
@@ -57,7 +57,7 @@ public interface IBookmarksApi
     /// <summary>
     /// Remove bookmark from the channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/bookmarks.remove">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/bookmarks.remove/">Slack documentation</a> for more information.</remarks>
     /// <param name="bookmarkId">Bookmark to remove.</param>
     /// <param name="channelId">Channel to remove bookmark from.</param>
     /// <param name="cancellationToken"></param>

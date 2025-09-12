@@ -12,7 +12,7 @@ public interface IAssistantSearchApi
     /// <summary>
     /// Searches messages across your Slack organization—perfect for broad, specific, and real-time data retrieval.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/assistant.search.context">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/assistant.search.context/">Slack documentation</a> for more information.</remarks>
     /// <param name="query">User prompt or search query.</param>
     /// <param name="actionToken">Send <see cref="MessageEvent.ActionToken"/> as received in a <see cref="MessageEvent"/>.</param>
     /// <param name="channelTypes">Mix and match channel types by providing a list of any combination of channel types.</param>

@@ -10,7 +10,7 @@ public interface IFileCommentsApi
     /// Delete an existing comment on a file.
     /// Only the original author of the comment or a Team Administrator may delete a file comment.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.comments.delete">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.comments.delete/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">File to delete a comment from.</param>
     /// <param name="commentId">The comment to delete.</param>
     /// <param name="cancellationToken"></param>

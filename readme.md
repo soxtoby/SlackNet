@@ -1,7 +1,7 @@
 # SlackNet
 An easy-to-use and comprehensive API for writing Slack apps in .NET.
 
-This project builds on the [Slack API](https://api.slack.com/). You should [read through Slack's documentation](https://api.slack.com/start) to get an understanding of how Slack apps work and what you can do with them before using SlackNet.
+This project builds on the [Slack API](https://docs.slack.dev/apis/). You should [read through Slack's documentation](https://docs.slack.dev/) to get an understanding of how Slack apps work and what you can do with them before using SlackNet.
 
 - [Getting Started](#getting-started)
   - [SlackNet](#slacknet)
@@ -28,7 +28,7 @@ var api = new SlackServiceBuilder()
     .UseApiToken("<your bot or user OAuth token here>")
     .GetApiClient();
 ```
-then call any of Slack's [many API methods](https://api.slack.com/methods):
+then call any of Slack's [many API methods](https://docs.slack.dev/reference/methods/):
 ```c#
 await api.Chat.PostMessage(new Message { Text = "Hello, Slack!", Channel = "#general" });
 ```

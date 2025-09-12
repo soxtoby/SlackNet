@@ -15,7 +15,7 @@ public interface IFilesApi
     /// <summary>
     /// Deletes a file from your team.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.delete">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.delete/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">ID of file to delete.</param>
     /// <param name="cancellationToken"></param>
     Task Delete(string fileId, CancellationToken cancellationToken = default);
@@ -23,7 +23,7 @@ public interface IFilesApi
     /// <summary>
     /// Returns information about a file in your team.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.info">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.info/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">Specify a file by providing its ID.</param>
     /// <param name="count">Number of comments to return per page.</param>
     /// <param name="page">Page number of comments to return.</param>
@@ -37,7 +37,7 @@ public interface IFilesApi
     /// <summary>
     /// Returns a list of files within the team. It can be filtered and sliced in various ways.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="userId">Filter files created by a single user.</param>
     /// <param name="channelId">Filter files appearing in a specific channel, indicated by its ID.</param>
     /// <param name="tsFrom">Filter files created after this timestamp (inclusive).</param>
@@ -69,7 +69,7 @@ public interface IFilesApi
     /// <summary>
     /// Disables public/external sharing for a file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.revokePublicURL">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.revokePublicURL/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">File to revoke</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> RevokePublicUrl(string fileId, CancellationToken cancellationToken = default);
@@ -77,7 +77,7 @@ public interface IFilesApi
     /// <summary>
     /// Enables public/external sharing for a file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.sharedPublicURL">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.sharedPublicURL/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">File to share.</param>
     /// <param name="cancellationToken"></param>
     Task<FileAndCommentsResponse> SharedPublicUrl(string fileId, CancellationToken cancellationToken = default);
@@ -85,11 +85,11 @@ public interface IFilesApi
     /// <summary>
     /// Allows you to create or upload an existing file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.upload">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.upload/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileContents">Contents of text file.</param>
-    /// <param name="fileType">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="fileType">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="fileName">Filename of file.</param>
-    /// <param name="title">Title of file</param>
+    /// <param name="title">Title of file.</param>
     /// <param name="initialComment">Initial comment to add to file.</param>
     /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload this file as a reply. Never use a reply's <c>Ts</c> value; use its parent instead.</param>
     /// <param name="channels">List of channel names or IDs where the file will be shared.</param>
@@ -109,9 +109,9 @@ public interface IFilesApi
     /// <summary>
     /// Allows you to create or upload an existing file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.upload">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.upload/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileContents">Contents of file.</param>
-    /// <param name="fileType">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="fileType">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="fileName">Filename of file.</param>
     /// <param name="title">Title of file</param>
     /// <param name="initialComment">Initial comment to add to file.</param>
@@ -133,9 +133,9 @@ public interface IFilesApi
     /// <summary>
     /// Allows you to create or upload an existing file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.upload">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.upload/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileContents">Contents of file.</param>
-    /// <param name="fileType">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="fileType">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="fileName">Filename of file.</param>
     /// <param name="title">Title of file</param>
     /// <param name="initialComment">Initial comment to add to file.</param>
@@ -159,9 +159,9 @@ public interface IFilesApi
     /// Used for creating a "file" from a long message/paste and forces "editable" mode.
     /// There is a 1 megabyte file size limit for files uploaded as snippets.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.upload">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.upload/">Slack documentation</a> for more information.</remarks>
     /// <param name="snippet">Contents file text file.</param>
-    /// <param name="fileType">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="fileType">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="fileName">Filename of file.</param>
     /// <param name="title">Title of file</param>
     /// <param name="initialComment">Initial comment to add to file.</param>
@@ -183,7 +183,7 @@ public interface IFilesApi
     /// <summary>
     /// Upload a single external file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/messaging/files#uploading_files">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/messaging/working-with-files/#uploading_files">Slack documentation</a> for more information.</remarks>
     /// <param name="file">An external file to upload.</param>
     /// <param name="channelId">Channel ID where the file will be shared. If not specified the file will be private.</param>
     /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload this file as a reply. Never use a reply's ts value; use its parent instead.</param>
@@ -199,7 +199,7 @@ public interface IFilesApi
     /// <summary>
     /// Uploads external files.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/messaging/files#uploading_files">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/messaging/working-with-files/#uploading_files">Slack documentation</a> for more information.</remarks>
     /// <param name="files">List of external files to upload.</param>
     /// <param name="channelId">Channel ID where the files will be shared. If not specified the files will be private.</param>
     /// <param name="threadTs">Provide another message's <see cref="MessageEventBase.Ts"/> value to upload these files as a reply. Never use a reply's <see cref="MessageEventBase.Ts"/> value; use its parent instead.</param>
@@ -215,7 +215,7 @@ public interface IFilesApi
     /// <summary>
     /// Gets a URL for an edge external file upload.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.getUploadURLExternal">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.getUploadURLExternal/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileName">Name of the file being uploaded.</param>
     /// <param name="length">Size in bytes of the file being uploaded.</param>
     /// <param name="altText">Description of image for screen-reader.</param>
@@ -233,7 +233,7 @@ public interface IFilesApi
     /// <summary>
     /// Finishes an upload started with <see cref="GetUploadUrlExternal"/>.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.completeUploadExternal">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.completeUploadExternal/">Slack documentation</a> for more information.</remarks>
     /// <param name="files">List of file ids and their corresponding (optional) titles.</param>
     /// <param name="channelId">Channel ID where the files will be shared. If not specified the files will be private.</param>
     /// <param name="initialComment">The message text introducing the files in specified channels.</param>

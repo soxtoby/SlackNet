@@ -8,9 +8,9 @@ public interface IOAuthV2Api
 {
     /// <summary>
     /// Exchanges a temporary OAuth verifier code for an access token.
-    /// See https://api.slack.com/methods/oauth.v2.access for more information.
+    /// See https://docs.slack.dev/reference/methods/oauth.v2.access for more information.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/oauth.v2.access">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/oauth.v2.access/">Slack documentation</a> for more information.</remarks>
     /// <param name="clientId">Issued when you created your application.</param>
     /// <param name="clientSecret">Issued when you created your application.</param>
     /// <param name="code">The code param returned via the OAuth callback.</param>

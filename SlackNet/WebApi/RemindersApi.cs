@@ -11,7 +11,7 @@ public interface IRemindersApi
     /// <summary>
     /// Creates a reminder.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reminders.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reminders.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="text">The content of the reminder.</param>
     /// <param name="time">When this reminder should happen (up to five years from now).</param>
     /// <param name="userId">The user who will receive the reminder. If no user is specified, the reminder will go to user who created it.</param>
@@ -21,7 +21,7 @@ public interface IRemindersApi
     /// <summary>
     /// Creates a reminder.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reminders.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reminders.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="text">The content of the reminder.</param>
     /// <param name="time">When this reminder should happen (up to 24 hours from now).</param>
     /// <param name="userId">The user who will receive the reminder. If no user is specified, the reminder will go to user who created it.</param>
@@ -31,7 +31,7 @@ public interface IRemindersApi
     /// <summary>
     /// Creates a reminder.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reminders.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reminders.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="text">The content of the reminder.</param>
     /// <param name="time">
     /// When this reminder should happen: the Unix timestamp (up to five years from now),
@@ -45,7 +45,7 @@ public interface IRemindersApi
     /// <summary>
     /// Completes a reminder.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reminders.complete">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reminders.complete/">Slack documentation</a> for more information.</remarks>
     /// <param name="reminderId">The ID of the reminder to be marked as complete.</param>
     /// <param name="cancellationToken"></param>
     Task Complete(string reminderId, CancellationToken cancellationToken = default);
@@ -53,7 +53,7 @@ public interface IRemindersApi
     /// <summary>
     /// Deletes a reminder.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reminders.delete">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reminders.delete/">Slack documentation</a> for more information.</remarks>
     /// <param name="reminderId">The ID of the reminder.</param>
     /// <param name="cancellationToken"></param>
     Task Delete(string reminderId, CancellationToken cancellationToken);
@@ -61,7 +61,7 @@ public interface IRemindersApi
     /// <summary>
     /// Returns information about a reminder.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reminders.info">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reminders.info/">Slack documentation</a> for more information.</remarks>
     /// <param name="reminderId">The ID of the reminder.</param>
     /// <param name="cancellationToken"></param>
     Task<Reminder> Info(string reminderId, CancellationToken cancellationToken = default);
@@ -69,7 +69,7 @@ public interface IRemindersApi
     /// <summary>
     /// Lists all reminders created by or for the user.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/reminders.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/reminders.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task<IReadOnlyList<Reminder>> List(CancellationToken cancellationToken = default);
 }

@@ -11,7 +11,7 @@ namespace SlackNet.Blocks;
 /// Use this block to include user-defined formatted text in your Block Kit payload.
 /// While it is possible to format text with <see cref="Markdown"/>, <see cref="RichTextBlock"/> is strongly preferred and allows greater flexibility.
 /// </summary>
-/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text">Slack documentation</a> for more information.</remarks>
+/// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/blocks/#rich_text">Slack documentation</a> for more information.</remarks>
 [SlackType("rich_text")]
 public class RichTextBlock() : Block("rich_text")
 {
@@ -26,7 +26,7 @@ public abstract class RichTextElement(string type)
 /// <summary>
 /// Section element.
 /// </summary>
-/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_section">Slack documentation</a> for more information.</remarks>
+/// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/blocks/#rich_text_section">Slack documentation</a> for more information.</remarks>
 public class RichTextSection() : RichTextElement("rich_text_section")
 {
     public IList<RichTextSectionElement> Elements { get; set; } = [];
@@ -104,7 +104,7 @@ public class RichTextDate() : RichTextSectionElement("date")
     }
     
     /// <summary>
-    /// See https://api.slack.com/reference/surfaces/formatting#date-formatting for more information.
+    /// See the <a href="https://docs.slack.dev/messaging/formatting-message-text/#date-formatting">Slack documentation</a> for more information.
     /// </summary>
     public string Format { get; set; }
     public RichTextStyle Style { get; set; } = new();
@@ -120,7 +120,7 @@ public class RichTextBroadcast() : RichTextSectionElement("broadcast")
 /// <summary>
 /// List element.
 /// </summary>
-/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_list">Slack documentation</a> for more information.</remarks>
+/// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/blocks/#rich_text_list">Slack documentation</a> for more information.</remarks>
 public class RichTextList() : RichTextElement("rich_text_list")
 {
     /// <summary>
@@ -158,7 +158,7 @@ public enum RichTextListStyle
 /// <summary>
 /// Quote element.
 /// </summary>
-/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_quote">Slack documentation</a> for more information.</remarks>
+/// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/blocks/#rich_text_quote">Slack documentation</a> for more information.</remarks>
 public class RichTextQuote() : RichTextElement("rich_text_quote")
 {
     /// <summary>
@@ -175,7 +175,7 @@ public class RichTextQuote() : RichTextElement("rich_text_quote")
 /// <summary>
 /// Preformatted code block element.
 /// </summary>
-/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#rich_text_preformatted">Slack documentation</a> for more information.</remarks>
+/// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/blocks/#rich_text_preformatted">Slack documentation</a> for more information.</remarks>
 public class RichTextPreformatted() : RichTextElement("rich_text_preformatted")
 {
     /// <summary>

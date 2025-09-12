@@ -10,7 +10,7 @@ public interface IApiApi
     /// <summary>
     /// Helps you test your calling code.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/api.test">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/api.test/">Slack documentation</a> for more information.</remarks>
     /// <param name="error">Error response to return.</param>
     /// <param name="args">Example properties to return.</param>
     /// <param name="cancellationToken"></param>

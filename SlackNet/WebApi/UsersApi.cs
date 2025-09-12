@@ -14,7 +14,7 @@ public interface IUsersApi
     /// <summary>
     /// Returns a list of all channel-like conversations accessible to the authenticated user or app.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.conversations">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.conversations/">Slack documentation</a> for more information.</remarks>
     /// <param name="excludeArchived">Set to True to exclude archived channels from the list.</param>
     /// <param name="limit">The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the list hasn't been reached. Must be an integer no larger than 1000.</param>
     /// <param name="types">Types of conversations to include. Default is <see cref="ConversationType.PublicChannel"/>.</param>
@@ -31,14 +31,14 @@ public interface IUsersApi
     /// Allows the user to delete their profile image. It will clear whatever image is currently set.
     /// To upload a new profile image, use the companion method <c>SetPhoto</c>.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.deletePhoto">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.deletePhoto/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task DeletePhoto(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Lets you find out information about a user's presence.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.getPresence">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.getPresence/">Slack documentation</a> for more information.</remarks>
     /// <param name="userId">User to get presence info on. Defaults to the authed user.</param>
     /// <param name="cancellationToken"></param>
     Task<Presence> GetPresence(string userId = null, CancellationToken cancellationToken = default);
@@ -48,14 +48,14 @@ public interface IUsersApi
     /// The returned fields depend on any additional authorization scopes you've requested.
     /// This method may only be used by tokens with the identity.basic scope, as provided in the Sign in with Slack process.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.identity">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.identity/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task<IdentityResponse> Identity(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns information about a team member.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.info">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.info/">Slack documentation</a> for more information.</remarks>
     /// <param name="userId">User to get info on.</param>
     /// <param name="includeLocale">Set this to true to receive the locale for this user.</param>
     /// <param name="cancellationToken"></param>
@@ -65,7 +65,7 @@ public interface IUsersApi
     /// Returns a list of all users in the team.
     /// This includes deleted/deactivated users.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="cursor">
     /// Paginate through collections of data by setting the cursor parameter to a <see cref="ResponseMetadata.NextCursor"/> property
     /// returned by a previous request's <see cref="UserListResponse.ResponseMetadata"/>.
@@ -79,7 +79,7 @@ public interface IUsersApi
     /// <summary>
     /// Find a user with an email address.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.lookupByEmail">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.lookupByEmail/">Slack documentation</a> for more information.</remarks>
     /// <param name="email">An email address belonging to a user in the workspace.</param>
     /// <param name="cancellationToken"></param>
     Task<User> LookupByEmail(string email, CancellationToken cancellationToken = default);
@@ -87,7 +87,7 @@ public interface IUsersApi
     /// <summary>
     /// Look up an email address to see if someone is discoverable on Slack.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.discoverableContacts.lookup">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.discoverableContacts.lookup/">Slack documentation</a> for more information.</remarks>
     /// <param name="email">The email address to look up.</param>
     /// <param name="cancellationToken"></param>
     Task<bool> LookupDiscoverableContact(string email, CancellationToken cancellationToken = default);
@@ -99,7 +99,7 @@ public interface IUsersApi
     /// Please limit your images to a maximum size of 1024 by 1024 pixels. 512x512 pixels is the minimum.
     /// To remove a profile image, use the companion method <see cref="UsersApi.DeletePhoto"/>.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.setPhoto">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.setPhoto/">Slack documentation</a> for more information.</remarks>
     /// <param name="imageContent">Image file contents.</param>
     /// <param name="contentType">MIME type of image file, such as image/gif, image/jpeg, image/png, etc.</param>
     /// <param name="fileName">Image file name.</param>
@@ -116,7 +116,7 @@ public interface IUsersApi
     /// Please limit your images to a maximum size of 1024 by 1024 pixels. 512x512 pixels is the minimum.
     /// To remove a profile image, use the companion method <see cref="UsersApi.DeletePhoto"/>.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.setPhoto">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.setPhoto/">Slack documentation</a> for more information.</remarks>
     /// <param name="image">Image file.</param>
     /// <param name="contentType">MIME type of image file, such as image/gif, image/jpeg, image/png, etc.</param>
     /// <param name="fileName">Image file name.</param>
@@ -129,7 +129,7 @@ public interface IUsersApi
     /// <summary>
     /// Lets you set the calling user's manual presence.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.setPresence">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.setPresence/">Slack documentation</a> for more information.</remarks>
     /// <param name="presence">User's presence.</param>
     /// <param name="cancellationToken"></param>
     [Obsolete("Use SetPresence with RequestPresence enum instead")]
@@ -138,7 +138,7 @@ public interface IUsersApi
     /// <summary>
     /// Lets you set the calling user's manual presence.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/users.setPresence">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/users.setPresence/">Slack documentation</a> for more information.</remarks>
     /// <param name="presence">User's presence.</param>
     /// <param name="cancellationToken"></param>
     Task SetPresence(RequestPresence presence, CancellationToken cancellationToken = default);

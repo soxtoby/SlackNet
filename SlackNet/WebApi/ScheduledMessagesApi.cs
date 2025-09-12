@@ -9,7 +9,7 @@ public interface IScheduledMessagesApi
     /// <summary>
     /// Returns a list of pending scheduled messages.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/chat.scheduledMessages.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.scheduledMessages.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">The channel of the scheduled messages.</param>
     /// <param name="latestTs">The latest value in the time range.</param>
     /// <param name="oldestTs">The oldest value in the time range.</param>

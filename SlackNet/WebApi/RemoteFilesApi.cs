@@ -13,11 +13,11 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Adds a file from a remote service.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="externalUrl">URL of the remote file.</param>
     /// <param name="title">Title of the file being shared.</param>
-    /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="filetype">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> Add(
@@ -32,12 +32,12 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Adds a file from a remote service.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="externalUrl">URL of the remote file.</param>
     /// <param name="title">Title of the file being shared.</param>
     /// <param name="previewImage">Preview of the document.</param>
-    /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="filetype">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> Add(
@@ -53,12 +53,12 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Adds a file from a remote service.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="externalUrl">URL of the remote file.</param>
     /// <param name="title">Title of the file being shared.</param>
     /// <param name="previewImage">Preview of the document.</param>
-    /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="filetype">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> Add(
@@ -74,7 +74,7 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Retrieve information about a remote file added to Slack.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.info">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.info/">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> InfoByExternalId(string externalId, CancellationToken cancellationToken = default);
@@ -82,7 +82,7 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Retrieve information about a remote file added to Slack.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.info">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.info/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">Specify a file by providing its ID.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> InfoByFileId(string fileId, CancellationToken cancellationToken = default);
@@ -90,7 +90,7 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Lists remote files visible to the token that calls it.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="channelId">Filter files appearing in a specific channel, indicated by its ID.</param>
     /// <param name="limit">The maximum number of items to return.</param>
     /// <param name="tsFrom">Filter files created after this timestamp (inclusive).</param>
@@ -113,7 +113,7 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Removes a remote file from Slack. It does not delete the file from its external host.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.remove">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.remove/">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="cancellationToken"></param>
     Task RemoveByExternalId(string externalId, CancellationToken cancellationToken = default);
@@ -121,7 +121,7 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Removes a remote file from Slack. It does not delete the file from its external host.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.remove">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.remove/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">Specify a file by providing its ID.</param>
     /// <param name="cancellationToken"></param>
     Task RemoveByFileId(string fileId, CancellationToken cancellationToken = default);
@@ -129,7 +129,7 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Share a remote file into a channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.share">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.share/">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="channelIds">List of channel IDs where the file will be shared.</param>
     /// <param name="cancellationToken"></param>
@@ -138,7 +138,7 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Share a remote file into a channel.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.share">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.share/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">Specify a file by providing its ID.</param>
     /// <param name="channelIds">List of channel IDs where the file will be shared.</param>
     /// <param name="cancellationToken"></param>
@@ -147,11 +147,11 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Updates an existing remote file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.update/">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="externalUrl">URL of the remote file.</param>
     /// <param name="title">Title of the file being shared.</param>
-    /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="filetype">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> UpdateByExternalId(
@@ -166,11 +166,11 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Updates an existing remote file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.update/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">Specify a file by providing its ID.</param>
     /// <param name="externalUrl">URL of the remote file.</param>
     /// <param name="title">Title of the file being shared.</param>
-    /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="filetype">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> UpdateByFileId(
@@ -185,12 +185,12 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Updates an existing remote file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.update/">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="externalUrl">URL of the remote file.</param>
     /// <param name="title">Title of the file being shared.</param>
     /// <param name="previewImage">Preview of the document.</param>
-    /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="filetype">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> UpdateByExternalId(
@@ -206,12 +206,12 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Updates an existing remote file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.update/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">Specify a file by providing its ID.</param>
     /// <param name="externalUrl">URL of the remote file.</param>
     /// <param name="title">Title of the file being shared.</param>
     /// <param name="previewImage">Preview of the document.</param>
-    /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="filetype">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> UpdateByFileId(
@@ -227,12 +227,12 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Updates an existing remote file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.update/">Slack documentation</a> for more information.</remarks>
     /// <param name="externalId">Creator defined unique ID for the file.</param>
     /// <param name="externalUrl">URL of the remote file.</param>
     /// <param name="title">Title of the file being shared.</param>
     /// <param name="previewImage">Preview of the document.</param>
-    /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="filetype">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> UpdateByExternalId(
@@ -248,12 +248,12 @@ public interface IRemoteFilesApi
     /// <summary>
     /// Updates an existing remote file.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/files.remote.update">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/files.remote.update/">Slack documentation</a> for more information.</remarks>
     /// <param name="fileId">Specify a file by providing its ID.</param>
     /// <param name="externalUrl">URL of the remote file.</param>
     /// <param name="title">Title of the file being shared.</param>
     /// <param name="previewImage">Preview of the document.</param>
-    /// <param name="filetype">A file type identifier (see https://api.slack.com/types/file#file_types for more information).</param>
+    /// <param name="filetype">A file type identifier (see the <a href="https://docs.slack.dev/reference/objects/file-object/#types">Slack documentation</a> for more information).</param>
     /// <param name="indexableFileContents">Contents that can be used to improve searchability for the remote file.</param>
     /// <param name="cancellationToken"></param>
     Task<FileResponse> UpdateByFileId(

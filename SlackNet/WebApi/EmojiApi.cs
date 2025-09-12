@@ -10,7 +10,7 @@ public interface IEmojiApi
     /// <summary>
     /// Lists the custom emoji for a team.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/emoji.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/emoji.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     /// <returns>
     /// A map of name/url pairs, one for each custom emoji used by the team.

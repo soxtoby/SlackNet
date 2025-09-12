@@ -6,7 +6,7 @@
 /// Providing it in a markdown block leaves the translating to Slack to ensure your message appears as intended.
 /// Note that passing a single block may result in multiple blocks after translation.
 /// </summary>
-/// <remarks>See the <a href="https://api.slack.com/reference/block-kit/blocks#markdown">Slack documentation</a> for more information.</remarks>
+/// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/blocks/#markdown">Slack documentation</a> for more information.</remarks>
 [SlackType("markdown")]
 public class MarkdownBlock() : Block("markdown")
 {

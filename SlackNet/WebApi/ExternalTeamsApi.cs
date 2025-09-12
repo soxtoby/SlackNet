@@ -11,7 +11,7 @@ public interface IExternalTeamsApi
     /// <summary>
     /// Disconnect an external organization.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/team.externalTeams.disconnect">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/team.externalTeams.disconnect/">Slack documentation</a> for more information.</remarks>
     /// <param name="targetTeamId">The team ID of the target team.</param>
     /// <param name="cancellationToken"></param>
     Task Disconnect(string targetTeamId, CancellationToken cancellationToken = default);
@@ -19,7 +19,7 @@ public interface IExternalTeamsApi
     /// <summary>
     /// Returns a list of all the external teams connected and details about the connection.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/team.externalTeams.list">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/team.externalTeams.list/">Slack documentation</a> for more information.</remarks>
     /// <param name="limit">The maximum number of items to return per page.</param>
     /// <param name="cursor">Paginate through collections of data by setting parameter to the <see cref="ResponseMetadata.NextCursor"/> returned by a previous request's <see cref="ExternalTeamsListResponse.ResponseMetadata"/>. If not provided, the first page of the collection is returned.</param>
     /// <param name="sortField">Name of the parameter that we are sorting by (snake-cased name of property in <see cref="ExternalTeam"/>).</param>

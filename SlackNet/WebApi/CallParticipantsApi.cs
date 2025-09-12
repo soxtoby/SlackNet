@@ -10,7 +10,7 @@ public interface ICallParticipantsApi
     /// <summary>
     /// Registers new participants added to a Call.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/calls.participants.add">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/calls.participants.add/">Slack documentation</a> for more information.</remarks>
     /// <param name="id"><see cref="Call.Id"/> returned by the <see cref="Add"/> method.</param>
     /// <param name="users">The list of users to add as participants in the Call.</param>
     /// <param name="cancellationToken"></param>
@@ -19,7 +19,7 @@ public interface ICallParticipantsApi
     /// <summary>
     /// Registers participants removed from a Call.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/calls.participants.remove">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/calls.participants.remove/">Slack documentation</a> for more information.</remarks>
     /// <param name="id"><see cref="Call.Id"/> returned by the <see cref="Add"/> method.</param>
     /// <param name="users">The list of users to remove as participants in the Call.</param>
     /// <param name="cancellationToken"></param>

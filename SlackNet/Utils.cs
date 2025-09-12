@@ -74,7 +74,7 @@ public static class Utils
 
     /// <summary>
     /// Format a <see cref="DateTime"/> in users' own locales.
-    /// See https://api.slack.com/reference/surfaces/formatting#date-formatting for more information.
+    /// See the <a href="https://docs.slack.dev/messaging/formatting-message-text/#date-formatting">Slack documentation</a> for more information.
     /// </summary>
     public static string FormatForMessage(this DateTime dateTime, string formatTokenString, string? fallbackText = null, string? linkUrl = null)
         => $"<!date^{dateTime.ToTimestamp()}^{formatTokenString}{(linkUrl != null ? "^" + linkUrl : string.Empty)}|{fallbackText ?? dateTime.ToString("R")}>";

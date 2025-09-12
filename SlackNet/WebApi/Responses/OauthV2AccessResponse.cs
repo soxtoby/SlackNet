@@ -12,11 +12,11 @@ public class OauthV2AccessResponse : OauthAccessResponse
 
 #nullable enable
     /// <summary>
-    /// Only available for OAuth flows with Token Rotation enabled. See more: https://api.slack.com/authentication/rotation
+    /// Only available for OAuth flows with Token Rotation enabled. See the <a href="https://docs.slack.dev/authentication/using-token-rotation/">Slack documentation</a> for more information.
     /// </summary>
     public string? RefreshToken { get; set; }
     /// <summary>
-    /// Only available for OAuth flows with Token Rotation enabled. See more: https://api.slack.com/authentication/rotation
+    /// Only available for OAuth flows with Token Rotation enabled. See the <a href="https://docs.slack.dev/authentication/using-token-rotation/">Slack documentation</a> for more information.
     /// </summary>
     public int? ExpiresIn { get; set; }
 

@@ -9,7 +9,7 @@ public interface ITeamBillingApi
     /// <summary>
     /// Reads a workspace's billing plan information.
     /// </summary>
-    /// <remarks>See the <a href="https://api.slack.com/methods/team.billing.info">Slack documentation</a> for more information.</remarks>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/team.billing.info/">Slack documentation</a> for more information.</remarks>
     /// <param name="cancellationToken"></param>
     Task<BillingInfo> Info(CancellationToken cancellationToken = default);
 }
