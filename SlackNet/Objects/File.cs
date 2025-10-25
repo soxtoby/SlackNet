@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace SlackNet;
 
@@ -40,7 +42,6 @@ public class File
     public int LinesMore { get; set; }
     public bool IsPublic { get; set; }
     public bool PublicUrlShared { get; set; }
-    public bool DisplayAsBot { get; set; }
     public string[] Channels { get; set; }
     public string[] Groups { get; set; }
     public string[] Ims { get; set; }
@@ -48,12 +49,26 @@ public class File
     public int NumStars { get; set; }
     public bool IsStarred { get; set; }
     public string[] PinnedTo { get; set; }
+    public bool SkippedShares { get; set; }
     public FileShares Shares { get; set; }
+    public IList<string> TeamsSharedWith { get; set; }
+    public bool IsRestrictedSharingEnabled { get; set; }
     public IList<Reaction> Reactions { get; set; } = [];
     public int CommentsCount { get; set; }
     public string ExternalId { get; set; }
     public string ExternalUrl { get; set; }
     public bool HasRichPreview { get; set; }
+    public ListMetadata ListMetadata { get; set; }
+    public ListLimits ListLimits { get; set; }
+    public string LastEditor { get; set; }
+    public string ListCsvDownloadUrl { get; set; }
+    public int Updated { get; set; }
+    [JsonIgnore]
+    public DateTime? UpdatedTime => Updated.ToDateTime();
+    public string FileAccess { get; set; }
+    public string Access { get; set; }
+    public string OrgOrWorkspaceAccess { get; set; }
+    public bool IsAiSuggested { get; set; }
 }
 
 public class FileShares

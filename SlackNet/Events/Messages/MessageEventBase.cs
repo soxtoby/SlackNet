@@ -12,6 +12,7 @@ public abstract class MessageEventBase : Event
     public string Text { get; set; }
     public string Ts { get; set; }
     public string Team { get; set; }
+    public bool DisplayAsBot { get; set; }
     [JsonIgnore]
     public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
     public string Channel { get; set; }

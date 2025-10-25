@@ -18,6 +18,7 @@ public class ListItem
     public DateTime? Updated => UpdatedTimestamp.ToDateTime();
     public string ParentRecordId { get; set; }
     public IList<ListItemField> Fields { get; set; } = [];
+    public bool? IsSubscribed { get; set; }
 }
 
 public class ListItemField
@@ -40,6 +41,12 @@ public class ListItemField
     public IList<string> Attachment { get; set; }
     public IList<double> Number { get; set; }
     public IList<MessageReference> Message { get; set; }
+    public IList<ListItemReference> Reference { get; set; }
+}
+
+public class ListItemFieldUpdate : ListItemField
+{
+    public string RowId { get; set; }
 }
 
 public class MessageReference
@@ -47,6 +54,7 @@ public class MessageReference
     public string Value { get; set; }
     public string ChannelId { get; set; }
     public string Ts { get; set; }
+    public string ThreadTs { get; set; }
 }
 
 public class ListItemLink
@@ -56,4 +64,14 @@ public class ListItemLink
     public IDictionary<string, Attachment> Attachment { get; set; }
     [JsonProperty("displayAsUrl")]
     public bool DisplayAsUrl { get; set; }
+}
+
+public class ListItemReference
+{
+    public FileReference File { get; set; }
+}
+
+public class FileReference
+{
+    public string FileId { get; set; }
 }

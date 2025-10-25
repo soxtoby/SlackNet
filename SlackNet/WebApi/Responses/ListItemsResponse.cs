@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using SlackNet.WebApi;
 
-namespace SlackNet;
+namespace SlackNet.WebApi;
 
 public class ListItemsResponse
 {

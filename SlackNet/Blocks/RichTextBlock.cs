@@ -189,6 +189,12 @@ public class RichTextPreformatted() : RichTextElement("rich_text_preformatted")
     public int Border { get; set; }
 }
 
+[SlackType("list_record")]
+public class RichTextListRecord() : RichTextElement("list_record")
+{
+    public string FileId { get; set; }
+}
+
 /// <summary>
 /// Rich text styling. Note that not all properties are supported by all elements.
 /// </summary>

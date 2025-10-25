@@ -33,7 +33,10 @@ public interface ISlackApiClient
     IExternalTeamsApi ExternalTeams { get; }
     IFileCommentsApi FileComments { get; }
     IFilesApi Files { get; }
+    IListApi List { get; }
+    IListDownloadApi ListDownload { get; }
     IListItemsApi ListItems { get; }
+    IListAccessApi ListAccess { get; }
     IMigrationApi Migration { get; }
     IOAuthApi OAuth { get; }
     IOAuthV2Api OAuthV2 { get; }
@@ -179,7 +182,10 @@ public class SlackApiClient : ISlackApiClient
     public IExternalTeamsApi ExternalTeams => new ExternalTeamsApi(this);
     public IFileCommentsApi FileComments => new FileCommentsApi(this);
     public IFilesApi Files => new FilesApi(this, _http);
+    public IListApi List => new ListApi(this);
+    public IListDownloadApi ListDownload => new ListDownloadApi(this);
     public IListItemsApi ListItems => new ListItemsApi(this);
+    public IListAccessApi ListAccess => new ListAccessApi(this);
     public IMigrationApi Migration => new MigrationApi(this);
     public IOAuthApi OAuth => new OAuthApi(this);
     public IOAuthV2Api OAuthV2 => new OAuthV2Api(this);

@@ -202,6 +202,7 @@ public class ApiLintTest
             { typeof(IEnumerable<FileType>), _ => Enumerable.Empty<FileType>() },
             { typeof(IEnumerable<Block>), _ => Enumerable.Empty<Block>() },
             { typeof(IEnumerable<ContentType>), _ => Enumerable.Empty<ContentType>() },
+            { typeof(IEnumerable<RichTextBlock>), _ => Enumerable.Empty<RichTextBlock>() },
             { typeof(UserProfile), _ => new UserProfile() },
             { typeof(ViewDefinition), _ => new ModalViewDefinition() },
             { typeof(HomeViewDefinition), _ => new HomeViewDefinition() },
@@ -217,6 +218,9 @@ public class ApiLintTest
             { typeof(IEnumerable<AssistantPrompt>), _ => Enumerable.Empty<AssistantPrompt>() },
             { typeof(IEnumerable<CanvasChange>), _ => Enumerable.Empty<CanvasChange>() },
             { typeof(IEnumerable<SlackConnectPref>), _ => Enumerable.Empty<SlackConnectPref>() },
+            { typeof(IEnumerable<ColumnSchema>), _ => Enumerable.Empty<ColumnSchema>() },
+            { typeof(IEnumerable<ListItemField>), _ => Enumerable.Empty<ListItemField>() },
+            { typeof(IEnumerable<ListItemFieldUpdate>), _ => Enumerable.Empty<ListItemFieldUpdate>() },
             { typeof(DocumentContent), _ => new DocumentContent { Markdown = string.Empty } },
             { typeof(LookupCriteria), _ => new LookupCriteria() },
             { typeof(ApprovalMessage), _ => new ApprovalMessage() },
@@ -301,7 +305,10 @@ public class ApiLintTest
         public IExternalTeamsApi ExternalTeams { get; }
         public IFileCommentsApi FileComments { get; }
         public IFilesApi Files { get; }
+        public IListApi List { get; }
+        public IListDownloadApi ListDownload { get; }
         public IListItemsApi ListItems { get; }
+        public IListAccessApi ListAccess { get; }
         public IMigrationApi Migration { get; }
         public IOAuthApi OAuth { get; }
         public IOAuthV2Api OAuthV2 { get; }

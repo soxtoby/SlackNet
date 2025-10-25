@@ -897,7 +897,10 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IExternalTeamsApi ExternalTeams { get; }
         public IFileCommentsApi FileComments { get; }
         public IFilesApi Files { get; }
+        public IListApi List { get; }
+        public IListDownloadApi ListDownload { get; }
         public IListItemsApi ListItems { get; }
+        public IListAccessApi ListAccess { get; }
         public IMigrationApi Migration { get; }
         public IOAuthApi OAuth { get; }
         public IOAuthV2Api OAuthV2 { get; }
