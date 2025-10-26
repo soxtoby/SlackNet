@@ -51,7 +51,7 @@ public class ApiLintTest
     public async Task MissingApis()
     {
         using var http = new HttpClient();
-        var methodList = await http.GetFromJsonAsync<ApiMethod[]>("https://docs.slack.dev/methods/all-methods.json");
+        var methodList = await http.GetFromJsonAsync<ApiMethod[]>("https://docs.slack.dev/reference/methods.json");
         var allApiMethods = methodList.Select(m => m.Name).ToHashSet();
         allApiMethods.ShouldNotBeEmpty();
 
@@ -76,6 +76,8 @@ public class ApiLintTest
     private static readonly string[] MissingApiMethodExceptions = [
             "admin.", // Not supported for now, but should be
             "apps.", // Not supported for now, but should be
+            "functions.", // Not supported for now, but should be
+            "workflows.", // Not supported for now, but should be
             "stars.", // Deprecated
             "users.setActive", // Deprecated
         ];
