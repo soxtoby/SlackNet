@@ -10,6 +10,13 @@ namespace SlackNet.WebApi;
 public interface IAssistantSearchApi
 {
     /// <summary>
+    /// Returns search capabilities on a given team.
+    /// </summary>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/assistant.search.info/">Slack documentation</a> for more information.</remarks>
+    /// <param name="cancellationToken"></param>
+    Task<AssistantSearchInfoResponse> Info(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Searches messages across your Slack organization—perfect for broad, specific, and real-time data retrieval.
     /// </summary>
     /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/assistant.search.context/">Slack documentation</a> for more information.</remarks>
@@ -37,6 +44,9 @@ public interface IAssistantSearchApi
 
 public class AssistantSearchApi(ISlackApiClient client) : IAssistantSearchApi
 {
+    public Task<AssistantSearchInfoResponse> Info(CancellationToken cancellationToken = default) =>
+        client.Post<AssistantSearchInfoResponse>("assistant.search.info", new Args(), cancellationToken);
+
     public Task<AssistantSearchContextResponse> Context(
         string query,
         string? actionToken = null,
