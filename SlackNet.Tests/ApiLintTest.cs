@@ -328,6 +328,7 @@ public class ApiLintTest
         public ITeamBillingApi TeamBilling { get; }
         public ITeamPreferencesApi TeamPreferences { get; }
         public ITeamProfileApi TeamProfile { get; }
+        public IToolingApi Tooling { get; }
         public IUserGroupsApi UserGroups { get; }
         public IUserGroupUsersApi UserGroupUsers { get; }
         public IUsersApi Users { get; }

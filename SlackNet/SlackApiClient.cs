@@ -52,6 +52,7 @@ public interface ISlackApiClient
     ITeamBillingApi TeamBilling { get; }
     ITeamPreferencesApi TeamPreferences { get; }
     ITeamProfileApi TeamProfile { get; }
+    IToolingApi Tooling { get; }
     IUserGroupsApi UserGroups { get; }
     IUserGroupUsersApi UserGroupUsers { get; }
     IUsersApi Users { get; }
@@ -201,6 +202,7 @@ public class SlackApiClient : ISlackApiClient
     public ITeamBillingApi TeamBilling => new TeamBillingApi(this);
     public ITeamPreferencesApi TeamPreferences => new TeamPreferencesApi(this);
     public ITeamProfileApi TeamProfile => new TeamProfileApi(this);
+    public IToolingApi Tooling => new ToolingApi(this);
     public IUserGroupsApi UserGroups => new UserGroupsApi(this);
     public IUserGroupUsersApi UserGroupUsers => new UserGroupUsersApi(this);
     public IUsersApi Users => new UsersApi(this);
