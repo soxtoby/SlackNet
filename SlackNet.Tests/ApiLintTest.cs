@@ -182,6 +182,7 @@ public class ApiLintTest
             { typeof(int?), _ => null },
             { typeof(bool), _ => false },
             { typeof(bool?), _ => null },
+            { typeof(object), _ => null },
             { typeof(IEnumerable<string>), _ => Enumerable.Empty<string>() },
             { typeof(Message), _ => new Message() },
             { typeof(Dialog), _ => new Dialog() },
@@ -226,6 +227,7 @@ public class ApiLintTest
             { typeof(DocumentContent), _ => new DocumentContent { Markdown = string.Empty } },
             { typeof(LookupCriteria), _ => new LookupCriteria() },
             { typeof(ApprovalMessage), _ => new ApprovalMessage() },
+            { typeof(MessageMetadata), _ => null },
             { typeof(CancellationToken), _ => null },
         };
 

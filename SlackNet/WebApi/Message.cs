@@ -85,7 +85,7 @@ public interface IReadOnlyMessage
     /// <summary>
     /// A custom event attached to the message. Metadata you post to Slack is accessible to any app or user who is a member of that workspace.
     /// </summary>
-    /// <remarks>The specified object be automatically converted to a <see cref="MessageMetadata"/> using the standard Slack JSON conventions.</remarks>
+    /// <remarks>The specified object will be automatically converted to a <see cref="MessageMetadata"/> using the standard Slack JSON conventions.</remarks>
     object MetadataObject { get; }
 }
 

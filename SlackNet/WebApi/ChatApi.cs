@@ -142,6 +142,49 @@ public interface IChatApi
     /// <param name="messageTs">A message's timestamp, uniquely identifying it within a channel.</param>
     /// <param name="cancellationToken"></param>
     Task<PermalinkResponse> GetPermalink(string channelId, string messageTs, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Starts a new streaming conversation.
+    /// </summary>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.startStream/">Slack documentation</a> for more information.</remarks>
+    /// <param name="channel">An encoded ID that represents a channel, private group, or DM.</param>
+    /// <param name="threadTs">Provide another message's timestamp value to reply to. Streamed messages should always be replies to a user request.</param>
+    /// <param name="markdownText">Accepts message text formatted in markdown. This text is what will be appended to the message received so far.</param>
+    /// <param name="recipientUserId">The encoded ID of the user to receive the streaming text. Required when streaming to channels.</param>
+    /// <param name="recipientTeamId">The encoded ID of the team the user receiving the streaming text belongs to. Required when streaming to channels.</param>
+    /// <param name="cancellationToken"></param>
+    Task<MessageTsResponse> StartStream(string channel, string threadTs, string markdownText = null, string recipientUserId = null, string recipientTeamId = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Appends text to an existing streaming conversation.
+    /// </summary>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.appendStream/">Slack documentation</a> for more information.</remarks>
+    /// <param name="channel">An encoded ID that represents a channel, private group, or DM.</param>
+    /// <param name="ts">The timestamp of the streaming message.</param>
+    /// <param name="markdownText">Accepts message text formatted in markdown. This text is what will be appended to the message received so far.</param>
+    /// <param name="cancellationToken"></param>
+    Task<MessageTsResponse> AppendStream(string channel, string ts, string markdownText, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Stops a streaming conversation.
+    /// </summary>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.stopStream/">Slack documentation</a> for more information.</remarks>
+    /// <param name="channel">An encoded ID that represents a channel, private group, or DM.</param>
+    /// <param name="ts">A message's timestamp, uniquely identifying it within a channel.</param>
+    /// <param name="markdownText">Accepts message text formatted in markdown. This text is what will be appended to the message received so far.</param>
+    /// <param name="blocks">A list of blocks that will be rendered at the bottom of the finalized message.</param>
+    /// <param name="metadataObject">
+    /// A custom event attached to the message.
+    /// Metadata you post to Slack is accessible to any app or user who is a member of that workspace.
+    /// The specified object will be automatically converted to a <see cref="MessageMetadata"/> using the standard Slack JSON conventions.
+    /// </param>
+    /// <param name="metadataJson">
+    /// A custom event attached to the message.
+    /// Metadata you post to Slack is accessible to any app or user who is a member of that workspace.
+    /// Will take precedence over <see cref="metadataObject"/>.
+    /// </param>
+    /// <param name="cancellationToken"></param>
+    Task<PostMessageResponse> StopStream(string channel, string ts, string markdownText = null, IEnumerable<Block> blocks = null, object metadataObject = null, MessageMetadata metadataJson = null, CancellationToken cancellationToken = default);
 }
 
 public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : IChatApi
@@ -277,4 +320,40 @@ public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : I
                     { "file_ids", messageUpdate.FileIds }
                 },
             cancellationToken);
+
+    public Task<MessageTsResponse> StartStream(string channel, string threadTs, string markdownText = null, string recipientUserId = null, string recipientTeamId = null, CancellationToken cancellationToken = default) =>
+        client.Post<MessageTsResponse>("chat.startStream", new Args
+            {
+                { "channel", channel },
+                { "thread_ts", threadTs },
+                { "markdown_text", markdownText },
+                { "recipient_user_id", recipientUserId },
+                { "recipient_team_id", recipientTeamId }
+            }, cancellationToken);
+
+    public Task<MessageTsResponse> AppendStream(string channel, string ts, string markdownText, CancellationToken cancellationToken = default) =>
+        client.Post<MessageTsResponse>("chat.appendStream", new Args
+            {
+                { "channel", channel },
+                { "ts", ts },
+                { "markdown_text", markdownText }
+            }, cancellationToken);
+
+    public Task<PostMessageResponse> StopStream(
+        string channel,
+        string ts,
+        string markdownText = null,
+        IEnumerable<Block> blocks = null,
+        object metadataObject = null,
+        MessageMetadata metadataJson = null,
+        CancellationToken cancellationToken = default
+    ) =>
+        client.Post<PostMessageResponse>("chat.stopStream", new Args
+            {
+                { "channel", channel },
+                { "ts", ts },
+                { "markdown_text", markdownText },
+                { "blocks", blocks },
+                { "metadata", metadataJson ?? MessageMetadata.FromObject(metadataObject, jsonSettings) }
+            }, cancellationToken);
 }
