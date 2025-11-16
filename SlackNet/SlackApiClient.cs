@@ -30,6 +30,7 @@ public interface ISlackApiClient
     IDialogApi Dialog { get; }
     IDndApi Dnd { get; }
     IEmojiApi Emoji { get; }
+    IEntityApi Entity { get; }
     IExternalTeamsApi ExternalTeams { get; }
     IFileCommentsApi FileComments { get; }
     IFilesApi Files { get; }
@@ -144,6 +145,7 @@ public class SlackApiClient : ISlackApiClient
     private readonly string _token;
     private readonly SlackJsonSettings _jsonSettings;
     public bool DisableRetryOnRateLimit { get; set; }
+    public bool WarningsAsErrors { get; set; }
 
     public SlackApiClient(string token)
     {
@@ -162,7 +164,11 @@ public class SlackApiClient : ISlackApiClient
     }
 
     public ISlackApiClient WithAccessToken(string accessToken) => 
-        new SlackApiClient(_http, _urlBuilder, _jsonSettings, accessToken) { DisableRetryOnRateLimit = DisableRetryOnRateLimit };
+        new SlackApiClient(_http, _urlBuilder, _jsonSettings, accessToken)
+            {
+                DisableRetryOnRateLimit = DisableRetryOnRateLimit,
+                WarningsAsErrors = WarningsAsErrors
+            };
 
     public IApiApi Api => new ApiApi(this);
     public IAppsConnectionsApi AppsConnectionsApi => new AppsConnectionsApi(this);
@@ -180,6 +186,7 @@ public class SlackApiClient : ISlackApiClient
     public IDialogApi Dialog => new DialogApi(this);
     public IDndApi Dnd => new DndApi(this);
     public IEmojiApi Emoji => new EmojiApi(this);
+    public IEntityApi Entity => new EntityApi(this);
     public IExternalTeamsApi ExternalTeams => new ExternalTeamsApi(this);
     public IFileCommentsApi FileComments => new FileCommentsApi(this);
     public IFilesApi Files => new FilesApi(this, _http);
@@ -269,8 +276,15 @@ public class SlackApiClient : ISlackApiClient
 
     private T Deserialize<T>(WebApiResponse response) where T : class =>
         response.Ok
-            ? response.Data?.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings))
-            : throw new SlackException(response.Data?.ToObject<ErrorResponse>(JsonSerializer.Create(_jsonSettings.SerializerSettings)));
+            ? WarningsAsErrors && ReadErrorResponse(response) is { Warning.Length: > 0 } warning
+                ? throw new SlackException(warning)
+                : response.Data?.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings))
+            : throw new SlackException(ReadErrorResponse(response));
+
+    private ErrorResponse ReadErrorResponse(WebApiResponse response)
+    {
+        return response.Data?.ToObject<ErrorResponse>(JsonSerializer.Create(_jsonSettings.SerializerSettings));
+    }
 
     private static Args StripNullArgs(Args args) =>
         args.Where(kv => kv.Value != null)

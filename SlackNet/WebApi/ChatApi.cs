@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using Args = System.Collections.Generic.Dictionary<string, object>;
@@ -69,11 +71,12 @@ public interface IChatApi
     /// </summary>
     /// <param name="channelId">Channel ID of the message.</param>
     /// <param name="ts">Timestamp of the message to add unfurl behavior to.</param>
-    /// <param name="unfurls">Dictionary mapping a set of URLs from the message to their unfurl attachment.</param>
+    /// <param name="unfurls">Dictionary mapping a set of URLs from the message to their unfurl attachment. Either <see cref="unfurls"/> or <see cref="metadata"/> must be provided.</param>
     /// <param name="userAuthRequired">Set to True to indicate the user must install your Slack app to trigger unfurls for this domain.</param>
     /// <param name="userAuthBlocks">Structured blocks to send as an ephemeral message to the user as invitation to authenticate further and enable full unfurling behavior.</param>
     /// <param name="userAuthMessage">A simply-formatted string to send as an ephemeral message to the user as invitation to authenticate further and enable full unfurling behavior.</param>
     /// <param name="userAuthUrl">Send users to this custom URL where they will complete authentication in your app to fully trigger unfurling. Value should be properly URL-encoded.</param>
+    /// <param name="metadata">Slack uses this parameter to generate a Work Object representing the resource your app is unfurling. Either <see cref="unfurls"/> or <see cref="metadata"/> must be provided.</param>
     /// <param name="cancellationToken"></param>
     /// <remarks>
     /// <para>
@@ -88,11 +91,12 @@ public interface IChatApi
     Task Unfurl(
         string channelId,
         string ts,
-        IDictionary<string, Attachment> unfurls,
+        IDictionary<string, Attachment> unfurls = null,
         bool userAuthRequired = false,
         IEnumerable<Block> userAuthBlocks = null,
         string userAuthMessage = null,
         string userAuthUrl = null,
+        UnfurlMetadata metadata = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -100,11 +104,12 @@ public interface IChatApi
     /// </summary>
     /// <param name="source">The source of the link to unfurl.</param>
     /// <param name="unfurlId">The ID of the link to unfurl.</param>
-    /// <param name="unfurls">Dictionary mapping a set of URLs from the message to their unfurl attachment.</param>
+    /// <param name="unfurls">Dictionary mapping a set of URLs from the message to their unfurl attachment. Either <see cref="unfurls"/> or <see cref="metadata"/> must be provided.</param>
     /// <param name="userAuthRequired">Set to True to indicate the user must install your Slack app to trigger unfurls for this domain.</param>
     /// <param name="userAuthBlocks">Structured blocks to send as an ephemeral message to the user as invitation to authenticate further and enable full unfurling behavior.</param>
     /// <param name="userAuthMessage">A simply-formatted string to send as an ephemeral message to the user as invitation to authenticate further and enable full unfurling behavior.</param>
     /// <param name="userAuthUrl">Send users to this custom URL where they will complete authentication in your app to fully trigger unfurling. Value should be properly URL-encoded.</param>
+    /// <param name="metadata">Slack uses this parameter to generate a Work Object representing the resource your app is unfurling. Either <see cref="unfurls"/> or <see cref="metadata"/> must be provided.</param>
     /// <param name="cancellationToken"></param>
     /// <remarks>
     /// <para>
@@ -119,11 +124,12 @@ public interface IChatApi
     Task Unfurl(
         LinkSource source,
         string unfurlId,
-        IDictionary<string, Attachment> unfurls,
+        IDictionary<string, Attachment> unfurls = null,
         bool userAuthRequired = false,
         IEnumerable<Block> userAuthBlocks = null,
         string userAuthMessage = null,
         string userAuthUrl = null,
+        UnfurlMetadata metadata = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -236,7 +242,9 @@ public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : I
         args["icon_emoji"] = message.IconEmoji;
         args["thread_ts"] = message.ThreadTs;
         args["reply_broadcast"] = message.ReplyBroadcast;
-        args["metadata"] = message.MetadataJson ?? MessageMetadata.FromObject(message.MetadataObject, jsonSettings);
+        args["metadata"] = message.MetadataJson
+            ?? MessageMetadata.FromObject(message.MetadataObject, jsonSettings) as object 
+            ?? message.UnfurlMetadata;
         return args;
     }
 
@@ -267,11 +275,12 @@ public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : I
     public Task Unfurl(
         string channelId,
         string ts,
-        IDictionary<string, Attachment> unfurls,
+        IDictionary<string, Attachment> unfurls = null,
         bool userAuthRequired = false,
         IEnumerable<Block> userAuthBlocks = null,
         string userAuthMessage = null,
         string userAuthUrl = null,
+        UnfurlMetadata metadata = null,
         CancellationToken cancellationToken = default
     ) =>
         client.Post("chat.unfurl", new Args
@@ -282,17 +291,19 @@ public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : I
                 { "user_auth_required", userAuthRequired },
                 { "user_auth_blocks", userAuthBlocks },
                 { "user_auth_message", userAuthMessage },
-                { "user_auth_url", userAuthUrl }
+                { "user_auth_url", userAuthUrl },
+                { "metadata", metadata }
             }, cancellationToken);
 
     public Task Unfurl(
         LinkSource source,
         string unfurlId,
-        IDictionary<string, Attachment> unfurls,
+        IDictionary<string, Attachment> unfurls = null,
         bool userAuthRequired = false,
         IEnumerable<Block> userAuthBlocks = null,
         string userAuthMessage = null,
         string userAuthUrl = null,
+        UnfurlMetadata metadata = null,
         CancellationToken cancellationToken = default
     ) =>
         client.Post("chat.unfurl", new Args
@@ -303,7 +314,8 @@ public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : I
                 { "user_auth_required", userAuthRequired },
                 { "user_auth_blocks", userAuthBlocks },
                 { "user_auth_message", userAuthMessage },
-                { "user_auth_url", userAuthUrl }
+                { "user_auth_url", userAuthUrl },
+                { "metadata", metadata }
             }, cancellationToken);
 
     public Task<MessageUpdateResponse> Update(MessageUpdate messageUpdate, CancellationToken cancellationToken = default) =>

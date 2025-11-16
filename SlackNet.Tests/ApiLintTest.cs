@@ -228,6 +228,9 @@ public class ApiLintTest
             { typeof(LookupCriteria), _ => new LookupCriteria() },
             { typeof(ApprovalMessage), _ => new ApprovalMessage() },
             { typeof(MessageMetadata), _ => null },
+            { typeof(UnfurlMetadata), _ => null },
+            { typeof(WorkObjectEntity), _ => null },
+            { typeof(EntityError), _ => null },
             { typeof(CancellationToken), _ => null },
         };
 
@@ -306,6 +309,7 @@ public class ApiLintTest
         public IDialogApi Dialog { get; }
         public IDndApi Dnd { get; }
         public IEmojiApi Emoji { get; }
+        public IEntityApi Entity { get; }
         public IExternalTeamsApi ExternalTeams { get; }
         public IFileCommentsApi FileComments { get; }
         public IFilesApi Files { get; }

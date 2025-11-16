@@ -93,13 +93,17 @@ class SlackTypeConverter : JsonConverter
         return jObjectReader;
     }
 
-    private Type GetType(JToken jObject, Type parentType)
+    private Type GetType(JObject jObject, Type parentType)
     {
         if (jObject.Value<uint>("reply_to") > 0)
             return typeof(Reply);
 
         var type = GetType(jObject, "type", parentType);
-        return GetType(jObject, "subtype", type);
+        
+        var subTypeProperty = type.GetCustomAttribute<SlackSubTypePropertyAttribute>()?.PropertyName.SnakeCase()
+            ?? "subtype";
+        
+        return GetType(jObject, subTypeProperty, type);
     }
 
     private Type GetType(JToken jObject, string typeProperty, Type baseType)

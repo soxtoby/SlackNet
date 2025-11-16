@@ -1,4 +1,5 @@
-﻿using SlackNet.Blocks;
+﻿using System;
+using SlackNet.Blocks;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -38,11 +39,20 @@ public class AttachmentUpdateResponse : IReadOnlyAttachment
     public string Ts => Attachment.Ts;
     public string CallbackId => Attachment.CallbackId;
     public IList<ActionElement> Actions => Attachment.Actions;
-
-    private Attachment Attachment => _response.Message.Attachments.First();
     public string ChannelTeam => Attachment.ChannelTeam;
     public string ChannelId => Attachment.ChannelId;
     public string ChannelName => Attachment.ChannelName;
     public bool? IsShare => Attachment.IsShare;
     public bool? IsMsgUnfurl => Attachment.IsMsgUnfurl;
+    public string AttachmentType => Attachment.AttachmentType;
+    public string OriginalUrl => Attachment.OriginalUrl;
+    public DateTime? Timestamp => Attachment.Timestamp;
+    public string ServiceName => Attachment.ServiceName;
+    public string ServiceIcon => Attachment.ServiceIcon;
+    public bool IsAppUnfurl => Attachment.IsAppUnfurl;
+    public string AppUnfurlUrl => Attachment.AppUnfurlUrl;
+    public string BotId => Attachment.BotId;
+    public string BotTeamId => Attachment.BotTeamId;
+
+    private Attachment Attachment => _response.Message.Attachments.First();
 }

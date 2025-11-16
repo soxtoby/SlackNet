@@ -24,6 +24,7 @@ public class SlackMessage(ISlackBot bot) : IMessage
 
     public IList<File> Files { get; set; } = [];
 
+    [IgnoreIfEmpty]
     public IList<Block> Blocks { get; set; } = [];
     public bool IsInThread => ThreadTs != null;
 

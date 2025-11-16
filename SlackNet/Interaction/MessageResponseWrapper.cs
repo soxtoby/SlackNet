@@ -4,25 +4,23 @@ using SlackNet.WebApi;
 
 namespace SlackNet.Interaction;
 
-public class MessageResponseWrapper : IReadOnlyMessage
+public class MessageResponseWrapper(IMessageResponse response) : IReadOnlyMessage
 {
-    private readonly IMessageResponse _response;
-    public MessageResponseWrapper(IMessageResponse response) => _response = response;
-        
-    public string Channel => _response.Message?.Channel;
-    public string Text => _response.Message?.Text;
-    public ParseMode Parse => _response.Message?.Parse ?? default;
-    public bool LinkNames => _response.Message?.LinkNames ?? default;
-    public IList<Attachment> Attachments => _response.Message?.Attachments;
-    public IList<Block> Blocks => _response.Message?.Blocks;
-    public bool UnfurlLinks => _response.Message?.UnfurlLinks ?? default;
-    public bool UnfurlMedia => _response.Message?.UnfurlMedia ?? default;
-    public string Username => _response.Message?.Username;
-    public bool? AsUser => _response.Message?.AsUser;
-    public string IconUrl => _response.Message?.IconUrl;
-    public string IconEmoji => _response.Message?.IconEmoji;
-    public string ThreadTs => _response.Message?.ThreadTs;
-    public bool ReplyBroadcast => _response.Message?.ReplyBroadcast ?? default;
-    public MessageMetadata MetadataJson => _response.Message?.MetadataJson;
-    public object MetadataObject => _response.Message?.MetadataObject;
+    public string Channel => response.Message?.Channel;
+    public string Text => response.Message?.Text;
+    public ParseMode Parse => response.Message?.Parse ?? default;
+    public bool LinkNames => response.Message?.LinkNames ?? false;
+    public IList<Attachment> Attachments => response.Message?.Attachments;
+    public IList<Block> Blocks => response.Message?.Blocks;
+    public bool UnfurlLinks => response.Message?.UnfurlLinks ?? false;
+    public bool UnfurlMedia => response.Message?.UnfurlMedia ?? false;
+    public string Username => response.Message?.Username;
+    public bool? AsUser => response.Message?.AsUser;
+    public string IconUrl => response.Message?.IconUrl;
+    public string IconEmoji => response.Message?.IconEmoji;
+    public string ThreadTs => response.Message?.ThreadTs;
+    public bool ReplyBroadcast => response.Message?.ReplyBroadcast ?? false;
+    public MessageMetadata MetadataJson => response.Message?.MetadataJson;
+    public object MetadataObject => response.Message?.MetadataObject;
+    public UnfurlMetadata UnfurlMetadata => response.Message?.UnfurlMetadata;
 }

@@ -7,12 +7,7 @@ namespace SlackNet;
 /// Use this to override the default snake_case conversion used to match Slack types to .NET types.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-public class SlackTypeAttribute : Attribute
+public class SlackTypeAttribute(string typeIdentifier) : Attribute
 {
-    public string TypeIdentifier { get; }
-
-    public SlackTypeAttribute(string typeIdentifier)
-    {
-        TypeIdentifier = typeIdentifier;
-    }
+    public string TypeIdentifier { get; } = typeIdentifier;
 }

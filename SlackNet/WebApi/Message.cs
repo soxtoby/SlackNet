@@ -79,14 +79,22 @@ public interface IReadOnlyMessage
     /// <summary>
     /// A custom event attached to the message. Metadata you post to Slack is accessible to any app or user who is a member of that workspace.
     /// </summary>
-    /// <remarks>Will take precedence over <see cref="MetadataObject"/>.</remarks>
+    /// <remarks>Will take precedence over <see cref="MetadataObject"/> and <see cref="UnfurlMetadata"/>.</remarks>
     MessageMetadata MetadataJson { get; }
     
     /// <summary>
     /// A custom event attached to the message. Metadata you post to Slack is accessible to any app or user who is a member of that workspace.
     /// </summary>
-    /// <remarks>The specified object will be automatically converted to a <see cref="MessageMetadata"/> using the standard Slack JSON conventions.</remarks>
+    /// <remarks>
+    /// The specified object will be automatically converted to a <see cref="MessageMetadata"/> using the standard Slack JSON conventions.
+    /// Will take precedence over <see cref="UnfurlMetadata"/>.
+    /// </remarks>
     object MetadataObject { get; }
+    
+    /// <summary>
+    /// Use this to attach work objects to this message.
+    /// </summary>
+    UnfurlMetadata UnfurlMetadata { get; } 
 }
 
 public class Message : IReadOnlyMessage
@@ -95,7 +103,9 @@ public class Message : IReadOnlyMessage
     public string Text { get; set; }
     public ParseMode Parse { get; set; }
     public bool LinkNames { get; set; }
+    [IgnoreIfEmpty]
     public IList<Attachment> Attachments { get; set; } = [];
+    [IgnoreIfEmpty]
     public IList<Block> Blocks { get; set; } = [];
     public bool UnfurlLinks { get; set; }
     public bool UnfurlMedia { get; set; } = true;
@@ -107,4 +117,5 @@ public class Message : IReadOnlyMessage
     public bool ReplyBroadcast { get; set; }
     public MessageMetadata MetadataJson { get; set; }
     public object MetadataObject { get; set; }
+    public UnfurlMetadata UnfurlMetadata { get; set; }
 }

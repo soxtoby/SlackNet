@@ -70,7 +70,7 @@ public static class Utils
     /// </summary>
     public static string SlackType(this TypeInfo type) =>
         type.GetCustomAttribute<SlackTypeAttribute>()?.TypeIdentifier
-        ?? SnakeCase(type.Name);
+        ?? type.Name.SnakeCase();
 
     /// <summary>
     /// Format a <see cref="DateTime"/> in users' own locales.
@@ -79,7 +79,7 @@ public static class Utils
     public static string FormatForMessage(this DateTime dateTime, string formatTokenString, string? fallbackText = null, string? linkUrl = null)
         => $"<!date^{dateTime.ToTimestamp()}^{formatTokenString}{(linkUrl != null ? "^" + linkUrl : string.Empty)}|{fallbackText ?? dateTime.ToString("R")}>";
 
-    private static string SnakeCase(string value) => new SnakeCaseNamingStrategy().GetPropertyName(value, false);
+    internal static string SnakeCase(this string value) => new SnakeCaseNamingStrategy().GetPropertyName(value, false);
 
     public static async Task<T?> NullIfNotFound<T>(this Task<T> apiTask) where T : class
     {

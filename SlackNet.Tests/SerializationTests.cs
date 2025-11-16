@@ -77,6 +77,14 @@ public class SerializationTests
     }
 
     [Test]
+    public void SlackSubTypesWithSpecifiedTypePropertyCanBeDeserialized()
+    {
+        var result = Deserialize<StringArray>(@"{ ""type"": ""array"", ""item_type"": ""string"", ""value"": [ { ""type"": ""string"", ""value"": ""foo"" } ] }");
+        result.ShouldBeA<StringArray>()
+            .And.Value.ShouldMatch(["foo"], (a, e) => a.Value.ShouldBe(e));
+    }
+
+    [Test]
     public void SlackTypePropertyCanBeDeserialized()
     {
         var result = Deserialize<HasSlackTypeProperty>(@"{ ""event"": { ""type"": ""message"", ""text"": ""foo"" } }");
