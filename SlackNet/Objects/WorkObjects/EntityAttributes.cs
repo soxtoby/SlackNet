@@ -11,7 +11,7 @@ public class EntityAttributes
     /// <summary>
     /// Title of the Work Object entity.
     /// </summary>
-    public EntityTitle Title { get; set; } = new(); // NOCOMMIT was just { Text }, so test if different types work 
+    public EntityTitle Title { get; set; } = new();
     
     /// <summary>
     /// User-friendly string ID to display on the entity.

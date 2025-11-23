@@ -6,7 +6,7 @@ namespace SlackNet;
 /// <summary>
 /// A Work Object entity for unfurling.
 /// </summary>
-public class WorkObjectEntity // NOCOMMIT separate types to get specific types of fields
+public class WorkObjectEntity
 {
     /// <summary>
     /// Entity type.
