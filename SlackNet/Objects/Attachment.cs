@@ -43,7 +43,7 @@ public interface IReadOnlyAttachment
     DateTime? Timestamp { get; }
     string ServiceName { get; }
     string ServiceIcon { get; }
-    bool IsAppUnfurl { get; }
+    bool? IsAppUnfurl { get; }
     string AppUnfurlUrl { get; }
     string BotId { get; }
     string BotTeamId { get; }
@@ -94,7 +94,7 @@ public class Attachment : IReadOnlyAttachment
     public bool? IsMsgUnfurl { get; set; }
     public string ServiceName { get; set; }
     public string ServiceIcon { get; set; }
-    public bool IsAppUnfurl { get; set; }
+    public bool? IsAppUnfurl { get; set; }
     public string AppUnfurlUrl { get; set; }
     public string BotId { get; set; }
     public string BotTeamId { get; set; }

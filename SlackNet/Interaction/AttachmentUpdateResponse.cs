@@ -49,7 +49,7 @@ public class AttachmentUpdateResponse : IReadOnlyAttachment
     public DateTime? Timestamp => Attachment.Timestamp;
     public string ServiceName => Attachment.ServiceName;
     public string ServiceIcon => Attachment.ServiceIcon;
-    public bool IsAppUnfurl => Attachment.IsAppUnfurl;
+    public bool? IsAppUnfurl => Attachment.IsAppUnfurl;
     public string AppUnfurlUrl => Attachment.AppUnfurlUrl;
     public string BotId => Attachment.BotId;
     public string BotTeamId => Attachment.BotTeamId;
