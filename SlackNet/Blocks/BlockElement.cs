@@ -5,9 +5,7 @@ public interface IBlockElement
     string Type { get; }
 }
 
-public abstract class BlockElement : IBlockElement
+public abstract class BlockElement(string type) : IBlockElement
 {
-    protected BlockElement(string type) => Type = type;
-
-    public string Type { get; }
+    public string Type { get; } = type;
 }
