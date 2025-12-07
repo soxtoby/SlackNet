@@ -17,7 +17,7 @@ using Args = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SlackNet.Tests;
 
-public class ApiLintTest
+public class ApiLintTests
 {
     [TestCaseSource(nameof(ApiClasses))]
     public void Lint(Type api)
