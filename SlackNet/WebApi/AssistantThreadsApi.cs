@@ -15,8 +15,9 @@ public interface IAssistantThreadsApi
     /// <param name="channelId">Channel ID containing the assistant thread.</param>
     /// <param name="threadTs">Message timestamp of the thread of where to set the status.</param>
     /// <param name="status">Status of the specified bot user, e.g. "is thinking..."</param>
+    /// <param name="loadingMessages">The list of messages to rotate through as a loading indicator.</param>
     /// <param name="cancellationToken"></param>
-    Task SetStatus(string channelId, string threadTs, string status, CancellationToken cancellationToken = default);
+    Task SetStatus(string channelId, string threadTs, string status, [CanBeNull] IEnumerable<string> loadingMessages = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Set suggested prompts for the given assistant thread.
@@ -42,12 +43,13 @@ public interface IAssistantThreadsApi
 
 public class AssistantThreadsApi(ISlackApiClient client) : IAssistantThreadsApi
 {
-    public Task SetStatus(string channelId, string threadTs, string status, CancellationToken cancellationToken = default) =>
+    public Task SetStatus(string channelId, string threadTs, string status, IEnumerable<string> loadingMessages = null, CancellationToken cancellationToken = default) =>
         client.Post("assistant.threads.setStatus", new Args
             {
                 { "channel_id", channelId },
                 { "thread_ts", threadTs },
-                { "status", status }
+                { "status", status },
+                { "loading_messages", loadingMessages }
             }, cancellationToken);
 
     public Task SetSuggestedPrompts(string channelId, string threadTs, IEnumerable<AssistantPrompt> prompts, string title = null, CancellationToken cancellationToken = default) =>
