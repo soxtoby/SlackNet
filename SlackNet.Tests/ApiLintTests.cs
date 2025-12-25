@@ -212,6 +212,8 @@ public class ApiLintTests
             { typeof(Presence), _ => Presence.Active },
             { typeof(RequestPresence), _ => RequestPresence.Auto },
             { typeof(BookmarkType), _ => BookmarkType.Link },
+            { typeof(TriggerPermissionType), _ => TriggerPermissionType.Everyone },
+            { typeof(TriggerPermissionType?), _ => TriggerPermissionType.Everyone },
             { typeof(FunctionPermissionType?), _ => FunctionPermissionType.Everyone },
             { typeof(ChangeType?), _ => null },
             { typeof(LinkSource), _ => LinkSource.Composer },
@@ -363,6 +365,8 @@ public class ApiLintTests
         public IUsersApi Users { get; }
         public IUserProfileApi UserProfile { get; }
         public IViewsApi Views { get; }
+        public IWorkflowsFeaturedApi WorkflowsFeatured { get; }
+        public IWorkflowTriggerPermissionsApi WorkflowTriggerPermissions { get; }
     }
 
     class FakeHttp : IHttp

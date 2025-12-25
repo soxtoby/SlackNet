@@ -927,6 +927,8 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IUsersApi Users { get; }
         public IUserProfileApi UserProfile { get; }
         public IViewsApi Views { get; }
+        public IWorkflowsFeaturedApi WorkflowsFeatured { get; }
+        public IWorkflowTriggerPermissionsApi WorkflowTriggerPermissions { get; }
         public Task Get(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) => throw new NotImplementedException();
         public Task<T> Get<T>(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) where T : class => throw new NotImplementedException();
         public Task Post(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) => throw new NotImplementedException();
