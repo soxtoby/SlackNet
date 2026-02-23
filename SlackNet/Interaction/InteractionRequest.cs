@@ -12,4 +12,7 @@ public abstract class InteractionRequest
     public WorkSpace Enterprise { get; set; }
     public bool IsEnterpriseInstall { get; set; }
     public string ActionTs { get; set; }
+    public FunctionData FunctionData { get; set; }
+    public string BotAccessToken { get; set; }
+    public Interactivity Interactivity { get; set; }
 }

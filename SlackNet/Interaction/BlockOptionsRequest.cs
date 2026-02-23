@@ -11,4 +11,14 @@ public class BlockOptionsRequest : OptionsRequestBase
     public string BlockId { get; set; }
     public MessageEvent Message { get; set; }
     public ViewInfo View { get; set; }
+
+    /// <summary>
+    /// Metadata about the function execution that generated the block where this block suggestion took place.
+    /// </summary>
+    public FunctionData FunctionData { get; set; }
+
+    /// <summary>
+    /// A workflow (just-in-time) token generated for this block suggestion.
+    /// </summary>
+    public string BotAccessToken { get; set; }
 }
