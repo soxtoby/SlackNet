@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using SlackNet.Extensions.DependencyInjection;
+using SlackNet.SocketMode;
 
 namespace SlackNet.AspNetCore;
 
@@ -57,4 +58,17 @@ public abstract class AspNetSlackServiceConfiguration<TConfig> : ServiceCollecti
     /// You'll find this value in the "App Credentials" section of your app's application management interface.
     /// </summary>
     public TConfig VerifyWith(string verificationToken) => Chain(() => _endpointConfiguration.VerifyWith(verificationToken));
+
+    /// <summary>
+    /// Use a <a href="https://docs.slack.dev/apis/events-api/using-socket-mode/">socket mode</a> client instead of ASP.NET middleware.
+    /// Use this for testing your app without needing to host it publicly.
+    /// </summary>
+    public SlackEndpointConfiguration UseSocketMode(SocketModeConnectionOptions? connectionOptions = null) => _endpointConfiguration.UseSocketMode(connectionOptions);
+
+    /// <summary>
+    /// Use a <a href="https://docs.slack.dev/apis/events-api/using-socket-mode/">socket mode</a> client instead of ASP.NET middleware.
+    /// Use this for testing your app without needing to host it publicly.
+    /// </summary>
+    public SlackEndpointConfiguration UseSocketMode(bool useSocketMode = true, SocketModeConnectionOptions? connectionOptions = null) => 
+        _endpointConfiguration.UseSocketMode(useSocketMode, connectionOptions);
 }

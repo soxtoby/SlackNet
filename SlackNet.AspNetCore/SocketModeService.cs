@@ -16,7 +16,7 @@ class SocketModeService(
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        if (_enabled)
+        if (_enabled) // TODO remove UseSocketMode from SlackEndpointConfiguration and only register the client if socket mode is enabled 
         {
             try
             {

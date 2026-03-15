@@ -16,6 +16,9 @@ builder.Services.AddSlackNet(c => c
     
     // Register your Slack handlers here
     .RegisterEventHandler<MessageEvent, PingDemo>()
+
+    // You can enable socket mode for testing without having to make your web app publicly accessible
+    .UseSocketMode(false)
 );
 
 var app = builder.Build();
@@ -23,10 +26,7 @@ var app = builder.Build();
 // This sets up the SlackNet endpoints for handling requests from Slack
 // By default the endpoints are /slack/event, /slack/action, /slack/options, and /slack/command,
 // but the 'slack' prefix can be changed using MapToPrefix.
-app.UseSlackNet(c => c
-    // You can enable socket mode for testing without having to make your web app publicly accessible
-    .UseSocketMode(false)
-);
+app.UseSlackNet();
 
 app.MapGet("/", () => "Hello, Slack!");
 
