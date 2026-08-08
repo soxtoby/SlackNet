@@ -29,6 +29,16 @@ public interface IAssistantThreadsApi
     /// <param name="title">Title for the list of provided prompts. For example: Suggested Prompts, Related Questions.</param>
     /// <param name="cancellationToken"></param>
     Task SetSuggestedPrompts(string channelId, string threadTs, IEnumerable<AssistantPrompt> prompts, [CanBeNull] string title = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Set suggested prompts for the Messages tab.
+    /// </summary>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/assistant.threads.setSuggestedPrompts/">Slack documentation</a> for more information.</remarks>
+    /// <param name="channelId">Channel ID containing the Messages tab.</param>
+    /// <param name="prompts">Each prompt should be supplied with its <see cref="AssistantPrompt.Title"/> and <see cref="AssistantPrompt.Message"/> properties.</param>
+    /// <param name="title">Title for the list of provided prompts. For example: Suggested Prompts, Related Questions.</param>
+    /// <param name="cancellationToken"></param>
+    Task SetSuggestedPrompts(string channelId, IEnumerable<AssistantPrompt> prompts, [CanBeNull] string title = null, CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Set the title for the given assistant thread.
@@ -53,6 +63,12 @@ public class AssistantThreadsApi(ISlackApiClient client) : IAssistantThreadsApi
             }, cancellationToken);
 
     public Task SetSuggestedPrompts(string channelId, string threadTs, IEnumerable<AssistantPrompt> prompts, string title = null, CancellationToken cancellationToken = default) =>
+        SetSuggestedPromptsCore(channelId, threadTs, prompts, title, cancellationToken);
+
+    public Task SetSuggestedPrompts(string channelId, IEnumerable<AssistantPrompt> prompts, string title = null, CancellationToken cancellationToken = default) =>
+        SetSuggestedPromptsCore(channelId, null, prompts, title, cancellationToken);
+
+    private Task SetSuggestedPromptsCore(string channelId, string threadTs, IEnumerable<AssistantPrompt> prompts, string title, CancellationToken cancellationToken) =>
         client.Post("assistant.threads.setSuggestedPrompts", new Args
             {
                 { "channel_id", channelId },
