@@ -17,6 +17,7 @@ public interface IOAuthV2Api
     /// <param name="grantType">The grant_type param as described in the OAuth spec.</param>
     /// <param name="redirectUrl">This must match the originally submitted URI (if one was sent).</param>
     /// <param name="refreshToken">The refresh_token param as described in the OAuth spec.</param>
+    /// <param name="codeVerifier">The code_verifier param as described in the PKCE extension to the OAuth spec, matching the code_challenge sent to the authorization endpoint.</param>
     /// <param name="cancellationToken"></param>
     Task<OauthV2AccessResponse> Access(
         string clientId,
@@ -26,6 +27,7 @@ public interface IOAuthV2Api
         string? grantType,
         string? redirectUrl,
         string? refreshToken,
+        string? codeVerifier = null,
 #nullable disable
         CancellationToken cancellationToken = default
     );
@@ -55,6 +57,7 @@ public class OAuthV2Api(ISlackApiClient client) : IOAuthV2Api
         string? grantType,
         string? redirectUrl,
         string? refreshToken,
+        string? codeVerifier = null,
 #nullable disable
         CancellationToken cancellationToken = default
     ) =>
@@ -66,7 +69,8 @@ public class OAuthV2Api(ISlackApiClient client) : IOAuthV2Api
                         { "code", code },
                         { "grant_type", grantType },
                         { "redirect_uri", redirectUrl },
-                        { "refresh_token", refreshToken }
+                        { "refresh_token", refreshToken },
+                        { "code_verifier", codeVerifier }
                     },
                 cancellationToken);
 
