@@ -1,0 +1,32 @@
+name: Publish NuGet packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: Test and pack release
+        run: ./build.sh Test Pack
+      - name: Log in to NuGet
+        id: nuget
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: Push packages
+        run: dotnet nuget push 'output/*.nupkg' --api-key '${{ steps.nuget.outputs.NUGET_API_KEY }}' --source https://api.nuget.org/v3/index.json

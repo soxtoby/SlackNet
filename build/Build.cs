@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Nuke.Common;
 using Nuke.Common.CI;
-using Nuke.Common.CI.AppVeyor;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
@@ -12,8 +12,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 [DotNetVerbosityMapping]
 [ShutdownDotNetAfterServerBuild]
-[AppVeyor(AppVeyorImage.VisualStudioLatest, InvokedTargets = [nameof(Test), nameof(Pack)])]
-class Build : NukeBuild
+partial class Build : NukeBuild
 {
     public static int Main() => Execute<Build>(x => x.Compile);
 
@@ -98,4 +97,7 @@ class Build : NukeBuild
             "SlackNet.Extensions.DependencyInjection",
             "SlackNet.SimpleInjector"
         ];
+
+    [GeneratedRegex(@"^v(?<version>\d+\.\d+\.\d+)$")]
+    private static partial Regex VersionPattern();
 }
