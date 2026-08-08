@@ -164,7 +164,7 @@ public class RichTextAttachmentMention() : RichTextSectionElement("attachment_me
     /// The timestamp of the attachment as a <see cref="DateTime"/>.
     /// </summary>
     [JsonIgnore]
-    public DateTime? Timestamp => Ts?.ToDateTime().GetValueOrDefault();
+    public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
 
     /// <summary>
     /// Whether the work object supports full size preview.
@@ -297,6 +297,8 @@ public class RichTextStyle
     public bool Highlight { get; set; }
     [IgnoreIfDefault]
     public bool ClientHighlight { get; set; }
+    [IgnoreIfDefault]
+    public bool Underline { get; set; }
     [IgnoreIfDefault]
     public bool Unlink { get; set; }
 }
