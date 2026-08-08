@@ -118,6 +118,91 @@ public class RichTextBroadcast() : RichTextSectionElement("broadcast")
 }
 
 /// <summary>
+/// Renders as a rich app attachment or entity reference.
+/// </summary>
+/// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/block-elements/attachment-mention-element">Slack documentation</a> for more information.</remarks>
+[SlackType("attachment_mention")]
+public class RichTextAttachmentMention() : RichTextSectionElement("attachment_mention")
+{
+    /// <summary>
+    /// The URL of the app attachment or entity to reference.
+    /// </summary>
+    public string Url { get; set; }
+
+    /// <summary>
+    /// Fallback text if attachment not found.
+    /// </summary>
+    public string Text { get; set; }
+
+    /// <summary>
+    /// The app ID that produced the unfurl. Used to fetch the app's profile for use in rendering.
+    /// </summary>
+    public string AppId { get; set; }
+
+    /// <summary>
+    /// The Work Object entity ID when the attachment is a Work Object.
+    /// </summary>
+    public string EntityId { get; set; }
+
+    /// <summary>
+    /// An optional override of the icon URL.
+    /// This will typically be used for adding the Work Object product icon, which can be different from the app's icon.
+    /// </summary>
+    public string IconUrl { get; set; }
+
+    /// <summary>
+    /// The encoded channel ID where this attachment lives.
+    /// </summary>
+    public string ChannelId { get; set; }
+
+    /// <summary>
+    /// The encoded message timestamp where this attachment lives.
+    /// </summary>
+    public string Ts { get; set; }
+
+    /// <summary>
+    /// The timestamp of the attachment as a <see cref="DateTime"/>.
+    /// </summary>
+    [JsonIgnore]
+    public DateTime? Timestamp => Ts?.ToDateTime().GetValueOrDefault();
+
+    /// <summary>
+    /// Whether the work object supports full size preview.
+    /// </summary>
+    public bool? FullSizePreviewEnabled { get; set; }
+
+    /// <summary>
+    /// An optional icon name identifier for the attachment (e.g., sf-account, sf-record, sf-list for Salesforce attachments).
+    /// </summary>
+    public string IconName { get; set; }
+
+    /// <summary>
+    /// An optional type identifier for the referenced object (e.g., list_view, record for Salesforce attachments).
+    /// </summary>
+    public string ReferenceObjectType { get; set; }
+
+    /// <summary>
+    /// The product name for the Work Object (e.g., Google Docs, Google Sheets).
+    /// Used to determine per-product click behavior preferences when the attachment is not available.
+    /// </summary>
+    public string ProductName { get; set; }
+
+    /// <summary>
+    /// An object of optional boolean properties that dictate style:
+    /// <list type="bullet">
+    /// <item><see cref="RichTextStyle.Bold"/></item>
+    /// <item><see cref="RichTextStyle.Italic"/></item>
+    /// <item><see cref="RichTextStyle.Strike"/></item>
+    /// <item><see cref="RichTextStyle.Highlight"/></item>
+    /// <item><see cref="RichTextStyle.ClientHighlight"/></item>
+    /// <item><see cref="RichTextStyle.Underline"/></item>
+    /// <item><see cref="RichTextStyle.Unlink"/></item>
+    /// </list>
+    /// </summary>
+    public RichTextStyle Style { get; set; } = new();
+}
+
+/// <summary>
 /// List element.
 /// </summary>
 /// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/blocks/#rich_text_list">Slack documentation</a> for more information.</remarks>
