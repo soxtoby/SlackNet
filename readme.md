@@ -111,4 +111,4 @@ Add event handler registrations inside the AddSlackNet callback. See the [AzureF
 Contributions are welcome. Currently, changes must be made on a feature branch, otherwise the CI build will fail.
 
 Slack's API is large and changes often, and while their documentation is very good, it's not always 100% complete or accurate, which can easily lead to bugs or missing features in SlackNet.
-Raising issues or submitting pull requests for these sorts of discrepencies is highly appreciated, as realistically I have to rely on the documentation unless I happen to be using a particular API myself.
+Raising issues or submitting pull requests for these sorts of discrepancies is highly appreciated, as realistically, I have to rely on the documentation unless I happen to be using a particular API myself.
