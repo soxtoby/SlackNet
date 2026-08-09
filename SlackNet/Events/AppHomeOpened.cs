@@ -9,6 +9,10 @@ public class AppHomeOpened : Event
     public string Channel { get; set; }
     public AppHomeTab Tab { get; set; }
     public ViewInfo View { get; set; }
+    /// <summary>
+    /// Information about what the user is currently viewing.
+    /// </summary>
+    public AppContext Context { get; set; }
 }
 
 public enum AppHomeTab

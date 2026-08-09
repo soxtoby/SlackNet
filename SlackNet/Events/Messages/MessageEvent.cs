@@ -26,6 +26,10 @@ public class MessageEvent : MessageEventBase
     public string AppId { get; set; }
     public BotInfo BotProfile { get; set; }
     public string ActionToken { get; set; }
+    /// <summary>
+    /// Information about what the user is currently viewing when sending a direct message to the app.
+    /// </summary>
+    public AppContext AppContext { get; set; }
 }
 
 public class PinnedInfo
