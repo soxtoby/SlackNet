@@ -260,7 +260,7 @@ public class RichTextQuote() : RichTextElement("rich_text_quote")
 /// <summary>
 /// Preformatted code block element.
 /// </summary>
-/// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/blocks/#rich_text_preformatted">Slack documentation</a> for more information.</remarks>
+/// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/block-elements/rich-text-preformatted-element/">Slack documentation</a> for more information.</remarks>
 public class RichTextPreformatted() : RichTextElement("rich_text_preformatted")
 {
     /// <summary>
@@ -272,6 +272,11 @@ public class RichTextPreformatted() : RichTextElement("rich_text_preformatted")
     /// Number of pixels of border thickness.
     /// </summary>
     public int Border { get; set; }
+
+    /// <summary>
+    /// The language of the code block, used for syntax highlighting.
+    /// </summary>
+    public string Language { get; set; }
 }
 
 [SlackType("list_record")]
