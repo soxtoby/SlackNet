@@ -26,6 +26,13 @@ public class RichTextCell() : TableCell("rich_text")
     public IList<RichTextElement> Elements { get; set; }
 }
 
+[SlackType("raw_number")]
+public class RawNumberCell() : TableCell("raw_number")
+{
+    public double Value { get; set; }
+    public string Text { get; set; }
+}
+
 public class TableColumnSettings
 {
     public ColumnAlignment Align { get; set; }
