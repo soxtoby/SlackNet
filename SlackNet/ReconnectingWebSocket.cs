@@ -11,7 +11,7 @@ using SlackNet.SocketMode;
 
 namespace SlackNet;
 
-class ReconnectingWebSocket : IDisposable
+class ReconnectingWebSocket : IDisposable, IAsyncDisposable
 {
     private readonly IWebSocketFactory _webSocketFactory;
     private readonly IScheduler _scheduler;
@@ -22,6 +22,7 @@ class ReconnectingWebSocket : IDisposable
     private readonly CancellationTokenSource _disposed = new();
     private IWebSocket _webSocket;
     private IDisposable _messagesSubscription;
+    private Task _connectAndReconnectTask = Task.CompletedTask;
 
     public ReconnectingWebSocket(IWebSocketFactory webSocketFactory, IScheduler scheduler, ILogger logger, int id)
     {
@@ -33,12 +34,51 @@ class ReconnectingWebSocket : IDisposable
         _messages = Subject.Synchronize(_messagesSubject);
     }
 
-    public async Task Connect(Func<Task<string>> getWebSocketUrl, CancellationToken cancellationToken = default)
+    public Task Connect(Func<Task<string>> getWebSocketUrl, CancellationToken cancellationToken = default)
     {
-        using var cancel = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _disposed.Token);
+        var connected = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _connectAndReconnectTask = ConnectAndReconnect(getWebSocketUrl, connected, cancellationToken);
+        return connected.Task;
+    }
 
+    private async Task ConnectAndReconnect(Func<Task<string>> getWebSocketUrl, TaskCompletionSource<object> connected, CancellationToken cancellationToken)
+    {
+        using var connectionCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _disposed.Token);
+        cancellationToken = connectionCancellation.Token;
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            try
+            {
+                await ConnectWithRetry(getWebSocketUrl, cancellationToken).ConfigureAwait(false);
+                connected.TrySetResult(null);
+
+                var result = await ClosedResult(cancellationToken).ConfigureAwait(false);
+                if (result is Exception closeException)
+                    _log.Internal(closeException, "Socket {SocketId} closed", _id);
+                else
+                    _log.Internal("Socket {SocketId} closed", _id);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                connected.TrySetCanceled(cancellationToken);
+                return;
+            }
+            catch (Exception connectionException)
+            {
+                if (!connected.TrySetException(connectionException))
+                    _log.Error(connectionException, "Socket {SocketId} failed to reconnect", _id);
+                return;
+            }
+        }
+
+        connected.TrySetCanceled(cancellationToken);
+    }
+
+    private async Task ConnectWithRetry(Func<Task<string>> getWebSocketUrl, CancellationToken cancellationToken)
+    {
         // Retry as long as not cancelled and Slack doesn't return an error response
-        await Observable.FromAsync(() => ConnectInternal(getWebSocketUrl, cancel.Token), _scheduler)
+        await Observable.FromAsync(() => ConnectInternal(getWebSocketUrl, cancellationToken), _scheduler)
             .RetryWithDelay(
                 e => e is not SlackException and not TaskCanceledException,
                 TimeSpan.FromSeconds(1),
@@ -47,7 +87,7 @@ class ReconnectingWebSocket : IDisposable
                 _scheduler,
                 (e, d) => _log.Internal(e, "Error connecting socket {SocketId} - retrying in {RetryDelay}", _id, d))
             .FirstAsync()
-            .ToTask(cancel.Token)
+            .ToTask(cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -81,34 +121,21 @@ class ReconnectingWebSocket : IDisposable
 
         _log.WithContext("Url", url)
             .Internal("Socket {SocketId} opened", _id);
-
-        _ = ReconnectOnClose(getWebSocketUrl, cancellationToken);
-    }
-
-    private async Task ReconnectOnClose(Func<Task<string>> getWebSocketUrl, CancellationToken cancellationToken)
-    {
-        var result = await ClosedResult().ConfigureAwait(false);
-        if (result is Exception e)
-            _log.Internal(e, "Socket {SocketId} closed", _id);
-        else
-            _log.Internal("Socket {SocketId} closed", _id);
-
-        if (!cancellationToken.IsCancellationRequested)
-            await Connect(getWebSocketUrl, cancellationToken).ConfigureAwait(false);
     }
 
     [ItemCanBeNull]
-    async Task<object> ClosedResult()
+    async Task<object> ClosedResult(CancellationToken cancellationToken)
     {
-        if (_webSocket.Closed is Task<object> closedResult)
-        {
-            return await closedResult.ConfigureAwait(false) as Exception;
-        }
-        else
-        {
-            await _webSocket.Closed.ConfigureAwait(false);
-            return null;
-        }
+        var closed = _webSocket.Closed;
+        if (closed is Task<object> closedResult)
+            return await Observable.FromAsync(() => closedResult, _scheduler)
+                .ToTask(cancellationToken)
+                .ConfigureAwait(false) as Exception;
+
+        await Observable.FromAsync(() => closed, _scheduler)
+            .ToTask(cancellationToken)
+            .ConfigureAwait(false);
+        return null;
     }
 
     public WebSocketState State => _webSocket?.State ?? WebSocketState.None;
@@ -117,14 +144,18 @@ class ReconnectingWebSocket : IDisposable
 
     public Task Send(string message) => _webSocket.Send(message);
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        _disposed.Cancel();
+        await _disposed.CancelAsync().ConfigureAwait(false);
+        // Dispose completes IWebSocket.Closed, releasing ClosedResult so ConnectAndReconnect can finish.
+        _webSocket?.Dispose();
+        await _connectAndReconnectTask.ConfigureAwait(false);
         _disposed.Dispose();
         _messagesSubscription?.Dispose();
         _messagesSubject?.Dispose();
-        _webSocket?.Dispose();
     }
+
+    public void Dispose() => DisposeAsync().AsTask().GetAwaiter().GetResult();
 }
 
 class ConnectionFailedException(int socketId, WebSocketState state, Exception exception = null)

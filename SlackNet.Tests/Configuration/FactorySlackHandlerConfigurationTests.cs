@@ -937,8 +937,10 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     protected class TestSocketModeClient : ISlackSocketModeClient
     {
         public void Dispose() => throw new NotImplementedException();
+        public ValueTask DisposeAsync() => throw new NotImplementedException();
         public Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public void Disconnect() { throw new NotImplementedException(); }
+        public Task DisconnectAsync() => throw new NotImplementedException();
         public bool Connected { get; }
     }
 

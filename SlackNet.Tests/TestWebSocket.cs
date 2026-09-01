@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
-using System.Reactive;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,11 +17,13 @@ class TestWebSocket(string uri) : IWebSocket
     public List<string> Sent { get; } = new();
     
     public TaskCompletionSource<bool> Connection { get; } = new();
+    public CancellationToken OpenCancellationToken { get; private set; }
 
     public async Task<bool> Open(CancellationToken cancellationToken)
     {
         State = WebSocketState.Connecting;
-        cancellationToken.Register(Connection.SetCanceled);
+        OpenCancellationToken = cancellationToken;
+        cancellationToken.Register(() => Connection.TrySetCanceled(cancellationToken));
         var connected = await Connection.Task;
         State = connected ? WebSocketState.Open : WebSocketState.Closed;
         return connected;

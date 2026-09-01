@@ -16,11 +16,14 @@ using SlackNet.SocketMode;
 
 namespace SlackNet;
 
-public interface ISlackSocketModeClient : IDisposable
+public interface ISlackSocketModeClient : IDisposable, IAsyncDisposable
 {
     Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken cancellationToken = default);
 
+    [Obsolete("Use DisconnectAsync instead.")]
     void Disconnect();
+
+    Task DisconnectAsync();
 
     /// <summary>
     /// Is the client connecting or has it connected.
@@ -60,7 +63,13 @@ public class SlackSocketModeClient : ISlackSocketModeClient
     public Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken cancellationToken = default) =>
         _socket.Connect(connectionOptions, cancellationToken);
 
-    public void Disconnect() => _socket.Disconnect();
+    [Obsolete("Use DisconnectAsync instead.")]
+    public void Disconnect() => DisconnectAsync().GetAwaiter().GetResult();
+
+    /// <summary>
+    /// Disconnects and waits for all socket connection work to stop.
+    /// </summary>
+    public Task DisconnectAsync() => _socket.DisconnectAsync();
 
     /// <summary>
     /// Is the client connecting or has it connected.
@@ -268,8 +277,11 @@ public class SlackSocketModeClient : ISlackSocketModeClient
     private Task Send(int socketId, Acknowledgement acknowledgement) =>
         _socket.Send(socketId, acknowledgement);
 
-    public void Dispose()
+    public void Dispose() => DisposeAsync().AsTask().GetAwaiter().GetResult();
+
+    public async ValueTask DisposeAsync()
     {
         _requestSubscription?.Dispose();
+        await DisconnectAsync().ConfigureAwait(false);
     }
 }

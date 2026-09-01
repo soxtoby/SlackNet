@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using EasyAssertions;
 using Microsoft.Reactive.Testing;
 using NUnit.Framework;
+using SlackNet.WebApi;
 
 namespace SlackNet.Tests;
 
@@ -85,9 +87,46 @@ public class ReconnectingWebSocketTests
         connected.ShouldComplete();
 
         socket0.Result.Dispose();
-        
+        _scheduler.Start();
+
         SocketConnected(socket1, true);
         _sut.State.ShouldBe(WebSocketState.Open);
+    }
+
+    [Test]
+    public void Closed_ReconnectFails_LogsError()
+    {
+        var socket = _webSocketFactory.Created.FirstAsync().ToTask();
+        var urlRequests = 0;
+        var connected = _sut.Connect(() =>
+            ++urlRequests == 1
+                ? Task.FromResult("test url")
+                : Task.FromException<string>(new SlackException(new ErrorResponse { Error = "fatal_test_error" })));
+        SocketConnected(socket, true);
+        connected.ShouldComplete();
+
+        socket.Result.Dispose();
+        _scheduler.Start();
+
+        _logger.Events.Any(e => e is { Category: LogCategory.Error, Exception: SlackException }).ShouldBe(true);
+    }
+
+    [Test]
+    public void CancelledAfterConnecting_DoesNotReconnect()
+    {
+        using var cancellation = new CancellationTokenSource();
+        var sockets = _scheduler.CreateObserver<TestWebSocket>();
+        _webSocketFactory.Created.Subscribe(sockets);
+        var socket = _webSocketFactory.Created.FirstAsync().ToTask();
+        var connected = _sut.Connect(() => Task.FromResult("test url"), cancellation.Token);
+        SocketConnected(socket, true);
+        connected.ShouldComplete();
+
+        cancellation.Cancel();
+        socket.Result.Dispose();
+        _scheduler.Start();
+
+        sockets.Messages.ShouldBeLength(1);
     }
 
     [Test]

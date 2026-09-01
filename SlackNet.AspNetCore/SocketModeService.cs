@@ -29,10 +29,8 @@ class SocketModeService(
         }
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        if (_enabled)
-            socketModeClient.Disconnect();
-        return Task.CompletedTask;
-    }
+    public Task StopAsync(CancellationToken cancellationToken) =>
+        _enabled
+            ? socketModeClient.DisconnectAsync()
+            : Task.CompletedTask;
 }
