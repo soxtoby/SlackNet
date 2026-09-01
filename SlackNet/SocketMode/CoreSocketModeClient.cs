@@ -54,15 +54,11 @@ public class CoreSocketModeClient : ICoreSocketModeClient
     private readonly SlackJsonSettings _jsonSettings;
     private readonly IScheduler _scheduler;
     private readonly ILogger _log;
-    private readonly Lock _disconnectLock = new();
+    private readonly Lock _connectionLock = new();
     private readonly Subject<RawSocketMessage> _rawSocketMessagesSubject = new();
     private readonly ISubject<RawSocketMessage> _rawSocketMessages;
-    private ReconnectingWebSocket[] _webSockets = [];
-    private IDisposable? _rawSocketStringsSubscription;
-    private Task _additionalConnectionsTask = Task.CompletedTask;
+    private SocketConnections? _connections;
     private Task _disconnectTask = Task.CompletedTask;
-    private CancellationTokenSource? _disconnectCancellation;
-    private CancellationTokenSource? _connectionCancelled;
 
     public CoreSocketModeClient(string appLevelToken)
         : this(
@@ -123,65 +119,77 @@ public class CoreSocketModeClient : ICoreSocketModeClient
 
     public async Task Connect(SocketModeConnectionOptions? connectionOptions = null, CancellationToken cancellationToken = default)
     {
-        if (Connected)
-            throw new InvalidOperationException("Already connecting or connected");
+        lock (_connectionLock)
+        {
+            if (Connected)
+                throw new InvalidOperationException("Already connecting or connected");
+        }
 
         connectionOptions ??= Default.SocketModeConnectionOptions;
 
         _log.Internal("Opening {NumberOfConnections} socket mode connections, with delay of {ConnectionDelay}", connectionOptions.NumberOfConnections, connectionOptions.ConnectionDelay);
 
-        _rawSocketStringsSubscription?.Dispose();
         await DisconnectAsync().ConfigureAwait(false);
-        _connectionCancelled?.Dispose();
-        _disconnectCancellation?.Dispose();
 
-        _disconnectCancellation = new CancellationTokenSource();
-        var connectionCancelled = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _disconnectCancellation.Token);
-        _connectionCancelled = connectionCancelled;
+        Task firstConnection;
+        lock (_connectionLock)
+        {
+            if (_connections is not null)
+                throw new InvalidOperationException("Already connecting or connected");
 
-        _webSockets = Enumerable.Range(0, connectionOptions.NumberOfConnections)
-            .Select(i => new ReconnectingWebSocket(_webSocketFactory, _scheduler, _log, i))
-            .ToArray();
+            var disconnectCancellation = new CancellationTokenSource();
+            var connectionCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, disconnectCancellation.Token);
 
-        _rawSocketStringsSubscription = _webSockets
-            .Select(ws => ws.Messages)
-            .Merge()
-            .Subscribe(_rawSocketMessages);
+            var webSockets = Enumerable.Range(0, connectionOptions.NumberOfConnections)
+                .Select(i => new ReconnectingWebSocket(_webSocketFactory, _scheduler, _log, i))
+                .ToArray();
 
-        var firstConnection = _webSockets.First().Connect(GetWebSocketUrl, connectionCancelled.Token);
+            var rawSocketStringsSubscription = webSockets
+                .Select(ws => ws.Messages)
+                .Merge()
+                .Subscribe(_rawSocketMessages);
 
-        // Stagger remaining connections so they don't all expire at the same time
-        _additionalConnectionsTask = Task.WhenAll(_webSockets.Skip(1).Select(ConnectAdditional));
+            firstConnection = webSockets.First().Connect(GetWebSocketUrl, connectionCancellation.Token);
+
+            // Stagger remaining connections so they don't all expire at the same time
+            var additionalConnectionsTask = Task.WhenAll(webSockets.Skip(1).Select(ConnectAdditional));
+            _connections = new SocketConnections(
+                disconnectCancellation,
+                connectionCancellation,
+                webSockets,
+                additionalConnectionsTask,
+                rawSocketStringsSubscription);
+
+            async Task<string> GetWebSocketUrl()
+            {
+                var openResponse = await _client.AppsConnectionsApi.Open(connectionCancellation.Token).ConfigureAwait(false);
+                return connectionOptions.DebugReconnects
+                    ? openResponse.Url + "&debug_reconnects=true"
+                    : openResponse.Url;
+            }
+
+            async Task ConnectAdditional(ReconnectingWebSocket webSocket, int index)
+            {
+                try
+                {
+                    await Observable.Interval(connectionOptions.ConnectionDelay, _scheduler)
+                        .ElementAt(index)
+                        .ToTask(connectionCancellation.Token)
+                        .ConfigureAwait(false);
+                    await webSocket.Connect(GetWebSocketUrl, connectionCancellation.Token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (connectionCancellation.IsCancellationRequested)
+                {
+                    // Disconnecting.
+                }
+                catch (Exception e)
+                {
+                    _log.Error(e, "Error opening additional socket mode connection");
+                }
+            }
+        }
 
         await firstConnection.ConfigureAwait(false);
-
-        async Task<string> GetWebSocketUrl()
-        {
-            var openResponse = await _client.AppsConnectionsApi.Open(connectionCancelled.Token).ConfigureAwait(false);
-            return connectionOptions.DebugReconnects
-                ? openResponse.Url + "&debug_reconnects=true"
-                : openResponse.Url;
-        }
-
-        async Task ConnectAdditional(ReconnectingWebSocket webSocket, int index)
-        {
-            try
-            {
-                await Observable.Interval(connectionOptions.ConnectionDelay, _scheduler)
-                    .ElementAt(index)
-                    .ToTask(connectionCancelled.Token)
-                    .ConfigureAwait(false);
-                await webSocket.Connect(GetWebSocketUrl, connectionCancelled.Token).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) when (connectionCancelled.IsCancellationRequested)
-            {
-                // Disconnecting.
-            }
-            catch (Exception e)
-            {
-                _log.Error(e, "Error opening additional socket mode connection");
-            }
-        }
     }
 
     [Obsolete("Use DisconnectAsync instead.")]
@@ -192,44 +200,29 @@ public class CoreSocketModeClient : ICoreSocketModeClient
     /// </summary>
     public Task DisconnectAsync()
     {
-        lock (_disconnectLock)
+        lock (_connectionLock)
         {
-            var disconnectCancellation = _disconnectCancellation;
-            if (disconnectCancellation is null)
+            var connections = _connections;
+            if (connections is null)
                 return _disconnectTask;
 
-            var connectionCancelled = _connectionCancelled;
-            _disconnectCancellation = null;
-            _connectionCancelled = null;
-            _disconnectTask = DisconnectCore(disconnectCancellation, connectionCancelled);
+            _connections = null;
+            _disconnectTask = DisconnectCore(connections);
             return _disconnectTask;
         }
     }
 
-    private async Task DisconnectCore(
-        CancellationTokenSource disconnectCancellation,
-        CancellationTokenSource? connectionCancelled)
+    private async Task DisconnectCore(SocketConnections connections)
     {
         _log.Internal("Disconnecting previous socket mode connections");
-        await disconnectCancellation.CancelAsync().ConfigureAwait(false);
-        try
-        {
-            await Task.WhenAll(_webSockets
-                .Select(webSocket => webSocket.DisposeAsync().AsTask())
-                .Append(_additionalConnectionsTask)).ConfigureAwait(false);
-        }
-        finally
-        {
-            connectionCancelled?.Dispose();
-            disconnectCancellation.Dispose();
-        }
+        await connections.DisconnectAsync().ConfigureAwait(false);
     }
 
     /// <summary>
     /// Is the client connecting or has it connected?
     /// </summary>
     public bool Connected =>
-        _webSockets.Any(ws => ws.State is WebSocketState.Connecting or WebSocketState.Open);
+        _connections?.WebSockets.Any(ws => ws.State is WebSocketState.Connecting or WebSocketState.Open) == true;
 
     public IObservable<RawSocketMessage> RawSocketMessages => _rawSocketMessages.AsObservable();
 
@@ -248,18 +241,42 @@ public class CoreSocketModeClient : ICoreSocketModeClient
     /// </param>
     public async Task Send(int socketId, Acknowledgement acknowledgement)
     {
-        if (_webSockets.ElementAtOrDefault(socketId) is ReconnectingWebSocket socket)
+        if (_connections?.WebSockets.ElementAtOrDefault(socketId) is ReconnectingWebSocket socket)
             await socket.Send(JsonConvert.SerializeObject(acknowledgement, _jsonSettings.SerializerSettings)).ConfigureAwait(false);
     }
 
     public async ValueTask DisposeAsync()
     {
         await DisconnectAsync().ConfigureAwait(false);
-        _connectionCancelled?.Dispose();
-        _disconnectCancellation?.Dispose();
-        _rawSocketStringsSubscription?.Dispose();
         _rawSocketMessagesSubject.Dispose();
     }
 
     public void Dispose() => DisposeAsync().AsTask().GetAwaiter().GetResult();
+
+    private sealed class SocketConnections(
+        CancellationTokenSource disconnectCancellation,
+        CancellationTokenSource connectionCancellation,
+        ReconnectingWebSocket[] webSockets,
+        Task additionalConnectionsTask,
+        IDisposable rawSocketStringsSubscription)
+    {
+        public ReconnectingWebSocket[] WebSockets { get; } = webSockets;
+
+        public async Task DisconnectAsync()
+        {
+            try
+            {
+                await disconnectCancellation.CancelAsync().ConfigureAwait(false);
+                await Task.WhenAll(WebSockets
+                    .Select(webSocket => webSocket.DisposeAsync().AsTask())
+                    .Append(additionalConnectionsTask)).ConfigureAwait(false);
+            }
+            finally
+            {
+                rawSocketStringsSubscription.Dispose();
+                connectionCancellation.Dispose();
+                disconnectCancellation.Dispose();
+            }
+        }
+    }
 }

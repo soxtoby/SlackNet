@@ -113,6 +113,21 @@ public class CoreSocketModeClientTests
     }
 
     [Test]
+    public void Connect_WhileConnecting_ThrowsWithoutReplacingConnection()
+    {
+        var socket = _sockets.Created.FirstAsync().ToTask();
+        var firstConnect = _sut.Connect(new SocketModeConnectionOptions { NumberOfConnections = 1 });
+        socket.ShouldComplete();
+
+        Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _sut.Connect(new SocketModeConnectionOptions { NumberOfConnections = 1 }));
+        _sockets.Created.Take(2).ToTask().IsCompleted.ShouldBe(false);
+
+        socket.Result.Connection.SetResult(true);
+        firstConnect.ShouldComplete();
+    }
+
+    [Test]
     public void SocketModeDisabled_DoesNotBlockMessageDelivery()
     {
         var socket = Connect();
