@@ -32,6 +32,7 @@ public static class Default
                 TraceWriter = new SerializationLogger(logger),
                 NullValueHandling = NullValueHandling.Ignore,
                 DateFormatString = "yyyy-MM-dd",
+                DateParseHandling = DateParseHandling.None,
                 ContractResolver = new SlackNetContractResolver
                     {
                         NamingStrategy = namingStrategy,
