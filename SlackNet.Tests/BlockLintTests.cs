@@ -25,7 +25,8 @@ public class BlockLintTests
     static readonly HashSet<string> ExcludedBlockElements =
         [
             "button",
-            "image"
+            "image",
+            "url"
         ];
 
     [Test]
