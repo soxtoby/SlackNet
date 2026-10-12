@@ -231,6 +231,7 @@ public class ApiLintTests
             { typeof(UnfurlMetadata), _ => null },
             { typeof(WorkObjectEntity), _ => null },
             { typeof(EntityError), _ => null },
+            { typeof(AgentSessionStatus), _ => AgentSessionStatus.Active },
             { typeof(CancellationToken), _ => null },
         };
 
@@ -293,6 +294,7 @@ public class ApiLintTests
 
         public ISlackApiClient WithAccessToken(string accessToken) => this;
 
+        public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }
         public IAppsConnectionsApi AppsConnectionsApi { get; }
         public IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
