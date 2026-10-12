@@ -6,6 +6,7 @@ namespace SlackNet.Blocks;
 /// Displays a single task, which represents a single action: a title, a status indicator and optional details, output and sources.
 /// Use a <see cref="PlanBlock"/> to show several related tasks together.
 /// Slack doesn't allow a message to contain both a plan block and task cards.
+/// When streaming, the equivalent is a <see cref="WebApi.TaskUpdateChunk"/>.
 /// </summary>
 /// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/blocks/task-card-block/">Slack documentation</a> for more information.</remarks>
 [SlackType("task_card")]

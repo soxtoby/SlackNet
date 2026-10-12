@@ -1,7 +1,7 @@
 ﻿namespace SlackNet.Blocks;
 
 /// <summary>
-/// Displays a clickable URL reference. This element can only be used in a <see cref="TaskCardBlock"/>.
+/// Displays a clickable URL reference. This element can only be used in a <see cref="TaskCardBlock"/> (or in the equivalent <see cref="WebApi.TaskUpdateChunk"/> when streaming).
 /// Slack doesn't validate that the URL resolves.
 /// </summary>
 /// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/block-elements/url-source-element/">Slack documentation</a> for more information.</remarks>

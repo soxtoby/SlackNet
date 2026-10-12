@@ -6,6 +6,8 @@ namespace SlackNet.Blocks;
 /// Groups related <see cref="TaskCardBlock"/>s under a single title, so users can follow a multi-step process as one list.
 /// Each task in a plan must have a unique <see cref="TaskCardBlock.TaskId"/>, and a plan can contain at most 50 tasks.
 /// Slack doesn't allow a message to contain both a plan block and <see cref="TaskCardBlock"/>s.
+/// When streaming, set <see cref="WebApi.TaskDisplayMode.Plan"/> on <see cref="WebApi.IChatApi.StartStream"/> to collect task updates into a plan,
+/// and send <see cref="WebApi.PlanUpdateChunk"/>s to change its title.
 /// </summary>
 /// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/blocks/plan-block/">Slack documentation</a> for more information.</remarks>
 [SlackType("plan")]
