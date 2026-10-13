@@ -15,4 +15,8 @@ public class MessageDeleted : MessageEvent
     public string DeletedTs { get; set; }
     [JsonIgnore]
     public DateTime DeleteTimestamp => DeletedTs.ToDateTime().GetValueOrDefault();
+    /// <summary>
+    /// The message that was deleted.
+    /// </summary>
+    public MessageEvent PreviousMessage { get; set; }
 }

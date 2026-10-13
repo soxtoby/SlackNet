@@ -42,4 +42,14 @@ public class MessageUpdate
     /// Array of new file ids that will be sent with this message.
     /// </summary>
     public IList<string> FileIds { get; set; }
+    /// <summary>
+    /// A custom event attached to the message. Leave as null to leave the existing metadata alone.
+    /// </summary>
+    /// <remarks>Will take precedence over <see cref="MetadataObject"/>.</remarks>
+    public MessageMetadata MetadataJson { get; set; }
+    /// <summary>
+    /// A custom event attached to the message. Leave as null to leave the existing metadata alone.
+    /// </summary>
+    /// <remarks>The specified object will be automatically converted to a <see cref="MessageMetadata"/> using the standard Slack JSON conventions.</remarks>
+    public object MetadataObject { get; set; }
 }

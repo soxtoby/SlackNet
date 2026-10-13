@@ -12,6 +12,14 @@ public abstract class MessageEventBase : Event
     public string Text { get; set; }
     public string Ts { get; set; }
     public string Team { get; set; }
+    /// <summary>
+    /// The workspace of the user who sent the message. Only sent when the message comes from a channel that is shared between workspaces.
+    /// </summary>
+    public string UserTeam { get; set; }
+    /// <summary>
+    /// The workspace the message was sent from. Only sent when the message comes from a channel that is shared between workspaces.
+    /// </summary>
+    public string SourceTeam { get; set; }
     public bool DisplayAsBot { get; set; }
     [JsonIgnore]
     public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();

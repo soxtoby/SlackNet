@@ -377,7 +377,8 @@ public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : I
                     { "parse", messageUpdate.Parse },
                     { "link_names", messageUpdate.LinkNames },
                     { "as_user", messageUpdate.AsUser },
-                    { "file_ids", messageUpdate.FileIds }
+                    { "file_ids", messageUpdate.FileIds },
+                    { "metadata", messageUpdate.MetadataJson ?? MessageMetadata.FromObject(messageUpdate.MetadataObject, jsonSettings) }
                 },
             cancellationToken);
 
