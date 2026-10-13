@@ -5,6 +5,7 @@ using EasyAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SlackNet.Events;
+using SlackNet.WebApi;
 
 namespace SlackNet.Tests;
 
@@ -207,6 +208,29 @@ public class SerializationTests
                     o.Required.ShouldBe(new TimeSpan(13, 14, 0));
                     o.Optional.ShouldBe(new TimeSpan(16, 17, 0));
                 });
+    }
+
+    [TestCase("2001-02-03")]
+    [TestCase("2001-02-03T04:05:06")]
+    [TestCase("2001-02-03T04:05:06Z")]
+    [TestCase("2001-02-03T04:05:06+07:00")]
+    public void DateString_DeserializedToStringProperty_Unchanged(string date)
+    {
+        var result = Deserialize<Event>($@"{{ ""type"": ""message"", ""text"": ""{date}"" }}");
+        result.ShouldBeA<MessageEvent>()
+            .And.Text.ShouldBe(date);
+    }
+
+    [TestCase("2001-02-03")]
+    [TestCase("2001-02-03T04:05:06+07:00")]
+    public void DateString_InWebApiResponse_Unchanged(string date)
+    {
+        var response = Deserialize<WebApiResponse>($@"{{ ""ok"": true, ""messages"": [{{ ""type"": ""message"", ""text"": ""{date}"" }}] }}");
+
+        var result = response.Data.ToObject<ConversationHistoryResponse>(JsonSerializer.Create(_sut));
+
+        result.Messages.ShouldBeASingular<MessageEvent>()
+            .And.Text.ShouldBe(date);
     }
 
     private string Serialize(object obj) => JsonConvert.SerializeObject(obj, _sut);
