@@ -151,25 +151,62 @@ public interface IChatApi
 
     /// <summary>
     /// Starts a new streaming conversation.
+    /// Starting a stream creates an agent session if there isn't one yet, and sets it to <see cref="AgentSessionStatus.Processing"/>.
     /// </summary>
     /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.startStream/">Slack documentation</a> for more information.</remarks>
     /// <param name="channel">An encoded ID that represents a channel, private group, or DM.</param>
-    /// <param name="threadTs">Provide another message's timestamp value to reply to. Streamed messages should always be replies to a user request.</param>
-    /// <param name="markdownText">Accepts message text formatted in markdown. This text is what will be appended to the message received so far.</param>
+    /// <param name="threadTs">
+    /// Provide another message's timestamp value to reply to. Streamed messages should always be replies to a user request.
+    /// Can be <c>null</c> only in channels where the whole channel is one session, such as Slack Code.
+    /// </param>
+    /// <param name="markdownText">
+    /// Accepts message text formatted in markdown. Limit this field to 12,000 characters.
+    /// Can't be combined with <paramref name="chunks"/>, and a stream started with markdown text can only be appended to with markdown text.
+    /// </param>
     /// <param name="recipientUserId">The encoded ID of the user to receive the streaming text. Required when streaming to channels.</param>
     /// <param name="recipientTeamId">The encoded ID of the team the user receiving the streaming text belongs to. Required when streaming to channels.</param>
+    /// <param name="chunks">
+    /// Chunks to stream: markdown text, task updates, plan updates and blocks.
+    /// Can't be combined with <paramref name="markdownText"/>, and a stream started with chunks can only be appended to with chunks.
+    /// </param>
+    /// <param name="taskDisplayMode">How task updates are displayed. Slack's default is <see cref="TaskDisplayMode.Timeline"/>.</param>
+    /// <param name="iconEmoji">Emoji to use as the icon for this message. Overrides <paramref name="iconUrl"/>.</param>
+    /// <param name="iconUrl">Image URL to use as the icon for this message.</param>
+    /// <param name="username">The bot's username to display.</param>
     /// <param name="cancellationToken"></param>
-    Task<MessageTsResponse> StartStream(string channel, string threadTs, string markdownText = null, string recipientUserId = null, string recipientTeamId = null, CancellationToken cancellationToken = default);
+    Task<MessageTsResponse> StartStream(
+        string channel,
+        string threadTs,
+        string markdownText = null,
+        string recipientUserId = null,
+        string recipientTeamId = null,
+        IEnumerable<StreamChunk> chunks = null,
+        TaskDisplayMode? taskDisplayMode = null,
+        string iconEmoji = null,
+        string iconUrl = null,
+        string username = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Appends text to an existing streaming conversation.
+    /// Appends text or chunks to an existing streaming conversation.
+    /// Fails with <c>stopped_by_user</c> if the user stopped the stream.
     /// </summary>
     /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.appendStream/">Slack documentation</a> for more information.</remarks>
     /// <param name="channel">An encoded ID that represents a channel, private group, or DM.</param>
     /// <param name="ts">The timestamp of the streaming message.</param>
-    /// <param name="markdownText">Accepts message text formatted in markdown. This text is what will be appended to the message received so far.</param>
+    /// <param name="markdownText">
+    /// Accepts message text formatted in markdown. Limit this field to 12,000 characters.
+    /// This text is what will be appended to the message received so far.
+    /// Use this if the stream was started with markdown text, and <paramref name="chunks"/> if it was started with chunks.
+    /// </param>
+    /// <param name="chunks">Chunks to append to the stream: markdown text, task updates, plan updates and blocks.</param>
     /// <param name="cancellationToken"></param>
-    Task<MessageTsResponse> AppendStream(string channel, string ts, string markdownText, CancellationToken cancellationToken = default);
+    Task<MessageTsResponse> AppendStream(
+        string channel,
+        string ts,
+        string markdownText = null,
+        IEnumerable<StreamChunk> chunks = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Stops a streaming conversation.
@@ -177,7 +214,7 @@ public interface IChatApi
     /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.stopStream/">Slack documentation</a> for more information.</remarks>
     /// <param name="channel">An encoded ID that represents a channel, private group, or DM.</param>
     /// <param name="ts">A message's timestamp, uniquely identifying it within a channel.</param>
-    /// <param name="markdownText">Accepts message text formatted in markdown. This text is what will be appended to the message received so far.</param>
+    /// <param name="markdownText">Accepts message text formatted in markdown. Limit this field to 12,000 characters. This text is what will be appended to the message received so far.</param>
     /// <param name="blocks">A list of blocks that will be rendered at the bottom of the finalized message.</param>
     /// <param name="metadataObject">
     /// A custom event attached to the message.
@@ -187,10 +224,21 @@ public interface IChatApi
     /// <param name="metadataJson">
     /// A custom event attached to the message.
     /// Metadata you post to Slack is accessible to any app or user who is a member of that workspace.
-    /// Will take precedence over <see cref="metadataObject"/>.
+    /// Will take precedence over <paramref name="metadataObject"/>.
     /// </param>
+    /// <param name="chunks">Chunks to append before the stream is stopped: markdown text, task updates, plan updates and blocks.</param>
+    /// <param name="sessionStatus">The status to set the agent session to after the stream has stopped. Slack's default is <see cref="AgentSessionStatus.Active"/>.</param>
     /// <param name="cancellationToken"></param>
-    Task<PostMessageResponse> StopStream(string channel, string ts, string markdownText = null, IEnumerable<Block> blocks = null, object metadataObject = null, MessageMetadata metadataJson = null, CancellationToken cancellationToken = default);
+    Task<PostMessageResponse> StopStream(
+        string channel,
+        string ts,
+        string markdownText = null,
+        IEnumerable<Block> blocks = null,
+        object metadataObject = null,
+        MessageMetadata metadataJson = null,
+        IEnumerable<StreamChunk> chunks = null,
+        AgentSessionStatus? sessionStatus = null,
+        CancellationToken cancellationToken = default);
 }
 
 public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : IChatApi
@@ -333,22 +381,46 @@ public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : I
                 },
             cancellationToken);
 
-    public Task<MessageTsResponse> StartStream(string channel, string threadTs, string markdownText = null, string recipientUserId = null, string recipientTeamId = null, CancellationToken cancellationToken = default) =>
+    public Task<MessageTsResponse> StartStream(
+        string channel,
+        string threadTs,
+        string markdownText = null,
+        string recipientUserId = null,
+        string recipientTeamId = null,
+        IEnumerable<StreamChunk> chunks = null,
+        TaskDisplayMode? taskDisplayMode = null,
+        string iconEmoji = null,
+        string iconUrl = null,
+        string username = null,
+        CancellationToken cancellationToken = default
+    ) =>
         client.Post<MessageTsResponse>("chat.startStream", new Args
             {
                 { "channel", channel },
                 { "thread_ts", threadTs },
                 { "markdown_text", markdownText },
                 { "recipient_user_id", recipientUserId },
-                { "recipient_team_id", recipientTeamId }
+                { "recipient_team_id", recipientTeamId },
+                { "chunks", chunks },
+                { "task_display_mode", taskDisplayMode },
+                { "icon_emoji", iconEmoji },
+                { "icon_url", iconUrl },
+                { "username", username }
             }, cancellationToken);
 
-    public Task<MessageTsResponse> AppendStream(string channel, string ts, string markdownText, CancellationToken cancellationToken = default) =>
+    public Task<MessageTsResponse> AppendStream(
+        string channel,
+        string ts,
+        string markdownText = null,
+        IEnumerable<StreamChunk> chunks = null,
+        CancellationToken cancellationToken = default
+    ) =>
         client.Post<MessageTsResponse>("chat.appendStream", new Args
             {
                 { "channel", channel },
                 { "ts", ts },
-                { "markdown_text", markdownText }
+                { "markdown_text", markdownText },
+                { "chunks", chunks }
             }, cancellationToken);
 
     public Task<PostMessageResponse> StopStream(
@@ -358,6 +430,8 @@ public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : I
         IEnumerable<Block> blocks = null,
         object metadataObject = null,
         MessageMetadata metadataJson = null,
+        IEnumerable<StreamChunk> chunks = null,
+        AgentSessionStatus? sessionStatus = null,
         CancellationToken cancellationToken = default
     ) =>
         client.Post<PostMessageResponse>("chat.stopStream", new Args
@@ -365,7 +439,9 @@ public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : I
                 { "channel", channel },
                 { "ts", ts },
                 { "markdown_text", markdownText },
+                { "chunks", chunks },
                 { "blocks", blocks },
-                { "metadata", metadataJson ?? MessageMetadata.FromObject(metadataObject, jsonSettings) }
+                { "metadata", metadataJson ?? MessageMetadata.FromObject(metadataObject, jsonSettings) },
+                { "session_status", sessionStatus }
             }, cancellationToken);
 }
