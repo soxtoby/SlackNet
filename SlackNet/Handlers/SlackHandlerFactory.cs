@@ -1,4 +1,5 @@
 ﻿using System;
+using SlackNet.Events;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 
@@ -7,7 +8,7 @@ namespace SlackNet.Handlers;
 class SlackHandlerFactory : ISlackHandlerFactory
 {
     private const string RequestHandler = nameof(RequestHandler);
-    private readonly Func<SlackRequestContext, IEventHandler> _eventHandler;
+    private readonly Func<SlackRequestContext, Experimental.IEventHandler<Event>> _eventHandler;
     private readonly Func<SlackRequestContext, IAsyncBlockActionHandler> _blockActionHandler;
     private readonly Func<SlackRequestContext, IBlockOptionProvider> _blockOptionProvider;
     private readonly Func<SlackRequestContext, IAsyncMessageShortcutHandler> _messageShortcutHandler;
@@ -19,7 +20,7 @@ class SlackHandlerFactory : ISlackHandlerFactory
     private readonly Func<SlackRequestContext, IDialogSubmissionHandler> _legacyDialogSubmissionHandler;
 
     public SlackHandlerFactory(
-        Func<SlackRequestContext, IEventHandler> eventHandler,
+        Func<SlackRequestContext, Experimental.IEventHandler<Event>> eventHandler,
         Func<SlackRequestContext, IAsyncBlockActionHandler> blockActionHandler,
         Func<SlackRequestContext, IBlockOptionProvider> blockOptionProvider,
         Func<SlackRequestContext, IAsyncMessageShortcutHandler> messageShortcutHandler,
@@ -42,7 +43,7 @@ class SlackHandlerFactory : ISlackHandlerFactory
         _legacyDialogSubmissionHandler = legacyDialogSubmissionHandler;
     }
 
-    public IEventHandler CreateEventHandler(SlackRequestContext context) => CreateHandler(context, _eventHandler);
+    public Experimental.IEventHandler<Event> CreateEventHandler(SlackRequestContext context) => CreateHandler(context, _eventHandler);
     public IAsyncBlockActionHandler CreateBlockActionHandler(SlackRequestContext context) => CreateHandler(context, _blockActionHandler);
     public IBlockOptionProvider CreateBlockOptionProvider(SlackRequestContext context) => CreateHandler(context, _blockOptionProvider);
     public IAsyncMessageShortcutHandler CreateMessageShortcutHandler(SlackRequestContext context) => CreateHandler(context, _messageShortcutHandler);

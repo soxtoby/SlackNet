@@ -7,8 +7,14 @@ namespace SlackNet.Handlers;
 
 public static class HandlerAdaptor
 {
-    public static IEventHandler ToEventHandler<TEvent>(this IEventHandler<TEvent> handler) where TEvent : Event =>
-        new TypedEventHandler<TEvent>(handler);
+    public static Experimental.IEventHandler<Event> ToEventHandler<TEvent>(this IEventHandler<TEvent> handler) where TEvent : Event =>
+        new EventHandlerAsyncWrapper<TEvent>(handler);
+
+    public static Experimental.IEventHandler<Event> ToEventHandler(this IEventHandler handler) =>
+        new EventHandlerAsyncWrapper(handler);
+
+    public static Experimental.IEventHandler<Event> ToEventHandler<TEvent>(this Experimental.IEventHandler<TEvent> handler) where TEvent : Event =>
+        new TypedContextEventHandler<TEvent>(handler);
 
     public static IAsyncBlockActionHandler ToBlockActionHandler<TAction>(this IBlockActionHandler<TAction> handler, string actionId) where TAction : BlockAction =>
         new SpecificBlockActionHandler(actionId, new TypedBlockActionHandler<TAction>(handler).ToBlockActionHandler());

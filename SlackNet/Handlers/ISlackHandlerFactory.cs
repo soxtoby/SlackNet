@@ -1,11 +1,12 @@
-﻿using SlackNet.Interaction;
+﻿using SlackNet.Events;
+using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 
 namespace SlackNet.Handlers;
 
 public interface ISlackHandlerFactory
 {
-    IEventHandler CreateEventHandler(SlackRequestContext context);
+    Experimental.IEventHandler<Event> CreateEventHandler(SlackRequestContext context);
     IAsyncBlockActionHandler CreateBlockActionHandler(SlackRequestContext context);
     IBlockOptionProvider CreateBlockOptionProvider(SlackRequestContext context);
     IAsyncMessageShortcutHandler CreateMessageShortcutHandler(SlackRequestContext context);

@@ -25,6 +25,24 @@ public abstract class SlackResult
         return this;
     }
 
+    internal SlackResult OnCompletedFinally(Func<Task> callback)
+    {
+        var callbacks = _requestCompletedCallbacks.ToArray();
+        _requestCompletedCallbacks.Clear();
+        return OnCompleted(async () =>
+            {
+                try
+                {
+                    foreach (var completedCallback in callbacks)
+                        await completedCallback().ConfigureAwait(false);
+                }
+                finally
+                {
+                    await callback().ConfigureAwait(false);
+                }
+            });
+    }
+
     public virtual string ContentType => null;
     public virtual string Body => null;
 }

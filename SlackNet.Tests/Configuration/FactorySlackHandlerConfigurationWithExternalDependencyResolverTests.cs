@@ -91,10 +91,10 @@ public abstract class FactorySlackHandlerConfigurationWithExternalDependencyReso
     }
 
     [Test]
-    public void ReplaceEventHandling_WithFactory()
+    public void ReplaceEventHandling_ContextHandlerFactory_UsesReplacementHandlerPerRequest()
     {
-        ReplaceRequestHandling<IEventHandler, TestEventHandler>(
-            c => c.ReplaceEventHandling(() => new TestEventHandler(ResolveDependency<InstanceTracker>())),
+        ReplaceRequestHandling<Handlers.Experimental.IEventHandler<Event>, TestContextEventHandler<Event>>(
+            c => c.ReplaceEventHandling(() => new TestContextEventHandler<Event>(ResolveDependency<InstanceTracker>())),
             (hf, ctx) => hf.CreateEventHandler(ctx));
     }
 
@@ -176,6 +176,14 @@ public abstract class FactorySlackHandlerConfigurationWithExternalDependencyReso
         RegisterEventHandler(
             registerGenericHandler: c => c.RegisterEventHandler(() => new TestEventHandler(ResolveDependency<InstanceTracker>())),
             registerTypedHandler: c => c.RegisterEventHandler(() => new TestEventHandler<Hello>(ResolveDependency<InstanceTracker>())));
+    }
+
+    [Test]
+    public void RegisterEventHandler_ContextFactory_HandlesMatchingEventsPerRequest()
+    {
+        RegisterContextEventHandlers(
+            c => c.RegisterEventHandler<Event>(() => new TestContextEventHandler<Event>(ResolveDependency<InstanceTracker>())),
+            c => c.RegisterEventHandler<Hello>(() => new TestContextEventHandler<Hello>(ResolveDependency<InstanceTracker>())));
     }
 
     [Test]

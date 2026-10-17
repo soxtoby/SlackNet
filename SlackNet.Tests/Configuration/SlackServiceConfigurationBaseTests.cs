@@ -12,6 +12,7 @@ using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 using Button = SlackNet.Interaction.Button;
+using Experimental = SlackNet.Handlers.Experimental;
 
 namespace SlackNet.Tests.Configuration;
 
@@ -131,9 +132,9 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
     }
 
     [Test]
-    public void ReplaceEventHandling()
+    public void ReplaceEventHandling_ContextHandler_UsesReplacementHandler()
     {
-        ReplaceRequestHandling(
+        ReplaceRequestHandling<Experimental.IEventHandler<Event>>(
             (c, sp) => c.ReplaceEventHandling(sp),
             (hf, ctx) => hf.CreateEventHandler(ctx));
     }
@@ -233,6 +234,60 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
         genericHandler.Received().Handle(helloEventCallback);
 
         helloHandler.Received(1).Handle(helloEvent);
+    }
+
+    [Test]
+    public void RegisterEventHandler_ContextHandlers_DispatchesMatchingEventsWithoutAcknowledging()
+    {
+        var genericHandler = new RecordingContextEventHandler<Event>();
+        var helloHandler = new RecordingContextEventHandler<Hello>();
+        var goodbyeCallback = new EventCallback { Event = new Goodbye() };
+        var helloCallback = new EventCallback { Event = new Hello() };
+        var sut = Configure(c => c
+            .RegisterEventHandler(genericHandler)
+            .RegisterEventHandler(helloHandler));
+
+        HandleEvents(sut, new[] { goodbyeCallback, helloCallback });
+
+        genericHandler.Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { goodbyeCallback, helloCallback });
+        genericHandler.Contexts.All(c => !c.IsAcknowledged).ShouldBe(true);
+        helloHandler.Contexts.ShouldBeSingular().And(contexts =>
+            {
+                var result = contexts.Single();
+                result.Callback.ShouldReferTo(helloCallback).And.Event.ShouldReferTo(result.Event);
+                result.IsAcknowledged.ShouldBe(false);
+            });
+    }
+
+    [Test]
+    public void RegisterEventHandler_RepeatedDispatch_ReusesLazyHandlerWithinEachRequest()
+    {
+        var handlers = new List<RecordingContextEventHandler<Event>>();
+        var callback = new EventCallback { Event = new Hello() };
+        var sut = Configure(c => c.RegisterEventHandler<Event>(_ =>
+            {
+                var handler = new RecordingContextEventHandler<Event>();
+                handlers.Add(handler);
+                return handler;
+            }));
+
+        DuringRequest(sut, context =>
+            {
+                handlers.ShouldBeEmpty();
+
+                HandleRepeatedly(context, callback);
+
+                handlers.ShouldBeSingular().And(h => h.Single().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { callback, callback }));
+            });
+
+        DuringRequest(sut, context =>
+            {
+                handlers.ShouldBeSingular();
+
+                HandleRepeatedly(context, callback);
+
+                handlers.ShouldBeLength(2).And(h => h.Last().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { callback, callback }));
+            });
     }
 
     [Test]
@@ -568,7 +623,14 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
     }
 
     protected void HandleEvents(ISlackServiceProvider services, EventCallback[] eventCallbacks) =>
-        HandleInRequest(services, (hf, ctx) => hf.CreateEventHandler(ctx), (h, e) => h.Handle(e), eventCallbacks);
+        HandleInRequest(services, (hf, ctx) => hf.CreateEventHandler(ctx), (h, e) => h.Handle(new EventContext(e, () => System.Threading.Tasks.Task.CompletedTask)).ShouldComplete(), eventCallbacks);
+
+    private static void HandleRepeatedly(SlackRequestContext context, EventCallback callback)
+    {
+        var eventContext = new EventContext(callback, () => System.Threading.Tasks.Task.CompletedTask);
+        context.EventHandlers.Single().Handle(eventContext).ShouldComplete();
+        context.EventHandlers.Single().Handle(eventContext).ShouldComplete();
+    }
 
     protected void HandleBlockActions(ISlackServiceProvider services, Responder responder, BlockActionRequest[] requests) =>
         HandleInRequest(services, (hf, ctx) => hf.CreateBlockActionHandler(ctx), (h, r) => h.Handle(r, responder), requests);

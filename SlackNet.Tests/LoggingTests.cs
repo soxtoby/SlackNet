@@ -260,11 +260,11 @@ public class LoggingTests
     }
 
     [Test]
-    public void RequestHandler_LogsInnerHandlers()
+    public void RequestHandler_CompositeHandlers_LogsInnerHandlers()
     {
-        var eventHandler = new CompositeEventHandler(new[]
+        var eventHandler = new CompositeContextEventHandler(new[]
             {
-                new TestEventHandler(),
+                new TestEventHandler().ToEventHandler(),
                 new TestMessageEventHandler().ToEventHandler()
             });
 

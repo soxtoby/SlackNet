@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SlackNet.Events;
 using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
@@ -9,7 +10,7 @@ namespace SlackNet;
 class SlackRequestContextPopulator : ISlackRequestListener
 {
     private readonly ISlackServiceProvider _serviceProvider;
-    private readonly IReadOnlyCollection<Func<SlackRequestContext, IEventHandler>> _eventHandlers;
+    private readonly IReadOnlyCollection<Func<SlackRequestContext, Handlers.Experimental.IEventHandler<Event>>> _eventHandlers;
     private readonly IReadOnlyCollection<Func<SlackRequestContext, IAsyncBlockActionHandler>> _blockActionHandlers;
     private readonly IReadOnlyDictionary<string, Func<SlackRequestContext, IBlockOptionProvider>> _blockOptionProviders;
     private readonly IReadOnlyCollection<Func<SlackRequestContext, IAsyncMessageShortcutHandler>> _messageShortcutHandlers;
@@ -23,7 +24,7 @@ class SlackRequestContextPopulator : ISlackRequestListener
 
     public SlackRequestContextPopulator(
         ISlackServiceProvider serviceProvider,
-        IReadOnlyCollection<Func<SlackRequestContext, IEventHandler>> eventHandlers,
+        IReadOnlyCollection<Func<SlackRequestContext, Handlers.Experimental.IEventHandler<Event>>> eventHandlers,
         IReadOnlyCollection<Func<SlackRequestContext, IAsyncBlockActionHandler>> blockActionHandlers,
         IReadOnlyDictionary<string, Func<SlackRequestContext, IBlockOptionProvider>> blockOptionProviders,
         IReadOnlyCollection<Func<SlackRequestContext, IAsyncMessageShortcutHandler>> messageShortcutHandlers,
@@ -50,7 +51,7 @@ class SlackRequestContextPopulator : ISlackRequestListener
     public void OnRequestBegin(SlackRequestContext context)
     {
         context[nameof(SlackRequestContext.ServiceProvider)] = _serviceProvider;
-        context[nameof(SlackRequestContext.EventHandlers)] = new HandlerCollection<IEventHandler>(context, _eventHandlers);
+        context[nameof(SlackRequestContext.EventHandlers)] = new HandlerCollection<Handlers.Experimental.IEventHandler<Event>>(context, _eventHandlers);
         context[nameof(SlackRequestContext.BlockActionHandlers)] = new HandlerCollection<IAsyncBlockActionHandler>(context, _blockActionHandlers);
         context[nameof(SlackRequestContext.BlockOptionProviders)] = new HandlerIndex<IBlockOptionProvider>(context, _blockOptionProviders);
         context[nameof(SlackRequestContext.MessageShortcutHandlers)] = new HandlerCollection<IAsyncMessageShortcutHandler>(context, _messageShortcutHandlers);

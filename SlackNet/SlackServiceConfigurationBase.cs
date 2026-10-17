@@ -25,7 +25,7 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     private Func<ISlackServiceProvider, ISlackApiClient> _apiClientProvider;
     private Func<ISlackServiceProvider, ISlackSocketModeClient> _socketModeClientProvider;
 
-    private readonly List<Func<SlackRequestContext, IEventHandler>> _eventHandlers = new();
+    private readonly List<Func<SlackRequestContext, Handlers.Experimental.IEventHandler<Event>>> _eventHandlers = new();
     private readonly List<Func<SlackRequestContext, IAsyncBlockActionHandler>> _blockActionHandlers = new();
     private readonly Dictionary<string, Func<SlackRequestContext, IBlockOptionProvider>> _blockOptionProviders = new();
     private readonly List<Func<SlackRequestContext, IAsyncMessageShortcutHandler>> _messageShortcutHandlers = new();
@@ -37,7 +37,7 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     private readonly Dictionary<string, Func<SlackRequestContext, IOptionProvider>> _legacyOptionProviders = new();
     private readonly Dictionary<string, Func<SlackRequestContext, IDialogSubmissionHandler>> _legacyDialogSubmissionHandlers = new();
 
-    private Func<SlackRequestContext, IEventHandler> _eventHandlerFactory = ctx => new CompositeEventHandler(ctx.EventHandlers);
+    private Func<SlackRequestContext, Handlers.Experimental.IEventHandler<Event>> _eventHandlerFactory = ctx => new CompositeContextEventHandler(ctx.EventHandlers);
     private Func<SlackRequestContext, IAsyncBlockActionHandler> _blockActionHandlerFactory = ctx => new CompositeBlockActionHandler(ctx.BlockActionHandlers);
     private Func<SlackRequestContext, IBlockOptionProvider> _blockOptionProviderFactory = ctx => new SwitchingBlockOptionProvider(ctx.BlockOptionProviders);
     private Func<SlackRequestContext, IAsyncMessageShortcutHandler> _messageShortcutHandlerFactory = ctx => new CompositeMessageShortcutHandler(ctx.MessageShortcutHandlers);
@@ -140,9 +140,10 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
             _legacyDialogSubmissionHandlers);
 
     /// <summary>
-    /// Take over all event handling with your own handler.
+    /// Take over all event handling and control when events are acknowledged.
     /// </summary>
-    public TConfig ReplaceEventHandling(Func<SlackRequestContext, IEventHandler> handlerFactory) => Chain(() => _eventHandlerFactory = handlerFactory);
+    public TConfig ReplaceEventHandling(Func<SlackRequestContext, Handlers.Experimental.IEventHandler<Event>> handlerFactory) =>
+        Chain(() => _eventHandlerFactory = handlerFactory);
 
     /// <summary>
     /// Take over all block action handling with your own handler.
@@ -194,6 +195,9 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
 
     public TConfig RegisterEventHandler(IEventHandler eventHandler) =>
         RegisterEventHandler(_ => eventHandler);
+
+    public TConfig RegisterEventHandler<TEvent>(Handlers.Experimental.IEventHandler<TEvent> handler) where TEvent : Event =>
+        RegisterEventHandler(_ => handler);
 
     public TConfig RegisterBlockActionHandler<TAction>(string actionId, IBlockActionHandler<TAction> handler) where TAction : BlockAction =>
         RegisterBlockActionHandler(actionId, _ => handler);
@@ -274,6 +278,12 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
         RegisterEventHandler(ctx => getHandler(ctx).ToEventHandler());
 
     public TConfig RegisterEventHandler(Func<SlackRequestContext, IEventHandler> getEventHandler) =>
+        RegisterEventHandler(ctx => getEventHandler(ctx).ToEventHandler());
+
+    public TConfig RegisterEventHandler<TEvent>(Func<SlackRequestContext, Handlers.Experimental.IEventHandler<TEvent>> getHandler) where TEvent : Event =>
+        RegisterEventHandler(ctx => getHandler(ctx).ToEventHandler());
+
+    public TConfig RegisterEventHandler(Func<SlackRequestContext, Handlers.Experimental.IEventHandler<Event>> getEventHandler) =>
         Chain(() => _eventHandlers.Add(getEventHandler));
 
     public TConfig RegisterBlockActionHandler<TAction>(string actionId, Func<SlackRequestContext, IBlockActionHandler<TAction>> getHandler) where TAction : BlockAction =>

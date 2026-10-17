@@ -21,10 +21,10 @@ public abstract class FactorySlackServiceConfiguration<TConfig> : SlackServiceCo
     public TConfig UseSocketModeClient<TService>() where TService : class, ISlackSocketModeClient => UseSocketModeClient(GetServiceFactory<ISlackSocketModeClient, TService>());
 
     /// <summary>
-    /// Take over all event handling with your own handler type.
+    /// Take over all event handling and control when events are acknowledged.
     /// </summary>
-    public TConfig ReplaceEventHandling<THandler>() where THandler : class, IEventHandler =>
-        ReplaceEventHandling(GetRequestHandlerFactory<IEventHandler, THandler>());
+    public TConfig ReplaceEventHandling<THandler>() where THandler : class, Handlers.Experimental.IEventHandler<Event> =>
+        ReplaceEventHandling(GetRequestHandlerFactory<Handlers.Experimental.IEventHandler<Event>, THandler>());
 
     /// <summary>
     /// Take over all block action handling with your own handler type.
@@ -88,6 +88,17 @@ public abstract class FactorySlackServiceConfiguration<TConfig> : SlackServiceCo
         where TEvent : Event
         where THandler : class, IEventHandler<TEvent> =>
         RegisterEventHandler(GetRegisteredHandlerFactory<THandler>());
+
+    [Obsolete(Warning.Experimental)]
+    public TConfig RegisterContextEventHandler<THandler>()
+        where THandler : class, Handlers.Experimental.IEventHandler<Event> =>
+        RegisterEventHandler(GetRegisteredHandlerFactory<THandler>());
+
+    [Obsolete(Warning.Experimental)]
+    public TConfig RegisterContextEventHandler<TEvent, THandler>()
+        where TEvent : Event
+        where THandler : class, Handlers.Experimental.IEventHandler<TEvent> =>
+        RegisterEventHandler<TEvent>(GetRegisteredHandlerFactory<THandler>());
 
     [Obsolete(Warning.Experimental)]
     public TConfig RegisterAsyncBlockActionHandler<THandler>()

@@ -65,22 +65,24 @@ class SlackRequestHandler(
                     }
 
                     return EventRequestValidation(requestBody, request.Headers, eventRequest)
-                        ?? eventRequest switch
+                        ?? await (eventRequest switch
                             {
                                 EventCallback eventCallback => HandleEvent(requestContext, eventCallback),
-                                UrlVerification urlVerification => HandleUrlVerification(urlVerification),
-                                _ => UnrecognizedEventRequestType(eventRequest)
-                            };
+                                UrlVerification urlVerification => Task.FromResult(HandleUrlVerification(urlVerification)),
+                                _ => Task.FromResult(UnrecognizedEventRequestType(eventRequest))
+                            }).ConfigureAwait(false);
                 });
 
-    private SlackResult HandleEvent(SlackRequestContext requestContext, EventCallback eventCallback) =>
-        EmptyResult(HttpStatusCode.OK)
-            .OnCompleted(() =>
-                {
-                    var handler = handlerFactory.CreateEventHandler(requestContext);
-                    _log.RequestHandler(handler, eventCallback, "Handling {EventType} event", eventCallback.Event.Type);
-                    return handler.Handle(eventCallback);
-                });
+    private Task<SlackResult> HandleEvent(SlackRequestContext requestContext, EventCallback eventCallback) =>
+        RespondAsync(async respond =>
+            {
+                var eventContext = new EventContext(eventCallback, () => respond());
+                var handler = handlerFactory.CreateEventHandler(requestContext);
+                _log.RequestHandler(handler, eventCallback, "Handling {EventType} event", eventCallback.Event.Type);
+                await handler.Handle(eventContext).ConfigureAwait(false);
+                if (!eventContext.IsAcknowledged)
+                    await eventContext.Acknowledge().ConfigureAwait(false);
+            });
 
     private SlackResult HandleUrlVerification(UrlVerification urlVerification)
     {
@@ -365,11 +367,12 @@ class SlackRequestHandler(
         try
         {
             return (await handleRequest(requestContext).ConfigureAwait(false))
-                .OnCompleted(() => requestScope.DisposeAsync().AsTask());
+                .OnCompletedFinally(() => requestScope.DisposeAsync().AsTask());
         }
         catch (Exception e)
         {
             _log.Error(e, "Error handling request");
+            await requestScope.DisposeAsync().ConfigureAwait(false);
             throw;
         }
     }

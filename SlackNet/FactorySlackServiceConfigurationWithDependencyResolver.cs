@@ -21,7 +21,7 @@ public abstract class FactorySlackServiceConfigurationWithDependencyResolver<TCo
     public TConfig UseApiClient(Func<TDependencyResolver, ISlackApiClient> apiClientProvider) => UseApiClient(GetServiceFactory(apiClientProvider));
     public TConfig UseSocketModeClient(Func<TDependencyResolver, ISlackSocketModeClient> socketModeClientProvider) => UseSocketModeClient(GetServiceFactory(socketModeClientProvider));
 
-    public TConfig ReplaceEventHandling(Func<TDependencyResolver, IEventHandler> handlerFactory) => ReplaceEventHandling(GetRequestHandlerFactory(handlerFactory));
+    public TConfig ReplaceEventHandling(Func<TDependencyResolver, Handlers.Experimental.IEventHandler<Event>> handlerFactory) => ReplaceEventHandling(GetRequestHandlerFactory(handlerFactory));
     public TConfig ReplaceBlockActionHandling(Func<TDependencyResolver, IAsyncBlockActionHandler> handlerFactory) => ReplaceBlockActionHandling(GetRequestHandlerFactory(handlerFactory));
     public TConfig ReplaceBlockOptionProviding(Func<TDependencyResolver, IBlockOptionProvider> providerFactory) => ReplaceBlockOptionProviding(GetRequestHandlerFactory(providerFactory));
     public TConfig ReplaceMessageShortcutHandling(Func<TDependencyResolver, IAsyncMessageShortcutHandler> handlerFactory) => ReplaceMessageShortcutHandling(GetRequestHandlerFactory(handlerFactory));
@@ -33,10 +33,13 @@ public abstract class FactorySlackServiceConfigurationWithDependencyResolver<TCo
     public TConfig ReplaceLegacyDialogSubmissionHandling(Func<TDependencyResolver, IDialogSubmissionHandler> handlerFactory) => ReplaceLegacyDialogSubmissionHandling(GetRequestHandlerFactory(handlerFactory));
 
     public TConfig RegisterEventHandler<TEvent>(Func<TDependencyResolver, IEventHandler<TEvent>> handlerFactory) where TEvent : Event =>
-        RegisterEventHandler(r => handlerFactory(r).ToEventHandler());
+        RegisterEventHandler<TEvent>(GetRequestHandlerFactory(handlerFactory));
 
     public TConfig RegisterEventHandler(Func<TDependencyResolver, IEventHandler> getHandler) =>
         RegisterEventHandler(GetRequestHandlerFactory(getHandler));
+
+    public TConfig RegisterEventHandler<TEvent>(Func<TDependencyResolver, Handlers.Experimental.IEventHandler<TEvent>> handlerFactory) where TEvent : Event =>
+        RegisterEventHandler<TEvent>(GetRequestHandlerFactory(handlerFactory));
 
     public TConfig RegisterBlockActionHandler<TAction>(string actionId, Func<TDependencyResolver, IBlockActionHandler<TAction>> getHandler) where TAction : BlockAction =>
         RegisterBlockActionHandler(actionId, GetRequestHandlerFactory(getHandler));

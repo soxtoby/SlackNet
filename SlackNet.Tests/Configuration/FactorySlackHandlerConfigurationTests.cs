@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -16,7 +17,11 @@ using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
 using SlackNet.SocketMode;
 using SlackNet.WebApi;
+using Button = SlackNet.Interaction.Button;
+using Experimental = SlackNet.Handlers.Experimental;
 using Hello = SlackNet.Events.Hello;
+
+#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace SlackNet.Tests.Configuration;
 
@@ -33,7 +38,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
             .GetMethod(nameof(ResolvedServiceShouldReferToProviderService), BindingFlags.Instance | BindingFlags.NonPublic)!
             .MakeGenericMethod(providerMethod.ReturnType);
         var getServiceFromProvider = providerMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(typeof(ISlackServiceProvider), providerMethod.ReturnType));
-        assertion.Invoke(this, new object[] { getServiceFromProvider });
+        assertion.Invoke(this, [getServiceFromProvider]);
     }
 
     protected abstract void ResolvedServiceShouldReferToProviderService<TService>(Func<ISlackServiceProvider, TService> getServiceFromProvider) where TService : class;
@@ -94,6 +99,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         RequestListenersShouldBeCreatedOnceOnEnumeration(sut, InstanceTracker);
     }
 
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")] // This is the point of the test
     protected static void RequestListenersShouldBeCreatedOnceOnEnumeration(ISlackServiceProvider sut, InstanceTracker instanceTracker)
     {
         var listeners = sut.GetRequestListeners();
@@ -104,7 +110,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         listeners.Last().ShouldBe(expectedListener, "Should be same instance");
 
         var createdInstances = instanceTracker.GetInstances<TestRequestListener>().Cast<ISlackRequestListener>();
-        createdInstances.ShouldMatchReferences(new[] { expectedListener }, "Listeners should be created once on enumeration");
+        createdInstances.ShouldMatchReferences([expectedListener], "Listeners should be created once on enumeration");
     }
 
     [Test]
@@ -132,10 +138,10 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     }
 
     [Test]
-    public void ReplaceEventHandling_WithType()
+    public void ReplaceEventHandling_ContextHandlerType_UsesReplacementHandlerPerRequest()
     {
-        ReplaceRequestHandling<IEventHandler, TestEventHandler>(
-            c => c.ReplaceEventHandling<TestEventHandler>(),
+        ReplaceRequestHandling<Experimental.IEventHandler<Event>, TestContextEventHandler<Event>>(
+            c => c.ReplaceEventHandling<TestContextEventHandler<Event>>(),
             (hf, ctx) => hf.CreateEventHandler(ctx));
     }
 
@@ -234,7 +240,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
             });
 
         // First request
-        HandleEvents(sut, new[] { goodbyeEventCallback, helloEventCallback1 });
+        HandleEvents(sut, [goodbyeEventCallback, helloEventCallback1]);
 
         var typedHandler = FirstRequestInstance<TestEventHandler<Hello>>();
         typedHandler.Received().Handle(helloEvent1);
@@ -244,10 +250,41 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         genericHandler.Received().Handle(helloEventCallback1);
 
         // Second request
-        HandleEvents(sut, new[] { helloEventCallback2 });
+        HandleEvents(sut, [helloEventCallback2]);
 
         SecondRequestInstance<TestEventHandler<Hello>>().Received().Handle(helloEvent2);
         SecondRequestInstance<TestEventHandler>().Received().Handle(helloEventCallback2);
+    }
+
+    [Test]
+    public void RegisterContextEventHandler_Type_HandlesMatchingEventsPerRequest()
+    {
+        RegisterContextEventHandlers(
+            c => c.RegisterContextEventHandler<TestContextEventHandler<Event>>(),
+            c => c.RegisterContextEventHandler<Hello, TestContextEventHandler<Hello>>());
+    }
+
+    protected void RegisterContextEventHandlers(Action<TConfig> registerGenericHandler, Action<TConfig> registerTypedHandler)
+    {
+        var goodbyeCallback = new EventCallback { Event = new Goodbye() };
+        var helloCallback1 = new EventCallback { Event = new Hello() };
+        var helloCallback2 = new EventCallback { Event = new Hello() };
+        var sut = Configure(c =>
+            {
+                registerGenericHandler(c);
+                registerTypedHandler(c);
+            });
+
+        HandleEvents(sut, [goodbyeCallback, helloCallback1]);
+
+        var genericHandler = FirstRequestInstance<TestContextEventHandler<Event>>();
+        genericHandler.Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { goodbyeCallback, helloCallback1 });
+        FirstRequestInstance<TestContextEventHandler<Hello>>().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { helloCallback1 });
+
+        HandleEvents(sut, [helloCallback2]);
+
+        SecondRequestInstance<TestContextEventHandler<Event>>().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { helloCallback2 });
+        SecondRequestInstance<TestContextEventHandler<Hello>>().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { helloCallback2 });
     }
 
     [Test]
@@ -294,7 +331,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
             });
 
         // First request
-        HandleBlockActions(sut, responder, new[] { overflowRequest, buttonRequest1, otherButtonRequest, datePickerRequest1 });
+        HandleBlockActions(sut, responder, [overflowRequest, buttonRequest1, otherButtonRequest, datePickerRequest1]);
 
         var keyedHandler1 = FirstRequestInstance<TestBlockActionHandler<ButtonAction>>();
         keyedHandler1.DidNotReceive().Handle(Arg.Any<ButtonAction>(), overflowRequest);
@@ -333,7 +370,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         genericAsyncHandler1.Received().Handle(datePickerRequest1, responder);
 
         // Second request
-        HandleBlockActions(sut, responder, new[] { buttonRequest2, datePickerRequest2 });
+        HandleBlockActions(sut, responder, [buttonRequest2, datePickerRequest2]);
 
         var keyedHandler2 = SecondRequestInstance<TestBlockActionHandler<ButtonAction>>();
         keyedHandler2.Received().Handle(buttonAction2, buttonRequest2);
@@ -376,14 +413,14 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         var sut = Configure(c => registerProvider(c, "action"));
 
         // First request
-        HandleBlockOptionRequests(sut, new[] { optionsRequest1 });
+        HandleBlockOptionRequests(sut, [optionsRequest1]);
 
         var provider = FirstRequestInstance<TestBlockOptionProvider>();
         provider.DidNotReceive().GetOptions(otherOptionsRequest);
         provider.Received().GetOptions(optionsRequest1);
 
         // Second request
-        HandleBlockOptionRequests(sut, new[] { optionsRequest2 });
+        HandleBlockOptionRequests(sut, [optionsRequest2]);
 
         SecondRequestInstance<TestBlockOptionProvider>().Received().GetOptions(optionsRequest2);
     }
@@ -411,13 +448,13 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
             });
 
         // First request
-        HandleMessageShortcuts(sut, responder, new[] { shortcut1 });
+        HandleMessageShortcuts(sut, responder, [shortcut1]);
 
         FirstRequestInstance<TestMessageShortcutHandler>().Received().Handle(shortcut1);
         FirstRequestInstance<TestAsyncMessageShortcutHandler>().Received().Handle(shortcut1, responder);
 
         // Second request
-        HandleMessageShortcuts(sut, responder, new[] { shortcut2 });
+        HandleMessageShortcuts(sut, responder, [shortcut2]);
 
         SecondRequestInstance<TestMessageShortcutHandler>().Received().Handle(shortcut2);
         SecondRequestInstance<TestAsyncMessageShortcutHandler>().Received().Handle(shortcut2, responder);
@@ -447,7 +484,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
             });
 
         // First request
-        HandleMessageShortcuts(sut, responder, new[] { otherShortcut, shortcut1 });
+        HandleMessageShortcuts(sut, responder, [otherShortcut, shortcut1]);
 
         var handler = FirstRequestInstance<TestMessageShortcutHandler>();
         handler.DidNotReceive().Handle(otherShortcut);
@@ -458,7 +495,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         asyncHandler.Received().Handle(shortcut1, responder);
 
         // Second request
-        HandleMessageShortcuts(sut, responder, new[] { shortcut2 });
+        HandleMessageShortcuts(sut, responder, [shortcut2]);
 
         SecondRequestInstance<TestMessageShortcutHandler>().Received().Handle(shortcut2);
         SecondRequestInstance<TestAsyncMessageShortcutHandler>().Received().Handle(shortcut2, responder);
@@ -487,13 +524,13 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
             });
 
         // First request
-        HandleGlobalShortcuts(sut, responder, new[] { shortcut1 });
+        HandleGlobalShortcuts(sut, responder, [shortcut1]);
 
         FirstRequestInstance<TestGlobalShortcutHandler>().Received().Handle(shortcut1);
         FirstRequestInstance<TestAsyncGlobalShortcutHandler>().Received().Handle(shortcut1, responder);
 
         // Second request
-        HandleGlobalShortcuts(sut, responder, new[] { shortcut2 });
+        HandleGlobalShortcuts(sut, responder, [shortcut2]);
 
         SecondRequestInstance<TestGlobalShortcutHandler>().Received().Handle(shortcut2);
         SecondRequestInstance<TestAsyncGlobalShortcutHandler>().Received().Handle(shortcut2, responder);
@@ -523,7 +560,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
             });
 
         // First request
-        HandleGlobalShortcuts(sut, responder, new[] { otherShortcut, shortcut1 });
+        HandleGlobalShortcuts(sut, responder, [otherShortcut, shortcut1]);
 
         var handler = FirstRequestInstance<TestGlobalShortcutHandler>();
         handler.DidNotReceive().Handle(otherShortcut);
@@ -534,7 +571,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         asyncHandler.Received().Handle(shortcut1, responder);
 
         // Second request
-        HandleGlobalShortcuts(sut, responder, new[] { shortcut2 });
+        HandleGlobalShortcuts(sut, responder, [shortcut2]);
 
         SecondRequestInstance<TestGlobalShortcutHandler>().Received().Handle(shortcut2);
         SecondRequestInstance<TestAsyncGlobalShortcutHandler>().Received().Handle(shortcut2, responder);
@@ -566,7 +603,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
             });
 
         // First request
-        HandleViewSubmissions(sut, submissionResponder, new[] { otherViewSubmission, viewSubmission1, asyncViewSubmission1 });
+        HandleViewSubmissions(sut, submissionResponder, [otherViewSubmission, viewSubmission1, asyncViewSubmission1]);
 
         var handler = FirstRequestInstance<TestViewSubmissionHandler>();
         handler.DidNotReceive().Handle(otherViewSubmission);
@@ -578,7 +615,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         asyncHandler.Received().Handle(asyncViewSubmission1, submissionResponder);
 
         // Second request
-        HandleViewSubmissions(sut, submissionResponder, new[] { viewSubmission2, asyncViewSubmission2 });
+        HandleViewSubmissions(sut, submissionResponder, [viewSubmission2, asyncViewSubmission2]);
 
         SecondRequestInstance<TestViewSubmissionHandler>().Received().Handle(viewSubmission2);
         SecondRequestInstance<TestAsyncViewSubmissionHandler>().Received().Handle(asyncViewSubmission2, submissionResponder);
@@ -610,7 +647,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
             });
 
         // First request
-        HandleViewCloses(sut, closeResponder, new[] { otherViewClosed, viewClosed1, asyncViewClosed1 });
+        HandleViewCloses(sut, closeResponder, [otherViewClosed, viewClosed1, asyncViewClosed1]);
 
         var handler = FirstRequestInstance<TestViewSubmissionHandler>();
         handler.DidNotReceive().HandleClose(otherViewClosed);
@@ -622,7 +659,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         asyncHandler.Received().HandleClose(asyncViewClosed1, closeResponder);
 
         // Second request
-        HandleViewCloses(sut, closeResponder, new[] { viewClosed2, asyncViewClosed2 });
+        HandleViewCloses(sut, closeResponder, [viewClosed2, asyncViewClosed2]);
 
         SecondRequestInstance<TestViewSubmissionHandler>().Received().HandleClose(viewClosed2);
         SecondRequestInstance<TestAsyncViewSubmissionHandler>().Received().HandleClose(asyncViewClosed2, closeResponder);
@@ -662,7 +699,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
             });
 
         // First request
-        HandleSlashCommands(sut, responder, new[] { otherSlashCommand, slashCommand1, asyncSlashCommand1 });
+        HandleSlashCommands(sut, responder, [otherSlashCommand, slashCommand1, asyncSlashCommand1]);
 
         var handler = FirstRequestInstance<TestSlashCommandHandler>();
         handler.DidNotReceive().Handle(otherSlashCommand);
@@ -674,7 +711,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         asyncHandler.Received().Handle(asyncSlashCommand1, responder);
 
         // Second request
-        HandleSlashCommands(sut, responder, new[] { slashCommand2, asyncSlashCommand2 });
+        HandleSlashCommands(sut, responder, [slashCommand2, asyncSlashCommand2]);
 
         SecondRequestInstance<TestSlashCommandHandler>().Received().Handle(slashCommand2);
         SecondRequestInstance<TestAsyncSlashCommandHandler>().Received().Handle(asyncSlashCommand2, responder);
@@ -689,21 +726,21 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
 
     protected void RegisterInteractiveMessageHandler(Action<TConfig, string> registerHandler)
     {
-        var otherInteractiveMessage = new InteractiveMessage { Actions = { new Interaction.Button { Name = "other" } } };
-        var interactiveMessage1 = new InteractiveMessage { Actions = { new Interaction.Button { Name = "action" } } };
-        var interactiveMessage2 = new InteractiveMessage { Actions = { new Interaction.Button { Name = "action" } } };
+        var otherInteractiveMessage = new InteractiveMessage { Actions = { new Button { Name = "other" } } };
+        var interactiveMessage1 = new InteractiveMessage { Actions = { new Button { Name = "action" } } };
+        var interactiveMessage2 = new InteractiveMessage { Actions = { new Button { Name = "action" } } };
 
         var sut = Configure(c => registerHandler(c, "action"));
 
         // First request
-        HandleLegacyInteractiveMessages(sut, new[] { otherInteractiveMessage, interactiveMessage1 });
+        HandleLegacyInteractiveMessages(sut, [otherInteractiveMessage, interactiveMessage1]);
 
         var handler = FirstRequestInstance<TestInteractiveMessageHandler>();
         handler.DidNotReceive().Handle(otherInteractiveMessage);
         handler.Received().Handle(interactiveMessage1);
 
         // Second request
-        HandleLegacyInteractiveMessages(sut, new[] { interactiveMessage2 });
+        HandleLegacyInteractiveMessages(sut, [interactiveMessage2]);
 
         SecondRequestInstance<TestInteractiveMessageHandler>().Received().Handle(interactiveMessage2);
     }
@@ -724,14 +761,14 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         var sut = Configure(c => registerHandler(c, "action"));
 
         // First request
-        HandleLegacyOptionsRequest(sut, new[] { otherOptionsRequest, optionsRequest1 });
+        HandleLegacyOptionsRequest(sut, [otherOptionsRequest, optionsRequest1]);
 
         var handler = FirstRequestInstance<TestOptionProvider>();
         handler.DidNotReceive().GetOptions(otherOptionsRequest);
         handler.Received().GetOptions(optionsRequest1);
 
         // Second request
-        HandleLegacyOptionsRequest(sut, new[] { optionsRequest2 });
+        HandleLegacyOptionsRequest(sut, [optionsRequest2]);
 
         SecondRequestInstance<TestOptionProvider>().Received().GetOptions(optionsRequest2);
     }
@@ -752,14 +789,14 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         var sut = Configure(c => registerHandler(c, "key"));
 
         // First request
-        HandleLegacyDialogSubmissions(sut, new[] { otherDialogSubmission, dialogSubmission1 });
+        HandleLegacyDialogSubmissions(sut, [otherDialogSubmission, dialogSubmission1]);
 
         var handler = FirstRequestInstance<TestDialogSubmissionHandler>();
         handler.DidNotReceive().Handle(otherDialogSubmission);
         handler.Received().Handle(dialogSubmission1);
 
         // Second request
-        HandleLegacyDialogSubmissions(sut, new[] { dialogSubmission2 });
+        HandleLegacyDialogSubmissions(sut, [dialogSubmission2]);
 
         SecondRequestInstance<TestDialogSubmissionHandler>().Received().Handle(dialogSubmission2);
     }
@@ -780,14 +817,14 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         var sut = Configure(c => registerHandler(c, "key"));
 
         // First request
-        HandleLegacyDialogCancellations(sut, new[] { otherDialogCancel, dialogCancel1 });
+        HandleLegacyDialogCancellations(sut, [otherDialogCancel, dialogCancel1]);
 
         var handler = FirstRequestInstance<TestDialogSubmissionHandler>();
         handler.DidNotReceive().HandleCancel(otherDialogCancel);
         handler.Received().HandleCancel(dialogCancel1);
 
         // Second request
-        HandleLegacyDialogCancellations(sut, new[] { dialogCancel2 });
+        HandleLegacyDialogCancellations(sut, [dialogCancel2]);
 
         SecondRequestInstance<TestDialogSubmissionHandler>().Received().HandleCancel(dialogCancel2);
     }
@@ -811,7 +848,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     {
         var sut = Configure(replaceHandling);
 
-        THandler firstRequestHandler = default;
+        THandler firstRequestHandler = null;
 
         DuringRequest(sut,
             c =>
@@ -864,7 +901,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
 
     protected class TestHandlerFactory : ISlackHandlerFactory
     {
-        public IEventHandler CreateEventHandler(SlackRequestContext context) => throw new NotImplementedException();
+        public Experimental.IEventHandler<Event> CreateEventHandler(SlackRequestContext context) => throw new NotImplementedException();
         public IAsyncBlockActionHandler CreateBlockActionHandler(SlackRequestContext context) => throw new NotImplementedException();
         public IBlockOptionProvider CreateBlockOptionProvider(SlackRequestContext context) => throw new NotImplementedException();
         public IAsyncMessageShortcutHandler CreateMessageShortcutHandler(SlackRequestContext context) => throw new NotImplementedException();
@@ -967,6 +1004,18 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         where TEvent : Event
     {
         public Task Handle(TEvent slackEvent) => Inner.Handle(slackEvent);
+    }
+
+    protected class TestContextEventHandler<TEvent>(InstanceTracker tracker) : TrackedClass(tracker), Experimental.IEventHandler<TEvent>
+        where TEvent : Event
+    {
+        public List<Experimental.IEventContext<TEvent>> Contexts { get; } = new();
+
+        public Task Handle(Experimental.IEventContext<TEvent> eventContext)
+        {
+            Contexts.Add(eventContext);
+            return Task.CompletedTask;
+        }
     }
 
     protected class TestBlockActionHandler(InstanceTracker tracker) : TestHandler<IBlockActionHandler>(tracker), IBlockActionHandler

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SlackNet.Events;
 using SlackNet.Handlers;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;
@@ -45,7 +46,7 @@ public class SlackRequestContext
 
     public string RequestId => (string)_items[nameof(RequestId)];
     public ISlackServiceProvider ServiceProvider => (ISlackServiceProvider)_items[nameof(ServiceProvider)];
-    public IEnumerable<IEventHandler> EventHandlers => (IEnumerable<IEventHandler>)_items[nameof(EventHandlers)];
+    public IEnumerable<Handlers.Experimental.IEventHandler<Event>> EventHandlers => (IEnumerable<Handlers.Experimental.IEventHandler<Event>>)_items[nameof(EventHandlers)];
     public IEnumerable<IAsyncBlockActionHandler> BlockActionHandlers => (IEnumerable<IAsyncBlockActionHandler>)_items[nameof(BlockActionHandlers)];
     public IHandlerIndex<IBlockOptionProvider> BlockOptionProviders => (IHandlerIndex<IBlockOptionProvider>)_items[nameof(BlockOptionProviders)];
     public IEnumerable<IAsyncMessageShortcutHandler> MessageShortcutHandlers => (IEnumerable<IAsyncMessageShortcutHandler>)_items[nameof(MessageShortcutHandlers)];

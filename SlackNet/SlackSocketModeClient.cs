@@ -152,10 +152,12 @@ public class SlackSocketModeClient : ISlackSocketModeClient
 
     private async Task HandleEvent(SlackRequestContext requestContext, EventCallback eventCallback, Func<object, Task> respond)
     {
-        await respond(null).ConfigureAwait(false);
+        var eventContext = new EventContext(eventCallback, () => respond(null));
         var handler = _handlerFactory.CreateEventHandler(requestContext);
         _log.RequestHandler(handler, eventCallback, "Handling {EventType} event", eventCallback.Event.Type);
-        await handler.Handle(eventCallback).ConfigureAwait(false);
+        await handler.Handle(eventContext).ConfigureAwait(false);
+        if (!eventContext.IsAcknowledged)
+            await eventContext.Acknowledge().ConfigureAwait(false);
     }
 
     private Task HandleInteraction(SlackRequestContext requestContext, InteractionRequest interaction, Func<object, Task> respond) =>
