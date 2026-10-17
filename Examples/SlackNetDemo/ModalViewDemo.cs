@@ -60,7 +60,7 @@ class ModalViewDemo(ISlackApiClient slack) : IEventHandler<MessageEvent>, IBlock
     {
         Console.WriteLine($"{request.User.Name} clicked the Open modal button in the {request.Channel.Name} channel");
 
-        await slack.Views.Open(request.TriggerId, new ModalViewDefinition
+        await slack.Views.Open(new ModalViewDefinition
             {
                 Title = "Example Modal",
                 CallbackId = ModalCallbackId,
@@ -171,7 +171,7 @@ class ModalViewDemo(ISlackApiClient slack) : IEventHandler<MessageEvent>, IBlock
                 Submit = "Submit",
                 NotifyOnClose = true,
                 PrivateMetadata = JsonSerializer.Serialize(new ModalMetadata(request.Channel.Id, request.Channel.Name)) // Holding onto this info for later
-            });
+            }, triggerId: request.TriggerId);
     }
 
     private static IList<Option> ExampleOptions() =>

@@ -21,6 +21,64 @@ public class WebApiRequestTests
         _sut = new SlackApiClient(_http, Default.UrlBuilder(jsonSettings), jsonSettings, "token");
     }
 
+    [TestCase(false, false)]
+    [TestCase(false, true)]
+    [TestCase(true, false)]
+    [TestCase(true, true)]
+    public async Task ViewsApi_InteractionCredential_SendsSelectedCredential(bool push, bool interactivity)
+    {
+        var view = new ModalViewDefinition { CallbackId = "review_request" };
+        using var cancellation = new CancellationTokenSource();
+
+        await ((push, interactivity) switch
+            {
+                (false, false) => _sut.Views.Open(view, triggerId: "trigger", cancellationToken: cancellation.Token),
+                (false, true) => _sut.Views.Open(view, interactivityPointer: "pointer", cancellationToken: cancellation.Token),
+                (true, false) => _sut.Views.Push(view, triggerId: "trigger", cancellationToken: cancellation.Token),
+                (true, true) => _sut.Views.Push(view, interactivityPointer: "pointer", cancellationToken: cancellation.Token)
+            });
+
+        _http.Request.Method.ShouldBe(HttpMethod.Post);
+        _http.Request.RequestUri.AbsolutePath.ShouldBe(push ? "/api/views.push" : "/api/views.open");
+        _http.Body.Value<string>(interactivity ? "interactivity_pointer" : "trigger_id").ShouldBe(interactivity ? "pointer" : "trigger");
+        _http.Body.ContainsKey(interactivity ? "trigger_id" : "interactivity_pointer").ShouldBe(false);
+        _http.Body["view"]["callback_id"].Value<string>().ShouldBe("review_request");
+        _http.CancellationToken.ShouldBe(cancellation.Token);
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task ViewsApi_TriggerFirstOverload_PreservesRequest(bool push)
+    {
+        var view = new ModalViewDefinition { CallbackId = "review_request" };
+        using var cancellation = new CancellationTokenSource();
+
+#pragma warning disable CS0618 // Exercises the obsolete compatibility overloads.
+        await (push
+            ? _sut.Views.Push("trigger", view, cancellation.Token)
+            : _sut.Views.Open("trigger", view, cancellation.Token));
+#pragma warning restore CS0618
+
+        _http.Request.RequestUri.AbsolutePath.ShouldBe(push ? "/api/views.push" : "/api/views.open");
+        _http.Body.Value<string>("trigger_id").ShouldBe("trigger");
+        _http.Body.ContainsKey("interactivity_pointer").ShouldBe(false);
+        _http.Body["view"]["callback_id"].Value<string>().ShouldBe("review_request");
+        _http.CancellationToken.ShouldBe(cancellation.Token);
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task ViewsApi_WithoutCredentials_OmitsOptionalCredentials(bool push)
+    {
+        var view = new ModalViewDefinition { CallbackId = "review_request" };
+
+        await (push ? _sut.Views.Push(view) : _sut.Views.Open(view));
+
+        _http.Body.ContainsKey("trigger_id").ShouldBe(false);
+        _http.Body.ContainsKey("interactivity_pointer").ShouldBe(false);
+        _http.Body["view"]["callback_id"].Value<string>().ShouldBe("review_request");
+    }
+
     [Test]
     public async Task WorkflowsFeaturedApi_ListWithChannelIds_PostsArray()
     {
