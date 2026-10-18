@@ -10,6 +10,7 @@ namespace SlackNet.WebApi;
 /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.appendStream/#chunks">Slack documentation</a> for more information.</remarks>
 public abstract class StreamChunk(string type)
 {
+    /// <summary>The kind of content carried by this chunk.</summary>
     public string Type { get; set; } = type;
 }
 
@@ -92,6 +93,9 @@ public class PlanUpdateChunk() : StreamChunk("plan_update")
 [SlackType("blocks")]
 public class BlocksChunk() : StreamChunk("blocks")
 {
+    /// <summary>
+    /// The blocks to append to the message.
+    /// </summary>
     public IList<Block> Blocks { get; set; } = [];
 }
 

@@ -74,7 +74,10 @@ public enum TaskCardStatus
     /// but rejects it for a <see cref="TaskCardBlock"/> that isn't part of a plan.
     /// </summary>
     Pending,
+    /// <summary>The task is currently being worked on.</summary>
     InProgress,
+    /// <summary>The task finished successfully.</summary>
     Complete,
+    /// <summary>The task could not be completed.</summary>
     Error
 }

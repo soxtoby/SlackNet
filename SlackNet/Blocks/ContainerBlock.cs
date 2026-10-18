@@ -60,10 +60,15 @@ public class ContainerBlock() : Block("container")
     public bool HasHeaderDivider { get; set; }
 }
 
+/// <summary>Controls how much horizontal space a <see cref="ContainerBlock"/> occupies.</summary>
 public enum ContainerWidth
 {
+    /// <summary>Uses Slack's standard constrained width.</summary>
     Standard,
+    /// <summary>Uses a narrower constrained width.</summary>
     Narrow,
+    /// <summary>Uses a wider constrained width.</summary>
     Wide,
+    /// <summary>Fills the available width.</summary>
     Full
 }

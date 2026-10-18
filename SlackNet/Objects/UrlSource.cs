@@ -8,6 +8,7 @@ namespace SlackNet;
 /// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/block-elements/url-source-element/">Slack documentation</a> for more information.</remarks>
 public class UrlSource
 {
+    /// <summary>The source type sent to Slack. Always <c>url</c>.</summary>
     public string Type { get; } = "url";
 
     /// <summary>

@@ -14,6 +14,9 @@ public class AppContextChanged : Event
     public AppContext Context { get; set; } = new();
 }
 
+/// <summary>
+/// Describes the Slack entities a user is viewing while interacting with an app.
+/// </summary>
 public class AppContext
 {
     /// <summary>
@@ -22,12 +25,17 @@ public class AppContext
     public IList<AppContextEntity> Entities { get; set; } = [];
 }
 
+/// <summary>
+/// Identifies one Slack entity in the user's current app context.
+/// </summary>
 public class AppContextEntity
 {
+    /// <summary>The kind of entity represented by <see cref="Value"/>.</summary>
     public string Type { get; set; }
     /// <summary>
     /// The entity value. Its JSON shape depends on <see cref="Type"/>; for example, channel IDs are strings while message contexts are objects.
     /// </summary>
     public JToken Value { get; set; }
+    /// <summary>The workspace containing the entity.</summary>
     public string TeamId { get; set; }
 }

@@ -19,11 +19,17 @@ public class AlertBlock() : Block("alert")
     public AlertLevel Level { get; set; }
 }
 
+/// <summary>Controls the visual emphasis applied to an <see cref="AlertBlock"/>.</summary>
 public enum AlertLevel
 {
+    /// <summary>Uses Slack's default alert styling.</summary>
     Default,
+    /// <summary>Indicates informational content.</summary>
     Info,
+    /// <summary>Calls attention to a potential problem.</summary>
     Warning,
+    /// <summary>Indicates an error or failed operation.</summary>
     Error,
+    /// <summary>Indicates a successful operation.</summary>
     Success
 }

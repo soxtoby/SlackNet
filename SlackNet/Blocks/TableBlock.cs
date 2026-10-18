@@ -26,10 +26,15 @@ public class RichTextCell() : TableCell("rich_text")
     public IList<RichTextElement> Elements { get; set; }
 }
 
+/// <summary>
+/// A table cell that sorts and compares by a numeric value while displaying separate text.
+/// </summary>
 [SlackType("raw_number")]
 public class RawNumberCell() : TableCell("raw_number")
 {
+    /// <summary>The numeric value used by the table.</summary>
     public double Value { get; set; }
+    /// <summary>The text displayed in the cell.</summary>
     public string Text { get; set; }
 }
 
