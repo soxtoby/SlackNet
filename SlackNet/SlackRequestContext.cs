@@ -36,7 +36,7 @@ public class SlackRequestContext
     /// </summary>
     public object this[string key]
     {
-        get => _items.TryGetValue(key, out var value) ? value : default;
+        get => _items.GetValueOrDefault(key);
         set => _items[key] = value;
     }
 

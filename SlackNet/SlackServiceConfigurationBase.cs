@@ -17,18 +17,18 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     private Func<ISlackServiceProvider, ISlackUrlBuilder> _urlBuilderProvider = sp => Default.UrlBuilder(sp.GetJsonSettings());
     private Func<ISlackServiceProvider, ILogger> _loggerProvider = sp => Default.Logger;
     private Func<ISlackServiceProvider, IWebSocketFactory> _webSocketFactoryProvider = sp => Default.WebSocketFactory;
-    private readonly List<Func<ISlackServiceProvider, ISlackRequestListener>> _requestListenerProviders = new();
+    private readonly List<Func<ISlackServiceProvider, ISlackRequestListener>> _requestListenerProviders = [];
     private Func<ISlackServiceProvider, ISlackHandlerFactory> _handlerFactoryProvider;
     private Func<ISlackServiceProvider, ISlackApiClient> _apiClientProvider;
     private Func<ISlackServiceProvider, ISlackSocketModeClient> _socketModeClientProvider;
     private Func<ISlackServiceProvider, ISlackApiTokenProvider> _apiTokenProvider = _ => new ConstantApiTokenProvider(null);
     private Func<ISlackServiceProvider, ISlackAppLevelTokenProvider> _appLevelTokenProvider = _ => new ConstantAppLevelTokenProvider(null);
 
-    private readonly List<Func<SlackRequestContext, Handlers.Experimental.IEventHandler<Event>>> _eventHandlers = new();
-    private readonly List<Func<SlackRequestContext, IAsyncBlockActionHandler>> _blockActionHandlers = new();
+    private readonly List<Func<SlackRequestContext, Handlers.Experimental.IEventHandler<Event>>> _eventHandlers = [];
+    private readonly List<Func<SlackRequestContext, IAsyncBlockActionHandler>> _blockActionHandlers = [];
     private readonly Dictionary<string, Func<SlackRequestContext, IBlockOptionProvider>> _blockOptionProviders = new();
-    private readonly List<Func<SlackRequestContext, IAsyncMessageShortcutHandler>> _messageShortcutHandlers = new();
-    private readonly List<Func<SlackRequestContext, IAsyncGlobalShortcutHandler>> _globalShortcutHandlers = new();
+    private readonly List<Func<SlackRequestContext, IAsyncMessageShortcutHandler>> _messageShortcutHandlers = [];
+    private readonly List<Func<SlackRequestContext, IAsyncGlobalShortcutHandler>> _globalShortcutHandlers = [];
     private readonly Dictionary<string, Func<SlackRequestContext, IAsyncViewSubmissionHandler>> _viewSubmissionHandlers = new();
     private readonly Dictionary<string, Func<SlackRequestContext, IAsyncSlashCommandHandler>> _slashCommandHandlers = new();
 
@@ -110,8 +110,8 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
             _appLevelTokenProvider,
             dependencyProvider);
 
-    ISlackHandlerFactory CreateHandlerFactory(ISlackServiceProvider serviceProvider) =>
-        new SlackHandlerFactory(
+    SlackHandlerFactory CreateHandlerFactory(ISlackServiceProvider serviceProvider) =>
+        new(
             _eventHandlerFactory,
             _blockActionHandlerFactory,
             _blockOptionProviderFactory,
@@ -123,16 +123,16 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
             _legacyOptionProviderFactory,
             _legacyDialogSubmissionHandlerFactory);
 
-    ISlackApiClient CreateApiClient(ISlackServiceProvider serviceProvider) =>
-        new SlackApiClient(
+    static SlackApiClient CreateApiClient(ISlackServiceProvider serviceProvider) =>
+        new(
             serviceProvider.GetHttp(),
             serviceProvider.GetUrlBuilder(),
             serviceProvider.GetJsonSettings(),
             serviceProvider.GetApiTokenProvider(),
             serviceProvider.GetAppLevelTokenProvider());
 
-    ISlackSocketModeClient CreateSocketModeClient(ISlackServiceProvider serviceProvider) =>
-        new SlackSocketModeClient(
+    static SlackSocketModeClient CreateSocketModeClient(ISlackServiceProvider serviceProvider) =>
+        new(
             new CoreSocketModeClient(
                 serviceProvider.GetApiClient(),
                 serviceProvider.GetWebSocketFactory(),
@@ -144,8 +144,8 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
             serviceProvider.GetHandlerFactory(),
             serviceProvider.GetLogger());
 
-    private ISlackRequestListener CreateRequestContextPopulator(ISlackServiceProvider serviceProvider) =>
-        new SlackRequestContextPopulator(
+    SlackRequestContextPopulator CreateRequestContextPopulator(ISlackServiceProvider serviceProvider) =>
+        new(
             serviceProvider,
             _eventHandlers,
             _blockActionHandlers,

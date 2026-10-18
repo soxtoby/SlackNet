@@ -320,10 +320,8 @@ public class SlackApiClient : ISlackApiClient
                 : response.Data?.ToObject<T>(JsonSerializer.Create(_jsonSettings.SerializerSettings))
             : throw new SlackException(ReadErrorResponse(response));
 
-    private ErrorResponse ReadErrorResponse(WebApiResponse response)
-    {
-        return response.Data?.ToObject<ErrorResponse>(JsonSerializer.Create(_jsonSettings.SerializerSettings));
-    }
+    private ErrorResponse ReadErrorResponse(WebApiResponse response) =>
+        response.Data?.ToObject<ErrorResponse>(JsonSerializer.Create(_jsonSettings.SerializerSettings));
 
     private static Args StripNullArgs(Args args) =>
         args.Where(kv => kv.Value != null)

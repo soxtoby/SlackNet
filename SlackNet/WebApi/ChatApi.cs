@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using Args = System.Collections.Generic.Dictionary<string, object>;
