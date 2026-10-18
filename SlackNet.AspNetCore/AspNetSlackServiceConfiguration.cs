@@ -42,8 +42,10 @@ public abstract class AspNetSlackServiceConfiguration<TConfig> : ServiceCollecti
         ServiceCollection.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         ServiceCollection.TryAddSingleton<IRequestServiceProviderAccessor, HttpContextServiceProviderAccessor>();
         ServiceCollection.TryAddSingleton<IServiceProviderSlackRequestListener, AspNetCoreServiceProviderSlackRequestListener>();
-        ServiceCollection.AddHostedService<SocketModeService>();
         
+        if (_socketModeConfiguration.SocketMode)
+            ServiceCollection.AddHostedService<SocketModeService>();
+
         base.ConfigureServices();
     }
 

@@ -12,25 +12,18 @@ class SocketModeService(
     SlackSocketModeConfiguration config
 ) : IHostedService
 {
-    private readonly bool _enabled = config.SocketMode; // Holding onto this to ensure initial state is used when stopping
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        if (_enabled) // TODO remove UseSocketMode from SlackEndpointConfiguration and only register the client if socket mode is enabled 
+        try
         {
-            try
-            {
-                await socketModeClient.Connect(config.ConnectionOptions, cancellationToken).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                logger.LogError(e, "Error connecting Slack socket mode client");
-            }
+            await socketModeClient.Connect(config.ConnectionOptions, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Error connecting Slack socket mode client");
         }
     }
 
     public Task StopAsync(CancellationToken cancellationToken) =>
-        _enabled
-            ? socketModeClient.DisconnectAsync()
-            : Task.CompletedTask;
+        socketModeClient.DisconnectAsync();
 }
