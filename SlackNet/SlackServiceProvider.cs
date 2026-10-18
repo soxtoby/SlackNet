@@ -16,6 +16,10 @@ public interface ISlackServiceProvider
     ISlackHandlerFactory GetHandlerFactory();
     ISlackApiClient GetApiClient();
     ISlackSocketModeClient GetSocketModeClient();
+    /// <summary>Gets the provider that selects credentials for Slack Web API requests.</summary>
+    ISlackApiTokenProvider GetApiTokenProvider();
+    /// <summary>Gets the provider that selects app-level credentials for Socket Mode connections.</summary>
+    ISlackAppLevelTokenProvider GetAppLevelTokenProvider();
     ILogger GetLogger();
 }
 
@@ -30,6 +34,8 @@ class SlackServiceProvider : ISlackServiceProvider
     private readonly Lazy<ISlackHandlerFactory> _handlerFactory;
     private readonly Lazy<ISlackApiClient> _apiClient;
     private readonly Lazy<ISlackSocketModeClient> _socketModeClient;
+    private readonly Lazy<ISlackApiTokenProvider> _apiTokenProvider;
+    private readonly Lazy<ISlackAppLevelTokenProvider> _appLevelTokenProvider;
     private readonly Lazy<ILogger> _logger;
 
     public SlackServiceProvider(
@@ -43,6 +49,8 @@ class SlackServiceProvider : ISlackServiceProvider
         Func<ISlackServiceProvider, ISlackHandlerFactory> handlerFactoryProvider,
         Func<ISlackServiceProvider, ISlackApiClient> apiClientProvider,
         Func<ISlackServiceProvider, ISlackSocketModeClient> socketModeClientProvider,
+        Func<ISlackServiceProvider, ISlackApiTokenProvider> apiTokenProvider,
+        Func<ISlackServiceProvider, ISlackAppLevelTokenProvider> appLevelTokenProvider,
         ISlackServiceProvider dependencyProvider = null)
     {
         dependencyProvider ??= this;
@@ -56,6 +64,8 @@ class SlackServiceProvider : ISlackServiceProvider
         _handlerFactory = new Lazy<ISlackHandlerFactory>(() => handlerFactoryProvider(dependencyProvider));
         _apiClient = new Lazy<ISlackApiClient>(() => apiClientProvider(dependencyProvider));
         _socketModeClient = new Lazy<ISlackSocketModeClient>(() => socketModeClientProvider(dependencyProvider));
+        _apiTokenProvider = new Lazy<ISlackApiTokenProvider>(() => apiTokenProvider(dependencyProvider));
+        _appLevelTokenProvider = new Lazy<ISlackAppLevelTokenProvider>(() => appLevelTokenProvider(dependencyProvider));
     }
 
     public IHttp GetHttp() => _http.Value;
@@ -68,4 +78,6 @@ class SlackServiceProvider : ISlackServiceProvider
     public ISlackHandlerFactory GetHandlerFactory() => _handlerFactory.Value;
     public ISlackApiClient GetApiClient() => _apiClient.Value;
     public ISlackSocketModeClient GetSocketModeClient() => _socketModeClient.Value;
+    public ISlackApiTokenProvider GetApiTokenProvider() => _apiTokenProvider.Value;
+    public ISlackAppLevelTokenProvider GetAppLevelTokenProvider() => _appLevelTokenProvider.Value;
 }

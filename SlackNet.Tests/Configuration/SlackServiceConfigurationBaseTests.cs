@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using EasyAssertions;
 using Newtonsoft.Json;
 using NSubstitute;
@@ -129,6 +131,73 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
             Substitute.For<ISlackSocketModeClient>(),
             (c, sp) => c.UseSocketModeClient(sp),
             s => s.GetSocketModeClient());
+    }
+
+    [Test]
+    public async Task UseApiToken()
+    {
+        var http = new TestHttp();
+        var sut = Configure(c => c.UseApiToken("api-token").UseHttp(_ => http));
+
+        await sut.GetApiClient().Get<object>("api.test", new(), CancellationToken.None);
+
+        http.AuthorizationHeaders.ShouldMatch(["Bearer api-token"]);
+    }
+
+    [Test]
+    public async Task UseAppLevelToken()
+    {
+        var http = new TestHttp();
+        var sut = Configure(c => c.UseAppLevelToken("app-level-token").UseHttp(_ => http));
+
+        await sut.GetApiClient().AppsConnectionsApi.Open();
+
+        http.AuthorizationHeaders.ShouldMatch(["Bearer app-level-token"]);
+    }
+
+    [Test]
+    public async Task GetApiClient_ChangingProviderCredentials_UsesCurrentCredentialsForEachCall()
+    {
+        var http = new TestHttp();
+        var apiToken = "first-api-token";
+        var appLevelToken = "first-app-level-token";
+        var services = Configure(c => c
+            .UseHttp(_ => http)
+            .UseApiTokenProvider(_ => new ApiTokenProvider(_ => apiToken))
+            .UseAppLevelTokenProvider(_ => new AppLevelTokenProvider(_ => appLevelToken)));
+        var sut = services.GetApiClient();
+
+        await sut.Get<object>("api.test", new(), CancellationToken.None);
+        await sut.AppsConnectionsApi.Open();
+        apiToken = "second-api-token";
+        appLevelToken = "second-app-level-token";
+        await sut.Get<object>("api.test", new(), CancellationToken.None);
+        await sut.AppsConnectionsApi.Open();
+
+        http.AuthorizationHeaders.ShouldMatch([
+            "Bearer first-api-token",
+            "Bearer first-app-level-token",
+            "Bearer second-api-token",
+            "Bearer second-app-level-token"
+        ]);
+    }
+
+    [Test]
+    public void UseApiTokenProvider()
+    {
+        UseService(
+            Substitute.For<ISlackApiTokenProvider>(),
+            (c, sp) => c.UseApiTokenProvider(sp),
+            s => s.GetApiTokenProvider());
+    }
+
+    [Test]
+    public void UseAppLevelTokenProvider()
+    {
+        UseService(
+            Substitute.For<ISlackAppLevelTokenProvider>(),
+            (c, sp) => c.UseAppLevelTokenProvider(sp),
+            s => s.GetAppLevelTokenProvider());
     }
 
     [Test]

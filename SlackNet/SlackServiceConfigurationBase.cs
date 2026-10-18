@@ -11,9 +11,6 @@ namespace SlackNet;
 
 public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : SlackServiceConfigurationBase<TConfig>
 {
-    private string _apiToken;
-    private string _appLevelToken;
-
     private Func<ISlackServiceProvider, IHttp> _httpProvider = sp => Default.Http(sp.GetJsonSettings(), logger: sp.GetLogger());
     private Func<ISlackServiceProvider, SlackJsonSettings> _jsonSettingsProvider = sp => Default.JsonSettings(sp.GetTypeResolver(), sp.GetLogger());
     private Func<ISlackServiceProvider, ISlackTypeResolver> _slackTypeResolverProvider = sp => Default.SlackTypeResolver();
@@ -24,6 +21,8 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     private Func<ISlackServiceProvider, ISlackHandlerFactory> _handlerFactoryProvider;
     private Func<ISlackServiceProvider, ISlackApiClient> _apiClientProvider;
     private Func<ISlackServiceProvider, ISlackSocketModeClient> _socketModeClientProvider;
+    private Func<ISlackServiceProvider, ISlackApiTokenProvider> _apiTokenProvider = _ => new ConstantApiTokenProvider(null);
+    private Func<ISlackServiceProvider, ISlackAppLevelTokenProvider> _appLevelTokenProvider = _ => new ConstantAppLevelTokenProvider(null);
 
     private readonly List<Func<SlackRequestContext, Handlers.Experimental.IEventHandler<Event>>> _eventHandlers = new();
     private readonly List<Func<SlackRequestContext, IAsyncBlockActionHandler>> _blockActionHandlers = new();
@@ -60,12 +59,20 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     /// <summary>
     /// Used for making Slack API requests. Can be either a bot or user token.
     /// </summary>
-    public TConfig UseApiToken(string token) => Chain(() => _apiToken = token);
+    public TConfig UseApiToken(string token)
+    {
+        var apiTokenProvider = new ConstantApiTokenProvider(token);
+        return UseApiTokenProvider(_ => apiTokenProvider);
+    }
 
     /// <summary>
     /// Used for connection socket mode client.
     /// </summary>
-    public TConfig UseAppLevelToken(string token) => Chain(() => _appLevelToken = token);
+    public TConfig UseAppLevelToken(string token)
+    {
+        var appLevelTokenProvider = new ConstantAppLevelTokenProvider(token);
+        return UseAppLevelTokenProvider(_ => appLevelTokenProvider);
+    }
 
     public TConfig UseHttp(Func<ISlackServiceProvider, IHttp> httpProvider) => Chain(() => _httpProvider = httpProvider);
     public TConfig UseJsonSettings(Func<ISlackServiceProvider, SlackJsonSettings> jsonSettingsProvider) => Chain(() => _jsonSettingsProvider = jsonSettingsProvider);
@@ -77,6 +84,15 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     public TConfig UseHandlerFactory(Func<ISlackServiceProvider, ISlackHandlerFactory> handlerFactoryProvider) => Chain(() => _handlerFactoryProvider = handlerFactoryProvider);
     public TConfig UseApiClient(Func<ISlackServiceProvider, ISlackApiClient> apiClientProvider) => Chain(() => _apiClientProvider = apiClientProvider);
     public TConfig UseSocketModeClient(Func<ISlackServiceProvider, ISlackSocketModeClient> socketModeClientProvider) => Chain(() => _socketModeClientProvider = socketModeClientProvider);
+    /// <summary>
+    /// Uses a provider to select the token for each Slack Web API request.
+    /// This supports apps whose credentials vary by workspace or request.
+    /// </summary>
+    public TConfig UseApiTokenProvider(Func<ISlackServiceProvider, ISlackApiTokenProvider> apiTokenProvider) => Chain(() => _apiTokenProvider = apiTokenProvider);
+    /// <summary>
+    /// Uses a provider to select the app-level token used to open Socket Mode connections.
+    /// </summary>
+    public TConfig UseAppLevelTokenProvider(Func<ISlackServiceProvider, ISlackAppLevelTokenProvider> appLevelTokenProvider) => Chain(() => _appLevelTokenProvider = appLevelTokenProvider);
 
     protected ISlackServiceProvider CreateServiceFactory(ISlackServiceProvider dependencyProvider = null) =>
         new SlackServiceProvider(
@@ -90,6 +106,8 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
             _handlerFactoryProvider,
             _apiClientProvider,
             _socketModeClientProvider,
+            _apiTokenProvider,
+            _appLevelTokenProvider,
             dependencyProvider);
 
     ISlackHandlerFactory CreateHandlerFactory(ISlackServiceProvider serviceProvider) =>
@@ -110,12 +128,13 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
             serviceProvider.GetHttp(),
             serviceProvider.GetUrlBuilder(),
             serviceProvider.GetJsonSettings(),
-            _apiToken);
+            serviceProvider.GetApiTokenProvider(),
+            serviceProvider.GetAppLevelTokenProvider());
 
     ISlackSocketModeClient CreateSocketModeClient(ISlackServiceProvider serviceProvider) =>
         new SlackSocketModeClient(
             new CoreSocketModeClient(
-                serviceProvider.GetApiClient().WithAccessToken(_appLevelToken),
+                serviceProvider.GetApiClient(),
                 serviceProvider.GetWebSocketFactory(),
                 serviceProvider.GetJsonSettings(),
                 Default.Scheduler,

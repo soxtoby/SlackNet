@@ -27,6 +27,8 @@ public class AutofacSlackServiceConfiguration : FactorySlackServiceConfiguration
         containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetHandlerFactory()).As<ISlackHandlerFactory>().SingleInstance();
         containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetApiClient()).As<ISlackApiClient>().SingleInstance();
         containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetSocketModeClient()).As<ISlackSocketModeClient>().SingleInstance();
+        containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetApiTokenProvider()).As<ISlackApiTokenProvider>().SingleInstance();
+        containerBuilder.Register(c => c.Resolve<ISlackServiceProvider>().GetAppLevelTokenProvider()).As<ISlackAppLevelTokenProvider>().SingleInstance();
 
         config.UseRequestListener<AutofacSlackRequestListener>();
         configure?.Invoke(config);

@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,11 +14,15 @@ class TestHttp : IHttp
     public string Method { get; private set; } = "";
     public JObject Body { get; private set; } = new();
     public JObject Response { get; set; } = new() { ["ok"] = true };
+    public IList<string?> AuthorizationHeaders { get; } = [];
 
     public async Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default)
     {
         Method = requestMessage.RequestUri!.Segments[^1];
-        Body = JObject.Parse(await requestMessage.Content!.ReadAsStringAsync().ConfigureAwait(false));
+        Body = requestMessage.Content is null
+            ? new JObject()
+            : JObject.Parse(await requestMessage.Content.ReadAsStringAsync().ConfigureAwait(false));
+        AuthorizationHeaders.Add(requestMessage.Headers.Authorization?.ToString());
         return (T)(object)new WebApiResponse { Ok = (bool)Response["ok"]!, Data = Response };
     }
 }

@@ -42,6 +42,8 @@ public abstract class ServiceCollectionSlackServiceConfiguration<TConfig> : Fact
         ServiceCollection.TryAddSingleton<ISlackHandlerFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetHandlerFactory());
         ServiceCollection.TryAddSingleton<ISlackApiClient>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetApiClient());
         ServiceCollection.TryAddSingleton<ISlackSocketModeClient>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetSocketModeClient());
+        ServiceCollection.TryAddSingleton<ISlackApiTokenProvider>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetApiTokenProvider());
+        ServiceCollection.TryAddSingleton<ISlackAppLevelTokenProvider>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetAppLevelTokenProvider());
     }
 
     protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService, TImplementation>()

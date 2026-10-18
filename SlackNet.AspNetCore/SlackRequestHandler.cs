@@ -360,7 +360,7 @@ class SlackRequestHandler(
     {
         var requestContext = SlackRequestContext.Current = new SlackRequestContext
             {
-                [nameof(SlackRequestContext.RequestId)] = request.HttpContext.TraceIdentifier
+                RequestId = request.HttpContext.TraceIdentifier
             };
         var requestScope = requestContext.BeginRequest(requestListeners);
 

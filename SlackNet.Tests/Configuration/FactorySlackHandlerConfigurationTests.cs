@@ -138,6 +138,22 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     }
 
     [Test]
+    public void UseApiTokenProviderType()
+    {
+        UseService<ISlackApiTokenProvider, TestApiTokenProvider>(
+            c => c.UseApiTokenProvider<TestApiTokenProvider>(),
+            s => s.GetApiTokenProvider());
+    }
+
+    [Test]
+    public void UseAppLevelTokenProviderType()
+    {
+        UseService<ISlackAppLevelTokenProvider, TestAppLevelTokenProvider>(
+            c => c.UseAppLevelTokenProvider<TestAppLevelTokenProvider>(),
+            s => s.GetAppLevelTokenProvider());
+    }
+
+    [Test]
     public void ReplaceEventHandling_ContextHandlerType_UsesReplacementHandlerPerRequest()
     {
         ReplaceRequestHandling<Experimental.IEventHandler<Event>, TestContextEventHandler<Event>>(
@@ -985,6 +1001,16 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public void Disconnect() { throw new NotImplementedException(); }
         public Task DisconnectAsync() => throw new NotImplementedException();
         public bool Connected { get; }
+    }
+
+    protected class TestApiTokenProvider : ISlackApiTokenProvider
+    {
+        public Task<string> GetApiToken(SlackApiCallContext context, CancellationToken cancellationToken) => throw new NotImplementedException();
+    }
+
+    protected class TestAppLevelTokenProvider : ISlackAppLevelTokenProvider
+    {
+        public Task<string> GetAppLevelToken(SlackApiCallContext context, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
     protected class TestHandler<THandler>(InstanceTracker tracker) : TrackedClass(tracker)

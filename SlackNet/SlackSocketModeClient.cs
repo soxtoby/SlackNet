@@ -83,7 +83,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
             var requestContext = SlackRequestContext.Current = new SlackRequestContext
                 {
                     [Envelope] = envelope,
-                    [nameof(SlackRequestContext.RequestId)] = envelope.RequestId
+                    RequestId = envelope.RequestId
                 };
 
             await using (requestContext.BeginRequest(_requestListeners).ConfigureAwait(false))
@@ -152,6 +152,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
 
     private async Task HandleEvent(SlackRequestContext requestContext, EventCallback eventCallback, Func<object, Task> respond)
     {
+        SetRequestIdentity(requestContext, eventCallback);
         var eventContext = new EventContext(eventCallback, () => respond(null));
         var handler = _handlerFactory.CreateEventHandler(requestContext);
         _log.RequestHandler(handler, eventCallback, "Handling {EventType} event", eventCallback.Event.Type);
@@ -160,8 +161,10 @@ public class SlackSocketModeClient : ISlackSocketModeClient
             await eventContext.Acknowledge().ConfigureAwait(false);
     }
 
-    private Task HandleInteraction(SlackRequestContext requestContext, InteractionRequest interaction, Func<object, Task> respond) =>
-        interaction switch
+    private Task HandleInteraction(SlackRequestContext requestContext, InteractionRequest interaction, Func<object, Task> respond)
+    {
+        SetRequestIdentity(requestContext, interaction);
+        return interaction switch
             {
                 BlockActionRequest blockActions => HandleBlockActions(requestContext, blockActions, respond),
                 InteractiveMessage interactiveMessage => HandleInteractiveMessage(requestContext, interactiveMessage, respond),
@@ -173,6 +176,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
                 ViewClosed viewClosed => HandleViewClosed(requestContext, viewClosed, respond),
                 _ => Task.CompletedTask
             };
+    }
 
     private async Task HandleBlockActions(SlackRequestContext requestContext, BlockActionRequest blockActions, Func<object, Task> respond)
     {
@@ -248,6 +252,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
 
     private async Task HandleBlockOptionsRequest(SlackRequestContext requestContext, BlockOptionsRequest blockOptionsRequest, Func<object, Task> respond)
     {
+        SetRequestIdentity(requestContext, blockOptionsRequest);
         var handler = _handlerFactory.CreateBlockOptionProvider(requestContext);
         _log.RequestHandler(handler, blockOptionsRequest, "Handling block options request for {ActionId}", blockOptionsRequest.ActionId);
         var blockOptionsResponse = await handler.GetOptions(blockOptionsRequest).ConfigureAwait(false);
@@ -256,6 +261,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
 
     private async Task HandleLegacyOptionsRequest(SlackRequestContext requestContext, OptionsRequest optionsRequest, Func<object, Task> respond)
     {
+        SetRequestIdentity(requestContext, optionsRequest);
         var handler = _handlerFactory.CreateLegacyOptionProvider(requestContext);
         _log.RequestHandler(handler, optionsRequest, "Handling options request for {RequestName}", optionsRequest.Name);
         var optionsResponse = await handler.GetOptions(optionsRequest).ConfigureAwait(false);
@@ -264,6 +270,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
 
     private async Task HandleSlashCommand(SlackRequestContext requestContext, SlashCommand slashCommand, Func<object, Task> respond)
     {
+        SetRequestIdentity(requestContext, slashCommand);
         var handler = _handlerFactory.CreateSlashCommandHandler(requestContext);
         _log.RequestHandler(handler, slashCommand, "Handling slash command {SlashCommand}", slashCommand.Command);
         await handler.Handle(slashCommand,
@@ -275,6 +282,50 @@ public class SlackSocketModeClient : ISlackSocketModeClient
     }
 
     private static Responder Responder(Func<object, Task> respond) => () => respond(null);
+
+    private static void SetRequestIdentity(SlackRequestContext requestContext, EventCallback eventCallback)
+    {
+        if (eventCallback == null)
+            return;
+
+        requestContext.RequestType = SlackRequestType.Event;
+        requestContext.ApiAppId = eventCallback.ApiAppId;
+        requestContext.TeamId = eventCallback.TeamId;
+        requestContext.EnterpriseId = eventCallback.EnterpriseId;
+    }
+
+    private static void SetRequestIdentity(SlackRequestContext requestContext, InteractionRequest interaction)
+    {
+        if (interaction == null)
+            return;
+
+        requestContext.RequestType = SlackRequestType.Action;
+        requestContext.ApiAppId = interaction.ApiAppId;
+        requestContext.TeamId = interaction.Team?.Id;
+        requestContext.EnterpriseId = interaction.Enterprise?.Id ?? interaction.Team?.EnterpriseId;
+    }
+
+    private static void SetRequestIdentity(SlackRequestContext requestContext, OptionsRequestBase optionsRequest)
+    {
+        if (optionsRequest == null)
+            return;
+
+        requestContext.RequestType = SlackRequestType.Options;
+        requestContext.ApiAppId = (optionsRequest as BlockOptionsRequest)?.ApiAppId;
+        requestContext.TeamId = optionsRequest.Team?.Id;
+        requestContext.EnterpriseId = optionsRequest.Team?.EnterpriseId;
+    }
+
+    private static void SetRequestIdentity(SlackRequestContext requestContext, SlashCommand slashCommand)
+    {
+        if (slashCommand == null)
+            return;
+
+        requestContext.RequestType = SlackRequestType.SlashCommand;
+        requestContext.ApiAppId = slashCommand.ApiAppId;
+        requestContext.TeamId = slashCommand.TeamId;
+        requestContext.EnterpriseId = slashCommand.EnterpriseId;
+    }
 
     private Task Send(int socketId, Acknowledgement acknowledgement) =>
         _socket.Send(socketId, acknowledgement);

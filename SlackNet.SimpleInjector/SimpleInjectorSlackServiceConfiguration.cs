@@ -29,6 +29,8 @@ public class SimpleInjectorSlackServiceConfiguration : FactorySlackServiceConfig
         RegisterFallback<ISlackHandlerFactory>(container, () => container.GetInstance<ISlackServiceProvider>().GetHandlerFactory(), Lifestyle.Singleton);
         RegisterFallback<ISlackApiClient>(container, () => container.GetInstance<ISlackServiceProvider>().GetApiClient(), Lifestyle.Singleton);
         RegisterFallback<ISlackSocketModeClient>(container, () => container.GetInstance<ISlackServiceProvider>().GetSocketModeClient(), Lifestyle.Singleton);
+        RegisterFallback<ISlackApiTokenProvider>(container, () => container.GetInstance<ISlackServiceProvider>().GetApiTokenProvider(), Lifestyle.Singleton);
+        RegisterFallback<ISlackAppLevelTokenProvider>(container, () => container.GetInstance<ISlackServiceProvider>().GetAppLevelTokenProvider(), Lifestyle.Singleton);
     }
 
     protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService, TImplementation>()

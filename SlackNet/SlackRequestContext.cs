@@ -44,7 +44,31 @@ public class SlackRequestContext
     public bool ContainsKey(string key) => _items.ContainsKey(key);
     public bool TryGetValue(string key, out object value) => _items.TryGetValue(key, out value);
 
-    public string RequestId => (string)_items[nameof(RequestId)];
+    /// <summary>
+    /// Identifies this request for logging and diagnostics.
+    /// </summary>
+    public string RequestId { get; init; }
+
+    /// <summary>
+    /// The kind of request received from Slack.
+    /// </summary>
+    public SlackRequestType? RequestType { get; set; }
+
+    /// <summary>
+    /// The Slack app receiving the request when supplied by Slack.
+    /// </summary>
+    public string ApiAppId { get; set; }
+
+    /// <summary>
+    /// The workspace associated with the request when supplied by Slack.
+    /// </summary>
+    public string TeamId { get; set; }
+
+    /// <summary>
+    /// The Enterprise Grid organization associated with the request when supplied by Slack.
+    /// </summary>
+    public string EnterpriseId { get; set; }
+
     public ISlackServiceProvider ServiceProvider => (ISlackServiceProvider)_items[nameof(ServiceProvider)];
     public IEnumerable<Handlers.Experimental.IEventHandler<Event>> EventHandlers => (IEnumerable<Handlers.Experimental.IEventHandler<Event>>)_items[nameof(EventHandlers)];
     public IEnumerable<IAsyncBlockActionHandler> BlockActionHandlers => (IEnumerable<IAsyncBlockActionHandler>)_items[nameof(BlockActionHandlers)];

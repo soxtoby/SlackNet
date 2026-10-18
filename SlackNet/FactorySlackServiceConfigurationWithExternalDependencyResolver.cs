@@ -19,6 +19,10 @@ public abstract class FactorySlackServiceConfigurationWithExternalDependencyReso
     public TConfig UseHandlerFactory(Func<ISlackHandlerFactory> handlerFactoryProvider) => UseHandlerFactory(GetServiceFactory(handlerFactoryProvider));
     public TConfig UseApiClient(Func<ISlackApiClient> apiClientProvider) => UseApiClient(GetServiceFactory(apiClientProvider));
     public TConfig UseSocketModeClient(Func<ISlackSocketModeClient> socketModeClientProvider) => UseSocketModeClient(GetServiceFactory(socketModeClientProvider));
+    /// <summary>Uses a factory to select the token for each Slack Web API request.</summary>
+    public TConfig UseApiTokenProvider(Func<ISlackApiTokenProvider> apiTokenProvider) => UseApiTokenProvider(GetServiceFactory(apiTokenProvider));
+    /// <summary>Uses a factory to select the app-level token for Socket Mode connections.</summary>
+    public TConfig UseAppLevelTokenProvider(Func<ISlackAppLevelTokenProvider> appLevelTokenProvider) => UseAppLevelTokenProvider(GetServiceFactory(appLevelTokenProvider));
 
     public TConfig ReplaceEventHandling(Func<Handlers.Experimental.IEventHandler<Event>> handlerFactory) => ReplaceEventHandling(GetRequestHandlerFactory(handlerFactory));
     public TConfig ReplaceBlockActionHandling(Func<IAsyncBlockActionHandler> handlerFactory) => ReplaceBlockActionHandling(GetRequestHandlerFactory(handlerFactory));

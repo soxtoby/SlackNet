@@ -19,6 +19,10 @@ public abstract class FactorySlackServiceConfiguration<TConfig> : SlackServiceCo
     public TConfig UseHandlerFactory<TService>() where TService : class, ISlackHandlerFactory => UseHandlerFactory(GetServiceFactory<ISlackHandlerFactory, TService>());
     public TConfig UseApiClient<TService>() where TService : class, ISlackApiClient => UseApiClient(GetServiceFactory<ISlackApiClient, TService>());
     public TConfig UseSocketModeClient<TService>() where TService : class, ISlackSocketModeClient => UseSocketModeClient(GetServiceFactory<ISlackSocketModeClient, TService>());
+    /// <summary>Uses the specified service type to select the token for each Slack Web API request.</summary>
+    public TConfig UseApiTokenProvider<TService>() where TService : class, ISlackApiTokenProvider => UseApiTokenProvider(GetServiceFactory<ISlackApiTokenProvider, TService>());
+    /// <summary>Uses the specified service type to select the app-level token for Socket Mode connections.</summary>
+    public TConfig UseAppLevelTokenProvider<TService>() where TService : class, ISlackAppLevelTokenProvider => UseAppLevelTokenProvider(GetServiceFactory<ISlackAppLevelTokenProvider, TService>());
 
     /// <summary>
     /// Take over all event handling and control when events are acknowledged.

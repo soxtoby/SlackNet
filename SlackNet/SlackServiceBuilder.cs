@@ -24,4 +24,8 @@ public class SlackServiceBuilder : SlackServiceConfigurationBase<SlackServiceBui
     public ISlackHandlerFactory GetHandlerFactory() => _factory.Value.GetHandlerFactory();
     public ISlackApiClient GetApiClient() => _factory.Value.GetApiClient();
     public ISlackSocketModeClient GetSocketModeClient() => _factory.Value.GetSocketModeClient();
+    /// <inheritdoc/>
+    public ISlackApiTokenProvider GetApiTokenProvider() => _factory.Value.GetApiTokenProvider();
+    /// <inheritdoc/>
+    public ISlackAppLevelTokenProvider GetAppLevelTokenProvider() => _factory.Value.GetAppLevelTokenProvider();
 }

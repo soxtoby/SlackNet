@@ -91,6 +91,22 @@ public abstract class FactorySlackHandlerConfigurationWithExternalDependencyReso
     }
 
     [Test]
+    public void UseApiTokenProviderFactory()
+    {
+        UseService<ISlackApiTokenProvider, TestApiTokenProvider>(
+            c => c.UseApiTokenProvider(() => new TestApiTokenProvider()),
+            s => s.GetApiTokenProvider());
+    }
+
+    [Test]
+    public void UseAppLevelTokenProviderFactory()
+    {
+        UseService<ISlackAppLevelTokenProvider, TestAppLevelTokenProvider>(
+            c => c.UseAppLevelTokenProvider(() => new TestAppLevelTokenProvider()),
+            s => s.GetAppLevelTokenProvider());
+    }
+
+    [Test]
     public void ReplaceEventHandling_ContextHandlerFactory_UsesReplacementHandlerPerRequest()
     {
         ReplaceRequestHandling<Handlers.Experimental.IEventHandler<Event>, TestContextEventHandler<Event>>(

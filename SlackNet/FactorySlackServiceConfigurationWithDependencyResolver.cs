@@ -20,6 +20,10 @@ public abstract class FactorySlackServiceConfigurationWithDependencyResolver<TCo
     public TConfig UseHandlerFactory(Func<TDependencyResolver, ISlackHandlerFactory> handlerFactoryProvider) => UseHandlerFactory(GetServiceFactory(handlerFactoryProvider));
     public TConfig UseApiClient(Func<TDependencyResolver, ISlackApiClient> apiClientProvider) => UseApiClient(GetServiceFactory(apiClientProvider));
     public TConfig UseSocketModeClient(Func<TDependencyResolver, ISlackSocketModeClient> socketModeClientProvider) => UseSocketModeClient(GetServiceFactory(socketModeClientProvider));
+    /// <summary>Uses a dependency-resolver factory to select the token for each Slack Web API request.</summary>
+    public TConfig UseApiTokenProvider(Func<TDependencyResolver, ISlackApiTokenProvider> apiTokenProvider) => UseApiTokenProvider(GetServiceFactory(apiTokenProvider));
+    /// <summary>Uses a dependency-resolver factory to select the app-level token for Socket Mode connections.</summary>
+    public TConfig UseAppLevelTokenProvider(Func<TDependencyResolver, ISlackAppLevelTokenProvider> appLevelTokenProvider) => UseAppLevelTokenProvider(GetServiceFactory(appLevelTokenProvider));
 
     public TConfig ReplaceEventHandling(Func<TDependencyResolver, Handlers.Experimental.IEventHandler<Event>> handlerFactory) => ReplaceEventHandling(GetRequestHandlerFactory(handlerFactory));
     public TConfig ReplaceBlockActionHandling(Func<TDependencyResolver, IAsyncBlockActionHandler> handlerFactory) => ReplaceBlockActionHandling(GetRequestHandlerFactory(handlerFactory));

@@ -92,7 +92,7 @@ public class LoggingTests
     {
         try
         {
-            SlackRequestContext.Current = new SlackRequestContext { [nameof(SlackRequestContext.RequestId)] = "expected value" };
+            SlackRequestContext.Current = new SlackRequestContext { RequestId = "expected value" };
 
             _sut.Data("test");
 

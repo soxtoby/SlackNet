@@ -150,6 +150,38 @@ public class SlackSocketModeClientTests
         _cleanupCount.ShouldBe(1);
     }
 
+    [Test]
+    public async Task HandleRequest_ApiCallFromHandler_IncludesOriginatingRequestIdentity()
+    {
+        var http = new TestHttp();
+        SlackApiCallContext callContext = null;
+        var apiClient = new SlackServiceBuilder()
+            .UseHttp(_ => http)
+            .UseApiTokenProvider(_ => new ApiTokenProvider(context =>
+                {
+                    callContext = context;
+                    return "api-token";
+                }))
+            .GetApiClient();
+        HandleEventsWith(_ => apiClient.Get<object>("api.test", new(), default));
+
+        ReceiveEvent(new EventCallback
+            {
+                ApiAppId = "A123",
+                TeamId = "T123",
+                EnterpriseId = "E123",
+                Event = new MessageEvent { Text = "message" }
+            });
+        await WaitForResponse();
+        await WaitForCleanup();
+
+        callContext.OriginatingRequest.RequestType.ShouldBe(SlackRequestType.Event);
+        callContext.OriginatingRequest.ApiAppId.ShouldBe("A123");
+        callContext.OriginatingRequest.TeamId.ShouldBe("T123");
+        callContext.OriginatingRequest.EnterpriseId.ShouldBe("E123");
+        http.AuthorizationHeaders.ShouldMatch(["Bearer api-token"]);
+    }
+
     private void HandleEventsWith(Func<Experimental.IEventContext<Event>, Task> handle) =>
         _handler = new ContextEventHandler<Event>(context =>
             {
@@ -160,11 +192,11 @@ public class SlackSocketModeClientTests
     private void HandleLegacyEventsWith(IEventHandler legacy) =>
         _handler = legacy.ToEventHandler();
 
-    private void ReceiveEvent() => _socket.Incoming.OnNext(new EventEnvelope
+    private void ReceiveEvent(EventCallback eventCallback = null) => _socket.Incoming.OnNext(new EventEnvelope
         {
             SocketId = 7,
             EnvelopeId = "envelope",
-            Payload = new EventCallback { EventId = "event", Event = new MessageEvent { Text = "message" } }
+            Payload = eventCallback ?? new EventCallback { EventId = "event", Event = new MessageEvent { Text = "message" } }
         });
 
     private Task<Experimental.IEventContext<Event>> WaitForHandler() => _received.Task.WaitAsync(TimeSpan.FromSeconds(5));

@@ -148,7 +148,8 @@ public class SlackApiClient : ISlackApiClient
 {
     private readonly IHttp _http;
     private readonly ISlackUrlBuilder _urlBuilder;
-    private readonly string _token;
+    private readonly ISlackApiTokenProvider _apiTokenProvider;
+    private readonly ISlackAppLevelTokenProvider _appLevelTokenProvider;
     private readonly SlackJsonSettings _jsonSettings;
     public bool DisableRetryOnRateLimit { get; set; }
     public bool WarningsAsErrors { get; set; }
@@ -158,19 +159,33 @@ public class SlackApiClient : ISlackApiClient
         _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
         _http = Default.Http(_jsonSettings);
         _urlBuilder = Default.UrlBuilder(_jsonSettings);
-        _token = token;
+        _apiTokenProvider = new ConstantApiTokenProvider(token);
+        _appLevelTokenProvider = new ConstantAppLevelTokenProvider(token);
     }
 
+    [Obsolete("Use constructor with IHttp, ISlackUrlBuilder, SlackJsonSettings, ISlackApiTokenProvider, ISlackAppLevelTokenProvider")]
     public SlackApiClient(IHttp http, ISlackUrlBuilder urlBuilder, SlackJsonSettings jsonSettings, string token)
+        : this(http, urlBuilder, jsonSettings, new ConstantApiTokenProvider(token), new ConstantAppLevelTokenProvider(token)) { }
+
+    /// <summary>
+    /// Creates a Slack Web API client whose API and app-level credentials can be selected for each request.
+    /// </summary>
+    public SlackApiClient(
+        IHttp http,
+        ISlackUrlBuilder urlBuilder,
+        SlackJsonSettings jsonSettings,
+        ISlackApiTokenProvider apiTokenProvider,
+        ISlackAppLevelTokenProvider appLevelTokenProvider)
     {
         _http = http;
         _urlBuilder = urlBuilder;
         _jsonSettings = jsonSettings;
-        _token = token;
+        _apiTokenProvider = apiTokenProvider;
+        _appLevelTokenProvider = appLevelTokenProvider;
     }
 
-    public ISlackApiClient WithAccessToken(string accessToken) => 
-        new SlackApiClient(_http, _urlBuilder, _jsonSettings, accessToken)
+    public ISlackApiClient WithAccessToken(string accessToken) =>
+        new SlackApiClient(_http, _urlBuilder, _jsonSettings, new ConstantApiTokenProvider(accessToken), new ConstantAppLevelTokenProvider(accessToken))
             {
                 DisableRetryOnRateLimit = DisableRetryOnRateLimit,
                 WarningsAsErrors = WarningsAsErrors
@@ -231,48 +246,60 @@ public class SlackApiClient : ISlackApiClient
     public Task Get(string apiMethod, Args args, CancellationToken cancellationToken) =>
         Get<object>(apiMethod, args, cancellationToken);
 
-    public Task<T> Get<T>(string apiMethod, Args args, CancellationToken cancellationToken) where T : class =>
-        WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Get, Url(apiMethod, args)), cancellationToken);
+    public Task<T> Get<T>(string apiMethod, Args args, CancellationToken cancellationToken) where T : class
+    {
+        var requestUrl = Url(apiMethod, args);
+        return WebApiRequest<T>(
+            () => new HttpRequestMessage(HttpMethod.Get, requestUrl),
+            ApiCallContext(requestUrl, apiMethod, args),
+            cancellationToken);
+    }
 
     public Task Post(string apiMethod, Args args, CancellationToken cancellationToken) =>
         Post<object>(apiMethod, args, cancellationToken);
 
     public Task<T> Post<T>(string apiMethod, Args args, CancellationToken cancellationToken) where T : class =>
-        Post<T>(Url(apiMethod), (object)StripNullArgs(args), cancellationToken);
+        Post<T>(Url(apiMethod), apiMethod, args, StripNullArgs(args), cancellationToken);
 
     public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken cancellationToken) =>
         Post<object>(apiMethod, args, content, cancellationToken);
 
-    public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken cancellationToken) where T : class =>
-        WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, Url(apiMethod, args)) { Content = content }, cancellationToken);
+    public Task<T> Post<T>(string apiMethod, Args args, HttpContent content, CancellationToken cancellationToken) where T : class
+    {
+        var requestUrl = Url(apiMethod, args);
+        return WebApiRequest<T>(
+            () => new HttpRequestMessage(HttpMethod.Post, requestUrl) { Content = content },
+            ApiCallContext(requestUrl, apiMethod, args),
+            cancellationToken);
+    }
 
     public Task Respond(string responseUrl, IReadOnlyMessage message, CancellationToken cancellationToken) =>
-        Post<object>(responseUrl, message, cancellationToken);
+        Post<object>(responseUrl, string.Empty, new Args(), message, cancellationToken);
 
     public Task PostToWebhook(string webhookUrl, Message message, CancellationToken cancellationToken = default) =>
-        string.IsNullOrEmpty(_token)
-            ? Post<object>(webhookUrl, message, cancellationToken)
-            : WithAccessToken(string.Empty).PostToWebhook(webhookUrl, message, cancellationToken);
+        WithAccessToken(string.Empty).Respond(webhookUrl, message, cancellationToken);
 
-    private Task<T> Post<T>(string requestUri, object body, CancellationToken cancellationToken) where T : class =>
-        WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, requestUri)
+    private Task<T> Post<T>(string requestUrl, string apiMethod, Args args, object body, CancellationToken cancellationToken) where T : class =>
+        WebApiRequest<T>(() => new HttpRequestMessage(HttpMethod.Post, requestUrl)
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(body, _jsonSettings.SerializerSettings), Encoding.UTF8, "application/json")
                 },
+            ApiCallContext(requestUrl, apiMethod, args),
             cancellationToken);
 
     private string Url(string apiMethod, Args args = null) =>
         _urlBuilder.Url(apiMethod, args ?? new Args());
 
-    private async Task<T> WebApiRequest<T>(Func<HttpRequestMessage> createRequest, CancellationToken cancellationToken) where T : class
+    private async Task<T> WebApiRequest<T>(Func<HttpRequestMessage> createRequest, SlackApiCallContext callContext, CancellationToken cancellationToken) where T : class
     {
         while (true)
         {
             try
             {
                 var request = createRequest();
-                if (!string.IsNullOrEmpty(_token)) // Token is cleared by methods that don't require authentication (e.g. OAuthV2Api.Access)
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+                var token = await ResolveToken(callContext, cancellationToken).ConfigureAwait(false);
+                if (!string.IsNullOrEmpty(token)) // Token is cleared by methods that don't require authentication (e.g. OAuthV2Api.Access)
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var response = await _http.Execute<WebApiResponse>(request, cancellationToken).ConfigureAwait(false)
                     ?? new WebApiResponse { Ok = true };
@@ -301,4 +328,12 @@ public class SlackApiClient : ISlackApiClient
     private static Args StripNullArgs(Args args) =>
         args.Where(kv => kv.Value != null)
             .ToDictionary(kv => kv.Key, kv => kv.Value);
+
+    private static SlackApiCallContext ApiCallContext(string requestUrl, string apiMethod, Args arguments) =>
+        new(requestUrl, apiMethod, arguments) { OriginatingRequest = SlackRequestContext.IsAvailable ? SlackRequestContext.Current : null };
+
+    private Task<string> ResolveToken(SlackApiCallContext callContext, CancellationToken cancellationToken) =>
+        callContext.ApiMethod == WebApi.AppsConnectionsApi.OpenMethod
+            ? _appLevelTokenProvider.GetAppLevelToken(callContext, cancellationToken)
+            : _apiTokenProvider.GetApiToken(callContext, cancellationToken);
 }

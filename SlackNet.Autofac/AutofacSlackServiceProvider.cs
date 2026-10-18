@@ -38,4 +38,6 @@ class AutofacSlackServiceProvider : ISlackServiceProvider
     public ISlackHandlerFactory GetHandlerFactory() => _baseProvider.GetHandlerFactory();
     public ISlackApiClient GetApiClient() => _baseProvider.GetApiClient();
     public ISlackSocketModeClient GetSocketModeClient() => _baseProvider.GetSocketModeClient();
+    public ISlackApiTokenProvider GetApiTokenProvider() => _baseProvider.GetApiTokenProvider();
+    public ISlackAppLevelTokenProvider GetAppLevelTokenProvider() => _baseProvider.GetAppLevelTokenProvider();
 }

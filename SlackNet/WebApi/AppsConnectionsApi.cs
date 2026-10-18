@@ -18,9 +18,11 @@ public interface IAppsConnectionsApi
 
 public class AppsConnectionsApi : IAppsConnectionsApi
 {
+    internal const string OpenMethod = "apps.connections.open";
     private readonly ISlackApiClient _client;
+    
     public AppsConnectionsApi(ISlackApiClient client) => _client = client;
 
     public Task<ConnectionOpenResponse> Open(CancellationToken cancellationToken = default) =>
-        _client.Post<ConnectionOpenResponse>("apps.connections.open", new Args(), cancellationToken);
+        _client.Post<ConnectionOpenResponse>(OpenMethod, new Args(), cancellationToken);
 }
