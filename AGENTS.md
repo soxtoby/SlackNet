@@ -1,0 +1,1 @@
+﻿- XML docs should match the Slack docs, but without documenting limits, and referencing existing types and members where possible.
