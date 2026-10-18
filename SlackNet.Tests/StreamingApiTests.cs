@@ -80,7 +80,7 @@ public class StreamingApiTests
                     Status = TaskCardStatus.Complete,
                     Details = "wow such good details",
                     Output = "amazing output here",
-                    Sources = [new UrlSourceElement { Text = "Example.com", Url = "https://example.com" }]
+                    Sources = [new UrlSource { Text = "Example.com", Url = "https://example.com" }]
                 },
             new PlanUpdateChunk { Title = "Sandra's new and improved plan" },
             new BlocksChunk { Blocks = [new MarkdownBlock { Text = "**Sandra's plan outline**" }] }

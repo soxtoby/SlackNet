@@ -76,7 +76,7 @@ public class TaskBlockTests
                 TaskId = "call_001",
                 Title = "Fetched user profile information",
                 Status = TaskCardStatus.InProgress,
-                Sources = [new UrlSourceElement { Text = "Example.com", Url = "https://example.com" }]
+                Sources = [new UrlSource { Text = "Example.com", Url = "https://example.com" }]
             });
 
         JToken.DeepEquals(JObject.Parse(@"{ ""type"": ""task_card"", ""task_id"": ""call_001"", ""title"": ""Fetched user profile information"", ""status"": ""in_progress"", ""sources"": [ { ""type"": ""url"", ""url"": ""https://example.com"", ""text"": ""Example.com"" } ] }"), JObject.Parse(result))

@@ -38,7 +38,7 @@ public class TaskCardBlock() : Block("task_card")
     /// URLs that were used to generate a response.
     /// </summary>
     [IgnoreIfEmpty]
-    public IList<UrlSourceElement> Sources { get; set; } = [];
+    public IList<UrlSource> Sources { get; set; } = [];
 
     /// <summary>
     /// When true, <see cref="Title"/> is not displayed and <see cref="Details"/> becomes the top element. <see cref="Title"/> is still required.

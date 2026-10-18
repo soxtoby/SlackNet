@@ -16,6 +16,7 @@ public abstract class StreamChunk(string type)
 /// <summary>
 /// Streams text, formatted as standard markdown (not Slack's mrkdwn).
 /// </summary>
+[SlackType("markdown_text")]
 public class MarkdownTextChunk() : StreamChunk("markdown_text")
 {
     /// <summary>
@@ -30,6 +31,7 @@ public class MarkdownTextChunk() : StreamChunk("markdown_text")
 /// This is the streaming counterpart of the <see cref="TaskCardBlock"/>.
 /// Slack limits the size of <c>task_update</c> and <c>plan_update</c> chunks to 256 characters.
 /// </summary>
+[SlackType("task_update")]
 public class TaskUpdateChunk() : StreamChunk("task_update")
 {
     /// <summary>
@@ -71,13 +73,14 @@ public class TaskUpdateChunk() : StreamChunk("task_update")
     /// URLs that were used in the task.
     /// </summary>
     [IgnoreIfEmpty]
-    public IList<UrlSourceElement> Sources { get; set; } = [];
+    public IList<UrlSource> Sources { get; set; } = [];
 }
 
 /// <summary>
 /// Updates the title of the plan that tasks are collected into when the stream's <see cref="TaskDisplayMode"/> is <see cref="TaskDisplayMode.Plan"/>.
 /// Slack limits the size of <c>task_update</c> and <c>plan_update</c> chunks to 256 characters.
 /// </summary>
+[SlackType("plan_update")]
 public class PlanUpdateChunk() : StreamChunk("plan_update")
 {
     public string Title { get; set; }
@@ -86,6 +89,7 @@ public class PlanUpdateChunk() : StreamChunk("plan_update")
 /// <summary>
 /// Streams blocks as part of the message. At most 50 blocks can be sent in one chunk; Slack drops any extra blocks and returns a warning.
 /// </summary>
+[SlackType("blocks")]
 public class BlocksChunk() : StreamChunk("blocks")
 {
     public IList<Block> Blocks { get; set; } = [];
