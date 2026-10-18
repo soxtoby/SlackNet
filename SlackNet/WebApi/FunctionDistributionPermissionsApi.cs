@@ -23,7 +23,7 @@ public interface IFunctionDistributionPermissionsApi
         string? functionAppId = null,
         IEnumerable<string>? userIds = null,
         CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// List the access type of a custom slack function and include the users,
     /// team, or org ids with access if its permission_type is set to named_entities.
@@ -45,7 +45,7 @@ public interface IFunctionDistributionPermissionsApi
     /// <param name="userIds">List of user IDs.</param>
     /// <param name="cancellationToken"></param>
     Task<FunctionPermissionsResponse> Remove(string? functionId = null, string? functionCallbackId = null, string? functionAppId = null, IEnumerable<string>? userIds = null, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Set the access type of a custom slack function and define the users,
     /// team or org ids to be granted access if permission_type is set to named_entities.
@@ -86,7 +86,7 @@ public class FunctionDistributionPermissionsApi(ISlackApiClient client) : IFunct
                 { "function_app_id", functionAppId },
                 { "user_ids", userIds }
             }, cancellationToken);
-    
+
     public Task<FunctionPermissionsResponse> List(
         string? functionId = null,
         string? functionCallbackId = null,

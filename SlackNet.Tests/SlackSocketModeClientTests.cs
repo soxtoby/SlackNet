@@ -213,8 +213,15 @@ public class SlackSocketModeClientTests
 
         public Task Connect(SocketModeConnectionOptions connectionOptions = null, CancellationToken cancellationToken = default) => Task.CompletedTask;
         public void Disconnect() { }
+        public Task DisconnectAsync() => Task.CompletedTask;
         public Task Send(int socketId, Acknowledgement acknowledgement) => send(socketId, acknowledgement);
         public void Dispose() => Incoming.Dispose();
+
+        public ValueTask DisposeAsync()
+        {
+            Dispose();
+            return ValueTask.CompletedTask;
+        }
     }
 
     class ErrorLogger(TaskCompletionSource<Exception> error) : ILogger

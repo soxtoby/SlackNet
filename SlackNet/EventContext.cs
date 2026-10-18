@@ -19,8 +19,8 @@ public class EventContext(EventCallback callback, Func<Task> acknowledge) : Hand
 
     public Task Acknowledge()
     {
-        return Interlocked.Exchange(ref _isAcknowledged, 1) == 0 
-            ? _acknowledgement.Value 
+        return Interlocked.Exchange(ref _isAcknowledged, 1) == 0
+            ? _acknowledgement.Value
             : throw new InvalidOperationException("Event already acknowledged");
     }
 

@@ -35,7 +35,7 @@ public class FunctionsApi(ISlackApiClient client) : IFunctionsApi
                 { "function_execution_id", functionExecutionId },
                 { "error", error }
             }, cancellationToken);
-    
+
     public Task CompleteSuccess(string functionExecutionId, JObject outputs, CancellationToken cancellationToken = default) =>
         client.Post("functions.completeSuccess", new Args
             {

@@ -67,7 +67,7 @@ public class ApiLintTests
                 implementedApiMethods.Add(client.SlackMethod);
             }
         }
-        
+
         var missingApiMethods = allApiMethods
             .Where(m => MissingApiMethodExceptions.All(e => !m.StartsWith(e)))
             .Except(implementedApiMethods);
@@ -113,7 +113,7 @@ public class ApiLintTests
     private static readonly string[] ApiPropertyNameExceptions =
         [
             "Api",
-            
+
             // These are wrong, but they've already been shipped :'(
             "AppsConnectionsApi",
             "OpenIdApi"

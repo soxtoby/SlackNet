@@ -22,7 +22,7 @@ public interface IFunctionWorkflowStepsApi
         string? workflow = null,
         string? workflowAppId = null,
         CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Download form responses of a workflow.
     /// Exports are generated asynchronously and delivered via a direct message from Slackbot.
