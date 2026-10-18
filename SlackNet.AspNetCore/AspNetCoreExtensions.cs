@@ -26,8 +26,9 @@ public static class AspNetCoreExtensions
     {
         var config = app.ApplicationServices.GetRequiredService<SlackEndpointConfiguration>();
         configure?.Invoke(config);
+        var socketModeConfig = app.ApplicationServices.GetRequiredService<SlackSocketModeConfiguration>();
 
-        return config.SocketMode 
+        return socketModeConfig.SocketMode 
             ? app // Nothing to do - SocketModeService manages the client
             : app.UseMiddleware<SlackRequestMiddleware>(config);
     }

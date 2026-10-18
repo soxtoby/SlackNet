@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -26,7 +27,9 @@ public interface ISlackRequestHandler
 }
 
 class SlackRequestHandler(
-    ISlackRequestValidationConfiguration validationConfiguration,
+    SlackRequestValidationConfiguration validationConfiguration,
+    ISlackSigningSecretProvider signingSecretProvider,
+    ISlackVerificationTokenProvider verificationTokenProvider,
     IEnumerable<ISlackRequestListener> requestListeners,
     ISlackHandlerFactory handlerFactory,
     SlackJsonSettings jsonSettings,
@@ -64,7 +67,7 @@ class SlackRequestHandler(
                         return StringResult(HttpStatusCode.BadRequest, "Unrecognized content");
                     }
 
-                    return EventRequestValidation(requestBody, request.Headers, eventRequest)
+                    return await EventRequestValidation(requestContext, requestBody, request.Headers, eventRequest, request.HttpContext.RequestAborted).ConfigureAwait(false)
                         ?? await (eventRequest switch
                             {
                                 EventCallback eventCallback => HandleEvent(requestContext, eventCallback),
@@ -121,7 +124,8 @@ class SlackRequestHandler(
                         return StringResult(HttpStatusCode.BadRequest, "Unrecognized content");
                     }
                     
-                    return RequestValidation(requestBody, request.Headers, interactionRequest.Token)
+                    SetRequestIdentity(requestContext, SlackRequestType.Action, interactionRequest);
+                    return await RequestValidation(requestContext, requestBody, request.Headers, interactionRequest.Token, request.HttpContext.RequestAborted).ConfigureAwait(false)
                         ?? await HandleAction(requestContext, interactionRequest).ConfigureAwait(false);
                 });
 
@@ -248,7 +252,8 @@ class SlackRequestHandler(
                         return StringResult(HttpStatusCode.BadRequest, "Unrecognized content");
                     }
                     
-                    return RequestValidation(requestBody, request.Headers, optionsRequest.Token)
+                    SetRequestIdentity(requestContext, SlackRequestType.Options, optionsRequest);
+                    return await RequestValidation(requestContext, requestBody, request.Headers, optionsRequest.Token, request.HttpContext.RequestAborted).ConfigureAwait(false)
                         ?? optionsRequest switch
                             {
                                 OptionsRequest legacyOptionsRequest => await HandleLegacyOptionsRequest(requestContext, legacyOptionsRequest).ConfigureAwait(false),
@@ -304,7 +309,8 @@ class SlackRequestHandler(
                         return StringResult(HttpStatusCode.BadRequest, "Unrecognized content");
                     }
                     
-                    return RequestValidation(requestBody, request.Headers, command.Token)
+                    SetRequestIdentity(requestContext, command);
+                    return await RequestValidation(requestContext, requestBody, request.Headers, command.Token, request.HttpContext.RequestAborted).ConfigureAwait(false)
                         ?? await RespondAsync<SlashCommandResponse>(r =>
                                 {
                                     var handler = handlerFactory.CreateSlashCommandHandler(requestContext);
@@ -426,20 +432,28 @@ class SlackRequestHandler(
         return await streamReader.ReadToEndAsync().ConfigureAwait(false);
     }
 
-    private SlackResult EventRequestValidation(string requestBody, IHeaderDictionary headers, EventRequest eventRequest) =>
-        eventRequest is UrlVerification && !validationConfiguration.VerifyEventUrl
-            ? null
-            : RequestValidation(requestBody, headers, eventRequest.Token);
-
-    private SlackResult RequestValidation(string requestBody, IHeaderDictionary headers, string token)
+    private Task<SlackResult> EventRequestValidation(SlackRequestContext requestContext, string requestBody, IHeaderDictionary headers, EventRequest eventRequest, CancellationToken cancellationToken)
     {
-        if (!IsValidSignature(requestBody, headers))
+        SetRequestIdentity(requestContext, eventRequest);
+        return eventRequest is UrlVerification && !validationConfiguration.VerifyEventUrl
+            ? Task.FromResult<SlackResult>(null)
+            : RequestValidation(requestContext, requestBody, headers, eventRequest.Token, cancellationToken);
+    }
+
+    private async Task<SlackResult> RequestValidation(
+        SlackRequestContext requestContext,
+        string requestBody,
+        IHeaderDictionary headers,
+        string token,
+        CancellationToken cancellationToken)
+    {
+        if (!await IsValidSignature(requestContext, requestBody, headers, cancellationToken).ConfigureAwait(false))
         {
             _log.Internal("Request signature was not signed with the configured signing secret");
             return StringResult(HttpStatusCode.BadRequest, "Invalid signature");
         }
 
-        if (!IsValidToken(token))
+        if (!await IsValidToken(requestContext, token, cancellationToken).ConfigureAwait(false))
         {
             _log.Internal("Request token doesn't match the configured verification token");
             return StringResult(HttpStatusCode.BadRequest, "Invalid token");
@@ -448,13 +462,24 @@ class SlackRequestHandler(
         return null;
     }
 
-    private bool IsValidSignature(string requestBody, IHeaderDictionary headers)
+    private async Task<bool> IsValidSignature(
+        SlackRequestContext requestContext,
+        string requestBody,
+        IHeaderDictionary headers,
+        CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(validationConfiguration.SigningSecret))
+        if (signingSecretProvider is UnconfiguredSigningSecretProvider)
             return true;
-        
+
+        var signingSecret = await signingSecretProvider.GetSigningSecret(requestContext, cancellationToken).ConfigureAwait(false);
+        return !string.IsNullOrEmpty(signingSecret)
+            && SignatureMatches(signingSecret, requestBody, headers);
+    }
+
+    private static bool SignatureMatches(string signingSecret, string requestBody, IHeaderDictionary headers)
+    {
         var encoding = new UTF8Encoding();
-        using var hmac = new HMACSHA256(encoding.GetBytes(validationConfiguration.SigningSecret));
+        using var hmac = new HMACSHA256(encoding.GetBytes(signingSecret));
 
         var hash = hmac.ComputeHash(encoding.GetBytes($"v0:{headers["X-Slack-Request-Timestamp"]}:{requestBody}"));
         var hashString = $"v0={BitConverter.ToString(hash).Replace("-", "").ToLower(CultureInfo.InvariantCulture)}";
@@ -462,9 +487,56 @@ class SlackRequestHandler(
         return hashString.Equals(headers["X-Slack-Signature"]);
     }
 
-    private bool IsValidToken(string requestToken) =>
-        string.IsNullOrEmpty(validationConfiguration.VerificationToken)
-        || requestToken == validationConfiguration.VerificationToken;
+    private async Task<bool> IsValidToken(SlackRequestContext requestContext, string requestToken, CancellationToken cancellationToken)
+    {
+        if (verificationTokenProvider is UnconfiguredVerificationTokenProvider)
+            return true;
+
+        var verificationToken = await verificationTokenProvider.GetVerificationToken(requestContext, cancellationToken).ConfigureAwait(false);
+        return !string.IsNullOrEmpty(verificationToken)
+            && requestToken == verificationToken;
+    }
+
+    private static void SetRequestIdentity(SlackRequestContext requestContext, EventRequest eventRequest)
+    {
+        requestContext.RequestType = eventRequest switch
+            {
+                EventCallback => SlackRequestType.Event,
+                UrlVerification => SlackRequestType.UrlVerification,
+                _ => null
+            };
+        
+        if (eventRequest is not EventCallback eventCallback)
+            return;
+
+        requestContext.ApiAppId = eventCallback.ApiAppId;
+        requestContext.TeamId = eventCallback.TeamId;
+        requestContext.EnterpriseId = eventCallback.EnterpriseId;
+    }
+
+    private static void SetRequestIdentity(SlackRequestContext requestContext, SlackRequestType requestType, InteractionRequest interactionRequest)
+    {
+        requestContext.RequestType = requestType;
+        requestContext.ApiAppId = interactionRequest.ApiAppId;
+        requestContext.TeamId = interactionRequest.Team?.Id;
+        requestContext.EnterpriseId = interactionRequest.Enterprise?.Id ?? interactionRequest.Team?.EnterpriseId;
+    }
+
+    private static void SetRequestIdentity(SlackRequestContext requestContext, SlackRequestType requestType, OptionsRequestBase optionsRequest)
+    {
+        requestContext.RequestType = requestType;
+        requestContext.ApiAppId = (optionsRequest as BlockOptionsRequest)?.ApiAppId;
+        requestContext.TeamId = optionsRequest.Team?.Id;
+        requestContext.EnterpriseId = optionsRequest.Team?.EnterpriseId;
+    }
+
+    private static void SetRequestIdentity(SlackRequestContext requestContext, SlashCommand command)
+    {
+        requestContext.RequestType = SlackRequestType.SlashCommand;
+        requestContext.ApiAppId = command.ApiAppId;
+        requestContext.TeamId = command.TeamId;
+        requestContext.EnterpriseId = command.EnterpriseId;
+    }
 
     private EventRequest DeserializeEventRequest(string requestBody)
     {

@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SlackNet.AspNetCore;
 
 namespace SlackNet.Tests;
 
@@ -14,4 +15,16 @@ class AppLevelTokenProvider(Func<SlackApiCallContext, string> getAppLevelToken) 
 {
     public Task<string> GetAppLevelToken(SlackApiCallContext context, CancellationToken cancellationToken) =>
         Task.FromResult(getAppLevelToken(context));
+}
+
+class SigningSecretProvider(Func<SlackRequestContext, string> getSigningSecret) : ISlackSigningSecretProvider
+{
+    public Task<string> GetSigningSecret(SlackRequestContext context, CancellationToken cancellationToken) =>
+        Task.FromResult(getSigningSecret(context));
+}
+
+class VerificationTokenProvider(Func<SlackRequestContext, string> getVerificationToken) : ISlackVerificationTokenProvider
+{
+    public Task<string> GetVerificationToken(SlackRequestContext context, CancellationToken cancellationToken) =>
+        Task.FromResult(getVerificationToken(context));
 }

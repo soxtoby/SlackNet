@@ -9,7 +9,7 @@ namespace SlackNet.AspNetCore;
 class SocketModeService(
     ISlackSocketModeClient socketModeClient,
     ILogger<SocketModeService> logger,
-    SlackEndpointConfiguration config
+    SlackSocketModeConfiguration config
 ) : IHostedService
 {
     private readonly bool _enabled = config.SocketMode; // Holding onto this to ensure initial state is used when stopping
@@ -20,7 +20,7 @@ class SocketModeService(
         {
             try
             {
-                await socketModeClient.Connect(config.SocketModeConnectionOptions, cancellationToken).ConfigureAwait(false);
+                await socketModeClient.Connect(config.ConnectionOptions, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e)
             {
