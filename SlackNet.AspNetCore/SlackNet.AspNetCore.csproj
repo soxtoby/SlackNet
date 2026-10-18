@@ -11,7 +11,6 @@
     <PackageTags>Slack API RTM Events AspNetCore</PackageTags>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <NoWarn>0618;1591;1701;1702</NoWarn>
-    <LangVersion>12</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -39,6 +38,13 @@
   <ItemGroup>
     <ProjectReference Include="..\SlackNet.Extensions.DependencyInjection\SlackNet.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\SlackNet\SlackNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Polyfill" Version="8.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

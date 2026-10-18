@@ -9,7 +9,6 @@
         <RepositoryUrl>https://github.com/soxtoby/SlackNet.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>Slack API Events DependencyInjection</PackageTags>
-        <LangVersion>12</LangVersion>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
     </PropertyGroup>
 

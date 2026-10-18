@@ -14,12 +14,8 @@ class FunctionContextServiceProviderAccessor : IRequestServiceProviderAccessor
         get => CurrentServiceProvider.Value?.Provider;
         set
         {
-            var holder = CurrentServiceProvider.Value;
-            if (holder != null)
-            {
-                // Clear current context trapped in the AsyncLocals, as its done.
-                holder.Provider = null;
-            }
+            // Clear current context trapped in the AsyncLocals, as it's done.
+            CurrentServiceProvider.Value?.Provider = null;
 
             if (value != null)
             {
