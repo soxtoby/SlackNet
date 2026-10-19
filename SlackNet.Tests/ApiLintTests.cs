@@ -77,8 +77,7 @@ public class ApiLintTests
     private static readonly string[] MissingApiMethodExceptions = [
             "admin.", // Not supported for now, but should be
             "apps.", // Not supported for now, but should be
-            "functions.", // Not supported for now, but should be
-            "workflows.", // Not supported for now, but should be
+            "agents.", // Not supported for now, but should be
             "stars.", // Deprecated
             "users.setActive", // Deprecated
         ];
