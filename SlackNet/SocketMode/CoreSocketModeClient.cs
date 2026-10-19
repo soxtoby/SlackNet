@@ -162,7 +162,7 @@ public class CoreSocketModeClient : ICoreSocketModeClient
 
             async Task<string> GetWebSocketUrl()
             {
-                var openResponse = await _client.AppsConnectionsApi.Open(connectionCancellation.Token).ConfigureAwait(false);
+                var openResponse = await _client.AppsConnections.Open(connectionCancellation.Token).ConfigureAwait(false);
                 return connectionOptions.DebugReconnects
                     ? openResponse.Url + "&debug_reconnects=true"
                     : openResponse.Url;

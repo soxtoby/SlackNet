@@ -27,13 +27,15 @@ public interface IAppsEventAuthorizationsApi
 
 public class AppsEventAuthorizationsApi(ISlackApiClient client) : IAppsEventAuthorizationsApi
 {
+    internal const string ListMethod = "apps.event.authorizations.list";
+
     public Task<AppsEventsAuthorizationsListResponse> List(
         string eventContext,
         int limit = 100,
         string cursor = null,
         CancellationToken cancellationToken = default
     ) =>
-        client.Post<AppsEventsAuthorizationsListResponse>("apps.event.authorizations.list", new Args
+        client.Post<AppsEventsAuthorizationsListResponse>(ListMethod, new Args
                 {
                     { "event_context", eventContext },
                     { "cursor", cursor },

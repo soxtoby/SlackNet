@@ -54,7 +54,7 @@ public class SlackApiClientTokenProviderTests
         _appLevelTokenProvider.GetAppLevelToken(Arg.Do<SlackApiCallContext>(c => context = c), Arg.Any<CancellationToken>())
             .Returns("app-token");
 
-        await Client().AppsConnectionsApi.Open();
+        await Client().AppsConnections.Open();
 
         context.ApiMethod.ShouldBe("apps.connections.open");
         _ = _apiTokenProvider.DidNotReceive().GetApiToken(Arg.Any<SlackApiCallContext>(), Arg.Any<CancellationToken>());
@@ -69,13 +69,35 @@ public class SlackApiClientTokenProviderTests
         var sut = Client().WithAccessToken("override");
 
         await sut.Get<object>("api.test", new(), CancellationToken.None);
-        await sut.AppsConnectionsApi.Open();
+        await sut.AppsConnections.Open();
+        await sut.AppsEventAuthorizations.List("event-context");
 
         _ = _apiTokenProvider.DidNotReceive().GetApiToken(Arg.Any<SlackApiCallContext>(), Arg.Any<CancellationToken>());
         _ = _appLevelTokenProvider.DidNotReceive().GetAppLevelToken(Arg.Any<SlackApiCallContext>(), Arg.Any<CancellationToken>());
-        await _http.Received(2).Execute<WebApiResponse>(
+        await _http.Received(3).Execute<WebApiResponse>(
             Arg.Is<HttpRequestMessage>(r => r.Headers.Authorization.ToString() == "Bearer override"),
             Arg.Any<CancellationToken>());
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task AppsEventAuthorizationsList_UsesAppLevelTokenProvider(bool useRawApiCall)
+    {
+        _apiTokenProvider.GetApiToken(Arg.Any<SlackApiCallContext>(), Arg.Any<CancellationToken>())
+            .Returns("api-token");
+        _appLevelTokenProvider.GetAppLevelToken(Arg.Any<SlackApiCallContext>(), Arg.Any<CancellationToken>())
+            .Returns("app-token");
+        var sut = Client();
+
+        if (useRawApiCall)
+            await sut.Post<object>("apps.event.authorizations.list", new() { ["event_context"] = "event-context" }, CancellationToken.None);
+        else
+            await sut.AppsEventAuthorizations.List("event-context");
+
+        await _http.Received().Execute<WebApiResponse>(
+            Arg.Is<HttpRequestMessage>(r => r.Headers.Authorization.ToString() == "Bearer app-token"),
+            Arg.Any<CancellationToken>());
+        _ = _apiTokenProvider.DidNotReceive().GetApiToken(Arg.Any<SlackApiCallContext>(), Arg.Any<CancellationToken>());
     }
 
     [Test]

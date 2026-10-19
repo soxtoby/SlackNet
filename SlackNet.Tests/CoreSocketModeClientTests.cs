@@ -44,7 +44,7 @@ public class CoreSocketModeClientTests
         _messages = [];
         _sut.Messages.Subscribe(_messages.Add);
             
-        _slack.AppsConnectionsApi.Open(Arg.Any<CancellationToken>()).Returns(new ConnectionOpenResponse { Ok = true, Url = "some url" });
+        _slack.AppsConnections.Open(Arg.Any<CancellationToken>()).Returns(new ConnectionOpenResponse { Ok = true, Url = "some url" });
     }
 
     [Test]
@@ -163,7 +163,7 @@ public class CoreSocketModeClientTests
         var scheduler = new TestScheduler();
         _sut.Dispose();
         _sut = new CoreSocketModeClient(_slack, _sockets, _jsonSettings, scheduler, _logger);
-        _slack.AppsConnectionsApi.Open(Arg.Any<CancellationToken>()).Returns(
+        _slack.AppsConnections.Open(Arg.Any<CancellationToken>()).Returns(
             Task.FromResult(new ConnectionOpenResponse { Ok = true, Url = "some url" }),
             Task.FromException<ConnectionOpenResponse>(new SlackException(new ErrorResponse { Error = "fatal_test_error" })));
         var socket = _sockets.Created.FirstAsync().ToTask();

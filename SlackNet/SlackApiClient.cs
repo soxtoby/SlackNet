@@ -16,7 +16,7 @@ public interface ISlackApiClient
 {
     IAgentsSessionsApi AgentsSessions { get; }
     IApiApi Api { get; }
-    IAppsConnectionsApi AppsConnectionsApi { get; }
+    IAppsConnectionsApi AppsConnections { get; }
     IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
     IAssistantSearchApi AssistantSearch { get; }
     IAssistantThreadsApi AssistantThreads { get; }
@@ -193,7 +193,7 @@ public class SlackApiClient : ISlackApiClient
 
     public IAgentsSessionsApi AgentsSessions => new AgentsSessionsApi(this);
     public IApiApi Api => new ApiApi(this);
-    public IAppsConnectionsApi AppsConnectionsApi => new AppsConnectionsApi(this);
+    public IAppsConnectionsApi AppsConnections => new AppsConnectionsApi(this);
     public IAppsEventAuthorizationsApi AppsEventAuthorizations => new AppsEventAuthorizationsApi(this);
     public IAssistantSearchApi AssistantSearch => new AssistantSearchApi(this);
     public IAssistantThreadsApi AssistantThreads => new AssistantThreadsApi(this);
@@ -331,7 +331,11 @@ public class SlackApiClient : ISlackApiClient
         new(requestUrl, apiMethod, arguments) { OriginatingRequest = SlackRequestContext.IsAvailable ? SlackRequestContext.Current : null };
 
     private Task<string> ResolveToken(SlackApiCallContext callContext, CancellationToken cancellationToken) =>
-        callContext.ApiMethod == WebApi.AppsConnectionsApi.OpenMethod
+        UsesAppLevelToken(callContext.ApiMethod)
             ? _appLevelTokenProvider.GetAppLevelToken(callContext, cancellationToken)
             : _apiTokenProvider.GetApiToken(callContext, cancellationToken);
+
+    private static bool UsesAppLevelToken(string apiMethod) => apiMethod
+        is AppsConnectionsApi.OpenMethod
+        or AppsEventAuthorizationsApi.ListMethod;
 }

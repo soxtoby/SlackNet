@@ -150,7 +150,7 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
         var http = new TestHttp();
         var sut = Configure(c => c.UseAppLevelToken("app-level-token").UseHttp(_ => http));
 
-        await sut.GetApiClient().AppsConnectionsApi.Open();
+        await sut.GetApiClient().AppsConnections.Open();
 
         http.AuthorizationHeaders.ShouldMatch(["Bearer app-level-token"]);
     }
@@ -168,11 +168,11 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
         var sut = services.GetApiClient();
 
         await sut.Get<object>("api.test", new(), CancellationToken.None);
-        await sut.AppsConnectionsApi.Open();
+        await sut.AppsConnections.Open();
         apiToken = "second-api-token";
         appLevelToken = "second-app-level-token";
         await sut.Get<object>("api.test", new(), CancellationToken.None);
-        await sut.AppsConnectionsApi.Open();
+        await sut.AppsConnections.Open();
 
         http.AuthorizationHeaders.ShouldMatch([
             "Bearer first-api-token",

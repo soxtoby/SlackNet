@@ -318,7 +318,7 @@ public class ApiLintTests
 
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }
-        public IAppsConnectionsApi AppsConnectionsApi { get; }
+        public IAppsConnectionsApi AppsConnections { get; }
         public IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
         public IAssistantSearchApi AssistantSearch { get; }
         public IAssistantThreadsApi AssistantThreads { get; }
