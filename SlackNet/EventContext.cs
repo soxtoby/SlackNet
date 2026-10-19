@@ -2,31 +2,35 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using SlackNet.Events;
+using SlackNet.Handlers.Experimental;
 
 namespace SlackNet;
 
 /// <summary>
-/// Provides an event, its callback metadata, and a single acknowledgement shared by its handlers.
+/// The context created for an incoming event, owning its acknowledgement.
 /// </summary>
-public class EventContext(EventCallback callback, Func<Task> acknowledge) : Handlers.Experimental.IEventContext<Event>
+public class EventContext(EventCallback callback, Func<Task> acknowledge) : IEventContext<Event>
 {
-    private readonly Lazy<Task> _acknowledgement = new(acknowledge);
     private int _isAcknowledged;
 
-    public EventCallback Callback { get; } = callback;
-    public Event Event => Callback.Event;
+    public EventCallback Callback => callback;
+    public Event Event => callback.Event;
     public bool IsAcknowledged => Volatile.Read(ref _isAcknowledged) != 0;
 
-    public Task Acknowledge()
-    {
-        return Interlocked.Exchange(ref _isAcknowledged, 1) == 0
-            ? _acknowledgement.Value
-            : throw new InvalidOperationException("Event already acknowledged");
-    }
+    public Task Acknowledge() =>
+        Interlocked.Exchange(ref _isAcknowledged, 1) == 0
+            ? acknowledge()
+            : throw new InvalidOperationException("Event already acknowledged.");
+}
 
-    internal Task AckIfNeeded()
-    {
-        Interlocked.Exchange(ref _isAcknowledged, 1);
-        return _acknowledgement.Value;
-    }
+/// <summary>
+/// A typed view of another context, sharing its callback and acknowledgement.
+/// </summary>
+class EventContext<TEvent>(IEventContext<Event> context, TEvent slackEvent) : IEventContext<TEvent>
+    where TEvent : Event
+{
+    public EventCallback Callback => context.Callback;
+    public TEvent Event => slackEvent;
+    public bool IsAcknowledged => context.IsAcknowledged;
+    public Task Acknowledge() => context.Acknowledge();
 }

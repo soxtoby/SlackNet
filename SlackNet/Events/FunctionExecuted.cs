@@ -2,7 +2,7 @@ using Newtonsoft.Json.Linq;
 
 namespace SlackNet.Events;
 
-public class FunctionExecuted : Event
+public class FunctionExecuted<TInputs> : Event
 {
     /// <summary>
     /// The function being executed.
@@ -12,5 +12,10 @@ public class FunctionExecuted : Event
     public string FunctionExecutionId { get; set; }
     public string WorkflowExecutionId { get; set; }
     public string BotAccessToken { get; set; }
-    public JObject Inputs { get; set; } = new();
+    public TInputs Inputs { get; set; }
+}
+
+public class FunctionExecuted : FunctionExecuted<JObject>
+{
+    public FunctionExecuted() => Inputs = new();
 }

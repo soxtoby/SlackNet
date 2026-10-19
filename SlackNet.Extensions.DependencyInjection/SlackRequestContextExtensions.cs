@@ -4,7 +4,7 @@ namespace SlackNet.Extensions.DependencyInjection;
 
 public static class SlackRequestContextExtensions
 {
-    private const string ProviderKey = "ServiceProvider";
+    private const string ProviderKey = "DependencyInjectionServiceProvider";
 
     public static void SetServiceProvider(this SlackRequestContext context, IServiceProvider scopedProvider) => context[ProviderKey] = scopedProvider;
 

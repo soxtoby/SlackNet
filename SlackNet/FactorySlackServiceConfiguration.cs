@@ -104,6 +104,14 @@ public abstract class FactorySlackServiceConfiguration<TConfig> : SlackServiceCo
         where THandler : class, Handlers.Experimental.IEventHandler<TEvent> =>
         RegisterEventHandler<TEvent>(GetRegisteredHandlerFactory<THandler>());
 
+    public TConfig RegisterFunctionHandler<THandler>(string callbackId)
+        where THandler : class, Handlers.Experimental.IEventHandler<FunctionExecuted> =>
+        RegisterFunctionHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
+
+    public TConfig RegisterFunctionHandler<THandler, TInputs>(string callbackId)
+        where THandler : class, Handlers.Experimental.IEventHandler<FunctionExecuted<TInputs>> =>
+        RegisterFunctionHandler(callbackId, GetRegisteredHandlerFactory<THandler>());
+
     [Obsolete(Warning.Experimental)]
     public TConfig RegisterAsyncBlockActionHandler<THandler>()
         where THandler : class, IAsyncBlockActionHandler =>

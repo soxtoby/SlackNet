@@ -44,6 +44,12 @@ public abstract class FactorySlackServiceConfigurationWithExternalDependencyReso
     public TConfig RegisterEventHandler<TEvent>(Func<Handlers.Experimental.IEventHandler<TEvent>> handlerFactory) where TEvent : Event =>
         RegisterEventHandler<TEvent>(GetRequestHandlerFactory(handlerFactory));
 
+    public TConfig RegisterFunctionHandler(string callbackId, Func<Handlers.Experimental.IEventHandler<FunctionExecuted>> getHandler) =>
+        RegisterFunctionHandler(callbackId, GetRequestHandlerFactory(getHandler));
+
+    public TConfig RegisterFunctionHandler<TInputs>(string callbackId, Func<Handlers.Experimental.IEventHandler<FunctionExecuted<TInputs>>> getHandler) =>
+        RegisterFunctionHandler(callbackId, GetRequestHandlerFactory(getHandler));
+
     public TConfig RegisterBlockActionHandler<TAction>(string actionId, Func<IBlockActionHandler<TAction>> getHandler) where TAction : BlockAction =>
         RegisterBlockActionHandler(actionId, GetRequestHandlerFactory(getHandler));
 

@@ -16,6 +16,12 @@ public static class HandlerAdaptor
     public static Experimental.IEventHandler<Event> ToEventHandler<TEvent>(this Experimental.IEventHandler<TEvent> handler) where TEvent : Event =>
         new TypedContextEventHandler<TEvent>(handler);
 
+    public static Experimental.IEventHandler<Event> ToFunctionHandler(this Experimental.IEventHandler<FunctionExecuted> handler, string callbackId) =>
+        new SpecificFunctionHandler(callbackId, handler.ToEventHandler());
+
+    public static Experimental.IEventHandler<Event> ToFunctionHandler<TInputs>(this Experimental.IEventHandler<FunctionExecuted<TInputs>> handler, string callbackId, SlackJsonSettings jsonSettings) =>
+        new TypedFunctionHandler<TInputs>(handler, jsonSettings).ToFunctionHandler(callbackId);
+
     public static IAsyncBlockActionHandler ToBlockActionHandler<TAction>(this IBlockActionHandler<TAction> handler, string actionId) where TAction : BlockAction =>
         new SpecificBlockActionHandler(actionId, new TypedBlockActionHandler<TAction>(handler).ToBlockActionHandler());
 

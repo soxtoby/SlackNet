@@ -6,6 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyAssertions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using NSubstitute;
 using NUnit.Framework;
 using SlackNet.Blocks;
@@ -175,11 +177,11 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
         await sut.AppsConnections.Open();
 
         http.AuthorizationHeaders.ShouldMatch([
-            "Bearer first-api-token",
-            "Bearer first-app-level-token",
-            "Bearer second-api-token",
-            "Bearer second-app-level-token"
-        ]);
+                "Bearer first-api-token",
+                "Bearer first-app-level-token",
+                "Bearer second-api-token",
+                "Bearer second-app-level-token"
+            ]);
     }
 
     [Test]
@@ -340,23 +342,138 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
                 return handler;
             }));
 
-        DuringRequest(sut, context =>
+        DuringRequest(sut,
+            context =>
+                {
+                    handlers.ShouldBeEmpty();
+
+                    HandleRepeatedly(context, callback);
+
+                    handlers.ShouldBeSingular().And(h => h.Single().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { callback, callback }));
+                });
+
+        DuringRequest(sut,
+            context =>
+                {
+                    handlers.ShouldBeSingular();
+
+                    HandleRepeatedly(context, callback);
+
+                    handlers.ShouldBeLength(2).And(h => h.Last().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { callback, callback }));
+                });
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void RegisterFunctionHandler(bool useFactory)
+    {
+        var handler = new RecordingContextEventHandler<FunctionExecuted>();
+        var matching = new FunctionExecuted { Function = new Function { CallbackId = "key" } };
+        var other = new FunctionExecuted { Function = new Function { CallbackId = "other" } };
+
+        var sut = Configure(c =>
             {
-                handlers.ShouldBeEmpty();
-
-                HandleRepeatedly(context, callback);
-
-                handlers.ShouldBeSingular().And(h => h.Single().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { callback, callback }));
+                if (useFactory)
+                    c.RegisterFunctionHandler("key", _ => handler);
+                else
+                    c.RegisterFunctionHandler("key", handler);
             });
 
-        DuringRequest(sut, context =>
+        HandleEvents(sut,
+            [
+                new EventCallback { Event = new Hello() },
+                new EventCallback { Event = new FunctionExecuted() },
+                new EventCallback { Event = other },
+                new EventCallback { Event = matching }
+            ]);
+
+        handler.Contexts.Select(c => c.Event).ShouldMatchReferences(new[] { matching });
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void RegisterFunctionHandler_WithTypedInputs(bool useFactory)
+    {
+        var handler = new RecordingContextEventHandler<FunctionExecuted<TestFunctionInputs>>();
+        var observer = new RecordingContextEventHandler<FunctionExecuted>();
+        var callback = CreateFunctionCallback();
+        var original = (FunctionExecuted)callback.Event;
+
+        var sut = Configure(c =>
             {
-                handlers.ShouldBeSingular();
-
-                HandleRepeatedly(context, callback);
-
-                handlers.ShouldBeLength(2).And(h => h.Last().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { callback, callback }));
+                c.RegisterEventHandler(observer);
+                if (useFactory)
+                    c.RegisterFunctionHandler("key", _ => handler);
+                else
+                    c.RegisterFunctionHandler("key", handler);
             });
+
+        HandleEvents(sut,
+            [
+                new EventCallback { Event = new Hello() },
+                new EventCallback { Event = new FunctionExecuted() },
+                new EventCallback { Event = new FunctionExecuted { Function = new Function { CallbackId = "other" } } },
+                callback
+            ]);
+
+        handler.Contexts.ShouldBeSingular()
+            .And(contexts =>
+                {
+                    var result = contexts.Single();
+                    result.Callback.ShouldReferTo(callback);
+                    result.IsAcknowledged.ShouldBe(false);
+                    result.Event.Inputs.UserId.ShouldBe("U123");
+                    result.Event.Type.ShouldBe(original.Type);
+                    result.Event.EventTs.ShouldBe(original.EventTs);
+                    result.Event.Function.Id.ShouldBe("Fn123");
+                    result.Event.Function.CallbackId.ShouldBe("key");
+                    result.Event.FunctionExecutionId.ShouldBe(original.FunctionExecutionId);
+                    result.Event.WorkflowExecutionId.ShouldBe(original.WorkflowExecutionId);
+                    result.Event.BotAccessToken.ShouldBe(original.BotAccessToken);
+                    result.Event.ExtraProperties["extra_field"].ShouldBe("retained");
+                });
+        original.Inputs.Value<string>("user_id").ShouldBe("U123");
+        observer.Contexts.Last().Event.ShouldReferTo(original);
+    }
+
+    private static EventCallback CreateFunctionCallback() => new()
+        {
+            Type = "event_callback",
+            Event = new FunctionExecuted
+                {
+                    Type = "function_executed",
+                    EventTs = "123.456",
+                    Function = new Function { Id = "Fn123", CallbackId = "key" },
+                    FunctionExecutionId = "Fx123",
+                    WorkflowExecutionId = "Wx123",
+                    BotAccessToken = "test-token",
+                    Inputs = JObject.Parse("""{"user_id":"U123"}"""),
+                    ExtraProperties = { ["extra_field"] = "retained" }
+                }
+        };
+
+    [Test]
+    public void RegisterFunctionHandler_WithTypedInputs_UsesConfiguredJsonSettings()
+    {
+        var handler = new RecordingContextEventHandler<FunctionExecuted<TestFunctionInputs>>();
+        var sut = Configure(c => c
+            .UseJsonSettings(_ => new SlackJsonSettings(new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }))
+            .RegisterFunctionHandler("key", handler));
+
+        HandleEvents(sut,
+            [
+                new EventCallback
+                    {
+                        Event = new FunctionExecuted
+                            {
+                                Function = new Function { CallbackId = "key" },
+                                Inputs = JObject.Parse("""{"userId":"U123"}""")
+                            }
+                    }
+            ]);
+
+        handler.Contexts.ShouldBeSingular()
+            .And.Single().Event.Inputs.UserId.ShouldBe("U123");
     }
 
     [Test]
@@ -692,11 +809,11 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
     }
 
     protected void HandleEvents(ISlackServiceProvider services, EventCallback[] eventCallbacks) =>
-        HandleInRequest(services, (hf, ctx) => hf.CreateEventHandler(ctx), (h, e) => h.Handle(new EventContext(e, () => System.Threading.Tasks.Task.CompletedTask)).ShouldComplete(), eventCallbacks);
+        HandleInRequest(services, (hf, ctx) => hf.CreateEventHandler(ctx), (h, e) => h.Handle(new EventContext(e, () => Task.CompletedTask)).ShouldComplete(), eventCallbacks);
 
     private static void HandleRepeatedly(SlackRequestContext context, EventCallback callback)
     {
-        var eventContext = new EventContext(callback, () => System.Threading.Tasks.Task.CompletedTask);
+        var eventContext = new EventContext(callback, () => Task.CompletedTask);
         context.EventHandlers.Single().Handle(eventContext).ShouldComplete();
         context.EventHandlers.Single().Handle(eventContext).ShouldComplete();
     }
@@ -736,12 +853,14 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
 
     private void HandleInRequest<THandler, TInput>(ISlackServiceProvider services, Func<ISlackHandlerFactory, SlackRequestContext, THandler> createHandler, Action<THandler, TInput> handle, TInput[] inputs)
     {
-        DuringRequest(services, ctx =>
-            {
-                var handler = createHandler(services.GetHandlerFactory(), ctx);
-                foreach (var input in inputs)
-                    handle(handler, input);
-            });
+        DuringRequest(
+            services,
+            ctx =>
+                {
+                    var handler = createHandler(services.GetHandlerFactory(), ctx);
+                    foreach (var input in inputs)
+                        handle(handler, input);
+                });
     }
 
     private void ReplaceRequestHandling<THandler>(
@@ -777,6 +896,11 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
     }
 
     protected abstract ISlackServiceProvider Configure(Action<TConfig> configure);
+
+    public class TestFunctionInputs
+    {
+        public string UserId { get; set; }
+    }
 
     protected class TestRequestListener : TrackedClass, ISlackRequestListener
     {

@@ -203,6 +203,14 @@ public abstract class FactorySlackHandlerConfigurationWithExternalDependencyReso
     }
 
     [Test]
+    public void RegisterFunctionHandlerFactory()
+    {
+        RegisterFunctionHandlers(
+            registerUntypedHandler: c => c.RegisterFunctionHandler("key", () => new TestContextEventHandler<FunctionExecuted>(ResolveDependency<InstanceTracker>())),
+            registerTypedHandler: c => c.RegisterFunctionHandler("key", () => new TestContextEventHandler<FunctionExecuted<TestFunctionInputs>>(ResolveDependency<InstanceTracker>())));
+    }
+
+    [Test]
     public void RegisterBlockActionHandlerFactory()
     {
         RegisterBlockActionHandler(

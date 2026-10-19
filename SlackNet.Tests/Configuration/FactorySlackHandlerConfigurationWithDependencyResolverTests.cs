@@ -204,6 +204,14 @@ public abstract class FactorySlackHandlerConfigurationWithDependencyResolverTest
     }
 
     [Test]
+    public void RegisterFunctionHandlerFactory()
+    {
+        RegisterFunctionHandlers(
+            registerUntypedHandler: c => c.RegisterFunctionHandler("key", r => new TestContextEventHandler<FunctionExecuted>(ResolveDependency<InstanceTracker>(r))),
+            registerTypedHandler: c => c.RegisterFunctionHandler("key", r => new TestContextEventHandler<FunctionExecuted<TestFunctionInputs>>(ResolveDependency<InstanceTracker>(r))));
+    }
+
+    [Test]
     public void RegisterBlockActionHandlerFactory()
     {
         RegisterBlockActionHandler(

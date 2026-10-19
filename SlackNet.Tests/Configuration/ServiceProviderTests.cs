@@ -17,6 +17,19 @@ public class ServiceProviderTests : FactorySlackHandlerConfigurationWithDependen
         _instanceTracker = new InstanceTracker();
     }
 
+    [Test]
+    public void RequestContext_ProvidesSlackServicesAndDependencyInjectionScope()
+    {
+        using var serviceProvider = ConfigureServiceProvider(_ => { });
+        var slackServices = serviceProvider.GetRequiredService<ISlackServiceProvider>();
+
+        DuringRequest(slackServices, context =>
+            {
+                context.ServiceProvider.ShouldReferTo(slackServices);
+                context.ServiceProvider().GetRequiredService<ISlackServiceProvider>().ShouldReferTo(slackServices);
+            });
+    }
+
     protected override void ResolvedServiceShouldReferToProviderService<TService>(Func<ISlackServiceProvider, TService> getServiceFromProvider)
     {
         var serviceProvider = ConfigureServiceProvider(_ => { });

@@ -218,6 +218,12 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     public TConfig RegisterEventHandler<TEvent>(Handlers.Experimental.IEventHandler<TEvent> handler) where TEvent : Event =>
         RegisterEventHandler(_ => handler);
 
+    public TConfig RegisterFunctionHandler(string callbackId, Handlers.Experimental.IEventHandler<FunctionExecuted> handler) =>
+        RegisterFunctionHandler(callbackId, _ => handler);
+
+    public TConfig RegisterFunctionHandler<TInputs>(string callbackId, Handlers.Experimental.IEventHandler<FunctionExecuted<TInputs>> handler) =>
+        RegisterFunctionHandler(callbackId, _ => handler);
+
     public TConfig RegisterBlockActionHandler<TAction>(string actionId, IBlockActionHandler<TAction> handler) where TAction : BlockAction =>
         RegisterBlockActionHandler(actionId, _ => handler);
 
@@ -304,6 +310,18 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
 
     public TConfig RegisterEventHandler(Func<SlackRequestContext, Handlers.Experimental.IEventHandler<Event>> getEventHandler) =>
         Chain(() => _eventHandlers.Add(getEventHandler));
+
+    /// <summary>
+    /// Handle executions of the function with the specified callback ID.
+    /// </summary>
+    public TConfig RegisterFunctionHandler(string callbackId, Func<SlackRequestContext, Handlers.Experimental.IEventHandler<FunctionExecuted>> getHandler) =>
+        RegisterEventHandler(ctx => getHandler(ctx).ToFunctionHandler(callbackId));
+
+    /// <summary>
+    /// Handle executions of the function with the specified callback ID, deserializing inputs to <typeparamref name="TInputs"/>.
+    /// </summary>
+    public TConfig RegisterFunctionHandler<TInputs>(string callbackId, Func<SlackRequestContext, Handlers.Experimental.IEventHandler<FunctionExecuted<TInputs>>> getHandler) =>
+        RegisterEventHandler(ctx => getHandler(ctx).ToFunctionHandler(callbackId, ctx.ServiceProvider.GetJsonSettings()));
 
     public TConfig RegisterBlockActionHandler<TAction>(string actionId, Func<SlackRequestContext, IBlockActionHandler<TAction>> getHandler) where TAction : BlockAction =>
         RegisterAsyncBlockActionHandler(ctx => getHandler(ctx).ToBlockActionHandler(actionId));

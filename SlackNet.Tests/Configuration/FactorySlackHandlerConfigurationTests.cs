@@ -294,13 +294,68 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         HandleEvents(sut, [goodbyeCallback, helloCallback1]);
 
         var genericHandler = FirstRequestInstance<TestContextEventHandler<Event>>();
-        genericHandler.Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { goodbyeCallback, helloCallback1 });
-        FirstRequestInstance<TestContextEventHandler<Hello>>().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { helloCallback1 });
+        genericHandler.Contexts.Select(c => c.Callback).ShouldMatchReferences([goodbyeCallback, helloCallback1]);
+        FirstRequestInstance<TestContextEventHandler<Hello>>().Contexts.Select(c => c.Callback).ShouldMatchReferences([helloCallback1]);
 
         HandleEvents(sut, [helloCallback2]);
 
-        SecondRequestInstance<TestContextEventHandler<Event>>().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { helloCallback2 });
-        SecondRequestInstance<TestContextEventHandler<Hello>>().Contexts.Select(c => c.Callback).ShouldMatchReferences(new[] { helloCallback2 });
+        SecondRequestInstance<TestContextEventHandler<Event>>().Contexts.Select(c => c.Callback).ShouldMatchReferences([helloCallback2]);
+        SecondRequestInstance<TestContextEventHandler<Hello>>().Contexts.Select(c => c.Callback).ShouldMatchReferences([helloCallback2]);
+    }
+
+    [Test]
+    public void RegisterFunctionHandlerType()
+    {
+        RegisterFunctionHandlers(
+            registerUntypedHandler: c => c.RegisterFunctionHandler<TestContextEventHandler<FunctionExecuted>>("key"),
+            registerTypedHandler: c => c.RegisterFunctionHandler<TestContextEventHandler<FunctionExecuted<TestFunctionInputs>>, TestFunctionInputs>("key"));
+    }
+
+    protected void RegisterFunctionHandlers(Action<TConfig> registerUntypedHandler, Action<TConfig> registerTypedHandler)
+    {
+        var other = new FunctionExecuted { Function = new Function { CallbackId = "other" } };
+        var first = new FunctionExecuted
+            {
+                Function = new Function { Id = "Fn123", CallbackId = "key" },
+                Inputs = Newtonsoft.Json.Linq.JObject.Parse("""{"user_id":"U123"}""")
+            };
+        var second = new FunctionExecuted
+            {
+                Function = new Function { Id = "Fn456", CallbackId = "key" },
+                Inputs = Newtonsoft.Json.Linq.JObject.Parse("""{"user_id":"U456"}""")
+            };
+        var sut = Configure(c =>
+            {
+                registerUntypedHandler(c);
+                registerTypedHandler(c);
+            });
+
+        HandleEvents(sut, [new EventCallback { Event = other }, new EventCallback { Event = first }]);
+
+        var untypedHandler = FirstRequestInstance<TestContextEventHandler<FunctionExecuted>>();
+        untypedHandler.Contexts.Select(c => c.Event).ShouldMatchReferences([first]);
+        FirstRequestInstance<TestContextEventHandler<FunctionExecuted<TestFunctionInputs>>>().Contexts
+            .ShouldBeSingular()
+            .And(contexts =>
+                {
+                    var result = contexts.Single().Event;
+                    result.Inputs.UserId.ShouldBe("U123");
+                    result.Function.Id.ShouldBe("Fn123");
+                    result.Function.CallbackId.ShouldBe("key");
+                });
+
+        HandleEvents(sut, [new EventCallback { Event = second }]);
+
+        SecondRequestInstance<TestContextEventHandler<FunctionExecuted>>().Contexts.Select(c => c.Event).ShouldMatchReferences([second]);
+        SecondRequestInstance<TestContextEventHandler<FunctionExecuted<TestFunctionInputs>>>().Contexts
+            .ShouldBeSingular()
+            .And(contexts =>
+                {
+                    var result = contexts.Single().Event;
+                    result.Inputs.UserId.ShouldBe("U456");
+                    result.Function.Id.ShouldBe("Fn456");
+                    result.Function.CallbackId.ShouldBe("key");
+                });
     }
 
     [Test]
@@ -882,11 +937,19 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
                 });
     }
 
-    private THandler FirstRequestInstance<THandler>() where THandler : TrackedClass =>
-        InstanceTracker.GetInstances<THandler>().ShouldBeSingular(SameInstanceForSameRequest).And.Single();
+    private THandler FirstRequestInstance<THandler>() where THandler : TrackedClass
+    {
+        var instances = InstanceTracker.GetInstances<THandler>().ToArray();
+        instances.ShouldBeSingular(SameInstanceForSameRequest);
+        return instances[0];
+    }
 
-    private THandler SecondRequestInstance<THandler>() where THandler : TrackedClass =>
-        InstanceTracker.GetInstances<THandler>().ShouldBeLength(2, DifferentInstanceForDifferentRequest).And.Last();
+    private THandler SecondRequestInstance<THandler>() where THandler : TrackedClass
+    {
+        var instances = InstanceTracker.GetInstances<THandler>().ToArray();
+        instances.ShouldBeLength(2, DifferentInstanceForDifferentRequest);
+        return instances[1];
+    }
 
     protected class TestHttp : IHttp
     {
@@ -1035,7 +1098,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     protected class TestContextEventHandler<TEvent>(InstanceTracker tracker) : TrackedClass(tracker), Experimental.IEventHandler<TEvent>
         where TEvent : Event
     {
-        public List<Experimental.IEventContext<TEvent>> Contexts { get; } = new();
+        public List<Experimental.IEventContext<TEvent>> Contexts { get; } = [];
 
         public Task Handle(Experimental.IEventContext<TEvent> eventContext)
         {

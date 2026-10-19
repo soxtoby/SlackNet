@@ -45,6 +45,12 @@ public abstract class FactorySlackServiceConfigurationWithDependencyResolver<TCo
     public TConfig RegisterEventHandler<TEvent>(Func<TDependencyResolver, Handlers.Experimental.IEventHandler<TEvent>> handlerFactory) where TEvent : Event =>
         RegisterEventHandler<TEvent>(GetRequestHandlerFactory(handlerFactory));
 
+    public TConfig RegisterFunctionHandler(string callbackId, Func<TDependencyResolver, Handlers.Experimental.IEventHandler<FunctionExecuted>> getHandler) =>
+        RegisterFunctionHandler(callbackId, GetRequestHandlerFactory(getHandler));
+
+    public TConfig RegisterFunctionHandler<TInputs>(string callbackId, Func<TDependencyResolver, Handlers.Experimental.IEventHandler<FunctionExecuted<TInputs>>> getHandler) =>
+        RegisterFunctionHandler(callbackId, GetRequestHandlerFactory(getHandler));
+
     public TConfig RegisterBlockActionHandler<TAction>(string actionId, Func<TDependencyResolver, IBlockActionHandler<TAction>> getHandler) where TAction : BlockAction =>
         RegisterBlockActionHandler(actionId, GetRequestHandlerFactory(getHandler));
 

@@ -9,14 +9,10 @@ class EventHandlerAsyncWrapper(IEventHandler handler) : Experimental.IEventHandl
 {
     public async Task Handle(Experimental.IEventContext<Event> eventContext)
     {
-        await Acknowledge(eventContext).ConfigureAwait(false);
+        if (!eventContext.IsAcknowledged)
+            await eventContext.Acknowledge().ConfigureAwait(false);
         await handler.Handle(eventContext.Callback).ConfigureAwait(false);
     }
-
-    internal static Task Acknowledge(Experimental.IEventContext<Event> eventContext) =>
-        eventContext is EventContext context
-            ? context.AckIfNeeded()
-            : eventContext.IsAcknowledged ? Task.CompletedTask : eventContext.Acknowledge();
 
     IEnumerable<object> IComposedHandler<EventCallback>.InnerHandlers(EventCallback eventCallback) => handler.InnerHandlers(eventCallback);
 }
@@ -28,7 +24,8 @@ class EventHandlerAsyncWrapper<TEvent>(IEventHandler<TEvent> handler) : Experime
     {
         if (eventContext.Event is TEvent slackEvent)
         {
-            await EventHandlerAsyncWrapper.Acknowledge(eventContext).ConfigureAwait(false);
+            if (!eventContext.IsAcknowledged)
+                await eventContext.Acknowledge().ConfigureAwait(false);
             await handler.Handle(slackEvent).ConfigureAwait(false);
         }
     }
