@@ -17,7 +17,7 @@ bot.OnMessage += (sender, message) => { /* handle message */ };
 
 // Adding handlers
 class MyMessageHandler: IMessageHandler { 
-    public Task HandleMessage(IMessage message) {
+    public async Task HandleMessage(IMessage message) {
         // handle message
     }
 }
@@ -34,7 +34,7 @@ message.ReplyWith(new BotMessage {
     Attachments = { new Attachment { Title = "attachments!" } }
 });
 message.ReplyWith(async () => {
-    // Show typing indication in Slack while message is build built
+    // Show typing indication in Slack while message is being built
     var asyncInfo = await SomeAsyncMethod();
     return new BotMessage { Text = "async message: " + asyncInfo };
 });

@@ -59,10 +59,13 @@ Add event handler registrations inside the AddSlackNet callback. See the [SlackN
 
 #### Developing with Socket Mode
 
-While developing an ASP.NET application, you can use socket mode instead of needing to host the website publicly, by enabling socket mode with:
+While developing an ASP.NET application, you can use socket mode instead of needing to host the website publicly, by providing an app-level token and enabling socket mode in the AddSlackNet callback:
 
 ```c#
-app.UseSlackNet(c => c.UseSocketMode());
+builder.Services.AddSlackNet(c => c
+    .UseApiToken("<your bot or user OAuth token here>")
+    .UseAppLevelToken("<app-level OAuth token required for socket mode>")
+    .UseSocketMode());
 ```
 
 #### Endpoints naming convention
@@ -79,10 +82,7 @@ SlackNet requires the Slack app endpoints to be named after the following conven
 By default, the value of `{route_prefix}` is `slack`, but this can be configured like so:
 
 ```c#
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-{
-    app.UseSlackNet(c => c.MapToPrefix("api/slack"));
-}
+app.UseSlackNet(c => c.MapToPrefix("api/slack"));
 ```
 
 ### SlackNet.AzureFunctions
