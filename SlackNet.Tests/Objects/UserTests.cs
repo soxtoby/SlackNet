@@ -34,4 +34,55 @@ public class UserTests
             "https://secure.gravatar.com/avatar/invalid.jpg?s=24\u0026d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0008-24.png");
 
     }
+
+    [Test]
+    public void Serialization_WorksCorrectlyForIsEmailConfirmed()
+    {
+        var settings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+
+        var user = JsonConvert.DeserializeObject<User>(@"{ ""id"": ""U12345678"", ""is_email_confirmed"": true }", settings);
+
+        user.IsEmailConfirmed.ShouldBe(true);
+    }
+
+    [Test]
+    public void Serialization_WorksCorrectlyForWhoCanShareContactCard()
+    {
+        var settings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+
+        var user = JsonConvert.DeserializeObject<User>(@"{ ""id"": ""U12345678"", ""who_can_share_contact_card"": ""EVERYONE"" }", settings);
+
+        user.WhoCanShareContactCard.ShouldBe("EVERYONE");
+    }
+
+    [Test]
+    public void Serialization_WorksCorrectlyForIsWorkflowBot()
+    {
+        var settings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+
+        var user = JsonConvert.DeserializeObject<User>(@"{ ""id"": ""B12345678"", ""is_bot"": true, ""is_workflow_bot"": true }", settings);
+
+        user.IsWorkflowBot.ShouldBe(true);
+    }
+
+    [Test]
+    public void Serialization_WorksCorrectlyForDisplayNameNormalized()
+    {
+        var settings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+
+        var user = JsonConvert.DeserializeObject<User>(@"{ ""id"": ""U12345678"", ""profile"": { ""display_name"": ""Zo\u00eb"", ""display_name_normalized"": ""Zo"" } }", settings);
+
+        user.Profile.DisplayNameNormalized.ShouldBe("Zo");
+    }
+
+    [Test]
+    public void Serialization_WorksCorrectlyForImage1024AndIsCustomImage()
+    {
+        var settings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+
+        var user = JsonConvert.DeserializeObject<User>(@"{ ""id"": ""U12345678"", ""profile"": { ""image_1024"": ""https://avatars.slack-edge.com/profile_1024.png"", ""is_custom_image"": true } }", settings);
+
+        user.Profile.Image1024.ShouldBe("https://avatars.slack-edge.com/profile_1024.png");
+        user.Profile.IsCustomImage.ShouldBe(true);
+    }
 }

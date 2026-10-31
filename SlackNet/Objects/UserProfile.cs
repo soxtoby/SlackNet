@@ -18,6 +18,8 @@ public class UserProfile
     public string RealName { get; set; }
     public string RealNameNormalized { get; set; }
     public string DisplayName { get; set; }
+    /// <summary>The <see cref="DisplayName"/> field, but with any non-Latin characters filtered out.</summary>
+    public string DisplayNameNormalized { get; set; }
     public string Pronouns { get; set; }
     public string Email { get; set; }
     public string HuddleState { get; set; }
@@ -40,6 +42,11 @@ public class UserProfile
     public string Image192 { get; set; }
     [JsonProperty("image_512")]
     public string Image512 { get; set; }
+    /// <summary>1024px profile image URL.</summary>
+    [JsonProperty("image_1024")]
+    public string Image1024 { get; set; }
+    /// <summary>Whether the user uploaded a custom profile image.</summary>
+    public bool IsCustomImage { get; set; }
     [JsonConverter(typeof(IgnoreArrayConverter))] // Slack returns an empty array instead of an object if profile has been modified, but no custom fields have been set
     public IDictionary<string, UserProfileField> Fields { get; set; } = new Dictionary<string, UserProfileField>();
 }
