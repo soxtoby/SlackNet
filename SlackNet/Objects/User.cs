@@ -25,6 +25,8 @@ public class User
     public int Updated { get; set; }
     public bool IsAppUser { get; set; }
     public bool IsInvitedUser { get; set; }
+    /// <summary>Whether the user's email address has been confirmed.</summary>
+    public bool IsEmailConfirmed { get; set; }
     [JsonIgnore]
     public DateTime UpdateTime => Updated.ToDateTime().GetValueOrDefault();
     [JsonProperty("has_2fa")]

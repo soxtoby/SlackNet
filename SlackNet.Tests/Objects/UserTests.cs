@@ -34,4 +34,14 @@ public class UserTests
             "https://secure.gravatar.com/avatar/invalid.jpg?s=24\u0026d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0008-24.png");
 
     }
+
+    [Test]
+    public void Serialization_WorksCorrectlyForIsEmailConfirmed()
+    {
+        var settings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+
+        var user = JsonConvert.DeserializeObject<User>(@"{ ""id"": ""U12345678"", ""is_email_confirmed"": true }", settings);
+
+        user.IsEmailConfirmed.ShouldBe(true);
+    }
 }
