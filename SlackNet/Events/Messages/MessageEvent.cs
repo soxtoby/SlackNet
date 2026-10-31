@@ -17,6 +17,8 @@ public class MessageEvent : MessageEventBase
     public IList<string> ReplyUsers { get; set; } = [];
     public int ReplyUsersCount { get; set; }
     public string LatestReply { get; set; }
+    public string ParentUserId { get; set; }
+    public bool Subscribed { get; set; }
     public bool IsStarred { get; set; }
     public IList<Reaction> Reactions { get; set; } = [];
     public IList<string> PinnedTo { get; set; } = [];
