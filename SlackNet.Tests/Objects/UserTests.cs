@@ -64,4 +64,25 @@ public class UserTests
 
         user.IsWorkflowBot.ShouldBe(true);
     }
+
+    [Test]
+    public void Serialization_WorksCorrectlyForDisplayNameNormalized()
+    {
+        var settings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+
+        var user = JsonConvert.DeserializeObject<User>(@"{ ""id"": ""U12345678"", ""profile"": { ""display_name"": ""Zo\u00eb"", ""display_name_normalized"": ""Zo"" } }", settings);
+
+        user.Profile.DisplayNameNormalized.ShouldBe("Zo");
+    }
+
+    [Test]
+    public void Serialization_WorksCorrectlyForImage1024AndIsCustomImage()
+    {
+        var settings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+
+        var user = JsonConvert.DeserializeObject<User>(@"{ ""id"": ""U12345678"", ""profile"": { ""image_1024"": ""https://avatars.slack-edge.com/profile_1024.png"", ""is_custom_image"": true } }", settings);
+
+        user.Profile.Image1024.ShouldBe("https://avatars.slack-edge.com/profile_1024.png");
+        user.Profile.IsCustomImage.ShouldBe(true);
+    }
 }
