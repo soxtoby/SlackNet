@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class SearchResponse
+public class SearchResponse : SlackObject
 {
     public string Query { get; set; }
     public SearchResults<MessageSearchResult> Messages { get; set; }

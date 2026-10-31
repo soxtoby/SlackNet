@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class FileResponse
+public class FileResponse : SlackObject
 {
     public File File { get; set; }
 }

@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class ScheduleMessageResponse
+public class ScheduleMessageResponse : SlackObject
 {
     public string Channel { get; set; }
     public string ScheduledMessageId { get; set; }

@@ -8,7 +8,7 @@ namespace SlackNet.WebApi;
 /// A stream that was started with chunks must be appended to with chunks, and a stream that was started with markdown text must be appended to with markdown text.
 /// </summary>
 /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/chat.appendStream/#chunks">Slack documentation</a> for more information.</remarks>
-public abstract class StreamChunk(string type)
+public abstract class StreamChunk(string type) : SlackObject
 {
     /// <summary>The kind of content carried by this chunk.</summary>
     public string Type { get; set; } = type;

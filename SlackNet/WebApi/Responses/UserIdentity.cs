@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class UserIdentity
+public class UserIdentity : SlackObject
 {
     public string Id { get; set; }
     public string Name { get; set; }

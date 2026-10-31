@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class CompleteUploadExternalResponse
+public class CompleteUploadExternalResponse : SlackObject
 {
     public IList<ExternalFileReference> Files { get; set; } = [];
 }

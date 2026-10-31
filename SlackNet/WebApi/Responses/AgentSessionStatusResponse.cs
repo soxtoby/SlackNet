@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class AgentSessionStatusResponse
+public class AgentSessionStatusResponse : SlackObject
 {
     /// <summary>
     /// The status of the session as a whole, derived from the statuses of all the agents in it

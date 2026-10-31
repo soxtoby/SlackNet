@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class AuthTestResponse
+public class AuthTestResponse : SlackObject
 {
     public string Url { get; set; }
     public string Team { get; set; }

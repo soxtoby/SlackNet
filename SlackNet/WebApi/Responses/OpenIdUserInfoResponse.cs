@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class OpenIdUserInfoResponse
+public class OpenIdUserInfoResponse : SlackObject
 {
     public string Ok { get; set; }
     public string Sub { get; set; }

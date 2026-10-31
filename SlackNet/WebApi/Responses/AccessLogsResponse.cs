@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class AccessLogsResponse
+public class AccessLogsResponse : SlackObject
 {
     public IList<Login> Logins { get; set; } = [];
     public Paging Paging { get; set; }

@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class ConnectResponse
+public class ConnectResponse : SlackObject
 {
     public string Url { get; set; }
     public Team Team { get; set; }

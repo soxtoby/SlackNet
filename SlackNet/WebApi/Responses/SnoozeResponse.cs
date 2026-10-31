@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet.WebApi;
 
-public class SnoozeResponse
+public class SnoozeResponse : SlackObject
 {
     public bool SnoozeEnabled { get; set; }
     public int SnoozeEndtime { get; set; }

@@ -2,12 +2,12 @@
 
 namespace SlackNet.WebApi;
 
-public class WorkflowStepsVersionsResponse
+public class WorkflowStepsVersionsResponse : SlackObject
 {
     public IList<WorkflowStepsVersion> StepsVersions { get; set; } = [];
 }
 
-public class WorkflowStepsVersion
+public class WorkflowStepsVersion : SlackObject
 {
     public string Title { get; set; }
     public string WorkflowId { get; set; }

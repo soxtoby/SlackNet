@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class ConversationJoinResponse
+public class ConversationJoinResponse : SlackObject
 {
     public Conversation Channel { get; set; }
     public string Warning { get; set; }

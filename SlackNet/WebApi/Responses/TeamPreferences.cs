@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class TeamPreferences
+public class TeamPreferences : SlackObject
 {
     public bool AllowMessageDeletion { get; set; }
     public bool DisplayRealNames { get; set; }

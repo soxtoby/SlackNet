@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class AcceptSharedInviteResponse
+public class AcceptSharedInviteResponse : SlackObject
 {
     public bool ImplicitApproval { get; set; }
     public string ChannelId { get; set; }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet.WebApi;
 
-public class IntegrationLogRecord
+public class IntegrationLogRecord : SlackObject
 {
     public string ServiceId { get; set; }
     public string ServiceType { get; set; }

@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class ConversationListResponse
+public class ConversationListResponse : SlackObject
 {
     public IList<Conversation> Channels { get; set; } = [];
     public ResponseMetadata ResponseMetadata { get; set; } = new();

@@ -1,6 +1,6 @@
 namespace SlackNet.WebApi;
 
-public class AssistantSearchInfoResponse
+public class AssistantSearchInfoResponse : SlackObject
 {
     public bool IsAiSearchEnabled { get; set; }
 }
