@@ -34,6 +34,8 @@ public class User
     public string TwoFactorType { get; set; }
     public string Locale { get; set; }
     public EnterpriseUser EnterpriseUser { get; set; }
+    /// <summary>Contact card sharing permission setting.</summary>
+    public string WhoCanShareContactCard { get; set; }
 
     public override string ToString() => Link.User(Id).ToString();
 }

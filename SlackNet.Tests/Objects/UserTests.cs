@@ -44,4 +44,14 @@ public class UserTests
 
         user.IsEmailConfirmed.ShouldBe(true);
     }
+
+    [Test]
+    public void Serialization_WorksCorrectlyForWhoCanShareContactCard()
+    {
+        var settings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+
+        var user = JsonConvert.DeserializeObject<User>(@"{ ""id"": ""U12345678"", ""who_can_share_contact_card"": ""EVERYONE"" }", settings);
+
+        user.WhoCanShareContactCard.ShouldBe("EVERYONE");
+    }
 }
