@@ -1,7 +1,7 @@
 ﻿#nullable enable
 namespace SlackNet.WebApi;
 
-public class ApprovalMessage
+public class ApprovalMessage : SlackObject
 {
     public string Text { get; set; } = string.Empty;
     

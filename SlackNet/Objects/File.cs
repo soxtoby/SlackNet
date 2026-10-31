@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet;
 
-public class File
+public class File : SlackObject
 {
     public string Id { get; set; }
     public int Created { get; set; }
@@ -71,13 +71,13 @@ public class File
     public bool IsAiSuggested { get; set; }
 }
 
-public class FileShares
+public class FileShares : SlackObject
 {
     public IDictionary<string, IEnumerable<FileShare>> Public { get; set; }
     public IDictionary<string, IEnumerable<FileShare>> Private { get; set; }
 }
 
-public class FileShare
+public class FileShare : SlackObject
 {
     public string[] ReplyUsers { get; set; }
     public int ReplyUsersCount { get; set; }

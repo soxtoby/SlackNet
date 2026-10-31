@@ -3,7 +3,7 @@
 /// <summary>
 /// An object that represents a single selectable item in a select menu.
 /// </summary>
-public class Option
+public class Option : SlackObject
 {
     /// <summary>
     /// A plain text object that defines the text shown in the option on the menu.

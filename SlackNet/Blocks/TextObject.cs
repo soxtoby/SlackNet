@@ -3,7 +3,7 @@
 /// <summary>
 /// An object containing some text, formatted either as plain text or using Slack's "mrkdwn".
 /// </summary>
-public abstract class TextObject
+public abstract class TextObject : SlackObject
 {
     protected TextObject(string type)
     {

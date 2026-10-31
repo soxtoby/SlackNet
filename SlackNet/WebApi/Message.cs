@@ -97,7 +97,7 @@ public interface IReadOnlyMessage
     UnfurlMetadata UnfurlMetadata { get; } 
 }
 
-public class Message : IReadOnlyMessage
+public class Message : SlackObject, IReadOnlyMessage
 {
     public string Channel { get; set; }
     public string Text { get; set; }

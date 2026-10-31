@@ -1,6 +1,6 @@
 namespace SlackNet.Interaction;
 
-public class OptionsRequestBase
+public class OptionsRequestBase : SlackObject
 {
     public string Type { get; set; }
     public string Value { get; set; }

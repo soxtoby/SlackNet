@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class Pagination
+public class Pagination : SlackObject
 {
     public int TotalCount { get; set; }
     public int Page { get; set; }

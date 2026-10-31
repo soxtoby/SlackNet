@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class CallUser
+public class CallUser : SlackObject
 {
     public string SlackId { get; set; }
     public string ExternalId { get; set; }

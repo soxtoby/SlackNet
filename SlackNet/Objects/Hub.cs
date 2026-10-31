@@ -5,7 +5,7 @@ using SlackNet.Events;
 namespace SlackNet;
 
 [Obsolete("Use Conversation instead")]
-public class Hub
+public class Hub : SlackObject
 {
     public string Id { get; set; }
     public bool IsIm { get; set; }

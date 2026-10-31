@@ -6,7 +6,7 @@ namespace SlackNet.Blocks;
 /// Defines Slack icon information for use in a <see cref="CardBlock"/>.
 /// </summary>
 /// <remarks>See the <a href="https://docs.slack.dev/reference/block-kit/composition-objects/slack-icon-object/">Slack documentation</a> for more information.</remarks>
-public class SlackIcon
+public class SlackIcon : SlackObject
 {
     /// <summary>
     /// The type of composition object. Always <c>icon</c>.

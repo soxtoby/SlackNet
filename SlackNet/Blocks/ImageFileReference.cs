@@ -3,7 +3,7 @@
 /// <summary>
 /// Defines an object containing Slack file information to be used in an image block or image element.
 /// </summary>
-public class ImageFileReference
+public class ImageFileReference : SlackObject
 {
     /// <summary>
     /// This URL can be the <see cref="File.UrlPrivate"/> or the <see cref="File.Permalink"/> of the Slack <see cref="File"/>.

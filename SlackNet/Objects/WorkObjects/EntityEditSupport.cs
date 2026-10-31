@@ -3,7 +3,7 @@ using SlackNet.Blocks;
 
 namespace SlackNet;
 
-public class EntityEditSupport
+public class EntityEditSupport : SlackObject
 {
     public bool Enabled { get; set; }
     public PlainText Placeholder { get; set; }
@@ -14,7 +14,7 @@ public class EntityEditSupport
     public TextEditing Text { get; set; }
 }
 
-public class SelectEditing
+public class SelectEditing : SlackObject
 {
     /// <summary>
     /// The current value of the select input.
@@ -30,7 +30,7 @@ public class SelectEditing
     public bool FetchOptionsDynamically { get; set; }
 }
 
-public class EntitySelectOption
+public class EntitySelectOption : SlackObject
 {
     /// <summary>
     /// The value that will be sent to your application when the user submits the form.
@@ -48,7 +48,7 @@ public class EntitySelectOption
     public TextObject Description { get; set; }
 }
 
-public class NumberEditing
+public class NumberEditing : SlackObject
 {
     /// <summary>
     /// Minimum allowed value.
@@ -61,7 +61,7 @@ public class NumberEditing
     public double MaxValue { get; set; }
 }
 
-public class TextEditing
+public class TextEditing : SlackObject
 {
     /// <summary>
     /// Minimum string length.

@@ -6,7 +6,7 @@ using SlackNet.Events;
 
 namespace SlackNet;
 
-public class EntityAttributes
+public class EntityAttributes : SlackObject
 {
     /// <summary>
     /// Title of the Work Object entity.
@@ -64,7 +64,7 @@ public class EntityAttributes
     }
 }
 
-public class EntityTitle
+public class EntityTitle : SlackObject
 {
     public string Text { get; set; }
     public EntityEditSupport Edit { get; set; }
@@ -80,7 +80,7 @@ public enum EntityDisplayType
     Document
 }
 
-public class FullSizePreview
+public class FullSizePreview : SlackObject
 {
     /// <summary>
     /// Lets Slack know that a full preview is supported.
@@ -100,7 +100,7 @@ public class FullSizePreview
     public FullSizePreviewError Error { get; set; }
 }
 
-public class FullSizePreviewError
+public class FullSizePreviewError : SlackObject
 {
     public FullSizePreviewErrorCode Code { get; set; }
     public string Message { get; set; }

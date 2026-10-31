@@ -17,7 +17,7 @@ public class AppContextChanged : Event
 /// <summary>
 /// Describes the Slack entities a user is viewing while interacting with an app.
 /// </summary>
-public class AppContext
+public class AppContext : SlackObject
 {
     /// <summary>
     /// The entities the user is currently viewing, ordered by relevance.
@@ -28,7 +28,7 @@ public class AppContext
 /// <summary>
 /// Identifies one Slack entity in the user's current app context.
 /// </summary>
-public class AppContextEntity
+public class AppContextEntity : SlackObject
 {
     /// <summary>The kind of entity represented by <see cref="Value"/>.</summary>
     public string Type { get; set; }

@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class ErrorResponseMetadata
+public class ErrorResponseMetadata : SlackObject
 {
     public IList<string> Messages { get; set; } = [];
 }

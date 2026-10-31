@@ -3,7 +3,7 @@ namespace SlackNet;
 /// <summary>
 /// A user with access to a custom function.
 /// </summary>
-public class FunctionPermissionUser
+public class FunctionPermissionUser : SlackObject
 {
     public string UserId { get; set; }
     public string Username { get; set; }

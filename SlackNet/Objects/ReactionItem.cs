@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class ReactionItem
+public class ReactionItem : SlackObject
 {
     public string Type { get; set; }
 }

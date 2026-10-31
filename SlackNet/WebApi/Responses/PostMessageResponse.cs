@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class PostMessageResponse
+public class PostMessageResponse : SlackObject
 {
     public string Ts { get; set; }
     public string Channel { get; set; }

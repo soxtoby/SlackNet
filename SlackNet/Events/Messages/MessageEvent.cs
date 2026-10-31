@@ -32,14 +32,14 @@ public class MessageEvent : MessageEventBase
     public AppContext AppContext { get; set; }
 }
 
-public class PinnedInfo
+public class PinnedInfo : SlackObject
 {
     public string Channel { get; set; }
     public string PinnedBy { get; set; }
     public int? PinnedTs { get; set; }
 }
 
-public class Edit
+public class Edit : SlackObject
 {
     public string User { get; set; }
     public string Ts { get; set; }
@@ -47,7 +47,7 @@ public class Edit
     public DateTime Timestamp => Ts.ToDateTime().GetValueOrDefault();
 }
 
-public class Reply
+public class Reply : SlackObject
 {
     public string User { get; set; }
     public string Ts { get; set; }

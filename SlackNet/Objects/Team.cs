@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class Team
+public class Team : SlackObject
 {
     public string Id { get; set; }
     public string Name { get; set; }

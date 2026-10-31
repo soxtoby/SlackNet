@@ -49,7 +49,7 @@ public interface IReadOnlyAttachment
     string BotTeamId { get; }
 }
 
-public class Attachment : IReadOnlyAttachment
+public class Attachment : SlackObject, IReadOnlyAttachment
 {
     /// <summary>
     /// Structured blocks. If any blocks are specified, then no other properties can be set, except <see cref="Color"/>.
@@ -100,7 +100,7 @@ public class Attachment : IReadOnlyAttachment
     public string BotTeamId { get; set; }
 }
 
-public class MessageBlock
+public class MessageBlock : SlackObject
 {
     public string Team { get; set; }
     public string Channel { get; set; }
@@ -108,7 +108,7 @@ public class MessageBlock
     public MessageBlocks Message { get; set; }
 }
 
-public class MessageBlocks
+public class MessageBlocks : SlackObject
 {
     public IList<Block> Blocks { get; set; }
 }

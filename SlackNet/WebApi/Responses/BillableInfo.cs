@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class BillableInfo
+public class BillableInfo : SlackObject
 {
     public bool BillingActive { get; set; }
 }

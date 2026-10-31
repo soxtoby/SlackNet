@@ -1,6 +1,6 @@
 namespace SlackNet.WebApi;
 
-public class TokenRotationResponse
+public class TokenRotationResponse : SlackObject
 {
     public string Token { get; set; }
     public string RefreshToken { get; set; }

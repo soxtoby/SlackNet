@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class FileListResponse
+public class FileListResponse : SlackObject
 {
     public IList<File> Files { get; set; } = [];
     public Paging Paging { get; set; } = new();

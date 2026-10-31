@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class ListLimits
+public class ListLimits : SlackObject
 {
     public bool OverRowMaximum { get; set; }
     public int RowCountLimit { get; set; }

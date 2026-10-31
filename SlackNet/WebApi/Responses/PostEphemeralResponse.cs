@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class PostEphemeralResponse
+public class PostEphemeralResponse : SlackObject
 {
     public string MessageTs { get; set; }
 }

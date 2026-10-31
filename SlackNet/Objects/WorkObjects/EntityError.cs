@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SlackNet;
 
-public class EntityError
+public class EntityError : SlackObject
 {
     public EntityErrorStatus Status { get; set; }
     public string CustomTitle { get; set; }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet;
 
-public class UserProfile
+public class UserProfile : SlackObject
 {
     public string ApiAppId { get; set; }
     public string Title { get; set; }

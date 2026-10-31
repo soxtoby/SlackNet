@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class Paging
+public class Paging : SlackObject
 {
     public int Count { get; set; }
     public int Total { get; set; }

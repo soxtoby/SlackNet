@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class MigrationResponse
+public class MigrationResponse : SlackObject
 {
     public string TeamId { get; set; }
     public string EnterpriseId { get; set; }

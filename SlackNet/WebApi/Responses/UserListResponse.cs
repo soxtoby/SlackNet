@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet.WebApi;
 
-public class UserListResponse
+public class UserListResponse : SlackObject
 {
     public IList<User> Members { get; set; } = [];
     public int CacheTs { get; set; }

@@ -2,7 +2,7 @@
 
 namespace SlackNet;
 
-public class EntityPayload
+public class EntityPayload : SlackObject
 {
     public EntityAttributes Attributes { get; set; } = new();
     public StandardEntityFields Fields { get; set; } = new();
@@ -14,7 +14,7 @@ public class EntityPayload
     public EntityRemoteFile SlackFile { get; set; }
 }
 
-public class StandardEntityFields
+public class StandardEntityFields : SlackObject
 {
     public ImageField Preview { get; set; }
     public UserField CreatedBy { get; set; }
@@ -32,13 +32,13 @@ public class StandardEntityFields
     public StringField Service { get; set; }
 }
 
-public class EntityActions
+public class EntityActions : SlackObject
 {
     public IList<EntityActionButton> PrimaryActions { get; set; } = [];
     public IList<EntityActionButton> OverflowActions { get; set; } = [];
 }
 
-public class EntityRemoteFile
+public class EntityRemoteFile : SlackObject
 {
     /// <summary>
     /// Apps providing remote files as well as Work Objects should provide the 

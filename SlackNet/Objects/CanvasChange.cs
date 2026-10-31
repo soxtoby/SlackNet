@@ -1,7 +1,7 @@
 ﻿#nullable enable
 namespace SlackNet;
 
-public class CanvasChange
+public class CanvasChange : SlackObject
 {
     public CanvasOperation Operation { get; set; }
     public DocumentContent? DocumentContent { get; set; }

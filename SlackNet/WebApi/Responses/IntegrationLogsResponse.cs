@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class IntegrationLogsResponse
+public class IntegrationLogsResponse : SlackObject
 {
     public IList<IntegrationLogRecord> Logs { get; set; }
     public Paging Paging { get; set; }

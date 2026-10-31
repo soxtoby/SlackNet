@@ -5,7 +5,7 @@ namespace SlackNet;
 /// workspace, and user (represented by <see cref="EnterpriseId"/>, <see cref="TeamId"/> and <see cref="UserId"/> inside this class)
 /// Installations may only have one or two, not all three, defined.
 /// </summary>
-public class Authorization
+public class Authorization : SlackObject
 {
     public string EnterpriseId { get; set; }
 

@@ -3,7 +3,7 @@ using SlackNet.Events;
 
 namespace SlackNet.WebApi;
 
-public class ConversationMessagesResponse
+public class ConversationMessagesResponse : SlackObject
 {
     public IList<MessageEvent> Messages { get; set; } = [];
     public bool HasMore { get; set; }

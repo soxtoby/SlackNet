@@ -2,7 +2,7 @@
 
 namespace SlackNet.Interaction;
 
-public class Dialog
+public class Dialog : SlackObject
 {
     public string CallbackId { get; set; }
     public string Title { get; set; }

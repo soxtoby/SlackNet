@@ -5,7 +5,7 @@ namespace SlackNet;
 /// <summary>
 /// Metadata for a function used as a workflow step.
 /// </summary>
-public class Function
+public class Function : SlackObject
 {
     public string Id { get; set; }
     public string CallbackId { get; set; }

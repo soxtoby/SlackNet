@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet;
 
-public class PinnedItem
+public class PinnedItem : SlackObject
 {
     public string Type { get; set; }
     public int Created { get; set; }

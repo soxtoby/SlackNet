@@ -3,7 +3,7 @@ using SlackNet.Blocks;
 
 namespace SlackNet.WebApi;
 
-public class MessageUpdate
+public class MessageUpdate : SlackObject
 {
     /// <summary>
     /// Timestamp of the message to be updated.

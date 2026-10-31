@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class CallResponse
+public class CallResponse : SlackObject
 {
     public Call Call { get; set; }
 }

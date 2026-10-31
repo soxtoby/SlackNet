@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet.WebApi;
 
-public class DndResponse
+public class DndResponse : SlackObject
 {
     public bool DndEnabled { get; set; }
     public int NextDndStartTs { get; set; }

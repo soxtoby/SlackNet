@@ -1,6 +1,6 @@
 namespace SlackNet;
 
-public class WorkSpace
+public class WorkSpace : SlackObject
 {
     public string Id { get; set; }
 #nullable enable

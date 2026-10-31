@@ -5,6 +5,7 @@ This project builds on the [Slack API](https://docs.slack.dev/apis/). You should
 
 - [Getting Started](#getting-started)
   - [SlackNet](#slacknet)
+    - [Properties SlackNet doesn't know about yet](#properties-slacknet-doesnt-know-about-yet)
     - [Socket Mode](#socket-mode)
   - [SlackNet.AspNetCore](#slacknetaspnetcore)
     - [Developing with Socket Mode](#developing-with-socket-mode)
@@ -32,6 +33,14 @@ then call any of Slack's [many API methods](https://docs.slack.dev/reference/met
 ```c#
 await api.Chat.PostMessage(new Message { Text = "Hello, Slack!", Channel = "#general" });
 ```
+
+#### Properties SlackNet doesn't know about yet
+Slack adds fields faster than SlackNet can add properties for them, so models keep anything they don't have a property for in `ExtraProperties`:
+```c#
+var user = await api.Users.Info("U0123456789");
+var value = user.ExtraProperties["a_field_slack_added_recently"];
+```
+The values are strings, booleans, `long`s and `double`s, with `JObject` and `JArray` for anything nested. SlackNet doesn't send them back to Slack. If you find anything in there, please [raise an issue](https://github.com/soxtoby/SlackNet/issues) so it can be added to the library.
 
 #### Socket Mode
 To use the socket mode client:

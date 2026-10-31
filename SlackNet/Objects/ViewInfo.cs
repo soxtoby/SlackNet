@@ -3,7 +3,7 @@ using SlackNet.Blocks;
 
 namespace SlackNet;
 
-public abstract class ViewInfo
+public abstract class ViewInfo : SlackObject
 {
     public string Id { get; set; }
     public string TeamId { get; set; }

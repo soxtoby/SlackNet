@@ -4,7 +4,7 @@ using SlackNet.WebApi;
 
 namespace SlackNet;
 
-public class Call
+public class Call : SlackObject
 {
     /// <summary>
     /// ID associated with the Call.

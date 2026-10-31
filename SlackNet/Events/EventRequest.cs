@@ -1,6 +1,6 @@
 namespace SlackNet.Events;
 
-public class EventRequest
+public class EventRequest : SlackObject
 {
     public string Type { get; set; }
     public string Token { get; set; }

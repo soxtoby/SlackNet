@@ -5,7 +5,7 @@ namespace SlackNet;
 /// <summary>
 /// The function execution that generated an interaction.
 /// </summary>
-public class FunctionData
+public class FunctionData : SlackObject
 {
     public string ExecutionId { get; set; }
     public Function Function { get; set; }

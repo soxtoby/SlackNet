@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class Invite
+public class Invite : SlackObject
 {
     public string Id { get; set; }
     public int DateCreated { get; set; }

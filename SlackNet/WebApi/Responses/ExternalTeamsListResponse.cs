@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class ExternalTeamsListResponse
+public class ExternalTeamsListResponse : SlackObject
 {
     public IList<ExternalTeam> Organizations { get; set; }
     public int TotalCount { get; set; }

@@ -2,7 +2,7 @@
 
 namespace SlackNet;
 
-public class ColumnSchema
+public class ColumnSchema : SlackObject
 {
     /// <summary>
     /// The ID of the column, provided by Slack.
@@ -31,7 +31,7 @@ public class ColumnSchema
     public ColumnOptions Options { get; set; } = new();
 }
 
-public class ColumnOptions
+public class ColumnOptions : SlackObject
 {
     /// <summary>
     /// Used by select columns to specify options.
@@ -77,7 +77,7 @@ public class ColumnOptions
     public bool? NotifyUsers { get; set; }
 }
 
-public class ColumnOptionItem
+public class ColumnOptionItem : SlackObject
 {
     /// <summary>
     /// The value for the option.
@@ -93,7 +93,7 @@ public class ColumnOptionItem
     public ColumnOptionColor Color { get; set; }
 }
 
-public class ColumnDefaultValue
+public class ColumnDefaultValue : SlackObject
 {
     /// <summary>
     /// Default user values (encoded user ids) for the people column.

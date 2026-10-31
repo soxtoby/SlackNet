@@ -2,7 +2,7 @@
 
 namespace SlackNet;
 
-public class FileComment
+public class FileComment : SlackObject
 {
     public string Id { get; set; }
     public int Created { get; set; }

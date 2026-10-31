@@ -8,7 +8,7 @@ public class ChannelRename : Event
     public RenamedChannel Channel { get; set; }
 }
 
-public class RenamedChannel
+public class RenamedChannel : SlackObject
 {
     public string Id { get; set; }
     public string Name { get; set; }

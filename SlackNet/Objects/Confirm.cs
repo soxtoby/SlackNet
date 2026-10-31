@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class Confirm
+public class Confirm : SlackObject
 {
     public string Title { get; set; }
     public string Text { get; set; }

@@ -1,6 +1,6 @@
 namespace SlackNet.Interaction;
 
-public class SlashCommand
+public class SlashCommand : SlackObject
 {
     /// <summary>
     /// This is a verification token, a deprecated feature that you shouldn't use any more.

@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class BookmarkListResponse
+public class BookmarkListResponse : SlackObject
 {
     public IList<Bookmark> Bookmarks { get; set; } = [];
 }

@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.SocketMode;
 
-public class Acknowledgement
+public class Acknowledgement : SlackObject
 {
     public string EnvelopeId { get; set; }
 }

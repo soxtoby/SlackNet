@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class InviteSharedResponse
+public class InviteSharedResponse : SlackObject
 {
     public string InviteId { get; set; }
     public bool IsLegacySharedChannel { get; set; }

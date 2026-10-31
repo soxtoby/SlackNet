@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class ConversationIdResponse
+public class ConversationIdResponse : SlackObject
 {
     public ConversationId Channel { get; set; }
 }

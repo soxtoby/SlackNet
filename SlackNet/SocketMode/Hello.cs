@@ -9,12 +9,12 @@ public class Hello : SocketMessage
     public HelloDebugInfo DebugInfo { get; set; }
 }
 
-public class HelloConnectionInfo
+public class HelloConnectionInfo : SlackObject
 {
     public string AppId { get; set; }
 }
 
-public class HelloDebugInfo
+public class HelloDebugInfo : SlackObject
 {
     public string Host { get; set; }
     public DateTime Started { get; set; }

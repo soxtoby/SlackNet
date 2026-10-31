@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class ListItemsResponse
+public class ListItemsResponse : SlackObject
 {
     public IList<ListItem> Items { get; set; }
     public ResponseMetadata ResponseMetadata { get; set; }

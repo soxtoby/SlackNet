@@ -35,7 +35,7 @@ public class OauthV2AccessResponse : OauthAccessResponse
     public IncomingWebhook IncomingWebhook { get; set; }
 }
 
-public class IncomingWebhook
+public class IncomingWebhook : SlackObject
 {
     /// <summary>
     /// The name of the channel that the user selected as a destination for webhook messages.

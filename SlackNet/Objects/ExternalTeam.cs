@@ -2,7 +2,7 @@
 
 namespace SlackNet;
 
-public class ExternalTeam
+public class ExternalTeam : SlackObject
 {
     public string TeamId { get; set; }
     public string TeamName { get; set; }
@@ -20,7 +20,7 @@ public class ExternalTeam
     public ListConnections Lists { get; set; }
 }
 
-public class ConnectedWorkspace
+public class ConnectedWorkspace : SlackObject
 {
     public string WorkspaceId { get; set; }
     public string WorkspaceName { get; set; }
@@ -38,19 +38,19 @@ public enum SlackConnectPref
     ExternalAwarenessContextBar,
 }
 
-public class CanvasConnections
+public class CanvasConnections : SlackObject
 {
     public int TotalCount { get; set; }
     public IList<OwnershipDetails> OwnershipDetails { get; set; }
 }
 
-public class ListConnections
+public class ListConnections : SlackObject
 {
     public int TotalCount { get; set; }
     public IList<OwnershipDetails> OwnershipDetails { get; set; }
 }
 
-public class OwnershipDetails
+public class OwnershipDetails : SlackObject
 {
     public string TeamId { get; set; }
     public int? Count { get; set; }

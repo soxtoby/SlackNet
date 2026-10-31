@@ -5,7 +5,7 @@ using SlackNet.Events;
 
 namespace SlackNet;
 
-public class Conversation
+public class Conversation : SlackObject
 {
     public string Id { get; set; }
 

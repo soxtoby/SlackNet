@@ -2,7 +2,7 @@
 
 namespace SlackNet.WebApi;
 
-public class ConversationJoinResponseMetadata
+public class ConversationJoinResponseMetadata : SlackObject
 {
     public IList<string> Warnings { get; set; } = [];
 }

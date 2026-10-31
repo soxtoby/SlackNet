@@ -2,13 +2,13 @@
 
 namespace SlackNet.WebApi;
 
-public class ConnectInvitesListResponse
+public class ConnectInvitesListResponse : SlackObject
 {
     public IList<PendingInvite> Invites { get; set; }
     public ResponseMetadata ResponseMetadata { get; set; } = new();
 }
 
-public class PendingInvite
+public class PendingInvite : SlackObject
 {
     public string Direction { get; set; }
     public string Status { get; set; }
@@ -19,7 +19,7 @@ public class PendingInvite
     public IList<InviteAcceptance> Acceptances { get; set; } = [];
 }
 
-public class InviteAcceptance
+public class InviteAcceptance : SlackObject
 {
     public string ApprovalStatus { get; set; }
     public int DateAccepted { get; set; }
@@ -30,7 +30,7 @@ public class InviteAcceptance
     public IList<InviteReview> Reviews { get; set; } = [];
 }
 
-public class InviteReview
+public class InviteReview : SlackObject
 {
     public string Type { get; set; }
     public int DateReview { get; set; }

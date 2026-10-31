@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class EmojiDisplayInfo
+public class EmojiDisplayInfo : SlackObject
 {
     public string EmojiName { get; set; }
     public string DisplayUrl { get; set; }

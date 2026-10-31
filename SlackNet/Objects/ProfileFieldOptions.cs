@@ -1,6 +1,6 @@
 namespace SlackNet;
 
-public class ProfileFieldOptions
+public class ProfileFieldOptions : SlackObject
 {
     public int IsProtected { get; set; }
 }

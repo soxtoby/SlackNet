@@ -5,7 +5,7 @@ namespace SlackNet.Blocks;
 /// <summary>
 /// Provides a way to filter the list of options in a <see cref="ConversationSelectMenu"/> or <see cref="ConversationMultiSelectMenu"/>.
 /// </summary>
-public class ConversationFilter
+public class ConversationFilter : SlackObject
 {
     /// <summary>
     /// Indicates which type of conversations should be included in the list.

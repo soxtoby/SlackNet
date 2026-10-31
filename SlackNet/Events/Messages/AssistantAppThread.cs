@@ -12,7 +12,7 @@ public class AssistantAppThread : MessageEvent
     public AssistantAppThreadInfo AssistantThread { get; set; }
 }
 
-public class AssistantAppThreadInfo
+public class AssistantAppThreadInfo : SlackObject
 {
   public string Title { get; set; }
   public IList<Block> TitleBlocks { get; set; } = [];

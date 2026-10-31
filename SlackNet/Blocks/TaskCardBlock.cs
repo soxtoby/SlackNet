@@ -54,7 +54,7 @@ public class TaskCardBlock() : Block("task_card")
 /// <summary>
 /// One of Slack's named task icons.
 /// </summary>
-public class TaskCardIcon
+public class TaskCardIcon : SlackObject
 {
     public string Type { get; set; } = "icon";
 

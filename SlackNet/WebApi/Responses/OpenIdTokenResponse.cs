@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.WebApi;
 
-public class OpenIdTokenResponse
+public class OpenIdTokenResponse : SlackObject
 {
     public bool Ok { get; set; }
     public string AccessToken { get; set; }
