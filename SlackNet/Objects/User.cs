@@ -21,6 +21,8 @@ public class User
     public bool IsRestricted { get; set; }
     public bool IsUltraRestricted { get; set; }
     public bool IsBot { get; set; }
+    /// <summary>Whether this is a workflow bot user.</summary>
+    public bool IsWorkflowBot { get; set; }
     public bool IsStranger { get; set; }
     public int Updated { get; set; }
     public bool IsAppUser { get; set; }

@@ -54,4 +54,14 @@ public class UserTests
 
         user.WhoCanShareContactCard.ShouldBe("EVERYONE");
     }
+
+    [Test]
+    public void Serialization_WorksCorrectlyForIsWorkflowBot()
+    {
+        var settings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+
+        var user = JsonConvert.DeserializeObject<User>(@"{ ""id"": ""B12345678"", ""is_bot"": true, ""is_workflow_bot"": true }", settings);
+
+        user.IsWorkflowBot.ShouldBe(true);
+    }
 }
