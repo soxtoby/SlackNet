@@ -9,7 +9,7 @@ public class TableBlock() : Block("table")
     public IList<TableColumnSettings> ColumnSettings { get; set; } = [];
 }
 
-public abstract class TableCell(string type)
+public abstract class TableCell(string type) : SlackObject
 {
     public string Type { get; set; } = type;
 }
@@ -38,7 +38,7 @@ public class RawNumberCell() : TableCell("raw_number")
     public string Text { get; set; }
 }
 
-public class TableColumnSettings
+public class TableColumnSettings : SlackObject
 {
     public ColumnAlignment Align { get; set; }
     public bool IsWrapped { get; set; }

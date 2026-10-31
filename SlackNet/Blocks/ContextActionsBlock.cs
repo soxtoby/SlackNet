@@ -8,7 +8,7 @@ public class ContextActionsBlock() : Block("context_actions")
     public IList<ContextActionsElement> Elements { get; set; } = [];
 }
 
-public abstract class ContextActionsElement(string type)
+public abstract class ContextActionsElement(string type) : SlackObject
 {
     public string Type { get; set; } = type;
     public string ActionId { get; set; }

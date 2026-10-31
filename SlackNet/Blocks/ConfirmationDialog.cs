@@ -4,7 +4,7 @@
 /// An object that defines a dialog that provides a confirmation step to any interactive element.
 /// This dialog will ask the user to confirm their action by offering a confirm and deny buttons.
 /// </summary>
-public class ConfirmationDialog
+public class ConfirmationDialog : SlackObject
 {
     /// <summary>
     /// A plain text object that defines the dialog's title.

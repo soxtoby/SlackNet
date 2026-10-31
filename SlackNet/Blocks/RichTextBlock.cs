@@ -18,7 +18,7 @@ public class RichTextBlock() : Block("rich_text")
     public IList<RichTextElement> Elements { get; set; } = [];
 }
 
-public abstract class RichTextElement(string type)
+public abstract class RichTextElement(string type) : SlackObject
 {
     public string Type { get; set; } = type;
 }
@@ -32,7 +32,7 @@ public class RichTextSection() : RichTextElement("rich_text_section")
     public IList<RichTextSectionElement> Elements { get; set; } = [];
 }
 
-public abstract class RichTextSectionElement(string type)
+public abstract class RichTextSectionElement(string type) : SlackObject
 {
     public string Type { get; set; } = type;
 }
@@ -288,7 +288,7 @@ public class RichTextListRecord() : RichTextElement("list_record")
 /// <summary>
 /// Rich text styling. Note that not all properties are supported by all elements.
 /// </summary>
-public class RichTextStyle
+public class RichTextStyle : SlackObject
 {
     [IgnoreIfDefault]
     public bool Bold { get; set; }

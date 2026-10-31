@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet.Blocks;
 
-public class BlockAction
+public class BlockAction : SlackObject
 {
     public string Type { get; set; }
     public string ActionId { get; set; }

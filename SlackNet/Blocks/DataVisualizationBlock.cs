@@ -23,7 +23,7 @@ public class DataVisualizationBlock() : Block("data_visualization")
 /// <summary>
 /// A chart displayed by a <see cref="DataVisualizationBlock"/>.
 /// </summary>
-public abstract class DataVisualizationChart(string type)
+public abstract class DataVisualizationChart(string type) : SlackObject
 {
     /// <summary>
     /// The type of chart.
@@ -80,7 +80,7 @@ public class LineChart() : AxisChart("line");
 /// <summary>
 /// A labeled slice in a <see cref="PieChart"/>.
 /// </summary>
-public class ChartSegment
+public class ChartSegment : SlackObject
 {
     /// <summary>
     /// Display name for this slice, shown in the legend and on hover.
@@ -96,7 +96,7 @@ public class ChartSegment
 /// <summary>
 /// A named set of ordered data points.
 /// </summary>
-public class DataSeries
+public class DataSeries : SlackObject
 {
     /// <summary>
     /// Human-readable identifier displayed in the chart legend.
@@ -112,7 +112,7 @@ public class DataSeries
 /// <summary>
 /// A value belonging to an x-axis category.
 /// </summary>
-public class DataPoint
+public class DataPoint : SlackObject
 {
     /// <summary>
     /// The x-axis category this point belongs to.
@@ -128,7 +128,7 @@ public class DataPoint
 /// <summary>
 /// X-axis categories and optional axis titles.
 /// </summary>
-public class AxisConfig
+public class AxisConfig : SlackObject
 {
     /// <summary>
     /// Category labels for the x-axis, in display order.

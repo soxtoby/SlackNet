@@ -7,7 +7,7 @@ public class FeedbackButtons() : ContextActionsElement("feedback_buttons")
     public FeedbackButton NegativeButton { get; set; } = new();
 }
 
-public class FeedbackButton
+public class FeedbackButton : SlackObject
 {
     public PlainText Text { get; set; }
     public string Value { get; set; }

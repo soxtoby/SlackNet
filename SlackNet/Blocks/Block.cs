@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.Blocks;
 
-public abstract class Block(string type)
+public abstract class Block(string type) : SlackObject
 {
     public string Type { get; } = type;
 

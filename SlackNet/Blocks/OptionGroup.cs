@@ -5,7 +5,7 @@ namespace SlackNet.Blocks;
 /// <summary>
 /// Provides a way to group options in a select menu.
 /// </summary>
-public class OptionGroup
+public class OptionGroup : SlackObject
 {
     /// <summary>
     /// A plain text object that defines the label shown above this group of options.
