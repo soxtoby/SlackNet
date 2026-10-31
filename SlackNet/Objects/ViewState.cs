@@ -5,7 +5,7 @@ using SlackNet.Blocks;
 
 namespace SlackNet;
 
-public class ViewState
+public class ViewState : SlackObject
 {
     /// <summary>
     /// Keyed with the <see cref="Block.BlockId"/>s of any user-modified <see cref="InputBlock"/> blocks from the message or view.

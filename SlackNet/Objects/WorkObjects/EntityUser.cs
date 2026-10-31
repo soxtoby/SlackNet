@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class EntityUser
+public class EntityUser : SlackObject
 {
     /// <summary>
     /// Use with a Slack user ID (e.g. "U123ABC456") if known.

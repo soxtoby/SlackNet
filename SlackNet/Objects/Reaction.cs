@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class Reaction
+public class Reaction : SlackObject
 {
     public string Name { get; set; }
     public int Count { get; set; }

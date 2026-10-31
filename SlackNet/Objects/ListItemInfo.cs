@@ -2,7 +2,7 @@
 
 namespace SlackNet;
 
-public class ListItemInfo
+public class ListItemInfo : SlackObject
 {
     public File List { get; set; }
     public ListItem Record { get; set; }

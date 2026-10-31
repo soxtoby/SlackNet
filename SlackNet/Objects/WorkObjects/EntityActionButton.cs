@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class EntityActionButton
+public class EntityActionButton : SlackObject
 {
     /// <summary>
     /// Human readable text that will be displayed in the button.
@@ -35,7 +35,7 @@ public class EntityActionButton
     public EntityActionProcessingState ProcessingState { get; set; }
 }
 
-public class EntityActionProcessingState
+public class EntityActionProcessingState : SlackObject
 {
     public bool Enabled { get; set; }
 }

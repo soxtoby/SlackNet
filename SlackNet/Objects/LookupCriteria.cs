@@ -4,7 +4,7 @@ using SlackNet.WebApi;
 
 namespace SlackNet;
 
-public class LookupCriteria
+public class LookupCriteria : SlackObject
 {
     public IList<SectionType> SectionTypes { get; set; } = [];
     public string? ContainsText { get; set; }

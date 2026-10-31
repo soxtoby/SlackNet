@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet;
 
-public class Reminder
+public class Reminder : SlackObject
 {
     public string Id { get; set; }
     public string Creator { get; set; }

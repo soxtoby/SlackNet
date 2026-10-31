@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SlackNet;
 
-public class TeamProfileField
+public class TeamProfileField : SlackObject
 {
     public string Id { get; set; }
     public int Ordering { get; set; }

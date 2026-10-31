@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class InviteChannel
+public class InviteChannel : SlackObject
 {
     public string Id { get; set; }
     public bool IsPrivate { get; set; }

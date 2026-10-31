@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public abstract class EntityField()
+public abstract class EntityField() : SlackObject
 {
     protected EntityField(string type) : this() => Type = type;
 

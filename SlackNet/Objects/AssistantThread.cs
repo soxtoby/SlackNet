@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class AssistantThread
+public class AssistantThread : SlackObject
 {
     public string UserId { get; set; }
     public AssistantThreadContext Context { get; set; } = new();
@@ -8,7 +8,7 @@ public class AssistantThread
     public string ThreadTs { get; set; }
 }
 
-public class AssistantThreadContext
+public class AssistantThreadContext : SlackObject
 {
     public string ChannelId { get; set; }
     public string TeamId { get; set; }

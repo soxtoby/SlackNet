@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class Field
+public class Field : SlackObject
 {
     public string Title { get; set; }
     public string Value { get; set; }

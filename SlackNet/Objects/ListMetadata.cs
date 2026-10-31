@@ -3,7 +3,7 @@ using SlackNet.Blocks;
 
 namespace SlackNet;
 
-public class ListMetadata
+public class ListMetadata : SlackObject
 {
     public IList<ColumnSchema> Schema { get; set; }
     public IList<ColumnSchema> SubtaskSchema { get; set; }
@@ -17,7 +17,7 @@ public class ListMetadata
     public string DefaultView { get; set; }
 }
 
-public class ListCreationSource
+public class ListCreationSource : SlackObject
 {
     public string Type { get; set; }
     public string ReferenceId { get; set; }

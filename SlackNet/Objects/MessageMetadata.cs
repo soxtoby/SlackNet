@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 
 namespace SlackNet;
 
-public class MessageMetadata
+public class MessageMetadata : SlackObject
 {
     public string EventType { get; set; }
     

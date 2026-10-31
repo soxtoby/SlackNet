@@ -2,7 +2,7 @@
 
 namespace SlackNet;
 
-public class BotInfo
+public class BotInfo : SlackObject
 {
     public string Id { get; set; }
     public string UserId { get; set; }

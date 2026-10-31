@@ -6,7 +6,7 @@ namespace SlackNet;
 /// <summary>
 /// A Work Object entity for unfurling.
 /// </summary>
-public class WorkObjectEntity
+public class WorkObjectEntity : SlackObject
 {
     /// <summary>
     /// Entity type.

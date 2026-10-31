@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class Bookmark
+public class Bookmark : SlackObject
 {
     public string Id { get; set; }
     public string ChannelId { get; set; }

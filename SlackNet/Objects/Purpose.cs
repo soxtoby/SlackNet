@@ -1,6 +1,6 @@
 ﻿namespace SlackNet;
 
-public class Purpose
+public class Purpose : SlackObject
 {
     public string Value { get; set; }
     public string Creator { get; set; }

@@ -5,7 +5,7 @@ using SlackNet.Blocks;
 
 namespace SlackNet;
 
-public class ListItem
+public class ListItem : SlackObject
 {
     public string Id { get; set; }
     public string ListId { get; set; }
@@ -21,7 +21,7 @@ public class ListItem
     public bool? IsSubscribed { get; set; }
 }
 
-public class ListItemField
+public class ListItemField : SlackObject
 {
     public string Key { get; set; }
     public string ColumnId { get; set; }
@@ -49,7 +49,7 @@ public class ListItemFieldUpdate : ListItemField
     public string RowId { get; set; }
 }
 
-public class MessageReference
+public class MessageReference : SlackObject
 {
     public string Value { get; set; }
     public string ChannelId { get; set; }
@@ -57,7 +57,7 @@ public class MessageReference
     public string ThreadTs { get; set; }
 }
 
-public class ListItemLink
+public class ListItemLink : SlackObject
 {
     [JsonProperty("originalUrl")]
     public string OriginalUrl { get; set; }
@@ -66,12 +66,12 @@ public class ListItemLink
     public bool DisplayAsUrl { get; set; }
 }
 
-public class ListItemReference
+public class ListItemReference : SlackObject
 {
     public FileReference File { get; set; }
 }
 
-public class FileReference
+public class FileReference : SlackObject
 {
     public string FileId { get; set; }
 }

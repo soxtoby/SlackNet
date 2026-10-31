@@ -4,7 +4,7 @@ using SlackNet.Interaction;
 
 namespace SlackNet;
 
-public abstract class ViewDefinition(string type)
+public abstract class ViewDefinition(string type) : SlackObject
 {
     public string Type { get; set; } = type;
 

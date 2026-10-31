@@ -2,7 +2,7 @@
 
 namespace SlackNet;
 
-public class EntityIcon
+public class EntityIcon : SlackObject
 {
     public string AltText { get; set; }
     public string Url { get; set; }

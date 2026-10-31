@@ -1,6 +1,6 @@
 namespace SlackNet;
 
-public class UserProfileField
+public class UserProfileField : SlackObject
 {
     public string Value { get; set; }
     public string Alt { get; set; }

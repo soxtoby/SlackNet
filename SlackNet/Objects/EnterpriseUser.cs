@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SlackNet;
 
-public class EnterpriseUser
+public class EnterpriseUser : SlackObject
 {
     public string Id { get; set; }
     public string EnterpriseId { get; set; }

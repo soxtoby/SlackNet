@@ -2,7 +2,7 @@
 
 namespace SlackNet;
 
-public class ListView
+public class ListView : SlackObject
 {
     public string Id { get; set; }
     public string Name { get; set; }
@@ -18,7 +18,7 @@ public class ListView
     public bool ShowCompletedItems { get; set; }
 }
 
-public class ColumnView
+public class ColumnView : SlackObject
 {
     public bool Visible { get; set; }
     public string Key { get; set; }

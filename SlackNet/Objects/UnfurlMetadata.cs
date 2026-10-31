@@ -2,7 +2,7 @@
 
 namespace SlackNet;
 
-public class UnfurlMetadata
+public class UnfurlMetadata : SlackObject
 {
     public IList<WorkObjectEntity> Entities { get; set; } = [];
 }
