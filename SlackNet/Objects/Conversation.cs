@@ -40,6 +40,11 @@ public class Conversation
     public DateTime CreatedDate => Created.ToDateTime().GetValueOrDefault();
 
     /// <summary>
+    /// The timestamp, in milliseconds (not seconds like <see cref="Created"/>), when the channel settings were updated - for example, the "topic" or "description" of the channel changed.
+    /// </summary>
+    public long Updated { get; set; }
+
+    /// <summary>
     /// The user ID of the member that created this channel.
     /// </summary>
     public string Creator { get; set; }
@@ -50,9 +55,19 @@ public class Conversation
     public string ConversationHostId { get; set; }
 
     /// <summary>
+    /// The ID of the workspace the conversation is within.
+    /// </summary>
+    public string ContextTeamId { get; set; }
+
+    /// <summary>
     /// Indicates a conversation is archived. Frozen in time.
     /// </summary>
     public bool IsArchived { get; set; }
+
+    /// <summary>
+    /// Whether the conversation is frozen (e.g. a disconnected Slack Connect channel becomes a read-only frozen copy on the away-team side).
+    /// </summary>
+    public bool IsFrozen { get; set; }
 
     /// <summary>
     /// Means the channel is the workspace's "general" discussion channel (even if it's not named #general but it might be anyway).
@@ -86,6 +101,26 @@ public class Conversation
     public object[] PendingShared { get; set; }
 
     /// <summary>
+    /// IDs of workspaces the channel is shared with.
+    /// </summary>
+    public IList<string> SharedTeamIds { get; set; } = [];
+
+    /// <summary>
+    /// Internal team IDs for shared channels.
+    /// </summary>
+    public IList<string> InternalTeamIds { get; set; } = [];
+
+    /// <summary>
+    /// Connected external team IDs.
+    /// </summary>
+    public IList<string> ConnectedTeamIds { get; set; } = [];
+
+    /// <summary>
+    /// Pending connected team IDs.
+    /// </summary>
+    public IList<string> PendingConnectedTeamIds { get; set; } = [];
+
+    /// <summary>
     /// Is intriguing. It means the conversation is ready to become an <see cref="IsExtShared"/> channel but isn't quite ready yet
     /// and needs some kind of approval or sign off. Best to treat it as if it were a shared channel, even if it traverses only one workspace.
     /// </summary>
@@ -105,6 +140,11 @@ public class Conversation
     /// Represents an unnamed private conversation between multiple users. It's an <see cref="IsPrivate"/> kind of thing.
     /// </summary>
     public bool IsMpim { get; set; }
+
+    /// <summary>
+    /// Whether a DM is open; this field is DM/MPIM-specific.
+    /// </summary>
+    public bool IsOpen { get; set; }
 
     /// <summary>
     /// The timestamp for the last message the calling user has read in this channel.
