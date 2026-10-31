@@ -65,6 +65,11 @@ public class Conversation
     public bool IsArchived { get; set; }
 
     /// <summary>
+    /// Whether the conversation is frozen (e.g. a disconnected Slack Connect channel becomes a read-only frozen copy on the away-team side).
+    /// </summary>
+    public bool IsFrozen { get; set; }
+
+    /// <summary>
     /// Means the channel is the workspace's "general" discussion channel (even if it's not named #general but it might be anyway).
     /// That might be important to your app because almost every user is a member.
     /// </summary>
@@ -94,6 +99,26 @@ public class Conversation
     public bool IsOrgShared { get; set; }
 
     public object[] PendingShared { get; set; }
+
+    /// <summary>
+    /// IDs of workspaces the channel is shared with.
+    /// </summary>
+    public IList<string> SharedTeamIds { get; set; } = [];
+
+    /// <summary>
+    /// Internal team IDs for shared channels.
+    /// </summary>
+    public IList<string> InternalTeamIds { get; set; } = [];
+
+    /// <summary>
+    /// Connected external team IDs.
+    /// </summary>
+    public IList<string> ConnectedTeamIds { get; set; } = [];
+
+    /// <summary>
+    /// Pending connected team IDs.
+    /// </summary>
+    public IList<string> PendingConnectedTeamIds { get; set; } = [];
 
     /// <summary>
     /// Is intriguing. It means the conversation is ready to become an <see cref="IsExtShared"/> channel but isn't quite ready yet

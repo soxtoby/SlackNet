@@ -34,5 +34,29 @@ public class ConversationTests
         result.IsOpen.ShouldBe(false);
     }
 
+    [Test]
+    public void Conversation_SharedChannel_HasFrozenStateAndTeamIds()
+    {
+        var result = Deserialize<Conversation>(@"{ ""id"": ""C12345678"", ""is_ext_shared"": true, ""is_frozen"": true, ""shared_team_ids"": [""T111"", ""T222""], ""internal_team_ids"": [""T111""], ""connected_team_ids"": [""T333""], ""pending_connected_team_ids"": [""T444""] }");
+
+        result.IsFrozen.ShouldBe(true);
+        result.SharedTeamIds.ShouldMatch(["T111", "T222"]);
+        result.InternalTeamIds.ShouldMatch(["T111"]);
+        result.ConnectedTeamIds.ShouldMatch(["T333"]);
+        result.PendingConnectedTeamIds.ShouldMatch(["T444"]);
+    }
+
+    [Test]
+    public void Conversation_NotShared_HasNoTeamIds()
+    {
+        var result = Deserialize<Conversation>(@"{ ""id"": ""C12345678"", ""is_channel"": true }");
+
+        result.IsFrozen.ShouldBe(false);
+        result.SharedTeamIds.ShouldBeEmpty();
+        result.InternalTeamIds.ShouldBeEmpty();
+        result.ConnectedTeamIds.ShouldBeEmpty();
+        result.PendingConnectedTeamIds.ShouldBeEmpty();
+    }
+
     private T Deserialize<T>(string json) => JsonConvert.DeserializeObject<T>(json, _sut);
 }
