@@ -12,7 +12,7 @@ public enum DisconnectReason
     SocketModeDisabled
 }
 
-public class DisconnectDebugInfo
+public class DisconnectDebugInfo : SlackObject
 {
     public string Host { get; set; }
 }

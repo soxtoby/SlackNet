@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.Interaction;
 
-public abstract class DialogElement
+public abstract class DialogElement : SlackObject
 {
     protected DialogElement(string type) => Type = type;
 

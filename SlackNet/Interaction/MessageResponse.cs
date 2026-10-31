@@ -7,7 +7,7 @@ public interface IMessageResponse
     Message Message { get; set; }
 }
 
-public class MessageResponse : IMessageResponse
+public class MessageResponse : SlackObject, IMessageResponse
 {
     public ResponseType ResponseType { get; set; }
     public bool ReplaceOriginal { get; set; }

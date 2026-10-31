@@ -1,6 +1,6 @@
 namespace SlackNet.Events;
 
-public class ReorderedProfileField
+public class ReorderedProfileField : SlackObject
 {
     public string Id { get; set; }
     public int Ordering { get; set; }

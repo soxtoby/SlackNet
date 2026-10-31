@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.Interaction;
 
-public class Container
+public class Container : SlackObject
 {
     public string Type { get; set; }
     public string MessageTs { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.SocketMode;
 
-public class RawSocketMessage
+public class RawSocketMessage : SlackObject
 {
     /// <summary>
     /// SlackNet-specific property identifying which web socket the message came from.

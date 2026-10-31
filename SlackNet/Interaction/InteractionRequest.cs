@@ -1,6 +1,6 @@
 ﻿namespace SlackNet.Interaction;
 
-public abstract class InteractionRequest
+public abstract class InteractionRequest : SlackObject
 {
     public string Type { get; set; }
     public string Token { get; set; }

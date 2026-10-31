@@ -1,6 +1,6 @@
 namespace SlackNet.Interaction;
 
-public abstract class ViewSubmissionResponse
+public abstract class ViewSubmissionResponse : SlackObject
 {
     protected ViewSubmissionResponse(string responseAction) => ResponseAction = responseAction;
 

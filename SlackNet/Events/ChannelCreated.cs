@@ -8,7 +8,7 @@ public class ChannelCreated : Event
     public CreatedChannel Channel { get; set; }
 }
 
-public class CreatedChannel
+public class CreatedChannel : SlackObject
 {
     public string Id { get; set; }
     public string Name { get; set; }

@@ -2,7 +2,7 @@
 
 namespace SlackNet.Interaction;
 
-public class DialogErrorResponse
+public class DialogErrorResponse : SlackObject
 {
     public IEnumerable<DialogError> Errors { get; set; }
 }

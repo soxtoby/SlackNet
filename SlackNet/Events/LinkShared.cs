@@ -21,7 +21,7 @@ public enum LinkSource
     Composer
 }
 
-public class SharedLink
+public class SharedLink : SlackObject
 {
     public string Domain { get; set; }
     public string Url { get; set; }
