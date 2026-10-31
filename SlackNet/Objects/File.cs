@@ -14,12 +14,19 @@ public class File
     public string Mimetype { get; set; }
     public string Filetype { get; set; }
     public string PrettyType { get; set; }
+    /// <summary>How the media should be displayed.</summary>
+    public string MediaDisplayType { get; set; }
     public string User { get; set; }
+    /// <summary>Team of the user who created the file.</summary>
+    public string UserTeam { get; set; }
+    /// <summary>Team where the file originated.</summary>
+    public string SourceTeam { get; set; }
     public string Mode { get; set; }
     public bool Editable { get; set; }
     public bool IsExternal { get; set; }
     public string ExternalType { get; set; }
     public string Username { get; set; }
+    public bool DisplayAsBot { get; set; }
     public int Size { get; set; }
     public string UrlPrivate { get; set; }
     public string UrlPrivateDownload { get; set; }
@@ -50,6 +57,8 @@ public class File
     public bool IsStarred { get; set; }
     public string[] PinnedTo { get; set; }
     public bool SkippedShares { get; set; }
+    /// <summary>Whether there are additional shares not returned.</summary>
+    public bool HasMoreShares { get; set; }
     public FileShares Shares { get; set; }
     public IList<string> TeamsSharedWith { get; set; }
     public bool IsRestrictedSharingEnabled { get; set; }
