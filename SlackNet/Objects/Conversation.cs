@@ -40,6 +40,11 @@ public class Conversation
     public DateTime CreatedDate => Created.ToDateTime().GetValueOrDefault();
 
     /// <summary>
+    /// The timestamp, in milliseconds (not seconds like <see cref="Created"/>), when the channel settings were updated - for example, the "topic" or "description" of the channel changed.
+    /// </summary>
+    public long Updated { get; set; }
+
+    /// <summary>
     /// The user ID of the member that created this channel.
     /// </summary>
     public string Creator { get; set; }
@@ -48,6 +53,11 @@ public class Conversation
     /// Indicates the "host" of a shared channel. The value may contain a workspace's ID (beginning with T) or an enterprise grid organization's ID (beginning with E).
     /// </summary>
     public string ConversationHostId { get; set; }
+
+    /// <summary>
+    /// The ID of the workspace the conversation is within.
+    /// </summary>
+    public string ContextTeamId { get; set; }
 
     /// <summary>
     /// Indicates a conversation is archived. Frozen in time.
@@ -105,6 +115,11 @@ public class Conversation
     /// Represents an unnamed private conversation between multiple users. It's an <see cref="IsPrivate"/> kind of thing.
     /// </summary>
     public bool IsMpim { get; set; }
+
+    /// <summary>
+    /// Whether a DM is open; this field is DM/MPIM-specific.
+    /// </summary>
+    public bool IsOpen { get; set; }
 
     /// <summary>
     /// The timestamp for the last message the calling user has read in this channel.
