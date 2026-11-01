@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Test and pack release
+        run: ./do pack
+      - name: NuGet login
+        id: nuget
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: Publish release
+        run: ./do release
+        env:
+          DOTNETDO_NUGET_API_KEY: ${{ steps.nuget.outputs.NUGET_API_KEY }}
+          GH_TOKEN: ${{ github.token }}

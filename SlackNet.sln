@@ -46,6 +46,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{865FC78C-9D83-4CAE-AE63-A3EC2CDEF0A9}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\pack.cs = scripts\pack.cs
+		scripts\prepare-release.cs = scripts\prepare-release.cs
+		scripts\release.cs = scripts\release.cs
 		scripts\test.cs = scripts\test.cs
 	EndProjectSection
 EndProject
