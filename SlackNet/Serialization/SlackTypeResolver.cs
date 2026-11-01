@@ -38,16 +38,23 @@ class SlackTypeResolver : ISlackTypeResolver
 
     }
 
-    private Dictionary<string, Type> CreateLookup(Type baseType)
-    {
-        var lookup = new Dictionary<string, Type>();
+    private Dictionary<string, Type> CreateLookup(Type baseType) =>
         _assemblies
             .SelectMany(a => a.ExportedTypes)
-            .Select(t => t.GetTypeInfo())
-            .Where(t => baseType.GetTypeInfo().IsAssignableFrom(t))
-            .Select(t => new { type = t.AsType(), slackType = t.SlackType() })
-            .ToList()
-            .ForEach(t => lookup[t.slackType] = t.type);
-        return lookup;
-    }
+            .Where(baseType.IsAssignableFrom)
+            .GroupBy(t => t.GetTypeInfo().SlackType())
+            .ToDictionary(g => g.Key, g => MostSpecific(g.ToList()));
+
+    // A type replaces any type it derives from (e.g. MessageShortcut replaces MessageAction).
+    // Otherwise the type closest to the base type wins, since some message subtypes share a name with an event (e.g. channel_archive).
+    private static Type MostSpecific(IList<Type> types) =>
+        types
+            .Where(t => !types.Any(other => other != t && t.IsAssignableFrom(other)))
+            .OrderBy(InheritanceDepth)
+            .First();
+
+    private static int InheritanceDepth(Type type) =>
+        type.BaseType == null
+            ? 0
+            : InheritanceDepth(type.BaseType) + 1;
 }

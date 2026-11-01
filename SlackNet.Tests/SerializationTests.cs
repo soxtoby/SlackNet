@@ -5,6 +5,7 @@ using EasyAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SlackNet.Events;
+using SlackNet.Interaction;
 using SlackNet.WebApi;
 
 namespace SlackNet.Tests;
@@ -83,6 +84,29 @@ public class SerializationTests
         var result = Deserialize<StringArray>(@"{ ""type"": ""array"", ""item_type"": ""string"", ""value"": [ { ""type"": ""string"", ""value"": ""foo"" } ] }");
         result.ShouldBeA<StringArray>()
             .And.Value.ShouldMatch(["foo"], (a, e) => a.Value.ShouldBe(e));
+    }
+
+    [Test]
+    public void SlackType_SharedByEventAndMessageSubtype_DeserializedAsEvent()
+    {
+        var result = Deserialize<Event>(@"{ ""type"": ""channel_archive"", ""channel"": ""C1"" }");
+        result.ShouldBeA<ChannelArchive>()
+            .And.Channel.ShouldBe("C1");
+    }
+
+    [Test]
+    public void SlackSubType_SharedByEventAndMessageSubtype_DeserializedAsMessageSubtype()
+    {
+        var result = Deserialize<Event>(@"{ ""type"": ""message"", ""subtype"": ""channel_archive"", ""channel"": ""C1"" }");
+        result.ShouldBeA<ChannelArchiveMessage>()
+            .And.Channel.ShouldBe("C1");
+    }
+
+    [Test]
+    public void SlackType_SharedWithBaseType_DeserializedAsDerivedType()
+    {
+        var result = Deserialize<InteractionRequest>(@"{ ""type"": ""message_action"" }");
+        result.ShouldBeA<MessageShortcut>();
     }
 
     [Test]
