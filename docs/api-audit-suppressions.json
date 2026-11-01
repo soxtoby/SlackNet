@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "536284a7762fbd14",
+    "Reason": "users.setActive is deprecated; intentionally excluded by MissingApis."
+  },
+  {
+    "Id": "3c02e2c2c6c8e758",
+    "Reason": "chat.delete.as_user is a legacy parameter; intentionally not implemented."
+  }
+]

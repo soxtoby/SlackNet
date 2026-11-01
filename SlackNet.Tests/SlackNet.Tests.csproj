@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SlackNet.ApiAudit\SlackNet.ApiAudit.csproj" />
     <ProjectReference Include="..\SlackNet.AspNetCore\SlackNet.AspNetCore.csproj" />
     <ProjectReference Include="..\SlackNet.Autofac\SlackNet.Autofac.csproj" />
     <ProjectReference Include="..\SlackNet.Bot\SlackNet.Bot.csproj" />

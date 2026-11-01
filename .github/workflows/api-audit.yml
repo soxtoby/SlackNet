@@ -1,0 +1,49 @@
+name: API audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      live:
+        description: Run read-only dev-workspace probes
+        type: boolean
+        default: false
+      channel:
+        description: Dev fixture channel ID (optional)
+        type: string
+      user:
+        description: Dev fixture user ID (optional; defaults to token user)
+        type: string
+      team:
+        description: Dev workspace ID (optional; useful for organization tokens)
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Audit
+        env:
+          SLACK_API_AUDIT_TOKEN: ${{ inputs.live && secrets.SLACK_API_AUDIT_TOKEN || '' }}
+          AUDIT_LIVE: ${{ inputs.live }}
+          AUDIT_CHANNEL: ${{ inputs.channel }}
+          AUDIT_USER: ${{ inputs.user }}
+          AUDIT_TEAM: ${{ inputs.team }}
+        run: >-
+          dotnet run --project SlackNet.ApiAudit --
+          --live "$AUDIT_LIVE" --channel "$AUDIT_CHANNEL" --user "$AUDIT_USER" --team "$AUDIT_TEAM"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-audit
+          path: artifacts/api-audit
+          if-no-files-found: error

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- `Conversation.Properties` and `ConversationProperties.Tabs` expose conversation tab metadata.
+
 ## v0.20.0
 
 ### Breaking
