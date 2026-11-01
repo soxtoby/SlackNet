@@ -14,5 +14,10 @@ public class Authorization
     public string UserId { get; set; }
         
     public bool IsBot { get; set; }
+
+    /// <summary>
+    /// Whether this installation is on an entire Enterprise Grid organization, rather than a single workspace.
+    /// </summary>
+    public bool IsEnterpriseInstall { get; set; }
             
 }

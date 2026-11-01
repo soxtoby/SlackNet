@@ -11,6 +11,10 @@ public class EventCallback : EventRequest
 {
     public string TeamId { get; set; }
     public string EnterpriseId { get; set; }
+    /// <summary>The workspace through which your app is receiving the event (i.e., where the app is installed).</summary>
+    public string ContextTeamId { get; set; }
+    /// <summary>The enterprise org through which your app is receiving the event (i.e., where the app is installed).</summary>
+    public string ContextEnterpriseId { get; set; }
     public string ApiAppId { get; set; }
     public bool IsExtSharedChannel { get; set; }
     public Event Event { get; set; }
