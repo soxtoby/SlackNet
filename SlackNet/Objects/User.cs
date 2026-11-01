@@ -21,10 +21,14 @@ public class User
     public bool IsRestricted { get; set; }
     public bool IsUltraRestricted { get; set; }
     public bool IsBot { get; set; }
+    /// <summary>Whether this is a workflow bot user.</summary>
+    public bool IsWorkflowBot { get; set; }
     public bool IsStranger { get; set; }
     public int Updated { get; set; }
     public bool IsAppUser { get; set; }
     public bool IsInvitedUser { get; set; }
+    /// <summary>Whether the user's email address has been confirmed.</summary>
+    public bool IsEmailConfirmed { get; set; }
     [JsonIgnore]
     public DateTime UpdateTime => Updated.ToDateTime().GetValueOrDefault();
     [JsonProperty("has_2fa")]
@@ -32,6 +36,8 @@ public class User
     public string TwoFactorType { get; set; }
     public string Locale { get; set; }
     public EnterpriseUser EnterpriseUser { get; set; }
+    /// <summary>Contact card sharing permission setting.</summary>
+    public string WhoCanShareContactCard { get; set; }
 
     public override string ToString() => Link.User(Id).ToString();
 }
