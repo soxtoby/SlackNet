@@ -24,7 +24,7 @@ Provide a dedicated dev-workspace bot or user token through the `SLACK_API_AUDIT
 dotnet run --project SlackNet.ApiAudit -- --live true --channel C_FIXTURE --user U_FIXTURE
 ```
 
-The user is optional and defaults to the token's user. The channel is optional; omitting it leaves channel info and history explicitly unverified. An empty channel is not automatically replaced by another workspace channel. List probes use the authenticated workspace ID, or `--team T_FIXTURE` for organization tokens that need an explicit workspace.
+The user is optional and defaults to the token's user. The channel is optional; omitting it leaves channel info and history explicitly unverified. An empty channel is not automatically replaced by another workspace channel. List probes use the fixture channel's context workspace when available, falling back to the authenticated workspace. `--team T_FIXTURE` explicitly overrides either choice for organization tokens.
 
 Read-only probes: `auth.test`, `users.list`, `users.info`, `conversations.list`, `conversations.info`, `conversations.history`. Use `users:read`, `channels:read`, and `channels:history` for public-channel coverage; private channels require the corresponding scopes and membership. Token type, workspace features and permissions can restrict coverage. Lists sample one page of 20 users/channels; history samples up to 15 messages. No messages or fixtures are created or modified. No pagination or rate-limit retries occur in this pilot. Rate limits, scope errors, empty samples and missing fixtures require further investigation, not a clean bill of health.
 

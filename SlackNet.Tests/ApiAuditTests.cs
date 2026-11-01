@@ -178,6 +178,20 @@ public class ApiAuditTests
         observations.Count.ShouldBe(2);
     }
 
+    [TestCase(null, "T-fixture")]
+    [TestCase("T-override", "T-override")]
+    public async Task LiveProbes_Run_ListsUseFixtureWorkspaceUnlessExplicitlyOverridden(string team, string allowedTeam)
+    {
+        using var http = new HttpClient(new WorkspaceProbeHandler(allowedTeam));
+        var observations = new List<Observation>();
+        var sut = new LiveProbes(http, await ApiInventory.Read(), [], observations);
+
+        await sut.Run("C-fixture", null, team);
+
+        observations.Single(o => o.Method == "users.list").Status.ShouldBe("Checked");
+        observations.Single(o => o.Method == "conversations.list").Status.ShouldBe("Checked");
+    }
+
     [Test]
     public async Task AuditRunner_Run_FullResponseExampleUsesAvailableFullResponseOverload()
     {
@@ -223,6 +237,27 @@ public class ApiAuditTests
         finally
         {
             output.Delete(true);
+        }
+    }
+
+    private class WorkspaceProbeHandler(string allowedTeam) : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var method = request.RequestUri.AbsolutePath.Split('/').Last();
+            var response = method switch
+                {
+                    "auth.test" => """{"ok":true,"user_id":"U-private","team_id":"T-default"}""",
+                    "conversations.info" => """{"ok":true,"channel":{"id":"C-fixture","context_team_id":"T-fixture"}}""",
+                    "users.list" or "conversations.list" when !request.RequestUri.Query.Contains($"team_id={allowedTeam}") =>
+                        """{"ok":false,"error":"team_access_not_granted"}""",
+                    "users.list" => """{"ok":true,"members":[{"id":"U-private"}]}""",
+                    "conversations.list" => """{"ok":true,"channels":[{"id":"C-fixture"}]}""",
+                    "users.info" => """{"ok":true,"user":{"id":"U-private"}}""",
+                    "conversations.history" => """{"ok":true,"messages":[{"type":"message","text":"private"}]}""",
+                    _ => throw new InvalidOperationException($"Unexpected probe: {method}")
+                };
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(response) });
         }
     }
 

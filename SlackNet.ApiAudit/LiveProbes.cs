@@ -15,8 +15,10 @@ public class LiveProbes(HttpClient http, IReadOnlyDictionary<string, ApiMethod> 
             observations.Add(new Observation("Live probes", "Live", "Not covered", "Authentication failed; dependent probes were not run.", []));
         else
         {
+            var channelResponse = channel == null ? null
+                : await Probe("conversations.info", new() { ["channel"] = channel, ["include_num_members"] = "true", ["include_locale"] = "true" });
             var userId = user ?? auth.Value<string>("user_id");
-            var teamId = team ?? auth.Value<string>("team_id");
+            var teamId = team ?? channelResponse?["channel"]?.Value<string>("context_team_id") ?? auth.Value<string>("team_id");
             var usersArguments = new Dictionary<string, string> { ["limit"] = "20", ["include_locale"] = "true" };
             var conversationsArguments = new Dictionary<string, string> { ["limit"] = "20", ["exclude_archived"] = "true" };
             if (!string.IsNullOrEmpty(teamId))
@@ -30,10 +32,7 @@ public class LiveProbes(HttpClient http, IReadOnlyDictionary<string, ApiMethod> 
             await Probe("conversations.list", conversationsArguments);
 
             if (channel != null)
-            {
-                await Probe("conversations.info", new() { ["channel"] = channel, ["include_num_members"] = "true", ["include_locale"] = "true" });
                 await Probe("conversations.history", new() { ["channel"] = channel, ["limit"] = "15", ["include_all_metadata"] = "true" });
-            }
             else
             {
                 observations.Add(new Observation("conversations.info", "Live", "Not covered", "No fixture channel supplied.", []));
@@ -42,7 +41,7 @@ public class LiveProbes(HttpClient http, IReadOnlyDictionary<string, ApiMethod> 
         }
     }
 
-    private async Task Probe(string method, Dictionary<string, string> arguments)
+    private async Task<JObject> Probe(string method, Dictionary<string, string> arguments)
     {
         var response = await Call(method, arguments);
         if (response != null)
@@ -55,6 +54,7 @@ public class LiveProbes(HttpClient http, IReadOnlyDictionary<string, ApiMethod> 
             observations.Add(new Observation(method, "Live", count == 0 ? "Partial" : "Checked",
                 $"One response sampled{(count == null ? "" : $"; {count} items")}{(more ? "; more pages available" : "")}. Values discarded; absent fields do not imply removal.", audit.Shapes));
         }
+        return response;
     }
 
     private async Task<JObject> Call(string method, Dictionary<string, string> arguments)
