@@ -170,6 +170,11 @@ public class Conversation
 
     public Purpose Purpose { get; set; }
 
+    /// <summary>
+    /// Additional conversation properties, including <see cref="ConversationProperties.Tabs"/>.
+    /// </summary>
+    public ConversationProperties Properties { get; set; }
+
     public string[] PreviousNames { get; set; }
 
     public int Priority { get; set; }
