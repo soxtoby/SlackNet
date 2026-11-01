@@ -1,4 +1,9 @@
-﻿- XML docs should match the Slack docs, but without documenting limits, and referencing existing types and members where possible.
+﻿XML docs should match the Slack docs, but without documenting limits, and referencing existing types and members where possible.
+
+# Tests
+
+Test the behaviour a change introduces. Code that follows an established pattern inherits that pattern's tests. e.g. a property mapped by the snake_case naming convention, or an event or block identified by its class name, needs no test of its own.
+
 # Changelog
 
 A change a user would notice gets an entry under `## Unreleased` in `CHANGELOG.md`, under one of these headings, which `./do prepare-release` reads to choose the next version:

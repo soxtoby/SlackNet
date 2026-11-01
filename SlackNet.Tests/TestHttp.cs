@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using EasyAssertions;
 using Newtonsoft.Json.Linq;
 using SlackNet.WebApi;
 
@@ -25,11 +24,4 @@ class TestHttp : IHttp
         AuthorizationHeaders.Add(requestMessage.Headers.Authorization?.ToString());
         return (T)(object)new WebApiResponse { Ok = (bool)Response["ok"]!, Data = Response };
     }
-}
-
-static class JsonAssertions
-{
-    public static void ShouldMatchJson(this JObject actual, string expectedJson) =>
-        JToken.DeepEquals(JObject.Parse(expectedJson), actual)
-            .ShouldBe(true, $"Expected JSON {JObject.Parse(expectedJson)} but was {actual}");
 }
