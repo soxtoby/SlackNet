@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.20.0
+
 ### Breaking
 - Removed `ISlackTypeResolver`, along with `UseTypeResolver`, `ISlackServiceProvider.GetTypeResolver`, `SlackServiceBuilder.GetTypeResolver`, `Default.SlackTypeResolver` and `Default.AssembliesContainingSlackTypes`. `Default.JsonSettings` no longer takes a type resolver. Use `ReplaceSlackType` or `RegisterSlackType` to deserialize your own types.
 
@@ -19,6 +21,8 @@
 
 ### Fixed
 - `channel_archive`, `channel_unarchive`, `group_archive` and `group_unarchive` events are deserialized as `ChannelArchive`, `ChannelUnarchive`, `GroupArchive` and `GroupUnarchive` events, rather than as message subtypes.
+
+Thankyou to @we4sz for his help with this release 💪
 
 ## v0.19.0
 
