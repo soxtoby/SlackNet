@@ -12,8 +12,9 @@ namespace SlackNet;
 public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : SlackServiceConfigurationBase<TConfig>
 {
     private Func<ISlackServiceProvider, IHttp> _httpProvider = sp => Default.Http(sp.GetJsonSettings(), logger: sp.GetLogger());
-    private Func<ISlackServiceProvider, SlackJsonSettings> _jsonSettingsProvider = sp => Default.JsonSettings(sp.GetTypeResolver(), sp.GetLogger());
-    private Func<ISlackServiceProvider, ISlackTypeResolver> _slackTypeResolverProvider = sp => Default.SlackTypeResolver();
+    private Func<ISlackServiceProvider, SlackJsonSettings> _jsonSettingsProvider;
+    private readonly Dictionary<Type, Type> _replacedSlackTypes = new();
+    private readonly List<(Type Type, string TypeIdentifier)> _registeredSlackTypes = [];
     private Func<ISlackServiceProvider, ISlackUrlBuilder> _urlBuilderProvider = sp => Default.UrlBuilder(sp.GetJsonSettings());
     private Func<ISlackServiceProvider, ILogger> _loggerProvider = sp => Default.Logger;
     private Func<ISlackServiceProvider, IWebSocketFactory> _webSocketFactoryProvider = sp => Default.WebSocketFactory;
@@ -51,6 +52,7 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     protected SlackServiceConfigurationBase()
     {
         _requestListenerProviders.Add(CreateRequestContextPopulator);
+        _jsonSettingsProvider = CreateJsonSettings;
         _handlerFactoryProvider = CreateHandlerFactory;
         _apiClientProvider = CreateApiClient;
         _socketModeClientProvider = CreateSocketModeClient;
@@ -75,8 +77,24 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     }
 
     public TConfig UseHttp(Func<ISlackServiceProvider, IHttp> httpProvider) => Chain(() => _httpProvider = httpProvider);
+    /// <summary>
+    /// Replaces the default JSON settings, along with any Slack types registered with <see cref="ReplaceSlackType{TSlackType,TReplacement}"/> or <see cref="RegisterSlackType{TSlackType}(string)"/>.
+    /// </summary>
     public TConfig UseJsonSettings(Func<ISlackServiceProvider, SlackJsonSettings> jsonSettingsProvider) => Chain(() => _jsonSettingsProvider = jsonSettingsProvider);
-    public TConfig UseTypeResolver(Func<ISlackServiceProvider, ISlackTypeResolver> slackTypeResolverProvider) => Chain(() => _slackTypeResolverProvider = slackTypeResolverProvider);
+    /// <summary>
+    /// Deserializes Slack objects as <typeparamref name="TReplacement"/> wherever SlackNet would create a <typeparamref name="TSlackType"/>,
+    /// so you can add properties that SlackNet doesn't have yet.
+    /// Only <typeparamref name="TSlackType"/> itself is replaced, not types derived from it.
+    /// </summary>
+    public TConfig ReplaceSlackType<TSlackType, TReplacement>() where TReplacement : TSlackType => Chain(() => _replacedSlackTypes[typeof(TSlackType)] = typeof(TReplacement));
+    /// <summary>
+    /// Deserializes Slack objects identified by <paramref name="typeIdentifier"/> as <typeparamref name="TSlackType"/>, so you can use Slack types that SlackNet doesn't have yet.
+    /// <typeparamref name="TSlackType"/> should derive from the SlackNet type it's a kind of, e.g. <see cref="Event"/> for an event, or <see cref="MessageEvent"/> for a message subtype.
+    /// To add properties to a type that SlackNet already has, use <see cref="ReplaceSlackType{TSlackType,TReplacement}"/> instead.
+    /// </summary>
+    /// <param name="typeIdentifier">The string that Slack uses to identify the type, as specified by <see cref="SlackTypeAttribute"/> on SlackNet's own types.</param>
+    /// <exception cref="ArgumentException">SlackNet already has a type for <paramref name="typeIdentifier"/>.</exception>
+    public TConfig RegisterSlackType<TSlackType>(string typeIdentifier) => Chain(() => AddRegisteredSlackType(typeof(TSlackType), typeIdentifier));
     public TConfig UseUrlBuilder(Func<ISlackServiceProvider, ISlackUrlBuilder> urlBuilderProvider) => Chain(() => _urlBuilderProvider = urlBuilderProvider);
     public TConfig UseLogger(Func<ISlackServiceProvider, ILogger> loggerProvider) => Chain(() => _loggerProvider = loggerProvider);
     public TConfig UseWebSocketFactory(Func<ISlackServiceProvider, IWebSocketFactory> webSocketFactoryProvider) => Chain(() => _webSocketFactoryProvider = webSocketFactoryProvider);
@@ -98,7 +116,6 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
         new SlackServiceProvider(
             _httpProvider,
             _jsonSettingsProvider,
-            _slackTypeResolverProvider,
             _urlBuilderProvider,
             _loggerProvider,
             _webSocketFactoryProvider,
@@ -109,6 +126,18 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
             _apiTokenProvider,
             _appLevelTokenProvider,
             dependencyProvider);
+
+    SlackJsonSettings CreateJsonSettings(ISlackServiceProvider serviceProvider) =>
+        Default.JsonSettings(new SlackTypeResolver(_replacedSlackTypes, _registeredSlackTypes), serviceProvider.GetLogger());
+
+    void AddRegisteredSlackType(Type type, string typeIdentifier)
+    {
+        var existingType = new SlackTypeResolver().FindExistingType(type, typeIdentifier);
+        if (existingType != null)
+            throw new ArgumentException($"SlackNet already has {existingType.FullName} for Slack type '{typeIdentifier}'. To add properties to it, derive from it and use ReplaceSlackType<{existingType.Name}, {type.Name}>() instead.", nameof(typeIdentifier));
+
+        _registeredSlackTypes.Add((type, typeIdentifier));
+    }
 
     SlackHandlerFactory CreateHandlerFactory(ISlackServiceProvider serviceProvider) =>
         new(

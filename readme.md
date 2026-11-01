@@ -11,6 +11,7 @@ This project builds on the [Slack API](https://docs.slack.dev/apis/). You should
     - [Endpoints naming convention](#endpoints-naming-convention)
   - [SlackNet.AzureFunctions](#slacknetazurefunctions)
 - [Examples](./Examples)
+- [Properties and types SlackNet doesn't have yet](#properties-and-types-slacknet-doesnt-have-yet)
 - [Contributing](#contributing)
 
 ## Getting Started
@@ -106,6 +107,14 @@ Add event handler registrations inside the AddSlackNet callback. See the [AzureF
 
 ## Examples
 [Several example projects](./Examples) are provided to help you get started.
+
+## Properties and types SlackNet doesn't have yet
+You can add properties to SlackNet's types, or add types that SlackNet doesn't have yet, by deriving from SlackNet's types and registering them when you configure SlackNet:
+```c#
+.ReplaceSlackType<User, MyUser>()               // MyUser derives from User
+.RegisterSlackType<MyEvent>("some_new_event")   // MyEvent derives from Event
+```
+Please also [raise an issue](https://github.com/soxtoby/SlackNet/issues) for anything that's missing, so it can be added to SlackNet.
 
 ## Contributing
 Contributions are welcome. Currently, changes must be made on a feature branch, otherwise the CI build will fail.

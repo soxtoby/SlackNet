@@ -11,7 +11,6 @@ public abstract class FactorySlackServiceConfiguration<TConfig> : SlackServiceCo
 {
     public TConfig UseHttp<TService>() where TService : class, IHttp => UseHttp(GetServiceFactory<IHttp, TService>());
     public TConfig UseJsonSettings<TService>() where TService : SlackJsonSettings => UseJsonSettings(GetServiceFactory<SlackJsonSettings, TService>());
-    public TConfig UseTypeResolver<TService>() where TService : class, ISlackTypeResolver => UseTypeResolver(GetServiceFactory<ISlackTypeResolver, TService>());
     public TConfig UseUrlBuilder<TService>() where TService : class, ISlackUrlBuilder => UseUrlBuilder(GetServiceFactory<ISlackUrlBuilder, TService>());
     public TConfig UseLogger<TService>() where TService : class, ILogger => UseLogger(GetServiceFactory<ILogger, TService>());
     public TConfig UseWebSocketFactory<TService>() where TService : class, IWebSocketFactory => UseWebSocketFactory(GetServiceFactory<IWebSocketFactory, TService>());

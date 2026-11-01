@@ -32,7 +32,7 @@ public class CoreSocketModeClientTests
     {
         _slack = Substitute.For<ISlackApiClient>();
         _sockets = new TestWebSocketFactory();
-        _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
+        _jsonSettings = Default.JsonSettings();
         _logger = new TestLogger();
         _sut = new CoreSocketModeClient(
             _slack,

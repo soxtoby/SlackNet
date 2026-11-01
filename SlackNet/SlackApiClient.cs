@@ -156,7 +156,7 @@ public class SlackApiClient : ISlackApiClient
 
     public SlackApiClient(string token)
     {
-        _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
+        _jsonSettings = Default.JsonSettings();
         _http = Default.Http(_jsonSettings);
         _urlBuilder = Default.UrlBuilder(_jsonSettings);
         _apiTokenProvider = new ConstantApiTokenProvider(token);

@@ -16,7 +16,6 @@ public class SlackServiceBuilder : SlackServiceConfigurationBase<SlackServiceBui
 
     public IHttp GetHttp() => _factory.Value.GetHttp();
     public SlackJsonSettings GetJsonSettings() => _factory.Value.GetJsonSettings();
-    public ISlackTypeResolver GetTypeResolver() => _factory.Value.GetTypeResolver();
     public ISlackUrlBuilder GetUrlBuilder() => _factory.Value.GetUrlBuilder();
     public ILogger GetLogger() => _factory.Value.GetLogger();
     public IWebSocketFactory GetWebSocketFactory() => _factory.Value.GetWebSocketFactory();

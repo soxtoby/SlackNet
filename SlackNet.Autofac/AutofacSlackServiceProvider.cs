@@ -30,7 +30,6 @@ class AutofacSlackServiceProvider : ISlackServiceProvider
 
     public IHttp GetHttp() => _baseProvider.GetHttp();
     public SlackJsonSettings GetJsonSettings() => _baseProvider.GetJsonSettings();
-    public ISlackTypeResolver GetTypeResolver() => _baseProvider.GetTypeResolver();
     public ISlackUrlBuilder GetUrlBuilder() => _baseProvider.GetUrlBuilder();
     public ILogger GetLogger() => _baseProvider.GetLogger();
     public IWebSocketFactory GetWebSocketFactory() => _baseProvider.GetWebSocketFactory();

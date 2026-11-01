@@ -12,7 +12,6 @@ public abstract class FactorySlackServiceConfigurationWithDependencyResolver<TCo
 {
     public TConfig UseHttp(Func<TDependencyResolver, IHttp> httpProvider) => UseHttp(GetServiceFactory(httpProvider));
     public TConfig UseJsonSettings(Func<TDependencyResolver, SlackJsonSettings> jsonSettingsProvider) => UseJsonSettings(GetServiceFactory(jsonSettingsProvider));
-    public TConfig UseTypeResolver(Func<TDependencyResolver, ISlackTypeResolver> slackTypeResolverProvider) => UseTypeResolver(GetServiceFactory(slackTypeResolverProvider));
     public TConfig UseUrlBuilder(Func<TDependencyResolver, ISlackUrlBuilder> urlBuilderProvider) => UseUrlBuilder(GetServiceFactory(urlBuilderProvider));
     public TConfig UseLogger(Func<TDependencyResolver, ILogger> urlBuilderProvider) => UseLogger(GetServiceFactory(urlBuilderProvider));
     public TConfig UseWebSocketFactory(Func<TDependencyResolver, IWebSocketFactory> webSocketFactoryProvider) => UseWebSocketFactory(GetServiceFactory(webSocketFactoryProvider));

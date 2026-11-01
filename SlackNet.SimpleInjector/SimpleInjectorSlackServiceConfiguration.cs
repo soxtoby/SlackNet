@@ -21,7 +21,6 @@ public class SimpleInjectorSlackServiceConfiguration : FactorySlackServiceConfig
         RegisterFallback<ISlackServiceProvider>(container, () => new SimpleInjectorSlackServiceProvider(config.CreateServiceFactory, container), Lifestyle.Singleton);
         RegisterFallback<IHttp>(container, () => container.GetInstance<ISlackServiceProvider>().GetHttp(), Lifestyle.Singleton);
         RegisterFallback<SlackJsonSettings>(container, () => container.GetInstance<ISlackServiceProvider>().GetJsonSettings(), Lifestyle.Singleton);
-        RegisterFallback<ISlackTypeResolver>(container, () => container.GetInstance<ISlackServiceProvider>().GetTypeResolver(), Lifestyle.Singleton);
         RegisterFallback<ISlackUrlBuilder>(container, () => container.GetInstance<ISlackServiceProvider>().GetUrlBuilder(), Lifestyle.Singleton);
         RegisterFallback<ILogger>(container, () => container.GetInstance<ISlackServiceProvider>().GetLogger(), Lifestyle.Singleton);
         RegisterFallback<IWebSocketFactory>(container, () => container.GetInstance<ISlackServiceProvider>().GetWebSocketFactory(), Lifestyle.Singleton);

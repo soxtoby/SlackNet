@@ -53,12 +53,15 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
     }
 
     [Test]
-    public void UseTypeResolver()
+    public async Task ReplaceSlackType()
     {
-        UseService(
-            Substitute.For<ISlackTypeResolver>(),
-            (c, sp) => c.UseTypeResolver(sp),
-            s => s.GetTypeResolver());
+        var http = new TestHttp { Response = JObject.Parse(@"{ ""ok"": true, ""user"": { ""id"": ""U1"", ""not_in_slack_net"": ""value"" } }") };
+        var sut = Configure(c => c.UseHttp(_ => http).ReplaceSlackType<User, CustomUser>());
+
+        var result = await sut.GetApiClient().Users.Info("U1");
+
+        result.ShouldBeA<CustomUser>()
+            .And.NotInSlackNet.ShouldBe("value");
     }
 
     [Test]
@@ -906,5 +909,10 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
     {
         public TestRequestListener(InstanceTracker tracker) : base(tracker) { }
         public void OnRequestBegin(SlackRequestContext context) { }
+    }
+
+    public class CustomUser : User
+    {
+        public string NotInSlackNet { get; set; }
     }
 }

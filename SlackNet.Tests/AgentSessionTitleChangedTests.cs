@@ -12,7 +12,7 @@ public class AgentSessionTitleChangedTests
     [SetUp]
     public void SetUp()
     {
-        _sut = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)).SerializerSettings;
+        _sut = Default.JsonSettings().SerializerSettings;
     }
 
     [Test]

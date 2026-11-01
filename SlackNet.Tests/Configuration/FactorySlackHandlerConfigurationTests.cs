@@ -60,14 +60,6 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     }
 
     [Test]
-    public void UseTypeResolverType()
-    {
-        UseService<ISlackTypeResolver, TestTypeResolver>(
-            c => c.UseTypeResolver<TestTypeResolver>(),
-            s => s.GetTypeResolver());
-    }
-
-    [Test]
     public void UseUrlBuilderType()
     {
         UseService<ISlackUrlBuilder, TestUrlBuilder>(
@@ -957,11 +949,6 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     }
 
     protected class TestJsonSettings() : SlackJsonSettings(new JsonSerializerSettings());
-
-    protected class TestTypeResolver : ISlackTypeResolver
-    {
-        public Type FindType(Type baseType, string slackType) => throw new NotImplementedException();
-    }
 
     protected class TestUrlBuilder : ISlackUrlBuilder
     {

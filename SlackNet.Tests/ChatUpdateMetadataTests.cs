@@ -17,7 +17,7 @@ public class ChatUpdateMetadataTests
     [SetUp]
     public void SetUp()
     {
-        var jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
+        var jsonSettings = Default.JsonSettings();
         _http = new RecordingHttp();
         _sut = new SlackApiClient(_http, Default.UrlBuilder(jsonSettings), jsonSettings, "token");
     }

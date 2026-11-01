@@ -27,14 +27,6 @@ public abstract class FactorySlackHandlerConfigurationWithDependencyResolverTest
     }
 
     [Test]
-    public void UseFactoryResolverFactory()
-    {
-        UseService<ISlackTypeResolver, TestTypeResolver>(
-            c => c.UseTypeResolver(r => new TestTypeResolver()),
-            s => s.GetTypeResolver());
-    }
-
-    [Test]
     public void UseUrlBuilderFactory()
     {
         UseService<ISlackUrlBuilder, TestUrlBuilder>(

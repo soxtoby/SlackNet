@@ -86,7 +86,7 @@ public class SlackRtmClient : ISlackRtmClient
 
     public SlackRtmClient(string token)
     {
-        _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
+        _jsonSettings = Default.JsonSettings();
         _client = new SlackApiClient(Default.Http(_jsonSettings), Default.UrlBuilder(_jsonSettings), _jsonSettings, token);
         _webSocket = new ReconnectingWebSocket(Default.WebSocketFactory, Scheduler.Default, Default.Logger, 0);
         _rawEvents = DeserializeEvents(_webSocket, _jsonSettings);

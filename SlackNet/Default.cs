@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Reactive.Concurrency;
-using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SlackNet.SocketMode;
@@ -21,10 +20,12 @@ public static class Default
 
     public static ISlackUrlBuilder UrlBuilder(SlackJsonSettings jsonSettings = null) => new SlackUrlBuilder(jsonSettings ?? JsonSettings());
 
-    public static SlackJsonSettings JsonSettings(ISlackTypeResolver slackTypeResolver = null, ILogger logger = null) => 
-        new(SerializerSettings(slackTypeResolver ?? SlackTypeResolver(), logger ?? Logger));
+    public static SlackJsonSettings JsonSettings(ILogger logger = null) => JsonSettings(new SlackTypeResolver(), logger);
 
-    private static JsonSerializerSettings SerializerSettings(ISlackTypeResolver slackTypeResolver, ILogger logger)
+    internal static SlackJsonSettings JsonSettings(SlackTypeResolver slackTypeResolver, ILogger logger) =>
+        new(SerializerSettings(slackTypeResolver, logger ?? Logger));
+
+    private static JsonSerializerSettings SerializerSettings(SlackTypeResolver slackTypeResolver, ILogger logger)
     {
         var namingStrategy = new SnakeCaseNamingStrategy();
         return new JsonSerializerSettings
@@ -45,12 +46,6 @@ public static class Default
                     }
             };
     }
-
-    public static ISlackTypeResolver SlackTypeResolver() => new SlackTypeResolver(AssembliesContainingSlackTypes);
-
-    public static ISlackTypeResolver SlackTypeResolver(params Assembly[] assembliesContainingSlackTypes) => new SlackTypeResolver(assembliesContainingSlackTypes);
-
-    public static Assembly[] AssembliesContainingSlackTypes => [typeof(Default).GetTypeInfo().Assembly];
 
     public static IWebSocketFactory WebSocketFactory => new WebSocketFactory();
 

@@ -11,7 +11,6 @@ public abstract class FactorySlackServiceConfigurationWithExternalDependencyReso
 {
     public TConfig UseHttp(Func<IHttp> httpProvider) => UseHttp(GetServiceFactory(httpProvider));
     public TConfig UseJsonSettings(Func<SlackJsonSettings> jsonSettingsProvider) => UseJsonSettings(GetServiceFactory(jsonSettingsProvider));
-    public TConfig UseTypeResolver(Func<ISlackTypeResolver> slackTypeResolverProvider) => UseTypeResolver(GetServiceFactory(slackTypeResolverProvider));
     public TConfig UseUrlBuilder(Func<ISlackUrlBuilder> urlBuilderProvider) => UseUrlBuilder(GetServiceFactory(urlBuilderProvider));
     public TConfig UseLogger(Func<ILogger> urlBuilderProvider) => UseLogger(GetServiceFactory(urlBuilderProvider));
     public TConfig UseWebSocketFactory(Func<IWebSocketFactory> webSocketFactoryProvider) => UseWebSocketFactory(GetServiceFactory(webSocketFactoryProvider));

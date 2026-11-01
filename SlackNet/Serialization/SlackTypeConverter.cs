@@ -4,23 +4,15 @@ using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SlackNet.Rtm;
 
 namespace SlackNet;
 
 // Adapted from https://github.com/manuc66/JsonSubTypes
-class SlackTypeConverter : JsonConverter
+class SlackTypeConverter(SlackTypeResolver slackTypeResolver, ILogger logger) : JsonConverter
 {
-    private readonly ISlackTypeResolver _slackTypeResolver;
-    private readonly ILogger _log;
+    private readonly ILogger _log = logger.ForSource<SlackTypeConverter>();
     [ThreadStatic] private static bool _isInsideRead;
     [ThreadStatic] private static JsonReader _reader;
-
-    public SlackTypeConverter(ISlackTypeResolver slackTypeResolver, ILogger logger)
-    {
-        _slackTypeResolver = slackTypeResolver;
-        _log = logger.ForSource<SlackTypeConverter>();
-    }
 
     public override bool CanRead => !_isInsideRead || !string.IsNullOrEmpty(_reader.Path);
 
@@ -76,7 +68,7 @@ class SlackTypeConverter : JsonConverter
     private object ReadObject(JsonReader reader, Type objectType, JsonSerializer serializer)
     {
         var jObject = JObject.Load(reader);
-        var targetType = GetType(jObject, objectType);
+        var targetType = slackTypeResolver.FindType(objectType, jObject);
         return ReadInner(CreateAnotherReader(jObject, reader), targetType, serializer);
     }
 
@@ -91,27 +83,6 @@ class SlackTypeConverter : JsonConverter
         jObjectReader.DateFormatString = reader.DateFormatString;
         jObjectReader.DateParseHandling = reader.DateParseHandling;
         return jObjectReader;
-    }
-
-    private Type GetType(JObject jObject, Type parentType)
-    {
-        if (jObject.Value<uint>("reply_to") > 0)
-            return typeof(Reply);
-
-        var type = GetType(jObject, "type", parentType);
-        
-        var subTypeProperty = type.GetCustomAttribute<SlackSubTypePropertyAttribute>()?.PropertyName.SnakeCase()
-            ?? "subtype";
-        
-        return GetType(jObject, subTypeProperty, type);
-    }
-
-    private Type GetType(JToken jObject, string typeProperty, Type baseType)
-    {
-        var slackType = jObject.Value<string>(typeProperty);
-        return slackType == null 
-            ? baseType 
-            : _slackTypeResolver.FindType(baseType, slackType);
     }
 
     private object ReadInner(JsonReader reader, Type objectType, JsonSerializer serializer)

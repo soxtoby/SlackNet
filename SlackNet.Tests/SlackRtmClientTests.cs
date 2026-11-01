@@ -22,7 +22,7 @@ public class SlackRtmClientTests
     {
         _slackApiClient = Substitute.For<ISlackApiClient>();
         _webSocketFactory = new TestWebSocketFactory();
-        _jsonSettings = Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes));
+        _jsonSettings = Default.JsonSettings();
         _scheduler = new TestScheduler();
         _sut = new SlackRtmClient(_slackApiClient, _webSocketFactory, _jsonSettings, _scheduler, Default.Logger);
     }

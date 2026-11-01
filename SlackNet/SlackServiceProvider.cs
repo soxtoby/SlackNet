@@ -9,7 +9,6 @@ public interface ISlackServiceProvider
 {
     IHttp GetHttp();
     SlackJsonSettings GetJsonSettings();
-    ISlackTypeResolver GetTypeResolver();
     ISlackUrlBuilder GetUrlBuilder();
     IWebSocketFactory GetWebSocketFactory();
     IEnumerable<ISlackRequestListener> GetRequestListeners();
@@ -27,7 +26,6 @@ class SlackServiceProvider : ISlackServiceProvider
 {
     private readonly Lazy<IHttp> _http;
     private readonly Lazy<SlackJsonSettings> _jsonSettings;
-    private readonly Lazy<ISlackTypeResolver> _slackTypeResolver;
     private readonly Lazy<ISlackUrlBuilder> _urlBuilder;
     private readonly Lazy<IWebSocketFactory> _webSocketFactory;
     private readonly IEnumerable<ISlackRequestListener> _requestListeners;
@@ -41,7 +39,6 @@ class SlackServiceProvider : ISlackServiceProvider
     public SlackServiceProvider(
         Func<ISlackServiceProvider, IHttp> httpProvider,
         Func<ISlackServiceProvider, SlackJsonSettings> jsonSettingsProvider,
-        Func<ISlackServiceProvider, ISlackTypeResolver> slackTypeResolverProvider,
         Func<ISlackServiceProvider, ISlackUrlBuilder> urlBuilderProvider,
         Func<ISlackServiceProvider, ILogger> loggerProvider,
         Func<ISlackServiceProvider, IWebSocketFactory> webSocketFactoryProvider,
@@ -56,7 +53,6 @@ class SlackServiceProvider : ISlackServiceProvider
         dependencyProvider ??= this;
         _http = new Lazy<IHttp>(() => httpProvider(dependencyProvider));
         _jsonSettings = new Lazy<SlackJsonSettings>(() => jsonSettingsProvider(dependencyProvider));
-        _slackTypeResolver = new Lazy<ISlackTypeResolver>(() => slackTypeResolverProvider(dependencyProvider));
         _urlBuilder = new Lazy<ISlackUrlBuilder>(() => urlBuilderProvider(dependencyProvider));
         _logger = new Lazy<ILogger>(() => loggerProvider(dependencyProvider));
         _webSocketFactory = new Lazy<IWebSocketFactory>(() => webSocketFactoryProvider(dependencyProvider));
@@ -70,7 +66,6 @@ class SlackServiceProvider : ISlackServiceProvider
 
     public IHttp GetHttp() => _http.Value;
     public SlackJsonSettings GetJsonSettings() => _jsonSettings.Value;
-    public ISlackTypeResolver GetTypeResolver() => _slackTypeResolver.Value;
     public ISlackUrlBuilder GetUrlBuilder() => _urlBuilder.Value;
     public ILogger GetLogger() => _logger.Value;
     public IWebSocketFactory GetWebSocketFactory() => _webSocketFactory.Value;

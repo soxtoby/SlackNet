@@ -34,7 +34,6 @@ public abstract class ServiceCollectionSlackServiceConfiguration<TConfig> : Fact
         ServiceCollection.TryAddSingleton<ISlackServiceProvider>(sp => new ServiceProviderSlackServiceProvider(CreateServiceFactory, sp));
         ServiceCollection.TryAddSingleton<IHttp>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetHttp());
         ServiceCollection.TryAddSingleton<SlackJsonSettings>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetJsonSettings());
-        ServiceCollection.TryAddSingleton<ISlackTypeResolver>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetTypeResolver());
         ServiceCollection.TryAddSingleton<ISlackUrlBuilder>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetUrlBuilder());
         ServiceCollection.TryAddSingleton<ILogger>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetLogger());
         ServiceCollection.TryAddSingleton<IWebSocketFactory>(sp => sp.GetRequiredService<ISlackServiceProvider>().GetWebSocketFactory());

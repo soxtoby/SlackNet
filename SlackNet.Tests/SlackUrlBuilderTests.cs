@@ -13,7 +13,7 @@ public class SlackUrlBuilderTests
     [SetUp]
     public void SetUp()
     {
-        _sut = Default.UrlBuilder(Default.JsonSettings(Default.SlackTypeResolver(Default.AssembliesContainingSlackTypes)));
+        _sut = Default.UrlBuilder(Default.JsonSettings());
     }
 
     [Test]
