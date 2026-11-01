@@ -1,0 +1,6 @@
+[
+  {
+    "Id": "536284a7762fbd14",
+    "Reason": "users.setActive is deprecated; intentionally excluded by MissingApis."
+  }
+]

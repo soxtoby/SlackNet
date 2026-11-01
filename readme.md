@@ -119,5 +119,7 @@ Please also [raise an issue](https://github.com/soxtoby/SlackNet/issues) for any
 ## Contributing
 Contributions are welcome. Currently, changes must be made on a feature branch, otherwise the CI build will fail.
 
+The [API audit](docs/api-audit.md) checks Slack's current method documentation against SlackNet and can probe a dev workspace for response fields the library does not model.
+
 Slack's API is large and changes often, and while their documentation is very good, it's not always 100% complete or accurate, which can easily lead to bugs or missing features in SlackNet.
 Raising issues or submitting pull requests for these sorts of discrepancies is highly appreciated, as realistically, I have to rely on the documentation unless I happen to be using a particular API myself.
