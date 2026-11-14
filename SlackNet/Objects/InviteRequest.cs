@@ -40,8 +40,21 @@ public class InviteRequest
 
     /// <summary>
     /// Whether the user is a multi-channel guest, a single-channel guest, or full member.
+    /// Not included in <see cref="WebApi.IAdminInviteRequestsDeniedApi.List"/> responses, which use <see cref="IsRestricted"/> and <see cref="IsUltraRestricted"/> instead.
     /// </summary>
-    public InviteRequestType InviteType { get; set; }
+    public InviteRequestType? InviteType { get; set; }
+
+    /// <summary>
+    /// Whether the user is a multi-channel guest.
+    /// Only included in <see cref="WebApi.IAdminInviteRequestsDeniedApi.List"/> responses; otherwise, see <see cref="InviteType"/>.
+    /// </summary>
+    public bool? IsRestricted { get; set; }
+
+    /// <summary>
+    /// Whether the user is a single-channel guest.
+    /// Only included in <see cref="WebApi.IAdminInviteRequestsDeniedApi.List"/> responses; otherwise, see <see cref="InviteType"/>.
+    /// </summary>
+    public bool? IsUltraRestricted { get; set; }
 
     /// <summary>
     /// The name of the person to invite.
@@ -66,8 +79,9 @@ public class InviteRequest
 
     /// <summary>
     /// The workspace the person will be invited to.
+    /// Only included in the <see cref="Events.InviteRequested"/> event.
     /// </summary>
-    public Team Team { get; set; } = null!;
+    public Team? Team { get; set; }
 }
 
 /// <summary>

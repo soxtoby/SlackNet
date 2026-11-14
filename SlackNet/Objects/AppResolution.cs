@@ -25,18 +25,5 @@ public class AppResolution
     /// <summary>
     /// Who last approved or restricted the app.
     /// </summary>
-    public AppResolutionActor? LastResolvedBy { get; set; }
-}
-
-/// <summary>
-/// Who approved or restricted an app.
-/// </summary>
-public class AppResolutionActor
-{
-    public string ActorId { get; set; } = null!;
-
-    /// <summary>
-    /// The type of actor, such as <c>user</c>.
-    /// </summary>
-    public string ActorType { get; set; } = null!;
+    public Actor? LastResolvedBy { get; set; }
 }

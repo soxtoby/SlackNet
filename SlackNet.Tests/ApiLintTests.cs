@@ -386,6 +386,11 @@ public class ApiLintTests
         public IAdminConversationsApi AdminConversations { get; }
         public IAdminConversationsEkmApi AdminConversationsEkm { get; }
         public IAdminConversationsRestrictAccessApi AdminConversationsRestrictAccess { get; }
+        public IAdminEmojiApi AdminEmoji { get; }
+        public IAdminInviteRequestsApi AdminInviteRequests { get; }
+        public IAdminInviteRequestsApprovedApi AdminInviteRequestsApproved { get; }
+        public IAdminInviteRequestsDeniedApi AdminInviteRequestsDenied { get; }
+        public IAdminRolesApi AdminRoles { get; }
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }

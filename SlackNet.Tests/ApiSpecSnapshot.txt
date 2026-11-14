@@ -350,6 +350,70 @@ admin.conversations.unlinkObjects arg token (required) {"type":"string","subtype
 admin.conversations.unlinkObjects arg channel (required) {"type":"string","subtype":"channel"}
 admin.conversations.unlinkObjects arg new_name (required) {"type":"string"}
 admin.conversations.unlinkObjects output null
+admin.emoji.add arg token (required) {"type":"string","subtype":"auth"}
+admin.emoji.add arg name (required) {"type":"string"}
+admin.emoji.add arg url {"type":"string","required_for_public":true}
+admin.emoji.add output null
+admin.emoji.addAlias arg token (required) {"type":"string","subtype":"auth"}
+admin.emoji.addAlias arg name (required) {"type":"string"}
+admin.emoji.addAlias arg alias_for (required) {"type":"string"}
+admin.emoji.addAlias output null
+admin.emoji.list arg token (required) {"type":"string","subtype":"auth"}
+admin.emoji.list arg cursor {"type":"string"}
+admin.emoji.list arg limit {"type":"integer","default":100}
+admin.emoji.list output emoji (required) {"type":"object"}
+admin.emoji.list output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.emoji.remove arg token (required) {"type":"string","subtype":"auth"}
+admin.emoji.remove arg name (required) {"type":"string"}
+admin.emoji.remove output null
+admin.emoji.rename arg token (required) {"type":"string","subtype":"auth"}
+admin.emoji.rename arg name (required) {"type":"string"}
+admin.emoji.rename arg new_name (required) {"type":"string"}
+admin.emoji.rename output null
+admin.inviteRequests.approve arg token (required) {"type":"string","subtype":"auth"}
+admin.inviteRequests.approve arg team_id {"type":"string"}
+admin.inviteRequests.approve arg invite_request_id (required) {"type":"string"}
+admin.inviteRequests.approve output null
+admin.inviteRequests.approved.list arg token (required) {"type":"string","subtype":"auth"}
+admin.inviteRequests.approved.list arg team_id {"type":"string"}
+admin.inviteRequests.approved.list arg cursor {"type":"string"}
+admin.inviteRequests.approved.list arg limit {"type":"integer","default":100}
+admin.inviteRequests.approved.list output response_metadata {"required":["next_cursor"],"type":"object","properties":{"next_cursor":{"type":"string"}}}
+admin.inviteRequests.approved.list output approved_requests (required) {"type":"array","items":{"schema":"approved_request"}}
+admin.inviteRequests.denied.list arg token (required) {"type":"string","subtype":"auth"}
+admin.inviteRequests.denied.list arg team_id {"schema":"team_id"}
+admin.inviteRequests.denied.list arg cursor {"type":"string"}
+admin.inviteRequests.denied.list arg limit {"type":"integer","default":100}
+admin.inviteRequests.denied.list output response_metadata {"required":["next_cursor"],"type":"object","properties":{"next_cursor":{"type":"string"}}}
+admin.inviteRequests.denied.list output denied_requests (required) {"type":"array","items":{"schema":"denied_request"}}
+admin.inviteRequests.deny arg token (required) {"type":"string","subtype":"auth"}
+admin.inviteRequests.deny arg team_id {"type":"string"}
+admin.inviteRequests.deny arg invite_request_id (required) {"type":"string"}
+admin.inviteRequests.deny output null
+admin.inviteRequests.list arg token (required) {"type":"string","subtype":"auth"}
+admin.inviteRequests.list arg team_id {"type":"string"}
+admin.inviteRequests.list arg cursor {"type":"string"}
+admin.inviteRequests.list arg limit {"type":"integer","default":100}
+admin.inviteRequests.list output response_metadata {"required":["next_cursor"],"type":"object","properties":{"next_cursor":{"type":"string"}}}
+admin.inviteRequests.list output invite_requests (required) {"type":"array","items":{"schema":"invite_request"}}
+admin.roles.addAssignments arg token (required) {"type":"string","subtype":"auth"}
+admin.roles.addAssignments arg role_id (required) {"type":"string","schema":"role_id"}
+admin.roles.addAssignments arg entity_ids (required) {"type":"array","items":{"type":"string"}}
+admin.roles.addAssignments arg user_ids (required) {"type":"array","items":{"schema":"user_id"}}
+admin.roles.addAssignments output error {"type":"string"}
+admin.roles.listAssignments arg token (required) {"type":"string","subtype":"auth"}
+admin.roles.listAssignments arg cursor {"type":"string"}
+admin.roles.listAssignments arg limit {"type":"integer","default":200}
+admin.roles.listAssignments arg role_ids {"type":"array","items":{"type":"string","schema":"role_id"}}
+admin.roles.listAssignments arg entity_ids {"type":"array","items":{"type":"string","schema":"entity_id"}}
+admin.roles.listAssignments arg sort_dir {"type":"string"}
+admin.roles.listAssignments output error {"type":"string"}
+admin.roles.listAssignments output role_assignments (required) {"type":"array","items":{"type":"object","required":["role_id","entity_id","user_id","date_create"],"properties":{"role_id":{"type":"string","schema":"role_id"},"entity_id":{"type":"string"},"user_id":{"type":"string","schema":"user_id"},"date_create":{"type":"integer"}}}}
+admin.roles.removeAssignments arg token (required) {"type":"string","subtype":"auth"}
+admin.roles.removeAssignments arg role_id (required) {"type":"string","schema":"role_id"}
+admin.roles.removeAssignments arg entity_ids (required) {"type":"array","items":{"type":"string"}}
+admin.roles.removeAssignments arg user_ids (required) {"type":"array","items":{"schema":"user_id"}}
+admin.roles.removeAssignments output error {"type":"string"}
 agents.conversations.archive arg token (required) {"type":"string","subtype":"auth"}
 agents.conversations.archive arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
 agents.conversations.archive arg summary_message_ts {"type":"string"}

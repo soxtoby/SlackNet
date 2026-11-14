@@ -33,6 +33,11 @@ public interface ISlackApiClient
     IAdminConversationsApi AdminConversations { get; }
     IAdminConversationsEkmApi AdminConversationsEkm { get; }
     IAdminConversationsRestrictAccessApi AdminConversationsRestrictAccess { get; }
+    IAdminEmojiApi AdminEmoji { get; }
+    IAdminInviteRequestsApi AdminInviteRequests { get; }
+    IAdminInviteRequestsApprovedApi AdminInviteRequestsApproved { get; }
+    IAdminInviteRequestsDeniedApi AdminInviteRequestsDenied { get; }
+    IAdminRolesApi AdminRoles { get; }
     IAgentsConversationsApi AgentsConversations { get; }
     IAgentsSessionsApi AgentsSessions { get; }
     IApiApi Api { get; }
@@ -246,6 +251,11 @@ public class SlackApiClient : ISlackApiClient
     public IAdminConversationsApi AdminConversations => new AdminConversationsApi(this);
     public IAdminConversationsEkmApi AdminConversationsEkm => new AdminConversationsEkmApi(this);
     public IAdminConversationsRestrictAccessApi AdminConversationsRestrictAccess => new AdminConversationsRestrictAccessApi(this);
+    public IAdminEmojiApi AdminEmoji => new AdminEmojiApi(this);
+    public IAdminInviteRequestsApi AdminInviteRequests => new AdminInviteRequestsApi(this);
+    public IAdminInviteRequestsApprovedApi AdminInviteRequestsApproved => new AdminInviteRequestsApprovedApi(this);
+    public IAdminInviteRequestsDeniedApi AdminInviteRequestsDenied => new AdminInviteRequestsDeniedApi(this);
+    public IAdminRolesApi AdminRoles => new AdminRolesApi(this);
     public IAgentsConversationsApi AgentsConversations => new AgentsConversationsApi(this);
     public IAgentsSessionsApi AgentsSessions => new AgentsSessionsApi(this);
     public IApiApi Api => new ApiApi(this);

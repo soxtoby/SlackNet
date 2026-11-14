@@ -8,6 +8,7 @@ using EasyAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using SlackNet.WebApi;
 
 namespace SlackNet.Tests;
 
@@ -187,6 +188,7 @@ public class WebApiRequestTests
             {"who_can_post":"type:admin,type:org_admin,user:U123,user:U456,subteam:S123","can_thread":"type:ra","enable_at_channel":"false","enable_at_here":"false"}
             """);
     }
+
 
     class RecordingHttp(SlackJsonSettings jsonSettings) : IHttp
     {
