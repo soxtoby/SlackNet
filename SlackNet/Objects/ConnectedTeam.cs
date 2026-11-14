@@ -8,4 +8,6 @@ public class ConnectedTeam
     public bool IsVerified { get; set; }
     public string Domain { get; set; }
     public int DateCreated { get; set; }
+    public string AvatarBaseUrl { get; set; }
+    public bool RequiresSponsorship { get; set; }
 }

@@ -6,4 +6,6 @@ public class InviteChannel
     public bool IsPrivate { get; set; }
     public bool IsIm { get; set; }
     public string Name { get; set; }
+    public int DateCreated { get; set; }
+    public long MessageLatestCountedTimestamp { get; set; }
 }
