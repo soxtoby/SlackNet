@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- `AppDeleted`, `AppInstalled`, `AppRequested` and `AppUninstalledTeam` events, with `AppRequest`, `App` and `AppScope`.
 - `BlocksApi.Validate`, which validates blocks, a message or a view against the Block Kit schema.
 - `CanvasesApi.GetContent`, which gets the content of a canvas as markdown or HTML.
 - `ErrorResponse.Errors` and `SlackException.ErrorDetails`, with the issues Slack found in a request, such as invalid elements reported by `BlocksApi.Validate`. `SlackException` messages include them too.
