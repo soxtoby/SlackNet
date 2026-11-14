@@ -36,6 +36,9 @@ public class SlackChangeDetectionTests
     }
 
     private static readonly string[] MissingApiMethodExceptions = [
+            "apps.activities.list", // Only for Slack-hosted apps
+            "apps.auth.external.", // Only for Slack-hosted apps
+            "apps.datastore.", // Only for Slack-hosted apps
             "stars.", // Deprecated
             "users.setActive", // Deprecated
         ];

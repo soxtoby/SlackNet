@@ -39,7 +39,7 @@ public class ApiLintTests
         foreach (var method in apiMethods)
         {
             client.Reset();
-            method.Invoke(instance, method.GetParameters().Select(DummyValue).ToArray());
+            Invoke(method, instance);
 
             LastParamShouldBeOptionalCancellationToken(method);
             AllMethodsShouldUseSameSlackMethodGroup(client, method, ref slackMethodGroup);
@@ -56,12 +56,26 @@ public class ApiLintTests
             var instance = CreateApiInstance(api, client);
             foreach (var method in api.GetMethods(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance))
             {
-                method.Invoke(instance, method.GetParameters().Select(DummyValue).ToArray());
+                Invoke(method, instance);
                 implementedApiMethods.Add(client.SlackMethod);
             }
         }
         return implementedApiMethods;
     }
+
+    private static void Invoke(MethodInfo method, object instance)
+    {
+        var closedMethod = WithDummyTypeArguments(method);
+        closedMethod.Invoke(instance, closedMethod.GetParameters().Select(DummyValue).ToArray());
+    }
+
+    /// <summary>
+    /// Generic methods, such as those taking app-defined function outputs, can only be invoked or compared once their type arguments are filled in.
+    /// </summary>
+    private static MethodInfo WithDummyTypeArguments(MethodInfo method) =>
+        method.IsGenericMethodDefinition
+            ? method.MakeGenericMethod(method.GetGenericArguments().Select(_ => typeof(JObject)).ToArray())
+            : method;
 
     private static object CreateApiInstance(Type api, FakeClient client)
     {
@@ -110,7 +124,7 @@ public class ApiLintTests
 
     private static bool MethodsEqual(MethodInfo a, MethodInfo b) =>
         a.Name == b.Name
-        && ParameterTypes(a).SequenceEqual(ParameterTypes(b));
+        && ParameterTypes(WithDummyTypeArguments(a)).SequenceEqual(ParameterTypes(WithDummyTypeArguments(b)));
 
     private static IEnumerable<Type> ParameterTypes(MethodInfo method)
     {
@@ -189,6 +203,12 @@ public class ApiLintTests
             { typeof(TimeSpan?), _ => TimeSpan.Zero },
             { typeof(SortBy), _ => SortBy.Score },
             { typeof(SortDirection), _ => SortDirection.Ascending },
+            { typeof(SortDirection?), _ => null },
+            { typeof(AppActivityLogLevel?), _ => null },
+            { typeof(AppActivitySource?), _ => null },
+            { typeof(AppActivityComponentType?), _ => null },
+            { typeof(ManagedAppPermissionType), _ => ManagedAppPermissionType.Everyone },
+            { typeof(UserConnectionStatus), _ => UserConnectionStatus.Connected },
             { typeof(ProfileFieldVisibility), _ => ProfileFieldVisibility.All },
             { typeof(Presence), _ => Presence.Active },
             { typeof(RequestPresence), _ => RequestPresence.Auto },
@@ -216,8 +236,9 @@ public class ApiLintTests
             { typeof(Args), _ => new Args() },
             { typeof(IDictionary<string, Attachment>), _ => new Dictionary<string, Attachment>() },
             { typeof(IDictionary<string, string>), _ => new Dictionary<string, string>() },
+            { typeof(IDictionary<string, object>), _ => new Dictionary<string, object>() },
             { typeof(IEnumerable<ExternalFileReference>), _ => Enumerable.Empty<ExternalFileReference>() },
-            { typeof(FileUpload), _ => new FileUpload(string.Empty, string.Empty) },
+            { typeof(FileUpload), _ => new FileUpload("foo", string.Empty) },
             { typeof(IEnumerable<FileUpload>), _ => Enumerable.Empty<FileUpload>() },
             { typeof(IEnumerable<AssistantPrompt>), _ => Enumerable.Empty<AssistantPrompt>() },
             { typeof(IEnumerable<CanvasChange>), _ => Enumerable.Empty<CanvasChange>() },
@@ -245,6 +266,7 @@ public class ApiLintTests
             { typeof(AgentResource), _ => null },
             { typeof(AppManifest), _ => null },
             { typeof(JObject), _ => new JObject() },
+            { typeof(IEnumerable<JObject>), _ => Enumerable.Empty<JObject>() },
             { typeof(CancellationToken), _ => null }
         };
 
@@ -310,9 +332,13 @@ public class ApiLintTests
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }
+        public IAppsApi Apps { get; }
         public IAppsConnectionsApi AppsConnections { get; }
         public IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
+        public IAppsIconApi AppsIcon { get; }
+        public IAppsManagedPermissionsApi AppsManagedPermissions { get; }
         public IAppsManifestApi AppsManifest { get; }
+        public IAppsUserConnectionApi AppsUserConnection { get; }
         public IAssistantSearchApi AssistantSearch { get; }
         public IAssistantThreadsApi AssistantThreads { get; }
         public IAuthApi Auth { get; }

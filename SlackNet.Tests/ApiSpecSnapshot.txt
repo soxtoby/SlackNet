@@ -95,6 +95,15 @@ apps.event.authorizations.list arg cursor {"type":"string"}
 apps.event.authorizations.list arg limit {"type":"integer"}
 apps.event.authorizations.list output cursor_next {"type":"string"}
 apps.event.authorizations.list output authorizations (required) {"type":"array","items":{"type":"object","required":["enterprise_id","team_id","user_id","is_bot","is_enterprise_install"],"properties":{"enterprise_id":{"anyOf":[{"type":"null"},{"type":"string"}]},"team_id":{"anyOf":[{"type":"null"},{"type":"string"}]},"user_id":{"type":"string"},"is_bot":{"type":"boolean"},"is_enterprise_install":{"type":"boolean"}}}}
+apps.icon.set arg token (required) {"type":"string","subtype":"auth"}
+apps.icon.set arg app_id (required) {"schema":"app_id"}
+apps.icon.set arg file {"schema":"post_file","is_resource":false}
+apps.icon.set arg url {"type":"string"}
+apps.icon.set output null
+apps.managed.permissions.set arg token (required) {"type":"string","subtype":"auth"}
+apps.managed.permissions.set arg app_id (required) {"schema":"app_id"}
+apps.managed.permissions.set arg permissions (required) {"type":"string","enum":["everyone","app_owner"]}
+apps.managed.permissions.set output {"schema":"app_acl"}
 apps.manifest.create arg token (required) {"type":"string","subtype":"auth"}
 apps.manifest.create arg manifest (required) {"type":"string"}
 apps.manifest.create arg team_id {"schema":"workspace_id","type":"string"}
@@ -120,6 +129,14 @@ apps.manifest.validate arg manifest (required) {"type":"string"}
 apps.manifest.validate arg app_id {"schema":"app_id"}
 apps.manifest.validate output errors (required) {"type":"array","items":{"type":"string"}}
 apps.manifest.validate output warnings {"type":"array","items":{"type":"object","required":["message","code"],"properties":{"code":{"type":"string"},"message":{"type":"string"},"pointer":{"type":"string"}}}}
+apps.uninstall arg token (required) {"type":"string","subtype":"auth"}
+apps.uninstall arg client_id (required) {"type":"string"}
+apps.uninstall arg client_secret (required) {"type":"string","subtype":"password"}
+apps.uninstall output uninstalled (required) {"type":"boolean"}
+apps.user.connection.update arg token (required) {"type":"string","subtype":"auth","allow":["granular_bot","oauth"]}
+apps.user.connection.update arg user_id (required) {"type":"string","logged":true,"schema":"user_id"}
+apps.user.connection.update arg status (required) {"type":"string","enum":["connected","disconnected"]}
+apps.user.connection.update output null
 assistant.search.context arg token (required) {"type":"string","subtype":"auth","org_app":{"allowed":true,"derive_team_context_from":"token"}}
 assistant.search.context arg query (required) {"type":"string"}
 assistant.search.context arg action_token {"type":"string"}

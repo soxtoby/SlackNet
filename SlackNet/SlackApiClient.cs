@@ -17,9 +17,13 @@ public interface ISlackApiClient
     IAgentsConversationsApi AgentsConversations { get; }
     IAgentsSessionsApi AgentsSessions { get; }
     IApiApi Api { get; }
+    IAppsApi Apps { get; }
     IAppsConnectionsApi AppsConnections { get; }
     IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
+    IAppsIconApi AppsIcon { get; }
+    IAppsManagedPermissionsApi AppsManagedPermissions { get; }
     IAppsManifestApi AppsManifest { get; }
+    IAppsUserConnectionApi AppsUserConnection { get; }
     IAssistantSearchApi AssistantSearch { get; }
     IAssistantThreadsApi AssistantThreads { get; }
     IAuthApi Auth { get; }
@@ -199,9 +203,13 @@ public class SlackApiClient : ISlackApiClient
     public IAgentsConversationsApi AgentsConversations => new AgentsConversationsApi(this);
     public IAgentsSessionsApi AgentsSessions => new AgentsSessionsApi(this);
     public IApiApi Api => new ApiApi(this);
+    public IAppsApi Apps => new AppsApi(this);
     public IAppsConnectionsApi AppsConnections => new AppsConnectionsApi(this);
     public IAppsEventAuthorizationsApi AppsEventAuthorizations => new AppsEventAuthorizationsApi(this);
+    public IAppsIconApi AppsIcon => new AppsIconApi(this);
+    public IAppsManagedPermissionsApi AppsManagedPermissions => new AppsManagedPermissionsApi(this);
     public IAppsManifestApi AppsManifest => new AppsManifestApi(this, _jsonSettings);
+    public IAppsUserConnectionApi AppsUserConnection => new AppsUserConnectionApi(this);
     public IAssistantSearchApi AssistantSearch => new AssistantSearchApi(this);
     public IAssistantThreadsApi AssistantThreads => new AssistantThreadsApi(this);
     public IAuthApi Auth => new AuthApi(this);
