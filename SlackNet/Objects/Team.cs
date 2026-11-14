@@ -9,4 +9,9 @@ public class Team
     public Icons Icon { get; set; }
     public string EnterpriseId { get; set; }
     public string EnterpriseName { get; set; }
+
+    /// <summary>
+    /// Whether the team is migrating to an Enterprise organization.
+    /// </summary>
+    public bool IsMigrating { get; set; }
 }
