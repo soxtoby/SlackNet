@@ -45,6 +45,51 @@ public interface IOAuthV2Api
         string token,
         CancellationToken cancellationToken = default
     );
+
+    /// <summary>
+    /// Call this to rotate the secret on an old API token with a short secret.
+    /// Must be paired with a call to <see cref="CompleteShortTokenRotation"/> to confirm the change.
+    /// </summary>
+    /// <remarks>
+    /// Use this API method alongside the <see cref="CompleteShortTokenRotation"/> method to rotate a short-secret user token created before August 19, 2016 to a more secure token with a longer 32-character secret.
+    /// This change does not take effect until you complete the flow. Do not overwrite your original token until the flow is complete.
+    /// See the <a href="https://docs.slack.dev/reference/methods/oauth.v2.beginShortTokenRotation/">Slack documentation</a> for more information.
+    /// </remarks>
+    /// <param name="clientId">Issued when you created your application. Must be the app the token being rotated was issued to.</param>
+    /// <param name="clientSecret">Issued when you created your application.</param>
+    /// <param name="token">The xoxp token being rotated.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>A new xoxp access token to replace the token with a shorter secret. Not yet active until <see cref="CompleteShortTokenRotation"/> is called.</returns>
+    Task<string> BeginShortTokenRotation(
+        string clientId,
+        string clientSecret,
+        string token,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    /// Call this to finish rotating the secret on an old API token with a short secret.
+    /// Must be paired with a call to <see cref="BeginShortTokenRotation"/> to start the process.
+    /// </summary>
+    /// <remarks>
+    /// Use this API method alongside the <see cref="BeginShortTokenRotation"/> method to rotate a short-secret user token created before August 19, 2016 to a more secure token with a longer 32-character secret.
+    /// If the response to this API call is successful, the original token will be invalidated and the new token will go live. The new token will be exactly the same as the original, but with a longer secret.
+    /// If you do not get a successful response from <see cref="CompleteShortTokenRotation"/>, the rotation may not have been completed. Call <see cref="IAuthApi.Test"/> with the original and new token to check which is valid.
+    /// See the <a href="https://docs.slack.dev/reference/methods/oauth.v2.completeShortTokenRotation/">Slack documentation</a> for more information.
+    /// </remarks>
+    /// <param name="clientId">Issued when you created your application. Must be the app the token being rotated was issued to.</param>
+    /// <param name="clientSecret">Issued when you created your application.</param>
+    /// <param name="token">The original short xoxp token being rotated (the one passed to <see cref="BeginShortTokenRotation"/>). Authenticates the request.</param>
+    /// <param name="newToken">The new xoxp token returned by <see cref="BeginShortTokenRotation"/>.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The new xoxp access token, now active. The previous token is no longer valid.</returns>
+    Task<string> CompleteShortTokenRotation(
+        string clientId,
+        string clientSecret,
+        string token,
+        string newToken,
+        CancellationToken cancellationToken = default
+    );
 }
 
 public class OAuthV2Api(ISlackApiClient client) : IOAuthV2Api
@@ -83,4 +128,27 @@ public class OAuthV2Api(ISlackApiClient client) : IOAuthV2Api
                         { "token", token }
                     },
                 cancellationToken);
+
+    public async Task<string> BeginShortTokenRotation(string clientId, string clientSecret, string token, CancellationToken cancellationToken = default) =>
+        (await client.WithAccessToken(string.Empty) // The token being rotated is sent with the client credentials, rather than the client's own token
+            .Post<BeginShortTokenRotationResponse>("oauth.v2.beginShortTokenRotation", new Args(), new SlackFormContent
+                    {
+                        { "client_id", clientId },
+                        { "client_secret", clientSecret },
+                        { "token", token }
+                    },
+                cancellationToken).ConfigureAwait(false))
+        .NewToken;
+
+    public async Task<string> CompleteShortTokenRotation(string clientId, string clientSecret, string token, string newToken, CancellationToken cancellationToken = default) =>
+        (await client.WithAccessToken(string.Empty) // The token being rotated is sent with the client credentials, rather than the client's own token
+            .Post<CompleteShortTokenRotationResponse>("oauth.v2.completeShortTokenRotation", new Args(), new SlackFormContent
+                    {
+                        { "client_id", clientId },
+                        { "client_secret", clientSecret },
+                        { "token", token },
+                        { "new_token", newToken }
+                    },
+                cancellationToken).ConfigureAwait(false))
+        .Token;
 }

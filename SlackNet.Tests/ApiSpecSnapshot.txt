@@ -789,6 +789,15 @@ oauth.v2.access output team (required) {"anyOf":[{"type":"null"},{"type":"object
 oauth.v2.access output enterprise (required) {"anyOf":[{"type":"null"},{"type":"object","required":["id"],"properties":{"id":{"type":"string","subtype":"team"},"name":{"type":"string"}}}]}
 oauth.v2.access output authed_user {"type":"object","required":["id"],"properties":{"id":{"type":"string","subtype":"user"},"access_token":{"type":"string"},"token_type":{"type":"string","enum":["user"]},"scope":{"type":"string"},"expires_in":{"type":"integer"},"refresh_token":{"type":"string"}}}
 oauth.v2.access output incoming_webhook {"type":"object","required":["channel","channel_id","configuration_url","url"],"properties":{"channel":{"type":"string"},"channel_id":{"type":"string","subtype":"channel"},"configuration_url":{"type":"string"},"url":{"type":"string"}}}
+oauth.v2.beginShortTokenRotation arg client_id (required) {"type":"string"}
+oauth.v2.beginShortTokenRotation arg client_secret (required) {"type":"string"}
+oauth.v2.beginShortTokenRotation arg token (required) {"type":"string"}
+oauth.v2.beginShortTokenRotation output new_token (required) {"type":"string"}
+oauth.v2.completeShortTokenRotation arg client_id (required) {"type":"string"}
+oauth.v2.completeShortTokenRotation arg client_secret (required) {"type":"string"}
+oauth.v2.completeShortTokenRotation arg token (required) {"type":"string"}
+oauth.v2.completeShortTokenRotation arg new_token (required) {"type":"string"}
+oauth.v2.completeShortTokenRotation output token (required) {"type":"string"}
 oauth.v2.exchange arg client_id (required) {"type":"string"}
 oauth.v2.exchange arg client_secret (required) {"type":"string"}
 oauth.v2.exchange arg token (required) {"type":"string"}
