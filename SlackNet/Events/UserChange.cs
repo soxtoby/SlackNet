@@ -1,3 +1,6 @@
+using System;
+using Newtonsoft.Json;
+
 namespace SlackNet.Events;
 
 /// <summary>
@@ -6,4 +9,7 @@ namespace SlackNet.Events;
 public class UserChange : Event
 {
     public User User { get; set; }
+    public int CacheTs { get; set; }
+    [JsonIgnore]
+    public DateTime CacheTime => CacheTs.ToDateTime().GetValueOrDefault();
 }
