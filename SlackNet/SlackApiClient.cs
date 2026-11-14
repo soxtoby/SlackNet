@@ -40,6 +40,11 @@ public interface ISlackApiClient
     IAdminInviteRequestsApprovedApi AdminInviteRequestsApproved { get; }
     IAdminInviteRequestsDeniedApi AdminInviteRequestsDenied { get; }
     IAdminRolesApi AdminRoles { get; }
+    IAdminSlackbotSkillsApi AdminSlackbotSkills { get; }
+    IAdminTeamsApi AdminTeams { get; }
+    IAdminTeamsAdminsApi AdminTeamsAdmins { get; }
+    IAdminTeamsOwnersApi AdminTeamsOwners { get; }
+    IAdminTeamsSettingsApi AdminTeamsSettings { get; }
     IAdminWorkflowsApi AdminWorkflows { get; }
     IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators { get; }
     IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions { get; }
@@ -264,6 +269,11 @@ public class SlackApiClient : ISlackApiClient
     public IAdminInviteRequestsApprovedApi AdminInviteRequestsApproved => new AdminInviteRequestsApprovedApi(this);
     public IAdminInviteRequestsDeniedApi AdminInviteRequestsDenied => new AdminInviteRequestsDeniedApi(this);
     public IAdminRolesApi AdminRoles => new AdminRolesApi(this);
+    public IAdminSlackbotSkillsApi AdminSlackbotSkills => new AdminSlackbotSkillsApi(this);
+    public IAdminTeamsApi AdminTeams => new AdminTeamsApi(this);
+    public IAdminTeamsAdminsApi AdminTeamsAdmins => new AdminTeamsAdminsApi(this);
+    public IAdminTeamsOwnersApi AdminTeamsOwners => new AdminTeamsOwnersApi(this);
+    public IAdminTeamsSettingsApi AdminTeamsSettings => new AdminTeamsSettingsApi(this);
     public IAdminWorkflowsApi AdminWorkflows => new AdminWorkflowsApi(this);
     public IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators => new AdminWorkflowsCollaboratorsApi(this);
     public IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions => new AdminWorkflowsPermissionsApi(this);

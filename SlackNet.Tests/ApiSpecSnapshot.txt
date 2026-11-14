@@ -433,6 +433,70 @@ admin.roles.removeAssignments arg role_id (required) {"type":"string","schema":"
 admin.roles.removeAssignments arg entity_ids (required) {"type":"array","items":{"type":"string"}}
 admin.roles.removeAssignments arg user_ids (required) {"type":"array","items":{"schema":"user_id"}}
 admin.roles.removeAssignments output error {"type":"string"}
+admin.slackbot.skills.list arg token (required) {"type":"string","subtype":"auth"}
+admin.slackbot.skills.list arg category {"type":"string","enum":["communication","customer_support","data_and_analytics","engineering","product_management","productivity","professional_development","project_management","sales","system","team_management","other"]}
+admin.slackbot.skills.list arg cursor {"type":"string"}
+admin.slackbot.skills.list arg limit {"type":"integer","default":100}
+admin.slackbot.skills.list arg creator_ids {"type":"array","items":{"type":"string","pattern":"^[UW][A-Z0-9]+$"}}
+admin.slackbot.skills.list arg publish_status {"type":"string","enum":["all","published","unpublished"],"default":"all"}
+admin.slackbot.skills.list arg auto_enabled_status {"type":"string","enum":["all","enabled","disabled"],"default":"all"}
+admin.slackbot.skills.list arg sort {"type":"string","enum":["name","usage_count","date_updated"],"default":"name"}
+admin.slackbot.skills.list arg sort_dir {"type":"string","enum":["asc","desc"],"default":"asc"}
+admin.slackbot.skills.list output skills (required) {"type":"array","items":{"type":"object","required":["id","display_name","description","category","creator_id","date_created","date_updated","visibility","is_official","usage_count","library_count","auto_enabled"],"properties":{"id":{"type":"string"},"display_name":{"type":"string"},"description":{"type":["string","null"]},"category":{"anyOf":[{"type":"string","enum":["communication","customer_support","data_and_analytics","engineering","product_management","productivity","professional_development","project_management","sales","system","team_management","other"]},{"type":"null"}]},"creator_id":{"type":["string","null"]},"date_created":{"type":["integer","null"]},"date_updated":{"type":["integer","null"]},"visibility":{"anyOf":[{"type":"string","enum":["invite_only","anyone_can_view","anyone_can_edit"]},{"type":"null"}]},"is_official":{"type":"boolean"},"usage_count":{"type":["integer","null"]},"library_count":{"type":["integer","null"]},"auto_enabled":{"type":"object","required":["permission_type","usergroup_ids"],"properties":{"permission_type":{"type":"string","enum":["everyone","named_entities","no_one"]},"usergroup_ids":{"type":"array","items":{"type":"string"}}}}}}}
+admin.slackbot.skills.list output response_metadata {"type":"object","properties":{"next_cursor":{"type":"string"}}}
+admin.slackbot.skills.publish arg token (required) {"type":"string","subtype":"auth"}
+admin.slackbot.skills.publish arg skill_ids (required) {"type":"array","items":{"type":"string"}}
+admin.slackbot.skills.setAutoEnabled arg token (required) {"type":"string","subtype":"auth"}
+admin.slackbot.skills.setAutoEnabled arg skill_id (required) {"type":"string"}
+admin.slackbot.skills.setAutoEnabled arg permission_type (required) {"type":"string","enum":["everyone","named_entities","no_one"]}
+admin.slackbot.skills.setAutoEnabled arg usergroup_ids {"type":"array","items":{"type":"string"}}
+admin.slackbot.skills.setAutoEnabled output skill_id (required) {"type":"string"}
+admin.slackbot.skills.setAutoEnabled output permission_type (required) {"type":"string","enum":["everyone","named_entities","no_one"]}
+admin.slackbot.skills.setAutoEnabled output usergroup_ids (required) {"type":"array","items":{"type":"string"}}
+admin.slackbot.skills.unpublish arg token (required) {"type":"string","subtype":"auth"}
+admin.slackbot.skills.unpublish arg skill_ids (required) {"type":"array","items":{"type":"string"}}
+admin.teams.admins.list arg token (required) {"type":"string","subtype":"auth"}
+admin.teams.admins.list arg limit {"type":"integer"}
+admin.teams.admins.list arg cursor {"type":"string"}
+admin.teams.admins.list arg team_id (required) {"schema":"workspace_id"}
+admin.teams.admins.list output admin_ids (required) {"type":"array","items":{"schema":"user_id"}}
+admin.teams.create arg token (required) {"type":"string","subtype":"auth"}
+admin.teams.create arg team_domain (required) {"type":"string"}
+admin.teams.create arg team_name (required) {"type":"string"}
+admin.teams.create arg team_description {"type":"string"}
+admin.teams.create arg team_discoverability {"type":"string"}
+admin.teams.create output team (required) {"schema":"workspace_id"}
+admin.teams.list arg token (required) {"type":"string","subtype":"auth"}
+admin.teams.list arg limit {"type":"integer","default":100}
+admin.teams.list arg cursor {"type":"string"}
+admin.teams.list output teams {"type":"array","items":{"type":"object","required":["team_id","name","discoverability","primary_owner","team_url"],"properties":{"id":{"type":"string"},"name":{"type":"string"},"discoverability":{"type":"string"},"primary_owner":{"type":"object","required":["user_id","email"],"properties":{"user_id":{"type":"string"},"email":{"type":"string"}}},"team_url":{"type":"string"}}}}
+admin.teams.owners.list arg token (required) {"type":"string","subtype":"auth"}
+admin.teams.owners.list arg team_id (required) {"schema":"workspace_id"}
+admin.teams.owners.list arg limit {"type":"integer","default":100}
+admin.teams.owners.list arg cursor {"type":"string"}
+admin.teams.owners.list output owner_ids (required) {"type":"array","items":{"schema":"user_id"}}
+admin.teams.settings.info arg token (required) {"type":"string","subtype":"auth"}
+admin.teams.settings.info arg team_id (required) {"schema":"workspace_id"}
+admin.teams.settings.info output ok (required) {"type":"boolean"}
+admin.teams.settings.info output team (required) {"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"domain":{"type":"string"},"email_domain":{"type":"string"},"icon":{"schema":"common_objects_schema"},"enterprise_id":{"type":"string"},"enterprise_name":{"type":"string"},"default_channels":{"type":"array"}}}
+admin.teams.settings.setDefaultChannels arg token (required) {"type":"string","subtype":"auth"}
+admin.teams.settings.setDefaultChannels arg team_id (required) {"schema":"workspace_id"}
+admin.teams.settings.setDefaultChannels arg channel_ids (required) {"type":"array","items":{"schema":"channel_id"}}
+admin.teams.settings.setDescription arg token (required) {"type":"string","subtype":"auth"}
+admin.teams.settings.setDescription arg team_id (required) {"schema":"workspace_id"}
+admin.teams.settings.setDescription arg description (required) {"type":"string"}
+admin.teams.settings.setDescription output ok (required) {"type":"boolean"}
+admin.teams.settings.setDiscoverability arg token (required) {"type":"string","subtype":"auth"}
+admin.teams.settings.setDiscoverability arg team_id (required) {"schema":"workspace_id"}
+admin.teams.settings.setDiscoverability arg discoverability (required) {"type":"string"}
+admin.teams.settings.setDiscoverability output ok (required) {"type":"boolean"}
+admin.teams.settings.setIcon arg token (required) {"type":"string","subtype":"auth"}
+admin.teams.settings.setIcon arg image_url (required) {"type":"string"}
+admin.teams.settings.setIcon arg team_id (required) {"schema":"workspace_id"}
+admin.teams.settings.setName arg token (required) {"type":"string","subtype":"auth"}
+admin.teams.settings.setName arg team_id (required) {"schema":"workspace_id"}
+admin.teams.settings.setName arg name (required) {"type":"string"}
+admin.teams.settings.setName output ok (required) {"type":"boolean"}
 admin.workflows.collaborators.add arg token (required) {"type":"string","subtype":"auth"}
 admin.workflows.collaborators.add arg workflow_ids (required) {"type":"array","items":{"schema":"workflow_id"}}
 admin.workflows.collaborators.add arg collaborator_ids (required) {"type":"array","items":{"subtype":"user","schema":"user_id"}}

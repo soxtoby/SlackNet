@@ -44,7 +44,7 @@ public interface IAdminWorkflowsApi
     /// <param name="sort">The field used to sort the returned workflows. Defaults to <see cref="WorkflowSearchSort.Name"/>.</param>
     /// <param name="sortDirection">Sort direction. Defaults to <see cref="SortDirection.Descending"/>.</param>
     /// <param name="triggerTypeId">Only include workflows with this trigger type.</param>
-    /// <param name="publishStatus">Filter workflows by their published status. Defaults to <see cref="WorkflowPublishStatus.Published"/>.</param>
+    /// <param name="publishStatus">Filter workflows by their published status. Defaults to <see cref="PublishStatus.Published"/>.</param>
     /// <param name="stepFunctionIds">Only include workflows that use all of the provided step function IDs.</param>
     /// <param name="cancellationToken"></param>
     Task<WorkflowSearchResponse> Search(
@@ -60,7 +60,7 @@ public interface IAdminWorkflowsApi
         WorkflowSearchSort? sort = null,
         SortDirection? sortDirection = null,
         string? triggerTypeId = null,
-        WorkflowPublishStatus? publishStatus = null,
+        PublishStatus? publishStatus = null,
         IEnumerable<string>? stepFunctionIds = null,
         CancellationToken cancellationToken = default);
 
@@ -92,7 +92,7 @@ public class AdminWorkflowsApi(ISlackApiClient client) : IAdminWorkflowsApi
         WorkflowSearchSort? sort = null,
         SortDirection? sortDirection = null,
         string? triggerTypeId = null,
-        WorkflowPublishStatus? publishStatus = null,
+        PublishStatus? publishStatus = null,
         IEnumerable<string>? stepFunctionIds = null,
         CancellationToken cancellationToken = default
     ) =>

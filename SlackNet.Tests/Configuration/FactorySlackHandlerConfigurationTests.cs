@@ -1008,6 +1008,11 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IAdminInviteRequestsApprovedApi AdminInviteRequestsApproved { get; }
         public IAdminInviteRequestsDeniedApi AdminInviteRequestsDenied { get; }
         public IAdminRolesApi AdminRoles { get; }
+        public IAdminSlackbotSkillsApi AdminSlackbotSkills { get; }
+        public IAdminTeamsApi AdminTeams { get; }
+        public IAdminTeamsAdminsApi AdminTeamsAdmins { get; }
+        public IAdminTeamsOwnersApi AdminTeamsOwners { get; }
+        public IAdminTeamsSettingsApi AdminTeamsSettings { get; }
         public IAdminWorkflowsApi AdminWorkflows { get; }
         public IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators { get; }
         public IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions { get; }

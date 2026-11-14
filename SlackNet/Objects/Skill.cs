@@ -83,6 +83,11 @@ public class Skill
     public int? LibraryCount { get; set; }
 
     /// <summary>
+    /// Who the skill is automatically turned on for. Only returned by <see cref="WebApi.IAdminSlackbotSkillsApi.List"/>; null elsewhere.
+    /// </summary>
+    public SkillAutoEnabled? AutoEnabled { get; set; }
+
+    /// <summary>
     /// User ID of the skill's creator. Null for built-in skills.
     /// </summary>
     public string? CreatorId { get; set; }
@@ -110,9 +115,9 @@ public class Skill
     public DateTime? Updated => DateUpdated?.ToDateTime();
 
     /// <summary>
-    /// Link to the skill.
+    /// Link to the skill. Not returned by <see cref="WebApi.IAdminSlackbotSkillsApi.List"/>.
     /// </summary>
-    public string Permalink { get; set; } = null!;
+    public string? Permalink { get; set; }
 }
 
 /// <summary>

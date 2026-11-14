@@ -253,7 +253,7 @@ public class ApiLintTests
             { typeof(IEnumerable<TriggerTypePermissionSetting>), _ => Enumerable.Empty<TriggerTypePermissionSetting>() },
             { typeof(WorkflowSource?), _ => null },
             { typeof(WorkflowSearchSort?), _ => null },
-            { typeof(WorkflowPublishStatus?), _ => null },
+            { typeof(PublishStatus?), _ => null },
             { typeof(ChangeType?), _ => null },
             { typeof(LinkSource), _ => LinkSource.Composer },
             { typeof(AccessLevel), _ => AccessLevel.Read },
@@ -298,6 +298,11 @@ public class ApiLintTests
             { typeof(AgentSessionStatus?), _ => null },
             { typeof(TaskDisplayMode?), _ => null },
             { typeof(SkillListFilter?), _ => null },
+            { typeof(SkillAutoEnabledStatus?), _ => null },
+            { typeof(SkillSort?), _ => null },
+            { typeof(SkillAutoEnabledPermissionType), _ => SkillAutoEnabledPermissionType.Everyone },
+            { typeof(TeamDiscoverability), _ => TeamDiscoverability.Open },
+            { typeof(TeamDiscoverability?), _ => null },
             { typeof(IEnumerable<McpServer>), _ => Enumerable.Empty<McpServer>() },
             { typeof(IEnumerable<AgentCommand>), _ => Enumerable.Empty<AgentCommand>() },
             { typeof(CodeChannelProperties), _ => null },
@@ -399,6 +404,11 @@ public class ApiLintTests
         public IAdminInviteRequestsApprovedApi AdminInviteRequestsApproved { get; }
         public IAdminInviteRequestsDeniedApi AdminInviteRequestsDenied { get; }
         public IAdminRolesApi AdminRoles { get; }
+        public IAdminSlackbotSkillsApi AdminSlackbotSkills { get; }
+        public IAdminTeamsApi AdminTeams { get; }
+        public IAdminTeamsAdminsApi AdminTeamsAdmins { get; }
+        public IAdminTeamsOwnersApi AdminTeamsOwners { get; }
+        public IAdminTeamsSettingsApi AdminTeamsSettings { get; }
         public IAdminWorkflowsApi AdminWorkflows { get; }
         public IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators { get; }
         public IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions { get; }
