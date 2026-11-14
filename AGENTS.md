@@ -2,7 +2,7 @@
 
 # Tests
 
-Test the behaviour a change introduces. Code that follows an established pattern inherits that pattern's tests. e.g. a property mapped by the snake_case naming convention, or an event or block identified by its class name, needs no test of its own.
+Test the behaviour a change introduces. Code that follows an established pattern or re-uses existing helpers inherits their tests. e.g. a property mapped by the snake_case naming convention, an event or block identified by its class name, or an API method whose arguments are built by existing helpers, needs no test of its own.
 
 # Changelog
 
