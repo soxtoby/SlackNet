@@ -1,4 +1,7 @@
-﻿namespace SlackNet;
+﻿using System;
+using Newtonsoft.Json;
+
+namespace SlackNet;
 
 public class Bookmark
 {
@@ -11,7 +14,11 @@ public class Bookmark
     public BookmarkType Type { get; set; }
     public string EntityId { get; set; }
     public int DateCreated { get; set; }
+    [JsonIgnore]
+    public DateTime Created => DateCreated.ToDateTime().GetValueOrDefault();
     public int DateUpdated { get; set; }
+    [JsonIgnore]
+    public DateTime? Updated => DateUpdated.ToDateTime();
     public string Rank { get; set; }
     public string LastUpdatedByUserId { get; set; }
     public string LastUpdatedByTeamId { get; set; }

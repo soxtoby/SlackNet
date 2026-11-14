@@ -8,6 +8,8 @@ public class File
 {
     public string Id { get; set; }
     public int Created { get; set; }
+    [JsonIgnore]
+    public DateTime CreatedDate => Created.ToDateTime().GetValueOrDefault();
     public int Timestamp { get; set; }
     public string Name { get; set; }
     public string Title { get; set; }

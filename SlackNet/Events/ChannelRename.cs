@@ -1,3 +1,6 @@
+using System;
+using Newtonsoft.Json;
+
 namespace SlackNet.Events;
 
 /// <summary>
@@ -13,4 +16,6 @@ public class RenamedChannel
     public string Id { get; set; }
     public string Name { get; set; }
     public int Created { get; set; }
+    [JsonIgnore]
+    public DateTime CreatedDate => Created.ToDateTime().GetValueOrDefault();
 }

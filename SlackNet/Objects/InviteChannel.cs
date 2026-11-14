@@ -1,4 +1,7 @@
-﻿namespace SlackNet;
+﻿using System;
+using Newtonsoft.Json;
+
+namespace SlackNet;
 
 public class InviteChannel
 {
@@ -7,5 +10,7 @@ public class InviteChannel
     public bool IsIm { get; set; }
     public string Name { get; set; }
     public int DateCreated { get; set; }
+    [JsonIgnore]
+    public DateTime Created => DateCreated.ToDateTime().GetValueOrDefault();
     public long MessageLatestCountedTimestamp { get; set; }
 }

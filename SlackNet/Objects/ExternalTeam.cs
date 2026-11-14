@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace SlackNet;
 
@@ -15,6 +17,8 @@ public class ExternalTeam
     public IList<SlackConnectPref> SlackConnectPrefs { get; set; }
     public string ConnectionStatus { get; set; }
     public int LastActiveTimestamp { get; set; }
+    [JsonIgnore]
+    public DateTime? LastActive => LastActiveTimestamp.ToDateTime();
     public bool IsSponsored { get; set; }
     public CanvasConnections Canvas { get; set; }
     public ListConnections Lists { get; set; }

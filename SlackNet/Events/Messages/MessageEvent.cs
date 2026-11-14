@@ -39,6 +39,8 @@ public class PinnedInfo
     public string Channel { get; set; }
     public string PinnedBy { get; set; }
     public int? PinnedTs { get; set; }
+    [JsonIgnore]
+    public DateTime? PinnedTimestamp => PinnedTs?.ToDateTime();
 }
 
 public class Edit

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using SlackNet.Blocks;
 using SlackNet.WebApi;
 
@@ -12,6 +14,8 @@ public class Call
     /// </summary>
     public string Id { get; set; }
     public int DateStart { get; set; }
+    [JsonIgnore]
+    public DateTime Started => DateStart.ToDateTime().GetValueOrDefault();
     public string ExternalUniqueId { get; set; }
     public string JoinUrl { get; set; }
     public string DesktopAppJoinUrl { get; set; }

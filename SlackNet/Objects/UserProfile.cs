@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -13,6 +14,8 @@ public class UserProfile
     public string StatusText { get; set; }
     public string StatusTextCanonical { get; set; }
     public long StatusExpiration { get; set; }
+    [JsonIgnore]
+    public DateTime? StatusExpirationDate => StatusExpiration.ToDateTime();
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string RealName { get; set; }
@@ -24,6 +27,8 @@ public class UserProfile
     public string Email { get; set; }
     public string HuddleState { get; set; }
     public int HuddleStateExpirationTs { get; set; }
+    [JsonIgnore]
+    public DateTime? HuddleStateExpiration => HuddleStateExpirationTs.ToDateTime();
     public string Skype { get; set; }
     public string Phone { get; set; }
     public string StartDate { get; set; }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace SlackNet;
 
@@ -11,6 +13,8 @@ public class ListView
     public string Position { get; set; }
     public IList<ColumnView> Columns { get; set; }
     public int DateCreated { get; set; }
+    [JsonIgnore]
+    public DateTime Created => DateCreated.ToDateTime().GetValueOrDefault();
     public string CreatedBy { get; set; }
     public bool StickColumnLeft { get; set; }
     public bool IsAllItemsView { get; set; }

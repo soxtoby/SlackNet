@@ -45,6 +45,12 @@ public class Conversation
     public long Updated { get; set; }
 
     /// <summary>
+    /// When the channel settings were updated - for example, the "topic" or "description" of the channel changed.
+    /// </summary>
+    [JsonIgnore]
+    public DateTime? UpdatedDate => (Updated / 1000m).ToDateTime();
+
+    /// <summary>
     /// The user ID of the member that created this channel.
     /// </summary>
     public string Creator { get; set; }

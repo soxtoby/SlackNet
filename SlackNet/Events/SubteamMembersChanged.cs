@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace SlackNet.Events;
 
@@ -11,7 +13,11 @@ public class SubteamMembersChanged : Event
     public string SubteamId { get; set; }
     public string TeamId { get; set; }
     public int DatePreviousUpdate { get; set; }
+    [JsonIgnore]
+    public DateTime? PreviousUpdate => DatePreviousUpdate.ToDateTime();
     public int DateUpdate { get; set; }
+    [JsonIgnore]
+    public DateTime Updated => DateUpdate.ToDateTime().GetValueOrDefault();
     public IList<string> AddedUsers { get; set; } = [];
     public string AddedUsersCount { get; set; }
     public IList<string> RemovedUsers { get; set; } = [];

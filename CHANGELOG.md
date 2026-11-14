@@ -55,6 +55,7 @@
 - `UserChange.CacheTs` and `UserChange.CacheTime`, also on `UserProfileChanged` and `UserStatusChanged`.
 - `UserConnection` event, with its `UserConnect` and `UserDisconnect` subtypes, which Slack sends when a user requests to connect with or disconnect from your app.
 - `UserGuestStatusChanged` event, which Slack sends when a user's guest status changes.
+- `DateTime` properties alongside Unix timestamp properties: `CreatedChannel.CreatedDate`, `RenamedChannel.CreatedDate`, `PinnedInfo.PinnedTimestamp`, `SubteamMembersChanged.PreviousUpdate` and `Updated`, `Bookmark.Created` and `Updated`, `Call.Started`, `ConnectedTeam.Created`, `Conversation.UpdatedDate`, `ExternalTeam.LastActive`, `File.CreatedDate`, `FileComment.CreatedDate`, `Function.Created`, `Updated` and `Deleted`, `Invite.Created` and `Expires`, `InviteChannel.Created`, `ListView.Created`, `OwnDndStatus.SnoozeEnd`, `Topic.LastSetDate`, `Purpose.LastSetDate`, `UserProfile.StatusExpirationDate` and `HuddleStateExpiration`, `Login.First` and `Last`, `ScheduledMessage.PostAtDate` and `Created`, `PendingInvite.LastUpdated`, `InviteAcceptance.Accepted`, `Expires` and `LastUpdated`, `InviteReview.Reviewed`, and `TokenRotationResponse.Expires` and `IssuedAt`.
 - `ErrorResponse.Fields` and `Field<T>`, and `SlackException.ErrorFields` and `ErrorField<T>`, with the fields specific to an error, such as the `invalid_mcp_servers` returned by `SlackbotSkillsApi.Create`.
 
 ### Changed
