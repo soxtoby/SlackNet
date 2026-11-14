@@ -35,6 +35,15 @@ public class WorkObjectEntity
     /// Entity payload containing attributes, fields, and actions.
     /// </summary>
     public EntityPayload EntityPayload { get; set; } = new();
+
+    /// <summary>
+    /// Adds an entry point to the comment flexpane from the unfurl card.
+    /// The presence of this field indicates whether or not the Work Object entity supports comments.
+    /// If your entity does not support comments, leave this null.
+    /// Conversely, if your entity has 0 comments, setting <see cref="EntityCommentSummary.Count"/> to 0 renders an unfurl card that links to the comment flexpane.
+    /// Comments are requested with the <see cref="EntityCommentsRequested"/> event.
+    /// </summary>
+    public EntityCommentSummary EntityComments { get; set; }
 }
 
 public enum EntityType

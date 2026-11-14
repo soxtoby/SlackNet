@@ -6,6 +6,8 @@
 - `BlocksApi.Validate`, which validates blocks, a message or a view against the Block Kit schema.
 - `CanvasesApi.GetContent`, which gets the content of a canvas as markdown or HTML.
 - `ErrorResponse.Errors` and `SlackException.ErrorDetails`, with the issues Slack found in a request, such as invalid elements reported by `BlocksApi.Validate`. `SlackException` messages include them too.
+- `EntityApi.PresentComments` and `EntityApi.AcknowledgeCommentAction`, with `EntityComment`, the `EntityCommentsRequested` event, and `WorkObjectEntity.EntityComments` to enable the comments tab, for Work Object comments.
+- `EntityCommentViewInfo` and `ViewSubmission.TriggerId`, so view submissions for Work Object comment posts and edits can be handled and acknowledged with `EntityApi.AcknowledgeCommentAction`.
 - `ErrorResponse.Fields` and `Field<T>`, and `SlackException.ErrorFields` and `ErrorField<T>`, with the fields specific to an error, such as the `invalid_mcp_servers` returned by `SlackbotSkillsApi.Create`.
 
 ### Changed

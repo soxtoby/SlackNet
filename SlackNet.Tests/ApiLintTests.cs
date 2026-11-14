@@ -229,6 +229,8 @@ public class ApiLintTests
             { typeof(UnfurlMetadata), _ => null },
             { typeof(WorkObjectEntity), _ => null },
             { typeof(EntityError), _ => null },
+            { typeof(IEnumerable<EntityComment>), _ => Enumerable.Empty<EntityComment>() },
+            { typeof(EntityComment), _ => null },
             { typeof(IEnumerable<StreamChunk>), _ => Enumerable.Empty<StreamChunk>() },
             { typeof(AgentSessionStatus), _ => AgentSessionStatus.Active },
             { typeof(AgentSessionStatus?), _ => null },

@@ -15,4 +15,9 @@ public class ViewSubmission : InteractionRequest
     /// This should be used to ensure the correct view is being updated when updates are happening asynchronously.
     /// </summary>
     public string Hash { get; set; }
+
+    /// <summary>
+    /// Present when a comment is posted or edited in a Work Object flexpane, to allow the app to acknowledge the action via <see cref="IEntityApi.AcknowledgeCommentAction"/>.
+    /// </summary>
+    public string TriggerId { get; set; }
 }

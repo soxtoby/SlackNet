@@ -556,6 +556,21 @@ emoji.list output cache_ts {"type":"string"}
 emoji.list output emoji (required) {"type":"object","patternProperties":{"^.*":{"anyOf":[{"type":"null"},{"type":"string"},{"type":"object","properties":{"apple":{"type":"string"},"google":{"type":"string"}}}]}}}
 emoji.list output categories_version {"type":"string"}
 emoji.list output categories {"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"emoji_names":{"type":"array","items":{"type":"string"}}}}}
+entity.acknowledgeCommentAction arg token (required) {"type":"string","subtype":"auth","org_app":{"allowed":true,"derive_team_context_from":"token"}}
+entity.acknowledgeCommentAction arg trigger_id (required) {"type":"string"}
+entity.acknowledgeCommentAction arg comment {"type":"object"}
+entity.acknowledgeCommentAction arg error {"type":"string"}
+entity.acknowledgeCommentAction output null
+entity.presentComments arg token (required) {"type":"string","subtype":"auth","org_app":{"allowed":true,"derive_team_context_from":"token"}}
+entity.presentComments arg comments (required) {"type":"array","items":{"type":"object"}}
+entity.presentComments arg cursor {"type":"string"}
+entity.presentComments arg can_post_comment {"type":"boolean"}
+entity.presentComments arg trigger_id (required) {"type":"string"}
+entity.presentComments arg delete_action_id {"type":"string"}
+entity.presentComments arg user_auth_required {"default":"0","type":"boolean"}
+entity.presentComments arg user_auth_url {"type":"string"}
+entity.presentComments arg error {"schema":"error"}
+entity.presentComments output null
 entity.presentDetails arg token (required) {"type":"string","subtype":"auth","org_app":{"allowed":true,"derive_team_context_from":"token"}}
 entity.presentDetails arg metadata {"type":"object"}
 entity.presentDetails arg trigger_id (required) {"type":"string"}
