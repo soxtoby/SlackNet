@@ -19,6 +19,7 @@
 - `OauthV2AccessResponse.UserId`, with the ID of the user the token belongs to.
 - `SharedChannelInviteRequested` event, with `InviteTargetUser`, which Slack sends when a shared channel invite needs approval. `ConnectedTeam` has `AvatarBaseUrl` and `RequiresSponsorship`, and `InviteChannel` has `DateCreated` and `MessageLatestCountedTimestamp`.
 - `SlackbotSkillsApi` and `SlackbotSkillsLibraryApi`, which create, update, delete, list and get Slackbot skills, and turn them on or off for the caller.
+- `UserConnection` event, with its `UserConnect` and `UserDisconnect` subtypes, which Slack sends when a user requests to connect with or disconnect from your app.
 - `ErrorResponse.Fields` and `Field<T>`, and `SlackException.ErrorFields` and `ErrorField<T>`, with the fields specific to an error, such as the `invalid_mcp_servers` returned by `SlackbotSkillsApi.Create`.
 
 ### Changed
