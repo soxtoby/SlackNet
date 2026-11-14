@@ -66,7 +66,26 @@ public class ApiLintTests
     private static void Invoke(MethodInfo method, object instance)
     {
         var closedMethod = WithDummyTypeArguments(method);
-        closedMethod.Invoke(instance, closedMethod.GetParameters().Select(DummyValue).ToArray());
+        var result = closedMethod.Invoke(instance, closedMethod.GetParameters().Select(DummyValue).ToArray());
+        if (AsyncEnumerableItemType(closedMethod.ReturnType) is { } itemType)
+            StartEnumeratingMethod.MakeGenericMethod(itemType).Invoke(null, [result]);
+    }
+
+    private static Type AsyncEnumerableItemType(Type type) =>
+        type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IAsyncEnumerable<>)
+            ? type.GetGenericArguments()[0]
+            : null;
+
+    private static readonly MethodInfo StartEnumeratingMethod = typeof(ApiLintTests).GetMethod(nameof(StartEnumerating), BindingFlags.NonPublic | BindingFlags.Static);
+
+    /// <summary>
+    /// Async enumerables, such as those for file downloads, only call the API once enumeration starts.
+    /// </summary>
+    private static void StartEnumerating<T>(IAsyncEnumerable<T> enumerable)
+    {
+        var enumerator = enumerable.GetAsyncEnumerator();
+        enumerator.MoveNextAsync().AsTask().GetAwaiter().GetResult();
+        enumerator.DisposeAsync().AsTask().GetAwaiter().GetResult();
     }
 
     /// <summary>
@@ -299,6 +318,13 @@ public class ApiLintTests
             return Task.FromResult(Activator.CreateInstance<T>());
         }
 
+        public Task<Stream> GetStream(string apiMethod, Args args, CancellationToken cancellationToken)
+        {
+            SlackMethod = apiMethod;
+            Args = args;
+            return Task.FromResult(Stream.Null);
+        }
+
         public Task Post(string apiMethod, Args args, HttpContent content, CancellationToken cancellationToken)
         {
             SlackMethod = apiMethod;
@@ -329,6 +355,9 @@ public class ApiLintTests
 
         public ISlackApiClient WithAccessToken(string accessToken) => this;
 
+        public IAdminAnalyticsApi AdminAnalytics { get; }
+        public IAdminAnalyticsMessagesApi AdminAnalyticsMessages { get; }
+        public IAdminAnalyticsSlackbotApi AdminAnalyticsSlackbot { get; }
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }
@@ -394,5 +423,6 @@ public class ApiLintTests
     class FakeHttp : IHttp
     {
         public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => Task.FromResult(Activator.CreateInstance<T>());
+        public Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => Task.FromResult(new HttpResponseMessage());
     }
 }

@@ -3,6 +3,10 @@
 ## Unreleased
 
 ### Added
+- `AdminAnalyticsApi`, which reads an Enterprise organization's member analytics, public channel analytics and public channel metadata as `MemberAnalytics`, `PublicChannelAnalytics` and `PublicChannelMetadata` records, streamed from Slack's compressed analytics files as you enumerate them.
+- `AdminAnalyticsMessagesApi`, which gets activity metrics and metadata for a channel's messages, with `MessageActivity` and `AnalyticsMessage`. `File` has `Subtype` and `DurationMs`.
+- `AdminAnalyticsSlackbotApi`, which gets per-user Slackbot skill and tool usage, with `SlackbotSkillUsage` and `SlackbotToolUsage`.
+- `ISlackApiClient.GetStream`, which calls a Slack API method that responds with a file, and returns its content as it arrives, using the new `IHttp.ExecuteStreaming`, which returns a response as soon as its headers have been read.
 - `AgentsConversationsApi`, which creates, archives and sets properties and slash commands on code channels, and manages their views and canvases, with `CodeChannelProperties`, `ContextBarItem`, `AgentResource`, `AgentCommand`, `AgentView` and `CanvasComment`. `AccessLevel` has `Comment` for comment-only canvas views.
 - `AgentsSessionsApi.Rename`, which renames an agent session.
 - `AppDeleted`, `AppInstalled`, `AppRequested` and `AppUninstalledTeam` events, with `AppRequest`, `App` and `AppScope`.

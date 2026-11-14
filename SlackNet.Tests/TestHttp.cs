@@ -24,4 +24,6 @@ class TestHttp : IHttp
         AuthorizationHeaders.Add(requestMessage.Headers.Authorization?.ToString());
         return (T)(object)new WebApiResponse { Ok = (bool)Response["ok"]!, Data = Response };
     }
+
+    public Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => throw new System.NotImplementedException();
 }

@@ -1,3 +1,39 @@
+admin.analytics.getFile arg token (required) {"type":"string","subtype":"auth"}
+admin.analytics.getFile arg date {"schema":"date"}
+admin.analytics.getFile arg type (required) {"type":"string"}
+admin.analytics.getFile arg metadata_only {"type":"boolean","default":"false"}
+admin.analytics.getFile output null
+admin.analytics.messages.activity arg token (required) {"type":"string","subtype":"auth"}
+admin.analytics.messages.activity arg channel (required) {"type":"string","subtype":"channel"}
+admin.analytics.messages.activity arg oldest_ts {"type":"string","subtype":"timestamp"}
+admin.analytics.messages.activity arg latest_ts {"type":"string","subtype":"timestamp"}
+admin.analytics.messages.activity arg cursor {"type":"string"}
+admin.analytics.messages.activity arg limit {"type":"integer","hidden":false,"default":50}
+admin.analytics.messages.activity output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.analytics.messages.activity output message_activities (required) {"schema":"message_activity"}
+admin.analytics.messages.metadata arg token (required) {"type":"string","subtype":"auth"}
+admin.analytics.messages.metadata arg channel (required) {"type":"string","subtype":"channel"}
+admin.analytics.messages.metadata arg oldest_ts {"type":"string","subtype":"timestamp"}
+admin.analytics.messages.metadata arg latest_ts {"type":"string","subtype":"timestamp"}
+admin.analytics.messages.metadata arg cursor {"type":"string"}
+admin.analytics.messages.metadata output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.analytics.messages.metadata output messages (required) {"type":"array","items":{"type":"object","required":["type","ts"],"properties":{"user_id":{"type":"string"},"type":{"type":"string"},"subtype":{"type":"string"},"ts":{"type":"string"},"thread_ts":{"type":"string"},"display_as_bot":{"type":"boolean"},"client_msg_id":{"type":"string"},"text_character_count":{"type":"integer"},"reactions":{"type":"array","items":{"type":"object","required":["name","count"],"properties":{"name":{"type":"string"},"count":{"type":"integer"}}}},"files":{"type":"array","items":{"type":"object","required":["id","created","timestamp"],"properties":{"id":{"type":"string"},"created":{"type":"integer"},"timestamp":{"type":"integer"},"mimetype":{"type":"string"},"filetype":{"type":"string"},"subtype":{"type":"string"},"pretty_type":{"type":"string"},"is_external":{"type":"boolean"},"external_type":{"type":"string"},"is_public":{"type":"boolean"},"public_url_shared":{"type":"boolean"},"display_as_bot":{"type":"boolean"},"duration_ms":{"type":"integer"},"media_display_type":{"type":"string"}}}}}}}
+admin.analytics.slackbot.skills arg token (required) {"type":"string","subtype":"auth"}
+admin.analytics.slackbot.skills arg date {"schema":"date"}
+admin.analytics.slackbot.skills arg cursor {"type":"string"}
+admin.analytics.slackbot.skills arg limit {"type":"integer","default":500}
+admin.analytics.slackbot.skills output date {"schema":"date"}
+admin.analytics.slackbot.skills output available_date_range {"type":"object","required":["start_date","end_date"],"properties":{"start_date":{"schema":"date"},"end_date":{"schema":"date"}}}
+admin.analytics.slackbot.skills output skill_usage (required) {"type":"array","items":{"type":"object","required":["date","enterprise_id","user_id","skills"],"properties":{"date":{"schema":"date"},"enterprise_id":{"schema":"enterprise_id"},"user_id":{"schema":"user_id"},"email_address":{"type":"string"},"skills":{"type":"array","items":{"type":"object","required":["id","use_count","added_count","shared_count"],"properties":{"id":{"schema":"file_id"},"name":{"type":"string"},"use_count":{"type":"integer"},"added_count":{"type":"integer"},"shared_count":{"type":"integer"}}}}}}}
+admin.analytics.slackbot.skills output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.analytics.slackbot.tools arg token (required) {"type":"string","subtype":"auth"}
+admin.analytics.slackbot.tools arg date {"schema":"date"}
+admin.analytics.slackbot.tools arg cursor {"type":"string"}
+admin.analytics.slackbot.tools arg limit {"type":"integer","default":500}
+admin.analytics.slackbot.tools output date {"schema":"date"}
+admin.analytics.slackbot.tools output available_date_range {"type":"object","required":["start_date","end_date"],"properties":{"start_date":{"schema":"date"},"end_date":{"schema":"date"}}}
+admin.analytics.slackbot.tools output tool_usage (required) {"type":"array","items":{"type":"object","required":["date","enterprise_id","user_id","tools"],"properties":{"date":{"schema":"date"},"enterprise_id":{"schema":"enterprise_id"},"user_id":{"schema":"user_id"},"email_address":{"type":"string"},"tools":{"type":"array","items":{"type":"object","required":["name","use_count"],"properties":{"name":{"type":"string"},"use_count":{"type":"integer"}}}}}}}
+admin.analytics.slackbot.tools output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
 agents.conversations.archive arg token (required) {"type":"string","subtype":"auth"}
 agents.conversations.archive arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
 agents.conversations.archive arg summary_message_ts {"type":"string"}

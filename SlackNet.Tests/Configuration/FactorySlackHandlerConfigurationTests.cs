@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -946,6 +947,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     protected class TestHttp : IHttp
     {
         public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => throw new NotImplementedException();
     }
 
     protected class TestJsonSettings() : SlackJsonSettings(new JsonSerializerSettings());
@@ -981,6 +983,9 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
 
     protected class TestApiClient : ISlackApiClient
     {
+        public IAdminAnalyticsApi AdminAnalytics { get; }
+        public IAdminAnalyticsMessagesApi AdminAnalyticsMessages { get; }
+        public IAdminAnalyticsSlackbotApi AdminAnalyticsSlackbot { get; }
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }
@@ -1043,6 +1048,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IWorkflowTriggerPermissionsApi WorkflowTriggerPermissions { get; }
         public Task Get(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) => throw new NotImplementedException();
         public Task<T> Get<T>(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) where T : class => throw new NotImplementedException();
+        public Task<Stream> GetStream(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) => throw new NotImplementedException();
         public Task Post(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) => throw new NotImplementedException();
         public Task<T> Post<T>(string apiMethod, Dictionary<string, object> args, CancellationToken cancellationToken) where T : class => throw new NotImplementedException();
         public Task Post(string apiMethod, Dictionary<string, object> args, HttpContent content, CancellationToken cancellationToken) => throw new NotImplementedException();

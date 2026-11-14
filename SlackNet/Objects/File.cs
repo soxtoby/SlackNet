@@ -14,8 +14,12 @@ public class File
     public string Mimetype { get; set; }
     public string Filetype { get; set; }
     public string PrettyType { get; set; }
+    /// <summary>File subtype.</summary>
+    public string Subtype { get; set; }
     /// <summary>How the media should be displayed.</summary>
     public string MediaDisplayType { get; set; }
+    /// <summary>Duration in milliseconds for media files.</summary>
+    public int DurationMs { get; set; }
     public string User { get; set; }
     /// <summary>Team of the user who created the file.</summary>
     public string UserTeam { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,6 +15,9 @@ namespace SlackNet;
 
 public interface ISlackApiClient
 {
+    IAdminAnalyticsApi AdminAnalytics { get; }
+    IAdminAnalyticsMessagesApi AdminAnalyticsMessages { get; }
+    IAdminAnalyticsSlackbotApi AdminAnalyticsSlackbot { get; }
     IAgentsConversationsApi AgentsConversations { get; }
     IAgentsSessionsApi AgentsSessions { get; }
     IApiApi Api { get; }
@@ -91,6 +95,15 @@ public interface ISlackApiClient
     /// <param name="args">Arguments to send to Slack. The "token" parameter will be filled in automatically.</param>
     /// <param name="cancellationToken"></param>
     Task<T> Get<T>(string apiMethod, Args args, CancellationToken cancellationToken) where T : class;
+
+    /// <summary>
+    /// Calls a Slack API method that responds with a file instead of JSON.
+    /// </summary>
+    /// <param name="apiMethod">Name of Slack method.</param>
+    /// <param name="args">Arguments to send to Slack. Authorization headers will be added automatically.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The content of the file, read as it arrives. Dispose it to release the connection.</returns>
+    Task<Stream> GetStream(string apiMethod, Args args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Calls a Slack API that requires POST content.
@@ -200,6 +213,9 @@ public class SlackApiClient : ISlackApiClient
                 WarningsAsErrors = WarningsAsErrors
             };
 
+    public IAdminAnalyticsApi AdminAnalytics => new AdminAnalyticsApi(this, _jsonSettings);
+    public IAdminAnalyticsMessagesApi AdminAnalyticsMessages => new AdminAnalyticsMessagesApi(this);
+    public IAdminAnalyticsSlackbotApi AdminAnalyticsSlackbot => new AdminAnalyticsSlackbotApi(this);
     public IAgentsConversationsApi AgentsConversations => new AgentsConversationsApi(this);
     public IAgentsSessionsApi AgentsSessions => new AgentsSessionsApi(this);
     public IApiApi Api => new ApiApi(this);
@@ -273,6 +289,31 @@ public class SlackApiClient : ISlackApiClient
             cancellationToken);
     }
 
+    public async Task<Stream> GetStream(string apiMethod, Args args, CancellationToken cancellationToken)
+    {
+        var requestUrl = Url(apiMethod, args);
+        var response = await Send(
+            () => new HttpRequestMessage(HttpMethod.Get, requestUrl),
+            ApiCallContext(requestUrl, apiMethod, args),
+            _http.ExecuteStreaming,
+            cancellationToken).ConfigureAwait(false);
+
+        try
+        {
+            if (response.Content.Headers.ContentType?.MediaType == "application/json")
+                Deserialize<object>(await ReadWebApiResponse(response.Content, cancellationToken).ConfigureAwait(false)); // Throws for error responses
+            return await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false); // Disposing the stream releases the connection, as with HttpClient.GetStreamAsync
+        }
+        catch
+        {
+            response.Dispose();
+            throw;
+        }
+    }
+
+    private async Task<WebApiResponse> ReadWebApiResponse(HttpContent content, CancellationToken cancellationToken) =>
+        JsonConvert.DeserializeObject<WebApiResponse>(await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false), _jsonSettings.SerializerSettings);
+
     public Task Post(string apiMethod, Args args, CancellationToken cancellationToken) =>
         Post<object>(apiMethod, args, cancellationToken);
 
@@ -310,6 +351,18 @@ public class SlackApiClient : ISlackApiClient
 
     private async Task<T> WebApiRequest<T>(Func<HttpRequestMessage> createRequest, SlackApiCallContext callContext, CancellationToken cancellationToken) where T : class
     {
+        var response = await Send(createRequest, callContext, _http.Execute<WebApiResponse>, cancellationToken).ConfigureAwait(false)
+            ?? new WebApiResponse { Ok = true };
+
+        return Deserialize<T>(response);
+    }
+
+    private async Task<TResponse> Send<TResponse>(
+        Func<HttpRequestMessage> createRequest,
+        SlackApiCallContext callContext,
+        Func<HttpRequestMessage, CancellationToken, Task<TResponse>> execute,
+        CancellationToken cancellationToken)
+    {
         while (true)
         {
             try
@@ -319,10 +372,7 @@ public class SlackApiClient : ISlackApiClient
                 if (!string.IsNullOrEmpty(token)) // Token is cleared by methods that don't require authentication (e.g. OAuthV2Api.Access)
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _http.Execute<WebApiResponse>(request, cancellationToken).ConfigureAwait(false)
-                    ?? new WebApiResponse { Ok = true };
-
-                return Deserialize<T>(response);
+                return await execute(request, cancellationToken).ConfigureAwait(false);
             }
             catch (SlackRateLimitException e) when (!DisableRetryOnRateLimit)
             {

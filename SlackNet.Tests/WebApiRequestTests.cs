@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -155,5 +156,7 @@ public class WebApiRequestTests
             Body = requestMessage.Content is null ? null : JObject.Parse(await requestMessage.Content.ReadAsStringAsync(cancellationToken));
             return JsonConvert.DeserializeObject<T>(ResponseJson, jsonSettings.SerializerSettings);
         }
+
+        public Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => throw new NotImplementedException();
     }
 }
