@@ -1,4 +1,4 @@
-﻿XML docs should match the Slack docs, but without documenting limits, and referencing existing types and members where possible.
+﻿XML docs should match the Slack docs as closely as possible, but without documenting limits or required scopes, and referencing existing types and members where possible. Only write a description of your own when the Slack docs don't provide one.
 
 # Tests
 
