@@ -237,6 +237,8 @@ public class ApiLintTests
             { typeof(AuthPolicyEntityType), _ => AuthPolicyEntityType.User },
             { typeof(AuthPolicyEntityType?), _ => null },
             { typeof(IEnumerable<RestrictedSubject>), _ => Enumerable.Empty<RestrictedSubject>() },
+            { typeof(IEnumerable<ConversationSearchType>), _ => Enumerable.Empty<ConversationSearchType>() },
+            { typeof(ConversationSearchSort?), _ => null },
             { typeof(UserConnectionStatus), _ => UserConnectionStatus.Connected },
             { typeof(ProfileFieldVisibility), _ => ProfileFieldVisibility.All },
             { typeof(Presence), _ => Presence.Active },
@@ -380,6 +382,7 @@ public class ApiLintTests
         public IAdminAuditAnomalyAllowApi AdminAuditAnomalyAllow { get; }
         public IAdminAuthPolicyApi AdminAuthPolicy { get; }
         public IAdminBarriersApi AdminBarriers { get; }
+        public IAdminConversationsApi AdminConversations { get; }
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }

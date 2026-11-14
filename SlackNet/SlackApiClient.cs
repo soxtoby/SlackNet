@@ -30,6 +30,7 @@ public interface ISlackApiClient
     IAdminAuditAnomalyAllowApi AdminAuditAnomalyAllow { get; }
     IAdminAuthPolicyApi AdminAuthPolicy { get; }
     IAdminBarriersApi AdminBarriers { get; }
+    IAdminConversationsApi AdminConversations { get; }
     IAgentsConversationsApi AgentsConversations { get; }
     IAgentsSessionsApi AgentsSessions { get; }
     IApiApi Api { get; }
@@ -240,6 +241,7 @@ public class SlackApiClient : ISlackApiClient
     public IAdminAuditAnomalyAllowApi AdminAuditAnomalyAllow => new AdminAuditAnomalyAllowApi(this);
     public IAdminAuthPolicyApi AdminAuthPolicy => new AdminAuthPolicyApi(this);
     public IAdminBarriersApi AdminBarriers => new AdminBarriersApi(this);
+    public IAdminConversationsApi AdminConversations => new AdminConversationsApi(this);
     public IAgentsConversationsApi AgentsConversations => new AgentsConversationsApi(this);
     public IAgentsSessionsApi AgentsSessions => new AgentsSessionsApi(this);
     public IApiApi Api => new ApiApi(this);

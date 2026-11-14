@@ -296,7 +296,7 @@ public class AgentsConversationsApi(ISlackApiClient client) : IAgentsConversatio
         string? teamId = null,
         CancellationToken cancellationToken = default
     ) =>
-        (await client.Post<AgentConversationCreateResponse>("agents.conversations.create", new Args
+        (await client.Post<ChannelIdResponse>("agents.conversations.create", new Args
             {
                 { "name", channelName },
                 { "origin_channel_id", originChannelId },

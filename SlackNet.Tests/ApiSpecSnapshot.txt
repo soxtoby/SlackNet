@@ -197,6 +197,104 @@ admin.barriers.update arg barriered_from_usergroup_ids (required) {"type":"array
 admin.barriers.update arg restricted_subjects (required) {"type":"array","items":{"type":"string","enum":["im","mpim","call"]}}
 admin.barriers.update output ok (required) {"type":"boolean"}
 admin.barriers.update output barrier (required) {"schema":"information_barrier"}
+admin.conversations.archive arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.archive arg channel_id (required) {"schema":"channel"}
+admin.conversations.archive output ok (required) {"type":"boolean"}
+admin.conversations.bulkArchive arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.bulkArchive arg channel_ids (required) {"type":"array","items":{"schema":"channel"}}
+admin.conversations.bulkArchive output bulk_action_id (required) {"type":"string"}
+admin.conversations.bulkArchive output not_added (required) {"type":"array","items":{"type":"object","required":["channel_id","errors"],"properties":{"channel_id":{"schema":"workspace_id"},"errors":{"type":"array","items":{"type":"string"}}}}}
+admin.conversations.bulkDelete arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.bulkDelete arg channel_ids (required) {"type":"array","items":{"schema":"channel"}}
+admin.conversations.bulkDelete output bulk_action_id (required) {"type":"string"}
+admin.conversations.bulkDelete output not_added (required) {"type":"array","items":{"type":"object","required":["channel_id","errors"],"properties":{"channel_id":{"schema":"workspace_id"},"errors":{"type":"array","items":{"type":"string"}}}}}
+admin.conversations.bulkMove arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.bulkMove arg target_team_id (required) {"type":"string","subtype":"team","schema":"workspace_id"}
+admin.conversations.bulkMove arg channel_ids (required) {"type":"array","items":{"schema":"channel"}}
+admin.conversations.bulkMove output bulk_action_id (required) {"type":"string"}
+admin.conversations.bulkMove output not_added (required) {"type":"array","items":{"type":"object","required":["channel_id","errors"],"properties":{"channel_id":{"schema":"workspace_id"},"errors":{"type":"array","items":{"type":"string"}}}}}
+admin.conversations.bulkSetExcludeFromSlackAi arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.bulkSetExcludeFromSlackAi arg channel_ids (required) {"type":"array","items":{"schema":"channel"}}
+admin.conversations.bulkSetExcludeFromSlackAi arg exclude (required) {"type":"boolean"}
+admin.conversations.bulkSetExcludeFromSlackAi output bulk_action_id (required) {"type":"string"}
+admin.conversations.bulkSetExcludeFromSlackAi output not_added (required) {"type":"array","items":{"type":"object","required":["channel_id","errors"],"properties":{"channel_id":{"schema":"workspace_id"},"errors":{"type":"array","items":{"type":"string"}}}}}
+admin.conversations.bulkSetProperties arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.bulkSetProperties arg channel_ids (required) {"type":"array","items":{"schema":"channel"}}
+admin.conversations.bulkSetProperties arg property (required) {"type":"string"}
+admin.conversations.bulkSetProperties output bulk_action_id (required) {"type":"string"}
+admin.conversations.bulkSetProperties output not_updated (required) {"type":"array","items":{"type":"object","required":["channel_id","errors"],"properties":{"channel_id":{"schema":"channel"},"errors":{"type":"array","items":{"type":"string"}}}}}
+admin.conversations.convertToPrivate arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.convertToPrivate arg channel_id (required) {"schema":"channel"}
+admin.conversations.convertToPrivate arg name {"type":"string"}
+admin.conversations.convertToPrivate output ok (required) {"type":"boolean"}
+admin.conversations.convertToPublic arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.convertToPublic arg channel_id (required) {"schema":"channel"}
+admin.conversations.convertToPublic output ok (required) {"type":"boolean"}
+admin.conversations.create arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.create arg name (required) {"type":"string"}
+admin.conversations.create arg description {"type":"string"}
+admin.conversations.create arg is_private (required) {"type":"boolean"}
+admin.conversations.create arg org_wide {"type":"boolean","default":"false"}
+admin.conversations.create arg team_id {"schema":"workspace_id"}
+admin.conversations.create output ok (required) {"type":"boolean"}
+admin.conversations.create output channel_id {"schema":"channel"}
+admin.conversations.delete arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.delete arg channel_id (required) {"schema":"channel"}
+admin.conversations.delete output ok (required) {"type":"boolean"}
+admin.conversations.disconnectShared arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.disconnectShared arg channel_id (required) {"schema":"channel"}
+admin.conversations.disconnectShared arg leaving_team_ids {"type":"array","items":{"schema":"team_id"}}
+admin.conversations.disconnectShared output ok (required) {"type":"boolean"}
+admin.conversations.getTeams arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.getTeams arg channel_id (required) {"schema":"channel"}
+admin.conversations.getTeams arg cursor {"type":"string"}
+admin.conversations.getTeams arg limit {"type":"integer","default":100}
+admin.conversations.getTeams output ok (required) {"type":"boolean"}
+admin.conversations.getTeams output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.conversations.invite arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.invite arg user_ids (required) {"type":"array","items":{"schema":"user_id"}}
+admin.conversations.invite arg channel_id (required) {"schema":"channel"}
+admin.conversations.invite output ok (required) {"type":"boolean"}
+admin.conversations.kick arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.kick arg channel_id (required) {"schema":"channel","subtype":"channel"}
+admin.conversations.kick arg user_ids (required) {"type":"array","items":{"schema":"user_id"},"subtype":"users"}
+admin.conversations.kick output removed_user_ids (required) {"type":"array","items":{"schema":"user_id"}}
+admin.conversations.kick output failed_user_ids (required) {"type":"array","items":{"type":"object","required":["user_id","error"],"properties":{"user_id":{"schema":"user_id"},"error":{"type":"string"}}}}
+admin.conversations.lookup arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.lookup arg team_ids (required) {"type":"array","items":{"type":"string","subtype":"team","schema":"workspace_id"}}
+admin.conversations.lookup arg max_member_count {"type":"integer","default":1}
+admin.conversations.lookup arg last_message_activity_before (required) {"type":"integer"}
+admin.conversations.lookup arg cursor {"type":"string","default":"*"}
+admin.conversations.lookup arg limit {"type":"integer","default":1000}
+admin.conversations.lookup output channel_ids (required) {"type":"array","items":{"schema":"channel"}}
+admin.conversations.lookup output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.conversations.rename arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.rename arg channel_id (required) {"schema":"channel"}
+admin.conversations.rename arg name (required) {"type":"string"}
+admin.conversations.rename output ok (required) {"type":"boolean"}
+admin.conversations.search arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.search arg team_ids {"type":"array","items":{"type":"string"}}
+admin.conversations.search arg connected_team_ids {"type":"array","items":{"type":"string"}}
+admin.conversations.search arg query {"type":"string"}
+admin.conversations.search arg limit {"type":"integer","default":10}
+admin.conversations.search arg cursor {"type":"string"}
+admin.conversations.search arg search_channel_types {"type":"array","items":{"type":"string"}}
+admin.conversations.search arg sort {"type":"string","default":"member_count"}
+admin.conversations.search arg sort_dir {"type":"string","default":"desc"}
+admin.conversations.search arg total_count_only {"type":"boolean","default":false}
+admin.conversations.search output conversations (required) {"type":"array","items":{"schema":"channel"}}
+admin.conversations.search output next_cursor (required) {"type":"string"}
+admin.conversations.search output total_count (required) {"type":"integer"}
+admin.conversations.search output error {"type":"string"}
+admin.conversations.setTeams arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.setTeams arg channel_id (required) {"type":"string"}
+admin.conversations.setTeams arg team_id {"schema":"workspace_id"}
+admin.conversations.setTeams arg target_team_ids {"type":"array","items":{"type":"string"}}
+admin.conversations.setTeams arg org_channel {"type":"boolean","default":"false"}
+admin.conversations.setTeams output channel (required) {"schema":"channel"}
+admin.conversations.unarchive arg token (required) {"type":"string","subtype":"auth"}
+admin.conversations.unarchive arg channel_id (required) {"schema":"channel"}
+admin.conversations.unarchive output ok (required) {"type":"boolean"}
 agents.conversations.archive arg token (required) {"type":"string","subtype":"auth"}
 agents.conversations.archive arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
 agents.conversations.archive arg summary_message_ts {"type":"string"}

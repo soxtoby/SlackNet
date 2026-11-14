@@ -16,6 +16,7 @@
 - `AdminAuditAnomalyAllowApi`, which reads and overwrites an Enterprise organization's allow list of IP blocks and ASNs, with `AnomalyAllowList`.
 - `AdminAuthPolicyApi`, which assigns, lists and removes the users assigned to an authentication policy, with `AuthPolicyEntity` and `AuthPolicyEntityType`.
 - `AdminBarriersApi`, which creates, lists, updates and deletes information barriers, with `InformationBarrier` and `RestrictedSubject`.
+- `AdminConversationsApi`, which creates, archives, unarchives, renames, deletes, converts, searches and looks up channels across an Enterprise organization, invites and removes their members, and sets or disconnects the workspaces they're connected to, with `AdminConversation`, `ConversationSearchType` and `ConversationSearchSort`. Its bulk methods return the channels Slack couldn't act on as `ConversationBulkActionFailure`s, and `Kick` returns the users it couldn't remove as `ConversationKickFailure`s.
 - `ISlackApiClient.GetStream`, which calls a Slack API method that responds with a file, and returns its content as it arrives, using the new `IHttp.ExecuteStreaming`, which returns a response as soon as its headers have been read.
 - `AgentsConversationsApi`, which creates, archives and sets properties and slash commands on code channels, and manages their views and canvases, with `CodeChannelProperties`, `ContextBarItem`, `AgentResource`, `AgentCommand`, `AgentView` and `CanvasComment`. `AccessLevel` has `Comment` for comment-only canvas views.
 - `AgentsSessionsApi.Rename`, which renames an agent session.

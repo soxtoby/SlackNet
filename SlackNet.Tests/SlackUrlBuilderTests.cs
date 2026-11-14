@@ -1,4 +1,5 @@
-﻿using EasyAssertions;
+﻿using System.Collections.Generic;
+using EasyAssertions;
 using NUnit.Framework;
 using SlackNet.WebApi;
 using Args = System.Collections.Generic.Dictionary<string, object>;
@@ -70,6 +71,13 @@ public class SlackUrlBuilderTests
     {
         _sut.Url("method", new Args { { "foo", new SomeObject { SomeProperty = "bar" } } })
             .ShouldBe(BaseUrl + "method?foo=%7B%22some_property%22%3A%22bar%22%7D");
+    }
+
+    [Test]
+    public void DictionaryArgs_SerializedAsObjectAndEscaped()
+    {
+        _sut.Url("method", new Args { { "foo", new Dictionary<string, object> { { "bar", true } } } })
+            .ShouldBe(BaseUrl + "method?foo=%7B%22bar%22%3Atrue%7D");
     }
 
     [Test]
