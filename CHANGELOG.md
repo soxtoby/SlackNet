@@ -5,6 +5,11 @@
 ### Added
 - `BlocksApi.Validate`, which validates blocks, a message or a view against the Block Kit schema.
 - `CanvasesApi.GetContent`, which gets the content of a canvas as markdown or HTML.
+- `ErrorResponse.Errors` and `SlackException.ErrorDetails`, with the issues Slack found in a request, such as invalid elements reported by `BlocksApi.Validate`. `SlackException` messages include them too.
+- `ErrorResponse.Fields` and `Field<T>`, and `SlackException.ErrorFields` and `ErrorField<T>`, with the fields specific to an error, such as the `invalid_mcp_servers` returned by `SlackbotSkillsApi.Create`.
+
+### Changed
+- `SlackException` messages include error fields that aren't strings, as JSON.
 
 ## v0.20.0
 
