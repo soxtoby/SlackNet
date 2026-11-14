@@ -2,5 +2,5 @@
 
 class CanvasCreationResponse
 {
-    public string CanvasId { get; set; } = null!;
+    public required string CanvasId { get; set; }
 }

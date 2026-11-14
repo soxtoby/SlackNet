@@ -2,5 +2,5 @@
 
 class InviteResponse
 {
-    public string InviteId { get; set; } = null!;
+    public required string InviteId { get; set; }
 }
