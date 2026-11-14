@@ -152,6 +152,51 @@ admin.apps.uninstall arg app_id (required) {"type":"string"}
 admin.apps.uninstall arg team_ids {"type":"string","is_resource":false}
 admin.apps.uninstall arg enterprise_id {"type":"string","is_resource":false}
 admin.apps.uninstall output null
+admin.audit.anomaly.allow.getItem output trusted_cidr {"type":"array","items":{"type":"string"}}
+admin.audit.anomaly.allow.getItem output trusted_asns {"type":"array","items":{"type":"integer"}}
+admin.audit.anomaly.allow.updateItem arg trusted_cidr {"type":"array","items":{"type":"string"}}
+admin.audit.anomaly.allow.updateItem arg trusted_asns {"type":"array","items":{"type":"integer"}}
+admin.audit.anomaly.allow.updateItem output null
+admin.auth.policy.assignEntities arg token (required) {"type":"string","subtype":"auth"}
+admin.auth.policy.assignEntities arg policy_name (required) {"type":"string"}
+admin.auth.policy.assignEntities arg entity_type (required) {"schema":"entity_types"}
+admin.auth.policy.assignEntities arg entity_ids (required) {"type":"array","items":{"type":"string"}}
+admin.auth.policy.assignEntities output entity_total_count (required) {"type":"integer"}
+admin.auth.policy.getEntities arg token (required) {"type":"string","subtype":"auth"}
+admin.auth.policy.getEntities arg policy_name (required) {"type":"string"}
+admin.auth.policy.getEntities arg entity_type {"schema":"entity_types"}
+admin.auth.policy.getEntities arg limit {"type":"integer","default":1000}
+admin.auth.policy.getEntities arg cursor {"type":"string"}
+admin.auth.policy.getEntities output response_metadata {"required":["next_cursor"],"type":"object","properties":{"next_cursor":{"type":"string"}}}
+admin.auth.policy.getEntities output entities (required) {"type":"array","items":{"type":"object","required":["entity_type","entity_id","date_added"],"properties":{"entity_type":{"type":"string"},"entity_id":{"type":"string"},"date_added":{"type":"integer"}}}}
+admin.auth.policy.getEntities output entity_total_count (required) {"type":"integer"}
+admin.auth.policy.removeEntities arg token (required) {"type":"string","subtype":"auth"}
+admin.auth.policy.removeEntities arg policy_name (required) {"type":"string"}
+admin.auth.policy.removeEntities arg entity_type (required) {"schema":"entity_types"}
+admin.auth.policy.removeEntities arg entity_ids (required) {"type":"array","items":{"type":"string"}}
+admin.auth.policy.removeEntities output entity_total_count (required) {"type":"integer"}
+admin.barriers.create arg token (required) {"type":"string","subtype":"auth"}
+admin.barriers.create arg primary_usergroup_id (required) {"schema":"subteam_id"}
+admin.barriers.create arg barriered_from_usergroup_ids (required) {"type":"array","items":{"schema":"subteam_id"}}
+admin.barriers.create arg restricted_subjects (required) {"type":"array","items":{"type":"string","enum":["im","mpim","call"]}}
+admin.barriers.create output ok (required) {"type":"boolean"}
+admin.barriers.create output barrier (required) {"schema":"information_barrier"}
+admin.barriers.delete arg token (required) {"type":"string","subtype":"auth"}
+admin.barriers.delete arg barrier_id (required) {"schema":"barrier_id"}
+admin.barriers.delete output ok (required) {"type":"boolean"}
+admin.barriers.list arg token (required) {"type":"string","subtype":"auth"}
+admin.barriers.list arg limit {"type":"integer","default":100}
+admin.barriers.list arg cursor {"type":"string"}
+admin.barriers.list output ok (required) {"type":"boolean"}
+admin.barriers.list output barriers (required) {"type":"array","items":{"schema":"information_barrier"}}
+admin.barriers.list output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.barriers.update arg token (required) {"type":"string","subtype":"auth"}
+admin.barriers.update arg barrier_id (required) {"schema":"barrier_id"}
+admin.barriers.update arg primary_usergroup_id (required) {"schema":"subteam_id"}
+admin.barriers.update arg barriered_from_usergroup_ids (required) {"type":"array","items":{"schema":"subteam_id"}}
+admin.barriers.update arg restricted_subjects (required) {"type":"array","items":{"type":"string","enum":["im","mpim","call"]}}
+admin.barriers.update output ok (required) {"type":"boolean"}
+admin.barriers.update output barrier (required) {"schema":"information_barrier"}
 agents.conversations.archive arg token (required) {"type":"string","subtype":"auth"}
 agents.conversations.archive arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
 agents.conversations.archive arg summary_message_ts {"type":"string"}

@@ -13,6 +13,9 @@
 - `AdminAppsConfigApi`, which looks up and sets connector configs, with `AppConfig`, `AppDomainRestrictions`, `WorkflowAuthStrategy` and `RichLinkPreviewType`.
 - `AdminAppsPermissionsApi`, which sets, lists, adds and removes who can access an app and where it can be used, with `AppPermissionType` and `AppPermissions`.
 - `AdminAppsMcpServersApi`, which lists the third-party app MCP servers approved for an Enterprise organization, with `AppMcpServer`, and `AdminAppsMcpServersPermissionsApi`, which lists and sets who can use an app's MCP servers, with `McpServerPermissions`.
+- `AdminAuditAnomalyAllowApi`, which reads and overwrites an Enterprise organization's allow list of IP blocks and ASNs, with `AnomalyAllowList`.
+- `AdminAuthPolicyApi`, which assigns, lists and removes the users assigned to an authentication policy, with `AuthPolicyEntity` and `AuthPolicyEntityType`.
+- `AdminBarriersApi`, which creates, lists, updates and deletes information barriers, with `InformationBarrier` and `RestrictedSubject`.
 - `ISlackApiClient.GetStream`, which calls a Slack API method that responds with a file, and returns its content as it arrives, using the new `IHttp.ExecuteStreaming`, which returns a response as soon as its headers have been read.
 - `AgentsConversationsApi`, which creates, archives and sets properties and slash commands on code channels, and manages their views and canvases, with `CodeChannelProperties`, `ContextBarItem`, `AgentResource`, `AgentCommand`, `AgentView` and `CanvasComment`. `AccessLevel` has `Comment` for comment-only canvas views.
 - `AgentsSessionsApi.Rename`, which renames an agent session.

@@ -233,6 +233,10 @@ public class ApiLintTests
             { typeof(RichLinkPreviewType?), _ => null },
             { typeof(IEnumerable<RichLinkPreviewType>), _ => Enumerable.Empty<RichLinkPreviewType>() },
             { typeof(AppDomainRestrictions), _ => null },
+            { typeof(IEnumerable<long>), _ => Enumerable.Empty<long>() },
+            { typeof(AuthPolicyEntityType), _ => AuthPolicyEntityType.User },
+            { typeof(AuthPolicyEntityType?), _ => null },
+            { typeof(IEnumerable<RestrictedSubject>), _ => Enumerable.Empty<RestrictedSubject>() },
             { typeof(UserConnectionStatus), _ => UserConnectionStatus.Connected },
             { typeof(ProfileFieldVisibility), _ => ProfileFieldVisibility.All },
             { typeof(Presence), _ => Presence.Active },
@@ -373,6 +377,9 @@ public class ApiLintTests
         public IAdminAppsPermissionsApi AdminAppsPermissions { get; }
         public IAdminAppsRequestsApi AdminAppsRequests { get; }
         public IAdminAppsRestrictedApi AdminAppsRestricted { get; }
+        public IAdminAuditAnomalyAllowApi AdminAuditAnomalyAllow { get; }
+        public IAdminAuthPolicyApi AdminAuthPolicy { get; }
+        public IAdminBarriersApi AdminBarriers { get; }
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }
