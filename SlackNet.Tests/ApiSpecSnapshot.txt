@@ -95,6 +95,31 @@ apps.event.authorizations.list arg cursor {"type":"string"}
 apps.event.authorizations.list arg limit {"type":"integer"}
 apps.event.authorizations.list output cursor_next {"type":"string"}
 apps.event.authorizations.list output authorizations (required) {"type":"array","items":{"type":"object","required":["enterprise_id","team_id","user_id","is_bot","is_enterprise_install"],"properties":{"enterprise_id":{"anyOf":[{"type":"null"},{"type":"string"}]},"team_id":{"anyOf":[{"type":"null"},{"type":"string"}]},"user_id":{"type":"string"},"is_bot":{"type":"boolean"},"is_enterprise_install":{"type":"boolean"}}}}
+apps.manifest.create arg token (required) {"type":"string","subtype":"auth"}
+apps.manifest.create arg manifest (required) {"type":"string"}
+apps.manifest.create arg team_id {"schema":"workspace_id","type":"string"}
+apps.manifest.create output app_id (required) {"schema":"app_id"}
+apps.manifest.create output credentials (required) {"type":"object","properties":{"client_id":{"type":"string"},"client_secret":{"type":"string"},"verification_token":{"type":"string"},"signing_secret":{"type":"string"}}}
+apps.manifest.create output oauth_authorize_url {"type":"string"}
+apps.manifest.create output team_id {"type":"string"}
+apps.manifest.create output team_domain {"type":"string"}
+apps.manifest.create output app_token {"type":"string"}
+apps.manifest.delete arg token (required) {"type":"string","subtype":"auth"}
+apps.manifest.delete arg app_id (required) {"schema":"app_id"}
+apps.manifest.delete output null
+apps.manifest.export arg token (required) {"type":"string","subtype":"auth"}
+apps.manifest.export arg app_id (required) {"schema":"app_id"}
+apps.manifest.export output manifest (required) {"schema":"manifest"}
+apps.manifest.update arg token (required) {"type":"string","subtype":"auth"}
+apps.manifest.update arg manifest (required) {"type":"string"}
+apps.manifest.update arg app_id (required) {"schema":"app_id"}
+apps.manifest.update output app_id (required) {"schema":"app_id"}
+apps.manifest.update output permissions_updated {"type":"boolean"}
+apps.manifest.validate arg token (required) {"type":"string","subtype":"auth"}
+apps.manifest.validate arg manifest (required) {"type":"string"}
+apps.manifest.validate arg app_id {"schema":"app_id"}
+apps.manifest.validate output errors (required) {"type":"array","items":{"type":"string"}}
+apps.manifest.validate output warnings {"type":"array","items":{"type":"object","required":["message","code"],"properties":{"code":{"type":"string"},"message":{"type":"string"},"pointer":{"type":"string"}}}}
 assistant.search.context arg token (required) {"type":"string","subtype":"auth","org_app":{"allowed":true,"derive_team_context_from":"token"}}
 assistant.search.context arg query (required) {"type":"string"}
 assistant.search.context arg action_token {"type":"string"}

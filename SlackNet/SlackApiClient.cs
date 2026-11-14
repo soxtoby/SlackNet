@@ -19,6 +19,7 @@ public interface ISlackApiClient
     IApiApi Api { get; }
     IAppsConnectionsApi AppsConnections { get; }
     IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
+    IAppsManifestApi AppsManifest { get; }
     IAssistantSearchApi AssistantSearch { get; }
     IAssistantThreadsApi AssistantThreads { get; }
     IAuthApi Auth { get; }
@@ -200,6 +201,7 @@ public class SlackApiClient : ISlackApiClient
     public IApiApi Api => new ApiApi(this);
     public IAppsConnectionsApi AppsConnections => new AppsConnectionsApi(this);
     public IAppsEventAuthorizationsApi AppsEventAuthorizations => new AppsEventAuthorizationsApi(this);
+    public IAppsManifestApi AppsManifest => new AppsManifestApi(this, _jsonSettings);
     public IAssistantSearchApi AssistantSearch => new AssistantSearchApi(this);
     public IAssistantThreadsApi AssistantThreads => new AssistantThreadsApi(this);
     public IAuthApi Auth => new AuthApi(this);

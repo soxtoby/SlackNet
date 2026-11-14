@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using EasyAssertions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using SlackNet.AppManifests;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Interaction;
@@ -242,6 +243,7 @@ public class ApiLintTests
             { typeof(IEnumerable<AgentCommand>), _ => Enumerable.Empty<AgentCommand>() },
             { typeof(CodeChannelProperties), _ => null },
             { typeof(AgentResource), _ => null },
+            { typeof(AppManifest), _ => null },
             { typeof(JObject), _ => new JObject() },
             { typeof(CancellationToken), _ => null }
         };
@@ -310,6 +312,7 @@ public class ApiLintTests
         public IApiApi Api { get; }
         public IAppsConnectionsApi AppsConnections { get; }
         public IAppsEventAuthorizationsApi AppsEventAuthorizations { get; }
+        public IAppsManifestApi AppsManifest { get; }
         public IAssistantSearchApi AssistantSearch { get; }
         public IAssistantThreadsApi AssistantThreads { get; }
         public IAuthApi Auth { get; }
