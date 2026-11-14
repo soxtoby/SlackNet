@@ -3,6 +3,7 @@ using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SlackNet.Events;
 using SlackNet.Handlers;
@@ -15,6 +16,7 @@ public class SlackSocketModeClientTests
 {
     private RecordingSocket _socket;
     private Experimental.IEventHandler<Event> _handler;
+    private SlackJsonSettings _jsonSettings;
     private SlackSocketModeClient _sut;
     private TaskCompletionSource<Experimental.IEventContext<Event>> _received;
     private TaskCompletionSource<Acknowledgement> _response;
@@ -182,6 +184,46 @@ public class SlackSocketModeClientTests
         http.AuthorizationHeaders.ShouldMatch(["Bearer api-token"]);
     }
 
+    [Test]
+    public async Task HandleRequest_AppRateLimitedPayload_PassesEventToEventHandlers()
+    {
+        HandleEventsWith(_ => Task.CompletedTask);
+
+        ReceiveJson("""
+            {
+                "type": "events_api",
+                "envelope_id": "envelope",
+                "payload": {
+                    "token": "verification-token",
+                    "type": "app_rate_limited",
+                    "team_id": "T123",
+                    "minute_rate_limited": 1518467820,
+                    "api_app_id": "A123"
+                }
+            }
+            """);
+        var context = await WaitForHandler();
+
+        context.Callback.TeamId.ShouldBe("T123");
+        context.Callback.ApiAppId.ShouldBe("A123");
+        context.Event.ShouldBeA<AppRateLimited>()
+            .And.MinuteRateLimited.ShouldBe(1518467820);
+    }
+
+    [Test]
+    public async Task HandleRequest_PayloadWithoutEvent_AcknowledgesWithoutHandlingOrError()
+    {
+        HandleEventsWith(_ => Task.CompletedTask);
+
+        ReceiveEvent(new EventCallback { EventId = "event" });
+        var result = await WaitForResponse();
+        await WaitForCleanup();
+
+        result.EnvelopeId.ShouldBe("envelope");
+        _received.Task.IsCompleted.ShouldBe(false);
+        _error.Task.IsCompleted.ShouldBe(false);
+    }
+
     private void HandleEventsWith(Func<Experimental.IEventContext<Event>, Task> handle) =>
         _handler = new ContextEventHandler<Event>(context =>
             {
@@ -198,6 +240,13 @@ public class SlackSocketModeClientTests
             EnvelopeId = "envelope",
             Payload = eventCallback ?? new EventCallback { EventId = "event", Event = new MessageEvent { Text = "message" } }
         });
+
+    private void ReceiveJson(string envelopeJson)
+    {
+        var envelope = JsonConvert.DeserializeObject<SocketMessage>(envelopeJson, _jsonSettings.SerializerSettings);
+        envelope.SocketId = 7;
+        _socket.Incoming.OnNext(envelope);
+    }
 
     private Task<Experimental.IEventContext<Event>> WaitForHandler() => _received.Task.WaitAsync(TimeSpan.FromSeconds(5));
     private Task<Acknowledgement> WaitForResponse() => _response.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -225,7 +274,8 @@ public class SlackSocketModeClientTests
     private SlackSocketModeClient CreateClient()
     {
         var services = new SlackServiceBuilder().ReplaceEventHandling(_ => _handler);
-        return new SlackSocketModeClient(_socket, services.GetJsonSettings(), new[] { CreateCompletionListener() }, services.GetHandlerFactory(), new ErrorLogger(_error));
+        _jsonSettings = services.GetJsonSettings();
+        return new SlackSocketModeClient(_socket, _jsonSettings,new[] { CreateCompletionListener() }, services.GetHandlerFactory(), new ErrorLogger(_error));
     }
 
     private RequestCompletionListener CreateCompletionListener() => new(() =>

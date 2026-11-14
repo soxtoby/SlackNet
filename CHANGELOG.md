@@ -4,6 +4,7 @@
 
 ### Added
 - `AppDeleted`, `AppInstalled`, `AppRequested` and `AppUninstalledTeam` events, with `AppRequest`, `App` and `AppScope`.
+- `AppRateLimited` event, which Slack sends when your app's event subscriptions are rate limited. Event handlers receive it in an `EventCallback`, over HTTP or Socket Mode, even though Slack doesn't send it in one.
 - `BlocksApi.Validate`, which validates blocks, a message or a view against the Block Kit schema.
 - `CanvasesApi.GetContent`, which gets the content of a canvas as markdown or HTML.
 - `ErrorResponse.Errors` and `SlackException.ErrorDetails`, with the issues Slack found in a request, such as invalid elements reported by `BlocksApi.Validate`. `SlackException` messages include them too.
@@ -17,6 +18,9 @@
 
 ### Changed
 - `SlackException` messages include error fields that aren't strings, as JSON.
+
+### Fixed
+- Socket Mode acknowledges Events API payloads without an event, instead of logging a `NullReferenceException`.
 
 ## v0.20.0
 

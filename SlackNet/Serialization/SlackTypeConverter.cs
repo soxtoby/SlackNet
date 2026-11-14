@@ -67,7 +67,7 @@ class SlackTypeConverter(SlackTypeResolver slackTypeResolver, ILogger logger) : 
 
     private object ReadObject(JsonReader reader, Type objectType, JsonSerializer serializer)
     {
-        var jObject = JObject.Load(reader);
+        var jObject = UnwrappedEvents.WrapInEventCallback(objectType, JObject.Load(reader));
         var targetType = slackTypeResolver.FindType(objectType, jObject);
         return ReadInner(CreateAnotherReader(jObject, reader), targetType, serializer);
     }

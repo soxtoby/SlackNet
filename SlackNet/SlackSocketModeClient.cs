@@ -131,7 +131,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
     private Task HandleSpecificRequest(SlackRequestContext requestContext, SocketEnvelope envelope, Func<object, Task> respond) =>
         envelope switch
             {
-                EventEnvelope eventEnvelope => HandleEvent(requestContext, eventEnvelope.Payload, respond),
+                EventEnvelope { Payload.Event: not null } eventEnvelope => HandleEvent(requestContext, eventEnvelope.Payload, respond),
                 SlashCommandEnvelope slashCommand => HandleSlashCommand(requestContext, slashCommand.Payload, respond),
                 InteractionEnvelope interaction when IsBlockOptionsRequest(interaction) => HandleBlockOptionsRequest(requestContext, DeserializePayload<BlockOptionsRequest>(interaction.Payload), respond),
                 InteractionEnvelope interaction when IsLegacyOptionsRequest(interaction) => HandleLegacyOptionsRequest(requestContext, DeserializePayload<OptionsRequest>(interaction.Payload), respond),

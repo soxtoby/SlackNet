@@ -195,6 +195,33 @@ public class SlackRequestHandlerTests
         http.AuthorizationHeaders.ShouldMatch(["Bearer api-token"]);
     }
 
+    [Test]
+    public async Task HandleEventRequest_AppRateLimitedRequest_ValidatesWithRequestIdentityAndPassesEventToEventHandlers()
+    {
+        ConfigureServices(c => c.UseVerificationTokenProvider(new VerificationTokenProvider(context =>
+            context is { RequestType: SlackRequestType.Event, ApiAppId: "A123", TeamId: "T123" }
+                ? "verification-token"
+                : null)));
+
+        var result = await ReceiveRequest("""
+            {
+                "token": "verification-token",
+                "type": "app_rate_limited",
+                "team_id": "T123",
+                "minute_rate_limited": 1518467820,
+                "api_app_id": "A123"
+            }
+            """);
+        await CompleteResponse(result);
+
+        result.Status.ShouldBe(HttpStatusCode.OK);
+        var context = await WaitForHandler();
+        context.Callback.TeamId.ShouldBe("T123");
+        context.Callback.ApiAppId.ShouldBe("A123");
+        context.Event.ShouldBeA<AppRateLimited>()
+            .And.MinuteRateLimited.ShouldBe(1518467820);
+    }
+
     private void ConfigureServices(Action<AspNetSlackServiceConfiguration> configure)
     {
         _services?.Dispose();
@@ -231,8 +258,11 @@ public class SlackRequestHandlerTests
                 EventId = "event",
                 Event = new MessageEvent { Type = "message", Text = "message" }
             };
-        var body = JsonConvert.SerializeObject(eventCallback, Default.JsonSettings().SerializerSettings);
+        return ReceiveRequest(JsonConvert.SerializeObject(eventCallback, Default.JsonSettings().SerializerSettings), signingSecret);
+    }
 
+    private Task<SlackResult> ReceiveRequest(string body, string signingSecret = null)
+    {
         var http = new DefaultHttpContext
             {
                 RequestServices = _services,
