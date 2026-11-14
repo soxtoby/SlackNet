@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,15 +46,8 @@ public class ApiLintTests
         }
     }
 
-    [Test]
-    [Explicit]
-    public async Task MissingApis()
+    internal static HashSet<string> ImplementedSlackMethods()
     {
-        using var http = new HttpClient();
-        var methodList = await http.GetFromJsonAsync<ApiMethod[]>("https://docs.slack.dev/reference/methods.json");
-        var allApiMethods = methodList.Select(m => m.Name).ToHashSet();
-        allApiMethods.ShouldNotBeEmpty();
-
         var implementedApiMethods = new HashSet<string>();
         var client = new FakeClient();
         foreach (var api in ApiClasses)
@@ -67,20 +59,8 @@ public class ApiLintTests
                 implementedApiMethods.Add(client.SlackMethod);
             }
         }
-
-        var missingApiMethods = allApiMethods
-            .Where(m => MissingApiMethodExceptions.All(e => !m.StartsWith(e)))
-            .Except(implementedApiMethods);
-        missingApiMethods.ShouldBeEmpty();
+        return implementedApiMethods;
     }
-
-    private static readonly string[] MissingApiMethodExceptions = [
-            "admin.", // Not supported for now, but should be
-            "apps.", // Not supported for now, but should be
-            "agents.", // Not supported for now, but should be
-            "stars.", // Deprecated
-            "users.setActive", // Deprecated
-        ];
 
     private static object CreateApiInstance(Type api, FakeClient client)
     {
@@ -372,10 +352,4 @@ public class ApiLintTests
     {
         public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => Task.FromResult(Activator.CreateInstance<T>());
     }
-
-    record ApiMethod(
-        string Name,
-        string Description,
-        string[] Family
-    );
 }

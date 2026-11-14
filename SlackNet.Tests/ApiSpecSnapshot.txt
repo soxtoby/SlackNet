@@ -1,0 +1,1280 @@
+agents.sessions.setStatus arg token (required) {"type":"string","subtype":"auth"}
+agents.sessions.setStatus arg channel_id {"type":"string","subtype":"channel","schema":"channel","required_for_public":true}
+agents.sessions.setStatus arg status (required) {"type":"string","enum":["active","processing","suspended","closed"],"schema":"agent_session_status"}
+agents.sessions.setStatus arg thread_ts {"type":"string"}
+agents.sessions.setStatus arg title {"type":"string"}
+agents.sessions.setStatus arg initiator_user_id {"type":"string"}
+agents.sessions.setStatus arg icon_emoji {"type":"string"}
+agents.sessions.setStatus arg icon_url {"type":"string"}
+agents.sessions.setStatus arg username {"type":"string"}
+agents.sessions.setStatus output status (required) {"schema":"agent_session_status"}
+agents.sessions.setStatus output agent_status (required) {"schema":"agent_session_status"}
+agents.sessions.setStatus output title {"type":"string"}
+api.test arg error {"type":"string"}
+api.test output args {"type":"object"}
+apps.connections.open arg token (required) {"type":"string","subtype":"auth"}
+apps.connections.open output url (required) {"type":"string","subtype":"auth"}
+apps.event.authorizations.list arg token (required) {"type":"string","subtype":"auth"}
+apps.event.authorizations.list arg event_context (required) {"type":"string"}
+apps.event.authorizations.list arg cursor {"type":"string"}
+apps.event.authorizations.list arg limit {"type":"integer"}
+apps.event.authorizations.list output cursor_next {"type":"string"}
+apps.event.authorizations.list output authorizations (required) {"type":"array","items":{"type":"object","required":["enterprise_id","team_id","user_id","is_bot","is_enterprise_install"],"properties":{"enterprise_id":{"anyOf":[{"type":"null"},{"type":"string"}]},"team_id":{"anyOf":[{"type":"null"},{"type":"string"}]},"user_id":{"type":"string"},"is_bot":{"type":"boolean"},"is_enterprise_install":{"type":"boolean"}}}}
+assistant.search.context arg token (required) {"type":"string","subtype":"auth","org_app":{"allowed":true,"derive_team_context_from":"token"}}
+assistant.search.context arg query (required) {"type":"string"}
+assistant.search.context arg action_token {"type":"string"}
+assistant.search.context arg channel_types {"default":"public_channel","type":"array","items":{"type":"string","enum":["public_channel","private_channel","mpim","im"]},"hidden":false}
+assistant.search.context arg content_types {"default":"messages","type":"array","items":{"type":"string","enum":["messages","files","enterprise","channels","users"]},"hidden":false}
+assistant.search.context arg include_bots {"default":null,"type":"boolean"}
+assistant.search.context arg include_deleted_users {"default":false,"logged":true,"type":"boolean"}
+assistant.search.context arg before {"type":"integer"}
+assistant.search.context arg after {"type":"integer"}
+assistant.search.context arg include_context_messages {"type":"boolean","default":false}
+assistant.search.context arg context_channel_id {"schema":"channel","subtype":"channel"}
+assistant.search.context arg cursor {"type":"string"}
+assistant.search.context arg limit {"type":"integer"}
+assistant.search.context arg sort {"type":"string","enum":["score","timestamp"],"default":"score"}
+assistant.search.context arg sort_dir {"type":"string","enum":["asc","desc"],"default":"desc"}
+assistant.search.context arg include_message_blocks {"type":"boolean","default":false}
+assistant.search.context arg highlight {"type":"boolean","default":false}
+assistant.search.context arg term_clauses {"type":"array","items":{"type":"string"}}
+assistant.search.context arg modifiers {"type":"string"}
+assistant.search.context arg include_archived_channels {"type":"boolean","default":false}
+assistant.search.context arg disable_semantic_search {"type":"boolean","default":false}
+assistant.search.context output results (required) {"type":"object","properties":{"messages":{"type":"array","items":{"type":"object","required":["author_name","author_user_id","team_id","channel_id","channel_name","message_ts","content","is_author_bot","permalink"],"properties":{"author_name":{"type":"string"},"author_email":{"type":"string"},"author_user_id":{"schema":"user_id"},"team_id":{"schema":"team_id"},"channel_id":{"schema":"channel"},"channel_name":{"type":"string"},"message_ts":{"schema":"ts","type":"string"},"content":{"type":"string"},"is_author_bot":{"type":"boolean"},"permalink":{"type":"string","format":"uri"},"context_messages":{"type":"object","properties":{"before":{"type":"array","items":{"schema":"context_msg"}},"after":{"type":"array","items":{"schema":"context_msg"}}}},"blocks":{"type":"array"},"reply_count":{"type":"integer"}}}},"files":{"type":"array","items":{"type":"object","required":["author_name","author_user_id","uploader_user_id","team_id","file_id","date_created","date_updated","title","file_type","permalink","content"],"properties":{"author_name":{"type":"string"},"author_email":{"type":"string"},"author_user_id":{"schema":"user_id"},"uploader_user_id":{"schema":"user_id"},"team_id":{"schema":"team_id"},"file_id":{"schema":"file_id"},"date_created":{"type":"integer"},"date_updated":{"type":"integer"},"title":{"type":"string"},"file_type":{"type":"string"},"permalink":{"type":"string","format":"uri"},"content":{"type":"string"},"size":{"type":"integer"}}}},"enterprise":{"type":"array","items":{"schema":"external-record"}},"channels":{"type":"array","items":{"type":"object","required":["team_id","creator_user_id","date_created","date_updated","name","permalink","is_archived","channel_type"],"properties":{"team_id":{"schema":"team_id"},"creator_user_id":{"schema":"user_id"},"creator_name":{"type":"string"},"date_created":{"type":"integer"},"date_updated":{"type":"integer"},"name":{"type":"string"},"topic":{"type":"string"},"purpose":{"type":"string"},"permalink":{"type":"string","format":"uri"},"is_archived":{"type":"boolean"},"channel_type":{"type":"string","enum":["public_channel","private_channel","mpim","im"]}}}},"users":{"type":"array","items":{"type":"object","required":["user_id","permalink","full_name","title","timezone","email"],"properties":{"user_id":{"type":"string"},"permalink":{"type":"string"},"profile_pic_permalink":{"type":"string"},"full_name":{"type":"string"},"title":{"type":"string"},"timezone":{"type":"string"},"email":{"type":"string"}}}}}}
+assistant.search.context output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"},"warnings":{"type":"array","items":{"type":"string"}}}}
+assistant.search.context output failed_content_types {"type":"array","items":{"type":"string","enum":["messages","files","channels","users"]}}
+assistant.search.info arg token (required) {"type":"string","subtype":"auth"}
+assistant.search.info output is_ai_search_enabled (required) {"type":"boolean"}
+assistant.threads.setStatus arg token (required) {"type":"string","subtype":"auth"}
+assistant.threads.setStatus arg channel_id (required) {"type":"string","subtype":"channel","schema":"channel"}
+assistant.threads.setStatus arg thread_ts (required) {"type":"string"}
+assistant.threads.setStatus arg status (required) {"type":"string"}
+assistant.threads.setStatus arg loading_messages {"type":"array","items":{"type":"string"}}
+assistant.threads.setStatus arg icon_emoji {"type":"string"}
+assistant.threads.setStatus arg icon_url {"type":"string"}
+assistant.threads.setStatus arg username {"type":"string"}
+assistant.threads.setStatus output {}
+assistant.threads.setSuggestedPrompts arg token (required) {"type":"string","subtype":"auth"}
+assistant.threads.setSuggestedPrompts arg channel_id (required) {"subtype":"channel","schema":"channel"}
+assistant.threads.setSuggestedPrompts arg thread_ts {"type":"string"}
+assistant.threads.setSuggestedPrompts arg prompts (required) {"schema":"prompts"}
+assistant.threads.setSuggestedPrompts arg title {"type":"string"}
+assistant.threads.setSuggestedPrompts output {}
+assistant.threads.setTitle arg token (required) {"type":"string","subtype":"auth"}
+assistant.threads.setTitle arg channel_id (required) {"subtype":"channel","schema":"channel"}
+assistant.threads.setTitle arg thread_ts (required) {"type":"string"}
+assistant.threads.setTitle arg title (required) {"type":"string"}
+assistant.threads.setTitle output {}
+auth.revoke arg token (required) {"type":"string","subtype":"auth"}
+auth.revoke arg test {"type":"boolean"}
+auth.revoke output revoked (required) {"type":"boolean"}
+auth.teams.list arg token (required) {"type":"string","subtype":"auth"}
+auth.teams.list arg limit {"type":"integer","default":100}
+auth.teams.list arg cursor {"type":"string"}
+auth.teams.list arg include_icon {"type":"boolean","default":"false"}
+auth.teams.list output teams {"type":"array","items":{"type":"object","required":["team_id","name"],"properties":{"id":{"type":"string"},"name":{"type":"string"},"icon":{"type":"object","properties":{"image_34":{"type":"string"},"image_44":{"type":"string"},"image_68":{"type":"string"},"image_88":{"type":"string"},"image_102":{"type":"string"},"image_132":{"type":"string"},"image_230":{"type":"string"},"image_default":{"type":"boolean"}}}}}}
+auth.test arg token (required) {"type":"string","subtype":"auth"}
+auth.test output user_id {"schema":"user_id"}
+auth.test output url {"type":"string"}
+auth.test output team_id {"schema":"team_id"}
+auth.test output user {"anyOf":[{"type":"null"},{"type":"string"}]}
+auth.test output team {"type":"string"}
+auth.test output app_id {"schema":"app_id"}
+auth.test output app_name {"type":"string"}
+auth.test output enterprise_id {"schema":"enterprise_id"}
+auth.test output bot_id {"schema":"bot_id"}
+auth.test output is_enterprise_install {"type":"boolean"}
+auth.test output expires_in {"anyOf":[{"type":"null"},{"type":"integer"}]}
+bookmarks.add arg token (required) {"type":"string","subtype":"auth"}
+bookmarks.add arg channel_id {"type":"string","subtype":"channel","required_for_public":true}
+bookmarks.add arg title (required) {"type":"string"}
+bookmarks.add arg link {"type":"string"}
+bookmarks.add arg type (required) {"type":"string"}
+bookmarks.add arg emoji {"type":"string"}
+bookmarks.add arg entity_id {"type":"string"}
+bookmarks.add arg access_level {"type":"string","enum":["read","write"]}
+bookmarks.add arg parent_id {"type":"string"}
+bookmarks.add output bookmark (required) {"type":"object","schema":"bookmark"}
+bookmarks.edit arg token (required) {"type":"string","subtype":"auth"}
+bookmarks.edit arg channel_id {"type":"string","subtype":"channel","required_for_public":true}
+bookmarks.edit arg bookmark_id {"type":"string","required_for_public":true}
+bookmarks.edit arg title {"type":"string"}
+bookmarks.edit arg link {"type":"string"}
+bookmarks.edit arg emoji {"type":"string"}
+bookmarks.edit output bookmark (required) {"type":"object","schema":"bookmark"}
+bookmarks.list arg token (required) {"type":"string","subtype":"auth"}
+bookmarks.list arg channel_id {"type":"string","subtype":"channel","required_for_public":true}
+bookmarks.list output bookmarks (required) {"type":"array","items":{"schema":"bookmark"}}
+bookmarks.remove arg token (required) {"type":"string","subtype":"auth"}
+bookmarks.remove arg channel_id {"type":"string","subtype":"channel","required_for_public":true}
+bookmarks.remove arg bookmark_id {"type":"string","required_for_public":true}
+bookmarks.remove arg quip_section_id {"type":"string"}
+bookmarks.remove output null
+bots.info arg token (required) {"type":"string","subtype":"auth"}
+bots.info arg bot {"type":"string","subtype":"bot"}
+bots.info arg team_id {"type":"string","subtype":"team"}
+bots.info output bots {"items":{"required":["updated","deleted","id"],"type":"object","properties":{"updated":{"type":"integer"},"name":{"type":"string"},"icons":{"type":"object","properties":{"emoji":{"type":"string"},"image_36":{"type":"string"},"image_48":{"type":"string"},"image_64":{"type":"string"},"image_72":{"type":"string"}}},"deleted":{"type":"boolean"},"app_id":{"type":"string"},"id":{"type":"string"},"is_workflow_bot":{"type":"boolean"},"is_connector_bot":{"type":"boolean"},"is_legacy_workflow_bot":{"type":"boolean"},"user_id":{"type":"string"}}},"type":"array"}
+bots.info output bot {"type":"object","required":["updated","deleted","id"],"properties":{"updated":{"type":"integer"},"user_id":{"type":"string"},"name":{"type":"string"},"icons":{"type":"object","properties":{"emoji":{"type":"string"},"image_36":{"type":"string"},"image_48":{"type":"string"},"image_64":{"type":"string"},"image_72":{"type":"string"}}},"deleted":{"type":"boolean"},"app_id":{"type":"string"},"id":{"type":"string"},"is_workflow_bot":{"type":"boolean"},"is_connector_bot":{"type":"boolean"},"is_legacy_workflow_bot":{"type":"boolean"}}}
+calls.add arg token (required) {"type":"string","subtype":"auth"}
+calls.add arg external_unique_id (required) {"type":"string"}
+calls.add arg external_display_id {"type":"string"}
+calls.add arg join_url (required) {"type":"string"}
+calls.add arg desktop_app_join_url {"type":"string"}
+calls.add arg date_start {"type":"integer"}
+calls.add arg title {"type":"string"}
+calls.add arg created_by {"type":"string"}
+calls.add arg users {"type":"array","items":{"schema":"user"}}
+calls.add output call (required) {"schema":"info"}
+calls.end arg token (required) {"type":"string","subtype":"auth"}
+calls.end arg id (required) {"type":"string"}
+calls.end arg duration {"type":"integer"}
+calls.end output call (required) {"schema":"info"}
+calls.info arg token (required) {"type":"string","subtype":"auth"}
+calls.info arg id (required) {"type":"string"}
+calls.info output call (required) {"schema":"info"}
+calls.participants.add arg token (required) {"type":"string","subtype":"auth"}
+calls.participants.add arg id (required) {"type":"string"}
+calls.participants.add arg users (required) {"type":"array","items":{"schema":"user"}}
+calls.participants.add output call (required) {"schema":"info"}
+calls.participants.remove arg token (required) {"type":"string","subtype":"auth"}
+calls.participants.remove arg id (required) {"type":"string"}
+calls.participants.remove arg users (required) {"type":"array","items":{"schema":"user"}}
+calls.participants.remove output call (required) {"schema":"info"}
+calls.update arg token (required) {"type":"string","subtype":"auth"}
+calls.update arg id (required) {"type":"string"}
+calls.update arg title {"type":"string"}
+calls.update arg join_url {"type":"string"}
+calls.update arg desktop_app_join_url {"type":"string"}
+calls.update output call (required) {"schema":"info"}
+canvases.access.delete arg token (required) {"type":"string","subtype":"auth"}
+canvases.access.delete arg canvas_id (required) {"subtype":"canvas","schema":"file_id"}
+canvases.access.delete arg channel_ids {"type":"array","items":{"schema":"channel_or_group_id"}}
+canvases.access.delete arg user_ids {"type":"array","items":{"schema":"user_id"}}
+canvases.access.delete output failed_to_update_channel_ids {"type":"array","items":{"schema":"channel"}}
+canvases.access.delete output failed_to_update_user_ids {"type":"array","items":{"schema":"user_id"}}
+canvases.access.set arg token (required) {"type":"string","subtype":"auth"}
+canvases.access.set arg canvas_id (required) {"subtype":"canvas","schema":"file_id"}
+canvases.access.set arg access_level (required) {"enum":["read","write","owner"],"schema":"file_access_level"}
+canvases.access.set arg channel_ids {"type":"array","items":{"schema":"channel_or_group_id"}}
+canvases.access.set arg user_ids {"type":"array","items":{"schema":"user_id"}}
+canvases.access.set output failed_to_update_channel_ids {"type":"array","items":{"schema":"channel"}}
+canvases.access.set output failed_to_update_user_ids {"type":"array","items":{"schema":"user_id"}}
+canvases.create arg token (required) {"type":"string","subtype":"auth"}
+canvases.create arg title {"type":"string"}
+canvases.create arg document_content {"schema":"selection"}
+canvases.create arg channel_id {"type":"string","subtype":"channel","schema":"channel"}
+canvases.create output canvas_id (required) {"schema":"file_id"}
+canvases.delete arg token (required) {"type":"string","subtype":"auth"}
+canvases.delete arg canvas_id (required) {"subtype":"canvas","schema":"file_id"}
+canvases.delete output null
+canvases.edit arg token (required) {"type":"string","subtype":"auth"}
+canvases.edit arg canvas_id (required) {"subtype":"canvas","schema":"file_id"}
+canvases.edit arg changes (required) {"type":"array","items":{"schema":"selection"}}
+canvases.edit output null
+canvases.sections.lookup arg token (required) {"type":"string","subtype":"auth"}
+canvases.sections.lookup arg canvas_id (required) {"subtype":"canvas","schema":"file_id"}
+canvases.sections.lookup arg criteria (required) {"schema":"criteria"}
+canvases.sections.lookup output sections (required) {"type":"array","items":{"type":"object","required":["id"],"properties":{"id":{"type":"string"},"child_section_ids":{"type":"array","items":{"type":"string"}}}}}
+chat.appendStream arg token (required) {"type":"string","subtype":"auth","org_app":{"allowed":true,"derive_team_context_from":"channel"}}
+chat.appendStream arg channel (required) {"type":"string","subtype":"channel"}
+chat.appendStream arg chunks {"type":"array"}
+chat.appendStream arg ts (required) {"schema":"ts"}
+chat.appendStream arg markdown_text {"type":"string"}
+chat.appendStream output channel (required) {"schema":"channel"}
+chat.appendStream output ts (required) {"schema":"ts"}
+chat.delete arg token (required) {"type":"string","subtype":"auth"}
+chat.delete arg as_user {"type":"boolean"}
+chat.delete arg channel (required) {"type":"string","subtype":"channel"}
+chat.delete arg ts (required) {"type":"string","subtype":"timestamp"}
+chat.delete output channel (required) {"type":"string","subtype":"channel"}
+chat.delete output ts (required) {"schema":"ts"}
+chat.deleteScheduledMessage arg token (required) {"type":"string","subtype":"auth"}
+chat.deleteScheduledMessage arg as_user {"type":"boolean"}
+chat.deleteScheduledMessage arg channel (required) {"type":"string","subtype":"channel"}
+chat.deleteScheduledMessage arg scheduled_message_id (required) {"type":"string"}
+chat.deleteScheduledMessage output null
+chat.getPermalink arg token (required) {"type":"string","subtype":"auth"}
+chat.getPermalink arg channel (required) {"type":"string","subtype":"channel"}
+chat.getPermalink arg message_ts (required) {"type":"string","subtype":"timestamp"}
+chat.getPermalink output permalink (required) {"type":"string"}
+chat.getPermalink output channel (required) {"type":"string","subtype":"channel"}
+chat.meMessage arg token (required) {"type":"string","subtype":"auth"}
+chat.meMessage arg channel (required) {"type":"string","subtype":"channel"}
+chat.meMessage arg text (required) {"type":"string"}
+chat.meMessage output ts {"schema":"ts"}
+chat.meMessage output channel {"schema":"channel"}
+chat.postEphemeral arg token (required) {"type":"string","subtype":"auth"}
+chat.postEphemeral arg as_user {"type":"boolean"}
+chat.postEphemeral arg attachments {"subtype":"attachments","anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postEphemeral arg blocks {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postEphemeral arg channel (required) {"type":"string","subtype":"channel"}
+chat.postEphemeral arg icon_emoji {"type":"string"}
+chat.postEphemeral arg icon_url {"type":"string"}
+chat.postEphemeral arg link_names {"type":"boolean"}
+chat.postEphemeral arg markdown_text {"type":"string"}
+chat.postEphemeral arg metadata {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postEphemeral arg parse {"anyOf":[{"enum":["","none","full","mrkdwn","false"],"type":"string"},{"type":"null"}]}
+chat.postEphemeral arg text {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postEphemeral arg thread_ts {"subtype":"timestamp","anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postEphemeral arg user (required) {"subtype":"user","schema":"user_id"}
+chat.postEphemeral arg username {"type":"string"}
+chat.postEphemeral output message_ts (required) {"type":"string"}
+chat.postMessage arg token (required) {"type":"string","subtype":"auth"}
+chat.postMessage arg as_user {"type":"boolean"}
+chat.postMessage arg attachments {"anyOf":[{"type":"string","subtype":"attachments"},{"type":"boolean"},{"type":"null"}]}
+chat.postMessage arg blocks {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postMessage arg channel (required) {"type":"string","subtype":"channel"}
+chat.postMessage arg current_draft_last_updated_ts {"type":"string"}
+chat.postMessage arg icon_emoji {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postMessage arg icon_url {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postMessage arg link_names {"type":"boolean"}
+chat.postMessage arg markdown_text {"type":"string"}
+chat.postMessage arg metadata {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postMessage arg mrkdwn {"default":"true","type":"boolean"}
+chat.postMessage arg parse {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postMessage arg reply_broadcast {"type":"boolean"}
+chat.postMessage arg text {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postMessage arg thread_ts {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postMessage arg unfurl_links {"type":"boolean"}
+chat.postMessage arg unfurl_media {"type":"boolean"}
+chat.postMessage arg username {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.postMessage arg unfurl_app_links {"type":"boolean"}
+chat.postMessage output channel (required) {"schema":"channel"}
+chat.postMessage output ts (required) {"schema":"ts"}
+chat.postMessage output message {"schema":"message"}
+chat.postMessage output is_duplicate {"type":"boolean"}
+chat.scheduledMessages.list arg token (required) {"type":"string","subtype":"auth"}
+chat.scheduledMessages.list arg channel {"type":"string","subtype":"channel"}
+chat.scheduledMessages.list arg cursor {"type":"string"}
+chat.scheduledMessages.list arg latest {"type":"string","subtype":"timestamp"}
+chat.scheduledMessages.list arg limit {"type":"integer"}
+chat.scheduledMessages.list arg oldest {"type":"string","subtype":"timestamp"}
+chat.scheduledMessages.list arg team_id {"type":"string","subtype":"team"}
+chat.scheduledMessages.list output scheduled_messages (required) {"type":"array","items":{"type":"object","required":["id","channel_id","post_at","date_created"],"properties":{"id":{"type":"string","pattern":"^[Q][A-Z0-9]{8,}$"},"channel_id":{"schema":"channel"},"post_at":{"type":"integer","pattern":"^\\d{10}$"},"date_created":{"type":"integer","pattern":"^\\d{10}$"},"text":{"type":"string"}}}}
+chat.scheduledMessages.list output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+chat.scheduleMessage arg token (required) {"type":"string","subtype":"auth"}
+chat.scheduleMessage arg as_user {"type":"boolean"}
+chat.scheduleMessage arg attachments {"type":"string"}
+chat.scheduleMessage arg blocks {"type":"string"}
+chat.scheduleMessage arg channel (required) {"type":"string","subtype":"channel"}
+chat.scheduleMessage arg link_names {"type":"boolean"}
+chat.scheduleMessage arg markdown_text {"type":"string"}
+chat.scheduleMessage arg parse {"type":"string","enum":["none","full"]}
+chat.scheduleMessage arg post_at (required) {"type":"integer"}
+chat.scheduleMessage arg reply_broadcast {"type":"boolean"}
+chat.scheduleMessage arg text {"type":"string"}
+chat.scheduleMessage arg thread_ts {"type":"string"}
+chat.scheduleMessage arg unfurl_links {"type":"boolean"}
+chat.scheduleMessage arg unfurl_media {"type":"boolean"}
+chat.scheduleMessage arg metadata {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.scheduleMessage output channel (required) {"schema":"channel"}
+chat.scheduleMessage output post_at (required) {"type":"integer"}
+chat.scheduleMessage output scheduled_message_id (required) {"type":"string"}
+chat.scheduleMessage output message (required) {"type":"object"}
+chat.startStream arg token (required) {"type":"string","subtype":"auth","org_app":{"allowed":true,"derive_team_context_from":"channel"}}
+chat.startStream arg channel (required) {"type":"string","subtype":"channel"}
+chat.startStream arg chunks {"type":"array"}
+chat.startStream arg markdown_text {"type":"string","hidden":false}
+chat.startStream arg thread_ts {"type":"string"}
+chat.startStream arg recipient_user_id {"schema":"user_id"}
+chat.startStream arg recipient_team_id {"type":"string"}
+chat.startStream arg task_display_mode {"type":"string","enum":["timeline","plan"],"default":"timeline"}
+chat.startStream arg icon_emoji {"type":"string","anyOf":[{"type":"string"},{"type":"null"}]}
+chat.startStream arg icon_url {"type":"string","anyOf":[{"type":"string"},{"type":"null"}]}
+chat.startStream arg username {"type":"string","anyOf":[{"type":"string"},{"type":"null"}]}
+chat.startStream output channel (required) {"schema":"channel"}
+chat.startStream output ts (required) {"schema":"ts"}
+chat.stopStream arg token (required) {"type":"string","subtype":"auth","org_app":{"allowed":true,"derive_team_context_from":"channel"}}
+chat.stopStream arg channel (required) {"type":"string","subtype":"channel"}
+chat.stopStream arg chunks {"type":"array","schema":""}
+chat.stopStream arg ts (required) {"schema":"ts"}
+chat.stopStream arg markdown_text {"type":"string"}
+chat.stopStream arg blocks {"schema":""}
+chat.stopStream arg metadata {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.stopStream arg session_status {"default":"active","type":"string","enum":["active","processing","suspended","closed"]}
+chat.stopStream output channel (required) {"schema":"channel"}
+chat.stopStream output ts (required) {"schema":"ts"}
+chat.stopStream output message (required) {"schema":"message"}
+chat.unfurl arg token (required) {"type":"string","subtype":"auth"}
+chat.unfurl arg channel {"type":"string","subtype":"channel","required_for_public":true}
+chat.unfurl arg ts {"type":"string","required_for_public":true}
+chat.unfurl arg unfurls {"type":"string","required_for_public":true}
+chat.unfurl arg user_auth_message {"anyOf":[{"type":"null"},{"type":"string"}]}
+chat.unfurl arg user_auth_required {"default":"0","type":"boolean"}
+chat.unfurl arg user_auth_url {"anyOf":[{"type":"null"},{"type":"string"}]}
+chat.unfurl arg user_auth_blocks {"schema":""}
+chat.unfurl arg unfurl_id {"type":"string","subtype":"unfurl_id"}
+chat.unfurl arg source {"type":"string","enum":["composer","conversations_history"]}
+chat.unfurl output null
+chat.update arg token (required) {"type":"string","subtype":"auth"}
+chat.update arg as_user {"anyOf":[{"type":"boolean"},{"type":"string"},{"type":"null"}]}
+chat.update arg attachments {"anyOf":[{"type":"string","subtype":"attachments"},{"type":"null"}]}
+chat.update arg unfurled_attachments {"anyOf":[{"type":"string","subtype":"attachments"},{"type":"null"}]}
+chat.update arg blocks {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.update arg markdown_text {"type":"string"}
+chat.update arg metadata {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.update arg channel (required) {"type":"string","subtype":"channel"}
+chat.update arg link_names {"anyOf":[{"type":"boolean"},{"type":"string"},{"type":"null"}]}
+chat.update arg parse {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.update arg text {"anyOf":[{"type":"string"},{"type":"null"}]}
+chat.update arg ts (required) {"type":"string","subtype":"timestamp"}
+chat.update arg reply_broadcast {"type":"boolean","default":"false"}
+chat.update arg file_ids {"type":"array","items":{"type":"string"}}
+chat.update output channel (required) {"type":"string"}
+chat.update output ts (required) {"type":"string"}
+chat.update output text (required) {"type":"string"}
+chat.update output message (required) {"title":"Message object","type":"object","required":["text"],"properties":{"text":{"type":"string"},"blocks":{"schema":"blocks"},"attachments":{"type":"array","items":{"type":"object"}},"metadata":{"type":"object"}}}
+conversations.acceptSharedInvite arg token (required) {"type":"string","subtype":"auth"}
+conversations.acceptSharedInvite arg channel_name (required) {"type":"string"}
+conversations.acceptSharedInvite arg is_private {"type":"boolean"}
+conversations.acceptSharedInvite arg free_trial_accepted {"type":"boolean"}
+conversations.acceptSharedInvite arg invite_id {"schema":"invite_id"}
+conversations.acceptSharedInvite arg channel_id {"schema":"channel_id"}
+conversations.acceptSharedInvite arg team_id {"subtype":"team","schema":"workspace_id"}
+conversations.acceptSharedInvite output implicit_approval (required) {"type":"boolean"}
+conversations.acceptSharedInvite output channel_id (required) {"schema":"channel_id"}
+conversations.acceptSharedInvite output invite_id (required) {"schema":"invite_id"}
+conversations.acceptSharedInvite output can_open_scdm (required) {"type":"boolean"}
+conversations.approveSharedInvite arg token (required) {"type":"string","subtype":"auth"}
+conversations.approveSharedInvite arg invite_id (required) {"schema":"invite_id"}
+conversations.approveSharedInvite arg target_team {"schema":"team_id"}
+conversations.approveSharedInvite output ok (required) {"type":"boolean"}
+conversations.archive arg token (required) {"type":"string","subtype":"auth"}
+conversations.archive arg channel (required) {"subtype":"channel","schema":"channel"}
+conversations.archive output null
+conversations.canvases.create arg token (required) {"type":"string","subtype":"auth"}
+conversations.canvases.create arg channel_id (required) {"type":"string","subtype":"channel","schema":"channel"}
+conversations.canvases.create arg document_content {"schema":"selection"}
+conversations.canvases.create arg title {"type":"string"}
+conversations.canvases.create output canvas_id (required) {"schema":"file_id"}
+conversations.close arg token (required) {"type":"string","subtype":"auth"}
+conversations.close arg channel (required) {"subtype":"channel_group","schema":"channel"}
+conversations.close output already_closed {"type":"boolean"}
+conversations.close output no_op {"type":"boolean"}
+conversations.create arg token (required) {"type":"string","subtype":"auth"}
+conversations.create arg is_private {"type":"boolean"}
+conversations.create arg name (required) {"type":"string"}
+conversations.create arg team_id {"subtype":"team","anyOf":[{"type":"string","subtype":"team"},{"type":"null"}]}
+conversations.create output channel (required) {"schema":"conversation"}
+conversations.declineSharedInvite arg token (required) {"type":"string","subtype":"auth"}
+conversations.declineSharedInvite arg invite_id (required) {"schema":"invite_id"}
+conversations.declineSharedInvite arg target_team {"schema":"team_id"}
+conversations.declineSharedInvite output ok (required) {"type":"boolean"}
+conversations.externalInvitePermissions.set arg token (required) {"type":"string","subtype":"auth"}
+conversations.externalInvitePermissions.set arg channel (required) {"subtype":"channel","schema":"channel_id"}
+conversations.externalInvitePermissions.set arg target_team (required) {"schema":"team_id"}
+conversations.externalInvitePermissions.set arg action (required) {"enum":["upgrade","downgrade"],"type":"string"}
+conversations.externalInvitePermissions.set output ok (required) {"type":"boolean"}
+conversations.history arg token (required) {"type":"string","subtype":"auth"}
+conversations.history arg channel (required) {"type":"string","subtype":"channel"}
+conversations.history arg cursor {"type":"string"}
+conversations.history arg include_all_metadata {"default":0,"type":"boolean"}
+conversations.history arg inclusive {"default":0,"type":"boolean"}
+conversations.history arg latest {"type":"string","subtype":"timestamp"}
+conversations.history arg limit {"default":"100","type":"number"}
+conversations.history arg oldest {"default":"0","type":"string","subtype":"timestamp"}
+conversations.history output messages (required) {"type":"array","items":{"schema":"message"}}
+conversations.history output has_more (required) {"type":"boolean"}
+conversations.history output pin_count {"type":"integer"}
+conversations.history output channel_actions_ts (required) {"oneOf":[{"type":"integer"},{"type":"null"}]}
+conversations.history output channel_actions_count (required) {"type":"integer"}
+conversations.history output response_metadata {"required":["next_cursor"],"type":"object","properties":{"next_cursor":{"type":"string"}}}
+conversations.history output oldest {"type":"string"}
+conversations.history output is_limited {"type":"boolean"}
+conversations.history output latest {"type":"string"}
+conversations.history output unread_count_display {"type":"integer"}
+conversations.history output users {"type":"object"}
+conversations.history output deleted {"type":"array","items":{"schema":"ts"}}
+conversations.history output mutation_timestamps {"type":"object","required":["latest","updated","history_invalid"],"properties":{"latest":{"schema":"ts"},"updated":{"schema":"ts"},"history_invalid":{"schema":"ts"}}}
+conversations.history output deleted_overflow {"type":"boolean"}
+conversations.history output warnings {"type":"array","items":{"type":"string"}}
+conversations.history output next_ts {"type":"integer"}
+conversations.history output latest_updates {"type":"object"}
+conversations.history output unchanged_messages {"type":"array","items":{"schema":"ts"}}
+conversations.history output date_joined {"type":"integer"}
+conversations.info arg token (required) {"type":"string","subtype":"auth"}
+conversations.info arg channel (required) {"type":"string","subtype":"channel"}
+conversations.info arg include_locale {"type":"boolean"}
+conversations.info arg include_num_members {"default":"false","type":"boolean"}
+conversations.info output app_home {"schema":"home"}
+conversations.info output channel (required) {"schema":"conversation"}
+conversations.info output home_view {"anyOf":[{"type":"null"},{"schema":"view"}]}
+conversations.invite arg token (required) {"type":"string","subtype":"auth"}
+conversations.invite arg channel (required) {"type":"string","subtype":"channel"}
+conversations.invite arg force {"default":"false","type":"boolean"}
+conversations.invite arg users (required) {"type":"string","subtype":"users"}
+conversations.invite output channel {"schema":"conversation"}
+conversations.invite output group {"schema":"conversation"}
+conversations.invite output errors {"type":"array"}
+conversations.inviteShared arg token (required) {"type":"string","subtype":"auth"}
+conversations.inviteShared arg channel (required) {"type":"string","subtype":"channel"}
+conversations.inviteShared arg emails {"type":"array","items":{"type":"string"}}
+conversations.inviteShared arg user_ids {"type":"array","items":{"schema":"user_id"}}
+conversations.inviteShared arg external_limited {"type":"boolean"}
+conversations.inviteShared output url {"type":"string","format":"uri"}
+conversations.inviteShared output invite_id {"schema":"invite_id"}
+conversations.inviteShared output conf_code {"type":"string"}
+conversations.inviteShared output is_legacy_shared_channel {"type":"boolean"}
+conversations.join arg token (required) {"type":"string","subtype":"auth"}
+conversations.join arg channel (required) {"type":"string","subtype":"channel"}
+conversations.join output channel (required) {"schema":"conversation"}
+conversations.join output response_metadata {"type":"object","title":"Response metadata","properties":{"warnings":{"type":"array","items":{"type":"string"}}}}
+conversations.kick arg token (required) {"type":"string","subtype":"auth"}
+conversations.kick arg channel (required) {"subtype":"channel","schema":"channel"}
+conversations.kick arg user {"subtype":"user","schema":"user_id"}
+conversations.kick output errors {"type":"object"}
+conversations.leave arg token (required) {"type":"string","subtype":"auth"}
+conversations.leave arg channel (required) {"subtype":"channel","schema":"channel"}
+conversations.leave output not_in_channel {"type":"boolean"}
+conversations.list arg token (required) {"type":"string","subtype":"auth"}
+conversations.list arg cursor {"type":"string"}
+conversations.list arg exclude_archived {"default":"false","type":"boolean"}
+conversations.list arg limit {"default":100,"type":"number"}
+conversations.list arg team_id {"type":"string","subtype":"team"}
+conversations.list arg types {"default":"public_channel","type":"string"}
+conversations.list output channels (required) {"type":"array","items":{"schema":"conversation"}}
+conversations.listConnectInvites arg token (required) {"type":"string","subtype":"auth"}
+conversations.listConnectInvites arg team_id {"type":"string","subtype":"team"}
+conversations.listConnectInvites arg count {"default":100,"type":"integer"}
+conversations.listConnectInvites arg cursor {"type":"string"}
+conversations.listConnectInvites output invites (required) {"type":"array","items":{"schema":"connect-invite"}}
+conversations.listConnectInvites output response_metadata {"schema":"response_metadata"}
+conversations.mark arg token (required) {"type":"string","subtype":"auth"}
+conversations.mark arg channel (required) {"type":"string","subtype":"channel"}
+conversations.mark arg ts (required) {"type":"string","subtype":"timestamp"}
+conversations.members arg token (required) {"type":"string","subtype":"auth"}
+conversations.members arg channel (required) {"type":"string","subtype":"channel"}
+conversations.members arg cursor {"type":"string"}
+conversations.members arg limit {"default":100,"type":"number"}
+conversations.members output members (required) {"type":"array","items":{"schema":"user_id"}}
+conversations.open arg token (required) {"type":"string","subtype":"auth"}
+conversations.open arg channel {"subtype":"channel_group","anyOf":[{"type":"string","subtype":"channel_group"},{"type":"null"}]}
+conversations.open arg return_im {"type":"boolean"}
+conversations.open arg users {"type":"string","subtype":"users"}
+conversations.open arg prevent_creation {"default":false,"type":"boolean"}
+conversations.open output already_open {"type":"boolean"}
+conversations.open output no_op {"type":"boolean"}
+conversations.open output channel {"oneOf":[{"schema":"conversation"},{"type":"object","required":["id"],"properties":{"id":{"schema":"channel"}}}]}
+conversations.open output app_home {"schema":"home"}
+conversations.open output home_view {"anyOf":[{"type":"null"},{"schema":"view"}]}
+conversations.rename arg token (required) {"type":"string","subtype":"auth"}
+conversations.rename arg channel (required) {"type":"string","subtype":"channel"}
+conversations.rename arg name (required) {"type":"string"}
+conversations.rename output channel (required) {"schema":"conversation"}
+conversations.replies arg token (required) {"type":"string","subtype":"auth"}
+conversations.replies arg channel (required) {"type":"string","subtype":"channel"}
+conversations.replies arg cursor {"type":"string"}
+conversations.replies arg include_all_metadata {"default":0,"type":"boolean"}
+conversations.replies arg inclusive {"default":0,"type":"boolean"}
+conversations.replies arg latest {"default":"now","type":"string","subtype":"timestamp"}
+conversations.replies arg limit {"default":1000,"type":"number"}
+conversations.replies arg oldest {"default":"0","type":"string","subtype":"timestamp"}
+conversations.replies arg ts (required) {"type":"string","subtype":"timestamp"}
+conversations.replies output has_more {"type":"boolean"}
+conversations.replies output messages (required) {"type":"array","items":{"schema":"message"}}
+conversations.replies output latest_updates {"type":"object"}
+conversations.replies output unchanged_messages {"type":"array","items":{"schema":"ts"}}
+conversations.requestSharedInvite.approve arg token (required) {"type":"string","subtype":"auth"}
+conversations.requestSharedInvite.approve arg invite_id (required) {"schema":"invite_id"}
+conversations.requestSharedInvite.approve arg is_external_limited {"type":"boolean"}
+conversations.requestSharedInvite.approve arg channel_id {"type":"string","subtype":"channel"}
+conversations.requestSharedInvite.approve arg message {"type":"object","required":["text","is_override"],"properties":{"text":{"type":"string"},"is_override":{"type":"boolean"}}}
+conversations.requestSharedInvite.approve output invite_id (required) {"schema":"invite_id"}
+conversations.requestSharedInvite.approve output confirmation_code {"type":"string"}
+conversations.requestSharedInvite.approve output url {"type":"string","format":"uri"}
+conversations.requestSharedInvite.deny arg token (required) {"type":"string","subtype":"auth"}
+conversations.requestSharedInvite.deny arg invite_id (required) {"schema":"invite_id"}
+conversations.requestSharedInvite.deny arg message {"type":"string"}
+conversations.requestSharedInvite.deny output ok (required) {"type":"boolean"}
+conversations.requestSharedInvite.list arg token (required) {"type":"string","subtype":"auth"}
+conversations.requestSharedInvite.list arg user_id {"schema":"enterprise_user_id"}
+conversations.requestSharedInvite.list arg include_expired {"type":"boolean","default":false}
+conversations.requestSharedInvite.list arg include_approved {"type":"boolean","default":false}
+conversations.requestSharedInvite.list arg include_denied {"type":"boolean","default":false}
+conversations.requestSharedInvite.list arg invite_ids {"type":"array","items":{"schema":"invite_id"}}
+conversations.requestSharedInvite.list arg limit {"type":"integer","default":200}
+conversations.requestSharedInvite.list arg cursor {"type":"string"}
+conversations.requestSharedInvite.list output invite_requests (required) {"type":"array","items":{"schema":"requested-shared-invite"}}
+conversations.requestSharedInvite.list output response_metadata {"schema":"response_metadata_new"}
+conversations.setPurpose arg token (required) {"type":"string","subtype":"auth"}
+conversations.setPurpose arg channel (required) {"type":"string","subtype":"channel"}
+conversations.setPurpose arg purpose (required) {"type":"string"}
+conversations.setPurpose output channel (required) {"schema":"conversation"}
+conversations.setTopic arg token (required) {"type":"string","subtype":"auth"}
+conversations.setTopic arg channel (required) {"type":"string","subtype":"channel"}
+conversations.setTopic arg topic (required) {"type":"string"}
+conversations.setTopic output channel (required) {"schema":"conversation"}
+conversations.unarchive arg token (required) {"type":"string","subtype":"auth"}
+conversations.unarchive arg channel (required) {"type":"string","subtype":"channel"}
+conversations.unarchive output null
+dialog.open arg token (required) {"type":"string","subtype":"auth"}
+dialog.open arg dialog (required) {"type":"string"}
+dialog.open arg trigger_id (required) {"type":"string","subtype":"app_trigger_id"}
+dialog.open output null
+dnd.endDnd arg token (required) {"type":"string","subtype":"auth"}
+dnd.endDnd output null
+dnd.endSnooze arg token (required) {"type":"string","subtype":"auth"}
+dnd.endSnooze output snooze_enabled (required) {"type":"boolean"}
+dnd.endSnooze output dnd_enabled (required) {"type":"boolean"}
+dnd.endSnooze output next_dnd_end_ts (required) {"type":"integer"}
+dnd.endSnooze output next_dnd_start_ts (required) {"type":"integer"}
+dnd.endSnooze output snooze_endtime {"type":"integer"}
+dnd.endSnooze output snooze_remaining {"type":"integer"}
+dnd.endSnooze output dnd_profile_status {"schema":"dnd_profile_status"}
+dnd.info arg token (required) {"type":"string","subtype":"auth"}
+dnd.info arg user {"type":"string","subtype":"user"}
+dnd.info arg team_id {"type":"string","subtype":"team"}
+dnd.info output dnd_enabled (required) {"type":"boolean"}
+dnd.info output next_dnd_start_ts (required) {"type":"integer"}
+dnd.info output next_dnd_end_ts (required) {"type":"integer"}
+dnd.info output snooze_enabled {"type":"boolean"}
+dnd.info output snooze_endtime {"type":"integer"}
+dnd.info output snooze_remaining {"type":"integer"}
+dnd.info output snooze_is_indefinite {"type":"boolean"}
+dnd.info output dnd_profile_status {"schema":"dnd_profile_status"}
+dnd.setSnooze arg token (required) {"type":"string","subtype":"auth"}
+dnd.setSnooze arg num_minutes (required) {"type":"string"}
+dnd.setSnooze output snooze_endtime {"type":"integer"}
+dnd.setSnooze output snooze_enabled (required) {"type":"boolean"}
+dnd.setSnooze output snooze_remaining {"type":"integer"}
+dnd.setSnooze output snooze_is_indefinite {"type":"boolean"}
+dnd.teamInfo arg token (required) {"type":"string","subtype":"auth"}
+dnd.teamInfo arg users (required) {"type":"string"}
+dnd.teamInfo arg team_id {"type":"string","subtype":"team"}
+dnd.teamInfo output users (required) {"type":"object","patternProperties":{"^[UW][A-Z0-9]{8,}$":{"type":"object","required":["dnd_enabled","next_dnd_start_ts","next_dnd_end_ts"],"properties":{"dnd_enabled":{"type":"boolean"},"next_dnd_start_ts":{"type":"integer"},"next_dnd_end_ts":{"type":"integer"},"snooze_enabled":{"type":"boolean"},"snooze_endtime":{"type":"integer"},"snooze_remaining":{"type":"integer"},"dnd_profile_status":{"schema":"dnd_profile_status"}}}}}
+emoji.list arg token (required) {"type":"string","subtype":"auth"}
+emoji.list arg include_categories {"type":"boolean"}
+emoji.list output cache_ts {"type":"string"}
+emoji.list output emoji (required) {"type":"object","patternProperties":{"^.*":{"anyOf":[{"type":"null"},{"type":"string"},{"type":"object","properties":{"apple":{"type":"string"},"google":{"type":"string"}}}]}}}
+emoji.list output categories_version {"type":"string"}
+emoji.list output categories {"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"emoji_names":{"type":"array","items":{"type":"string"}}}}}
+entity.presentDetails arg token (required) {"type":"string","subtype":"auth","org_app":{"allowed":true,"derive_team_context_from":"token"}}
+entity.presentDetails arg metadata {"type":"object"}
+entity.presentDetails arg trigger_id (required) {"type":"string"}
+entity.presentDetails arg user_auth_required {"default":"0","type":"boolean"}
+entity.presentDetails arg user_auth_url {"type":"string"}
+entity.presentDetails arg error {"schema":"error"}
+entity.presentDetails output null
+files.comments.delete arg token (required) {"type":"string","subtype":"auth"}
+files.comments.delete arg file (required) {"type":"string","subtype":"file"}
+files.comments.delete arg id (required) {"type":"string","subtype":"file_comment"}
+files.comments.delete output null
+files.completeUploadExternal arg token (required) {"type":"string","subtype":"auth"}
+files.completeUploadExternal arg files (required) {"type":"array","items":{"type":"object","required":["id"],"properties":{"id":{"schema":"file_id"},"title":{"type":"string"},"highlight_type":{"type":"string"}}}}
+files.completeUploadExternal arg channel_id {"default":null,"subtype":"channel","schema":"channel"}
+files.completeUploadExternal arg thread_ts {"type":"string"}
+files.completeUploadExternal arg channels {"type":"string","subtype":"channels"}
+files.completeUploadExternal arg initial_comment {"default":null,"type":"string"}
+files.completeUploadExternal arg blocks {"type":"string"}
+files.completeUploadExternal arg username {"anyOf":[{"type":"string"},{"type":"null"}],"is_customization_arg":true}
+files.completeUploadExternal arg icon_url {"type":"string","anyOf":[{"type":"string"},{"type":"null"}]}
+files.completeUploadExternal arg icon_emoji {"type":"string","anyOf":[{"type":"string"},{"type":"null"}]}
+files.completeUploadExternal output files (required) {"type":"array","items":{"type":"object","required":["id"],"properties":{"id":{"schema":"file_id"},"title":{"type":["null","string"],"default":null},"created":{"type":"integer"},"user":{"type":"string"}}}}
+files.delete arg token (required) {"type":"string","subtype":"auth"}
+files.delete arg file (required) {"type":"string","subtype":"file"}
+files.delete output null
+files.getUploadURLExternal arg token (required) {"type":"string","subtype":"auth"}
+files.getUploadURLExternal arg length (required) {"type":"integer"}
+files.getUploadURLExternal arg filename (required) {"type":"string"}
+files.getUploadURLExternal arg snippet_type {"type":"string","default":null}
+files.getUploadURLExternal arg alt_txt {"default":null,"type":"string"}
+files.getUploadURLExternal output file_id (required) {"schema":"file_id"}
+files.getUploadURLExternal output upload_url (required) {"type":"string"}
+files.info arg token (required) {"type":"string","subtype":"auth"}
+files.info arg count {"default":100,"type":"integer","subtype":"paging"}
+files.info arg cursor {"type":"string"}
+files.info arg file (required) {"type":"string","subtype":"file"}
+files.info arg limit {"default":0,"type":"integer"}
+files.info arg page {"default":1,"type":"integer","subtype":"paging"}
+files.info output file (required) {"type":"object","required":["id"],"properties":{"id":{"type":"string"}}}
+files.info output comments {"type":"array","items":{"type":"object","required":["comment","created","id","is_intro","timestamp","user"],"properties":{"comment":{"type":"string"},"created":{"type":"number"},"id":{"type":"string"},"is_intro":{"type":"boolean"},"timestamp":{"type":"number"},"user":{"type":"string"}}}}
+files.info output content {"type":"string"}
+files.info output content_html {"oneOf":[{"type":"string"},{"type":"null"}]}
+files.info output content_highlight_html {"oneOf":[{"type":"string"},{"type":"null"}]}
+files.list arg token (required) {"type":"string","subtype":"auth"}
+files.list arg channel {"type":"string","subtype":"channel"}
+files.list arg count {"default":100,"anyOf":[{"type":"integer"},{"type":"string"}],"subtype":"paging"}
+files.list arg page {"default":1,"anyOf":[{"type":"integer"},{"type":"string"}],"subtype":"paging"}
+files.list arg show_files_hidden_by_limit {"type":"boolean"}
+files.list arg team_id {"type":"string","subtype":"team"}
+files.list arg ts_from {"type":"string","subtype":"timestamp"}
+files.list arg ts_to {"type":"string","subtype":"timestamp"}
+files.list arg types {"default":"all","type":"string"}
+files.list arg user {"type":"string","subtype":"user"}
+files.list output files (required) {"type":"array","items":{"type":"object","required":["id"],"properties":{"id":{"type":"string"},"created":{"type":"integer"},"user":{"type":"string"}}}}
+files.list output paging {"type":"object","required":["pages","page","total"],"properties":{"count":{"type":"integer"},"total":{"type":"integer"},"page":{"type":"integer"},"pages":{"type":"integer"}}}
+files.remote.add arg token (required) {"type":"string","subtype":"auth"}
+files.remote.add arg external_id (required) {"type":"string"}
+files.remote.add arg external_url (required) {"type":"string"}
+files.remote.add arg filetype {"type":"string"}
+files.remote.add arg indexable_file_contents {"schema":"post_file"}
+files.remote.add arg preview_image {"schema":"post_file"}
+files.remote.add arg title (required) {"type":"string"}
+files.remote.add output file (required) {"type":"object","properties":{"id":{"type":"string"},"created":{"type":"integer"},"timestamp":{"type":"integer"},"name":{"type":"string"},"title":{"type":"string"},"mimetype":{"type":"string"},"filetype":{"type":"string"},"pretty_type":{"type":"string"},"user":{"type":"string"},"editable":{"type":"boolean"},"size":{"type":"integer"},"mode":{"type":"string"},"is_external":{"type":"boolean"},"external_type":{"type":"string"},"is_public":{"type":"boolean"},"public_url_shared":{"type":"boolean"},"display_as_bot":{"type":"boolean"},"username":{"type":"string"},"url_private":{"type":"string"},"permalink":{"type":"string"},"comments_count":{"type":"integer"},"is_starred":{"type":"boolean"},"shares":{"type":"object"},"channels":{"type":"array","items":{"type":"string"}},"groups":{"type":"array","items":{"type":"string"}},"ims":{"type":"array","items":{"type":"string"}},"external_id":{"type":"string"},"external_url":{"type":"string"},"has_rich_preview":{"type":"boolean"}}}
+files.remote.info arg token (required) {"type":"string","subtype":"auth"}
+files.remote.info arg external_id {"type":"string"}
+files.remote.info arg file {"type":"string","subtype":"file"}
+files.remote.info output file (required) {"type":"object","required":["id"],"properties":{"id":{"type":"string"},"created":{"type":"integer"},"user":{"type":"string"}}}
+files.remote.list arg token (required) {"type":"string","subtype":"auth"}
+files.remote.list arg channel {"type":"string","subtype":"channel"}
+files.remote.list arg cursor {"type":"string"}
+files.remote.list arg limit {"type":"integer"}
+files.remote.list arg ts_from {"default":"0","type":"string","subtype":"timestamp"}
+files.remote.list arg ts_to {"default":"now","type":"string","subtype":"timestamp"}
+files.remote.list output files {"type":"array","items":{"type":"object","properties":{"id":{"type":"string"}}}}
+files.remote.list output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+files.remote.remove arg token (required) {"type":"string","subtype":"auth"}
+files.remote.remove arg external_id {"type":"string"}
+files.remote.remove arg file {"type":"string","subtype":"file"}
+files.remote.remove output null
+files.remote.share arg token (required) {"type":"string","subtype":"auth"}
+files.remote.share arg channels (required) {"type":"string","subtype":"channels"}
+files.remote.share arg external_id {"type":"string"}
+files.remote.share arg file {"type":"string","subtype":"file"}
+files.remote.share output file {"type":"object","properties":{"id":{"type":"string"}}}
+files.remote.update arg token (required) {"type":"string","subtype":"auth"}
+files.remote.update arg external_id {"type":"string"}
+files.remote.update arg external_url {"type":"string"}
+files.remote.update arg file {"type":"string","subtype":"file"}
+files.remote.update arg filetype {"type":"string"}
+files.remote.update arg indexable_file_contents {"schema":"post_file"}
+files.remote.update arg preview_image {"schema":"post_file"}
+files.remote.update arg title {"type":"string"}
+files.remote.update output file {"type":"object","properties":{"id":{"type":"string"}}}
+files.revokePublicURL arg token (required) {"type":"string","subtype":"auth"}
+files.revokePublicURL arg file (required) {"type":"string","subtype":"file"}
+files.revokePublicURL output file (required) {"type":"object","properties":{"id":{"type":"string"},"created":{"type":"integer"},"user":{"type":"string"}}}
+files.sharedPublicURL arg token (required) {"type":"string","subtype":"auth"}
+files.sharedPublicURL arg file (required) {"type":"string","subtype":"file"}
+files.sharedPublicURL output file (required) {"type":"object","properties":{"id":{"type":"string"},"created":{"type":"integer"},"user":{"type":"string"}}}
+files.sharedPublicURL output comment {"type":"array","items":{"type":"object"}}
+files.sharedPublicURL output paging {"type":"object"}
+files.upload arg token (required) {"type":"string","subtype":"auth"}
+files.upload arg channels {"type":"string","subtype":"channels"}
+files.upload arg content {"type":"string"}
+files.upload arg file {"schema":"post_file"}
+files.upload arg filename {"type":"string"}
+files.upload arg filetype {"type":"string"}
+files.upload arg initial_comment {"type":"string"}
+files.upload arg thread_ts {"type":"string","subtype":"timestamp"}
+files.upload arg title {"type":"string"}
+files.upload output file (required) {"type":"object","properties":{"id":{"type":"string"},"created":{"type":"integer"},"user":{"type":"string"}}}
+functions.completeError arg token (required) {"type":"string","subtype":"auth"}
+functions.completeError arg function_execution_id (required) {"type":"string"}
+functions.completeError arg error (required) {"type":"string"}
+functions.completeError output null
+functions.completeSuccess arg token (required) {"type":"string","subtype":"auth"}
+functions.completeSuccess arg function_execution_id (required) {"type":"string"}
+functions.completeSuccess arg outputs (required) {"type":"object"}
+functions.completeSuccess output null
+functions.distributions.permissions.add arg token (required) {"type":"string","subtype":"auth"}
+functions.distributions.permissions.add arg function_id {"type":"string","schema":"function_id"}
+functions.distributions.permissions.add arg function_callback_id {"type":"string"}
+functions.distributions.permissions.add arg function_app_id {"type":"string","schema":"app_id"}
+functions.distributions.permissions.add arg user_ids {"type":"array","items":{"schema":"user_id"}}
+functions.distributions.permissions.add output permission_type (required) {"type":"string","enum":["everyone","app_collaborators","named_entities","system"]}
+functions.distributions.permissions.add output users {"type":"array","items":{"type":"object","properties":{"user_id":{"type":"string"},"username":{"type":"string"},"email":{"type":"string"}}}}
+functions.distributions.permissions.list arg token (required) {"type":"string","subtype":"auth"}
+functions.distributions.permissions.list arg function_id {"type":"string","schema":"function_id"}
+functions.distributions.permissions.list arg function_callback_id {"type":"string"}
+functions.distributions.permissions.list arg function_app_id {"type":"string","schema":"app_id"}
+functions.distributions.permissions.list output permission_type (required) {"type":"string","enum":["everyone","app_collaborators","named_entities","system"]}
+functions.distributions.permissions.list output users {"type":"array","items":{"type":"object","properties":{"user_id":{"type":"string"},"username":{"type":"string"},"email":{"type":"string"}}}}
+functions.distributions.permissions.list output team_ids {"type":"array","items":{"schema":"workspace_id"}}
+functions.distributions.permissions.list output org_ids {"type":"array","items":{"schema":"enterprise_id"}}
+functions.distributions.permissions.remove arg token (required) {"type":"string","subtype":"auth"}
+functions.distributions.permissions.remove arg function_id {"type":"string","schema":"function_id"}
+functions.distributions.permissions.remove arg function_callback_id {"type":"string"}
+functions.distributions.permissions.remove arg function_app_id {"type":"string","schema":"app_id"}
+functions.distributions.permissions.remove arg user_ids {"type":"array","items":{"schema":"user_id"}}
+functions.distributions.permissions.remove output permission_type (required) {"type":"string","enum":["everyone","app_collaborators","named_entities","system"]}
+functions.distributions.permissions.remove output users {"type":"array","items":{"type":"object","properties":{"user_id":{"type":"string"},"username":{"type":"string"},"email":{"type":"string"}}}}
+functions.distributions.permissions.set arg token (required) {"type":"string","subtype":"auth"}
+functions.distributions.permissions.set arg function_id {"type":"string","schema":"function_id"}
+functions.distributions.permissions.set arg function_callback_id {"type":"string"}
+functions.distributions.permissions.set arg function_app_id {"type":"string","schema":"app_id"}
+functions.distributions.permissions.set arg permission_type {"type":"string","enum":["everyone","app_collaborators","named_entities","system"]}
+functions.distributions.permissions.set arg user_ids {"type":"array","items":{"schema":"user_id"}}
+functions.distributions.permissions.set arg team_ids {"type":"array","items":{"schema":"workspace_id"}}
+functions.distributions.permissions.set arg org_ids {"type":"array","items":{"schema":"enterprise_id"}}
+functions.distributions.permissions.set output permission_type (required) {"type":"string","enum":["everyone","app_collaborators","named_entities","system"]}
+functions.distributions.permissions.set output users {"type":"array","items":{"type":"object","properties":{"user_id":{"type":"string"},"username":{"type":"string"},"email":{"type":"string"}}}}
+functions.distributions.permissions.set output team_ids {"type":"array","items":{"schema":"workspace_id"}}
+functions.distributions.permissions.set output org_ids {"type":"array","items":{"schema":"enterprise_id"}}
+functions.workflows.steps.list arg token (required) {"type":"string","subtype":"auth"}
+functions.workflows.steps.list arg workflow_id {"type":"string"}
+functions.workflows.steps.list arg workflow {"type":"string"}
+functions.workflows.steps.list arg workflow_app_id {"type":"string"}
+functions.workflows.steps.list arg function_id (required) {"type":"string"}
+functions.workflows.steps.list output steps_versions (required) {"type":"array","items":{"schema":"step_version"}}
+functions.workflows.steps.responses.export arg token (required) {"type":"string","subtype":"auth"}
+functions.workflows.steps.responses.export arg workflow_id {"type":"string"}
+functions.workflows.steps.responses.export arg workflow {"type":"string"}
+functions.workflows.steps.responses.export arg workflow_app_id {"type":"string"}
+functions.workflows.steps.responses.export arg step_id (required) {"type":"string"}
+functions.workflows.steps.responses.export output null
+migration.exchange arg token (required) {"type":"string","subtype":"auth"}
+migration.exchange arg users (required) {"type":"array","items":{"type":"string"}}
+migration.exchange arg team_id {"type":"string","subtype":"team"}
+migration.exchange arg to_old {"type":"boolean","default":false}
+migration.exchange output team_id (required) {"type":"string"}
+migration.exchange output enterprise_id (required) {"type":"string"}
+migration.exchange output user_id_map (required) {"type":"object","title":"A mapping of provided user IDs with mapped user IDs"}
+migration.exchange output invalid_user_ids {"type":"array","title":"A list of User IDs that cannot be mapped or found","items":{"type":"string"}}
+oauth.access arg client_id {"type":"string"}
+oauth.access arg client_secret {"type":"string","subtype":"password"}
+oauth.access arg code {"type":"string"}
+oauth.access arg redirect_uri {"type":"string"}
+oauth.access arg single_channel {"type":"boolean","default":"false"}
+oauth.access output token_type {"type":"string"}
+oauth.access output app_id {"type":"string"}
+oauth.access output app_user_id {"type":"string"}
+oauth.access output team_name {"type":"string"}
+oauth.access output team_id (required) {"type":"string"}
+oauth.access output access_token (required) {"type":"string"}
+oauth.access output authorizing_user {"type":"object","properties":{"user_id":{"type":"string"},"app_home":{"anyOf":[{"type":"string"},{"type":"null"}]}}}
+oauth.access output installer_user {"type":"object","properties":{"user_id":{"type":"string"},"app_home":{"anyOf":[{"type":"string"},{"type":"null"}]}}}
+oauth.access output scopes {"type":"object","properties":{"app_home":{"type":"array","items":{"type":"string"}},"team":{"type":"array","items":{"type":"string"}},"channel":{"type":"array","items":{"type":"string"}},"group":{"type":"array","items":{"type":"string"}},"mpim":{"type":"array","items":{"type":"string"}},"im":{"type":"array","items":{"type":"string"}}}}
+oauth.access output scope {"type":"string"}
+oauth.access output user_id {"type":"string"}
+oauth.access output bot {"type":"object","properties":{"bot_user_id":{"type":"string"},"bot_access_token":{"type":"string"},"scope":{"type":"string"}}}
+oauth.access output refresh_token {"type":"string"}
+oauth.access output expires_in {"type":"integer"}
+oauth.access output user {"type":"object","properties":{"name":{"type":"string"},"id":{"type":"string"},"email":{"type":"string"},"image_24":{"type":"string"},"image_32":{"type":"string"},"image_48":{"type":"string"},"image_72":{"type":"string"},"image_192":{"type":"string"},"image_512":{"type":"string"},"scope":{"type":"string"},"access_token":{"type":"string"},"token_type":{"type":"string"}}}
+oauth.access output team {"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"domain":{"type":"string"},"image_34":{"type":"string"},"image_44":{"type":"string"},"image_68":{"type":"string"},"image_88":{"type":"string"},"image_102":{"type":"string"},"image_132":{"type":"string"},"image_230":{"type":"string"},"image_default":{"type":"boolean"},"image_original":{"type":"string"}}}
+oauth.access output enterprise_id {"anyOf":[{"type":"string"},{"type":"null"}]}
+oauth.access output incoming_webhook {"type":"object","properties":{"channel":{"type":"string"},"channel_id":{"type":"string"},"configuration_url":{"type":"string"},"url":{"type":"string"}}}
+oauth.access output single_channel_id {"type":"string"}
+oauth.v2.access arg client_id {"type":"string"}
+oauth.v2.access arg client_secret {"type":"string"}
+oauth.v2.access arg code {"type":"string"}
+oauth.v2.access arg code_verifier {"type":"string"}
+oauth.v2.access arg redirect_uri {"type":"string"}
+oauth.v2.access arg grant_type {"type":"string"}
+oauth.v2.access arg refresh_token {"type":"string"}
+oauth.v2.access arg assertion {"type":"string"}
+oauth.v2.access output access_token {"type":"string"}
+oauth.v2.access output token_type {"type":"string","enum":["granular_bot"]}
+oauth.v2.access output scope {"type":"string"}
+oauth.v2.access output bot_user_id {"type":"string","subtype":"user"}
+oauth.v2.access output user_id {"type":"string","subtype":"user"}
+oauth.v2.access output app_id (required) {"type":"string","subtype":"app"}
+oauth.v2.access output is_enterprise_install {"type":"boolean"}
+oauth.v2.access output expires_in {"type":"integer"}
+oauth.v2.access output refresh_token {"type":"string"}
+oauth.v2.access output team (required) {"anyOf":[{"type":"null"},{"type":"object","required":["id"],"properties":{"id":{"type":"string","subtype":"team"},"name":{"type":"string"}}}]}
+oauth.v2.access output enterprise (required) {"anyOf":[{"type":"null"},{"type":"object","required":["id"],"properties":{"id":{"type":"string","subtype":"team"},"name":{"type":"string"}}}]}
+oauth.v2.access output authed_user {"type":"object","required":["id"],"properties":{"id":{"type":"string","subtype":"user"},"access_token":{"type":"string"},"token_type":{"type":"string","enum":["user"]},"scope":{"type":"string"},"expires_in":{"type":"integer"},"refresh_token":{"type":"string"}}}
+oauth.v2.access output incoming_webhook {"type":"object","required":["channel","channel_id","configuration_url","url"],"properties":{"channel":{"type":"string"},"channel_id":{"type":"string","subtype":"channel"},"configuration_url":{"type":"string"},"url":{"type":"string"}}}
+oauth.v2.exchange arg client_id (required) {"type":"string"}
+oauth.v2.exchange arg client_secret (required) {"type":"string"}
+oauth.v2.exchange arg token (required) {"type":"string"}
+oauth.v2.exchange output app_id (required) {"schema":"app_id"}
+oauth.v2.exchange output token_type (required) {"type":"string","enum":["bot","user"]}
+oauth.v2.exchange output scope (required) {"type":"string"}
+oauth.v2.exchange output bot_user_id {"title":"Bot User ID","subtype":"user","schema":"user_id"}
+oauth.v2.exchange output user_id {"subtype":"user","schema":"user_id"}
+oauth.v2.exchange output access_token (required) {"schema":"xoxe_access_token"}
+oauth.v2.exchange output expires_in (required) {"type":"integer"}
+oauth.v2.exchange output refresh_token (required) {"schema":"xoxe_refresh_token"}
+oauth.v2.exchange output team {"anyOf":[{"type":"null"},{"schema":"team_lean"}]}
+oauth.v2.exchange output enterprise {"anyOf":[{"type":"null"},{"schema":"enterprise_lean"}]}
+openid.connect.token arg client_id {"type":"string"}
+openid.connect.token arg client_secret {"type":"string"}
+openid.connect.token arg code {"type":"string"}
+openid.connect.token arg redirect_uri {"type":"string"}
+openid.connect.token arg grant_type {"type":"string","enum":["authorization_code","refresh_token"]}
+openid.connect.token arg refresh_token {"type":"string"}
+openid.connect.token arg code_verifier {"type":"string"}
+openid.connect.token output access_token (required) {"type":"string"}
+openid.connect.token output token_type (required) {"type":"string","enum":["Bearer"]}
+openid.connect.token output id_token {"type":"string"}
+openid.connect.token output state {"type":"string"}
+openid.connect.token output expires_in {"type":"integer"}
+openid.connect.token output refresh_token {"type":"string"}
+openid.connect.userInfo arg token (required) {"type":"string","subtype":"auth"}
+openid.connect.userInfo output sub (required) {"type":"string"}
+openid.connect.userInfo output https://slack.com/user_id (required) {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_id {"type":"string"}
+openid.connect.userInfo output https://slack.com/enterprise_id {"type":"string"}
+openid.connect.userInfo output email {"type":"string"}
+openid.connect.userInfo output email_verified {"type":"boolean"}
+openid.connect.userInfo output date_email_verified {"type":"integer"}
+openid.connect.userInfo output locale {"type":"string"}
+openid.connect.userInfo output name {"type":"string"}
+openid.connect.userInfo output given_name {"type":"string"}
+openid.connect.userInfo output family_name {"type":"string"}
+openid.connect.userInfo output picture {"type":"string"}
+openid.connect.userInfo output https://slack.com/user_image_24 {"type":"string"}
+openid.connect.userInfo output https://slack.com/user_image_32 {"type":"string"}
+openid.connect.userInfo output https://slack.com/user_image_48 {"type":"string"}
+openid.connect.userInfo output https://slack.com/user_image_72 {"type":"string"}
+openid.connect.userInfo output https://slack.com/user_image_192 {"type":"string"}
+openid.connect.userInfo output https://slack.com/user_image_512 {"type":"string"}
+openid.connect.userInfo output https://slack.com/user_image_1024 {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_name {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_domain {"type":"string"}
+openid.connect.userInfo output https://slack.com/enterprise_name {"type":"string"}
+openid.connect.userInfo output https://slack.com/enterprise_domain {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_image_34 {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_image_44 {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_image_68 {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_image_88 {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_image_102 {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_image_132 {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_image_230 {"type":"string"}
+openid.connect.userInfo output https://slack.com/team_image_default {"type":"boolean"}
+pins.add arg token (required) {"type":"string","subtype":"auth"}
+pins.add arg channel (required) {"type":"string","subtype":"channel"}
+pins.add arg timestamp {"type":"string","subtype":"timestamp"}
+pins.add output null
+pins.list arg token (required) {"type":"string","subtype":"auth"}
+pins.list arg channel (required) {"type":"string","subtype":"channel"}
+pins.list output items {"type":"array","items":{"type":"object","required":["type","created","created_by"],"properties":{"type":{"type":"string","enum":["file","message","file_comment"]},"created":{"type":"integer"},"created_by":{"schema":"user_id"},"channel":{"schema":"channel"},"message":{"schema":"message"},"file":{"schema":"file"},"comment":{"type":"string"}}}}
+pins.list output count {"type":"integer"}
+pins.remove arg token (required) {"type":"string","subtype":"auth"}
+pins.remove arg channel (required) {"type":"string","subtype":"channel"}
+pins.remove arg timestamp {"type":"string","subtype":"timestamp"}
+pins.remove output null
+reactions.add arg channel (required) {"type":"string","subtype":"channel"}
+reactions.add arg name (required) {"type":"string"}
+reactions.add arg timestamp (required) {"type":"string","subtype":"timestamp"}
+reactions.add arg token (required) {"type":"string","subtype":"auth"}
+reactions.add output null
+reactions.get arg token (required) {"type":"string","subtype":"auth"}
+reactions.get arg channel {"type":"string","subtype":"channel"}
+reactions.get arg file {"type":"string","subtype":"file"}
+reactions.get arg file_comment {"type":"string","subtype":"file_comment"}
+reactions.get arg full {"type":"boolean"}
+reactions.get arg timestamp {"type":"string","subtype":"timestamp"}
+reactions.get output comment {"schema":"comment"}
+reactions.get output message {"schema":"message"}
+reactions.get output type (required) {"type":"string"}
+reactions.get output channel {"type":"string"}
+reactions.get output file {"schema":"file"}
+reactions.list arg token (required) {"type":"string","subtype":"auth"}
+reactions.list arg user {"type":"string","subtype":"user"}
+reactions.list arg full {"type":"boolean"}
+reactions.list arg count {"default":100,"type":"integer","subtype":"paging"}
+reactions.list arg page {"default":1,"type":"integer","subtype":"paging"}
+reactions.list arg cursor {"type":"string"}
+reactions.list arg limit {"default":0,"type":"integer"}
+reactions.list arg team_id {"type":"string","subtype":"team"}
+reactions.list output items (required) {"type":"array","items":{"type":"object"}}
+reactions.list output paging {"schema":"paging"}
+reactions.remove arg token (required) {"type":"string","subtype":"auth"}
+reactions.remove arg name (required) {"type":"string"}
+reactions.remove arg file {"type":"string","subtype":"file"}
+reactions.remove arg file_comment {"type":"string","subtype":"file_comment"}
+reactions.remove arg channel {"type":"string","subtype":"channel"}
+reactions.remove arg timestamp {"type":"string","subtype":"timestamp"}
+reactions.remove output null
+reminders.add arg token (required) {"type":"string","subtype":"auth"}
+reminders.add arg text (required) {"type":"string"}
+reminders.add arg time (required) {"type":"string"}
+reminders.add arg user {"type":"string","subtype":"user"}
+reminders.add arg team_id {"type":"string","subtype":"team"}
+reminders.add arg recurrence {"type":"object","schema":""}
+reminders.add output reminder (required) {"schema":"reminder"}
+reminders.complete arg token (required) {"type":"string","subtype":"auth"}
+reminders.complete arg reminder (required) {"type":"string","subtype":"reminder"}
+reminders.complete arg team_id {"type":"string","subtype":"team"}
+reminders.complete output null
+reminders.delete arg token (required) {"type":"string","subtype":"auth"}
+reminders.delete arg reminder (required) {"type":"string","subtype":"reminder"}
+reminders.delete arg team_id {"type":"string","subtype":"team"}
+reminders.delete output null
+reminders.info arg token (required) {"type":"string","subtype":"auth"}
+reminders.info arg reminder (required) {"type":"string","subtype":"reminder"}
+reminders.info arg team_id {"type":"string","subtype":"team"}
+reminders.info output reminder (required) {"schema":"reminder"}
+reminders.list arg token (required) {"type":"string","subtype":"auth"}
+reminders.list arg team_id {"type":"string","subtype":"team"}
+reminders.list output reminders {"type":"array","items":{"schema":"reminder"}}
+rtm.connect arg token (required) {"type":"string","subtype":"auth"}
+rtm.connect arg batch_presence_aware {"default":false,"type":"boolean"}
+rtm.connect arg presence_sub {"default":true,"type":"boolean"}
+rtm.connect output url (required) {"type":"string","format":"uri"}
+rtm.connect output self (required) {"required":["id","name"],"type":"object","properties":{"id":{"schema":"user_id"},"name":{"type":"string"}}}
+rtm.connect output team (required) {"required":["id","name","domain"],"type":"object","properties":{"domain":{"type":"string"},"id":{"schema":"workspace_id"},"name":{"type":"string"},"enterprise_id":{"schema":"enterprise_id"},"enterprise_name":{"schema":"enterprise_name"}}}
+rtm.start arg token (required) {"type":"string","subtype":"auth"}
+rtm.start arg simple_latest {"type":"boolean"}
+rtm.start arg no_unreads {"type":"boolean"}
+rtm.start arg mpim_aware {"type":"boolean"}
+rtm.start arg presence_sub {"type":"boolean","default":"true"}
+rtm.start arg batch_presence_aware {"type":"boolean","default":"false"}
+rtm.start arg no_latest {"type":"boolean","default":"0"}
+rtm.start arg include_locale {"type":"boolean"}
+rtm.start output url (required) {"type":"string","format":"uri"}
+rtm.start output self (required) {"required":["id","name"],"type":"object","properties":{"id":{"schema":"user_id"},"name":{"type":"string"}}}
+rtm.start output team (required) {"required":["id","name","domain"],"type":"object","properties":{"domain":{"type":"string"},"id":{"schema":"workspace_id"},"name":{"type":"string"},"enterprise_id":{"schema":"enterprise_id"},"enterprise_name":{"schema":"enterprise_name"}}}
+search.all arg token (required) {"type":"string","subtype":"auth"}
+search.all arg count {"default":20,"type":"integer","subtype":"paging"}
+search.all arg highlight {"type":"boolean"}
+search.all arg page {"default":1,"type":"integer","subtype":"paging"}
+search.all arg query (required) {"type":"string"}
+search.all arg sort {"default":"score","type":"string"}
+search.all arg sort_dir {"default":"desc","type":"string","enum":["asc","desc"]}
+search.all arg team_id {"type":"string","subtype":"team"}
+search.all output files {"matches":{"type":"array"},"pagination":{"type":"object","properties":{"last":{"type":"integer"},"total_count":{"type":"integer"},"page_count":{"type":"integer"},"per_page":{"type":"integer"},"page":{"type":"integer"},"first":{"type":"integer"}}},"total":{"type":"integer"},"paging":{"type":"object","properties":{"count":{"type":"integer"},"total":{"type":"integer"},"page":{"type":"integer"},"pages":{"type":"integer"}}}}
+search.all output callstack {"type":"string","optional":true}
+search.all output messages {"matches":{"type":"array"},"pagination":{"type":"object","properties":{"last":{"type":"integer"},"total_count":{"type":"integer"},"page_count":{"type":"integer"},"per_page":{"type":"integer"},"page":{"type":"integer"},"first":{"type":"integer"}}},"total":{"type":"integer"},"paging":{"type":"object","properties":{"count":{"type":"integer"},"total":{"type":"integer"},"page":{"type":"integer"},"pages":{"type":"integer"}}}}
+search.all output posts {"matches":{"type":"array"},"total":{"type":"integer"}}
+search.all output query {"type":"string","optional":false}
+search.files arg token (required) {"type":"string","subtype":"auth"}
+search.files arg count {"default":20,"type":"integer","subtype":"paging"}
+search.files arg highlight {"type":"boolean"}
+search.files arg page {"default":1,"type":"integer","subtype":"paging"}
+search.files arg query (required) {"type":"string"}
+search.files arg sort {"default":"score","type":"string"}
+search.files arg sort_dir {"default":"desc","type":"string","enum":["asc","desc"]}
+search.files arg team_id {"type":"string","subtype":"team"}
+search.files output files {"type":"object","properties":{"pagination":{"type":"object","properties":{"last":{"type":"integer"},"warnings":{"type":"array","optional":true,"items":{"type":"string"}},"total_count":{"type":"integer"},"page_count":{"type":"integer"},"per_page":{"type":"integer"},"page":{"type":"integer"},"first":{"type":"integer"},"next_cursor":{"type":"string","optional":true}}},"matches":{"type":"array"},"paging":{"type":"object","properties":{"count":{"type":"integer"},"pages":{"type":"integer"},"total":{"type":"integer"},"page":{"type":"integer"},"warnings":{"type":"array","optional":true,"items":{"type":"string"}},"next_cursor":{"type":"string","optional":true}}},"all_stop_words":{"optional":true,"type":"boolean"},"total":{"type":"integer"},"query_too_long":{"optional":true,"type":"boolean"}}}
+search.files output callstack {"type":"string","optional":true}
+search.files output users {"type":"object","optional":true}
+search.files output teams {"type":"object","optional":true}
+search.files output channels {"type":"object","optional":true}
+search.files output ims {"type":"object","optional":true}
+search.files output groups {"type":"object","optional":true}
+search.files output query {"optional":false,"type":"string"}
+search.files output ignored_exclude_bots_pref {"type":"boolean","optional":true}
+search.messages arg token (required) {"type":"string","subtype":"auth"}
+search.messages arg count {"default":20,"type":"integer","subtype":"paging"}
+search.messages arg highlight {"type":"boolean"}
+search.messages arg page {"default":1,"type":"integer","subtype":"paging"}
+search.messages arg cursor {"type":"string"}
+search.messages arg query (required) {"type":"string"}
+search.messages arg sort {"default":"score","type":"string"}
+search.messages arg sort_dir {"default":"desc","type":"string","enum":["asc","desc",""]}
+search.messages arg team_id {"type":"string","subtype":"team"}
+search.messages output callstack {"optional":true,"type":"string"}
+search.messages output users {"optional":true,"type":"object"}
+search.messages output messages {"type":"object","properties":{"matches":{"type":"array"},"pagination":{"type":"object","properties":{"last":{"type":"integer"},"warnings":{"items":{"type":"string"},"type":"array"},"total_count":{"type":"integer"},"page_count":{"type":"integer"},"per_page":{"type":"integer"},"page":{"type":"integer"},"first":{"type":"integer"},"next_cursor":{"type":"string"}}},"total":{"type":"integer"},"all_stop_words":{"optional":true,"type":"boolean"},"paging":{"type":"object","properties":{"count":{"type":"integer"},"total":{"type":"integer"},"pages":{"type":"integer"},"page":{"type":"integer"},"warnings":{"items":{"type":"string"},"type":"array"},"next_cursor":{"type":"string"}}}}}
+search.messages output show_feedback {"optional":true,"type":"boolean"}
+search.messages output teams {"optional":true,"type":"object"}
+search.messages output query {"optional":false,"type":"string"}
+search.messages output bots {"optional":true,"type":"object"}
+search.messages output ignored_exclude_bots_pref {"optional":true,"type":"boolean"}
+slackLists.access.delete arg token (required) {"type":"string","subtype":"auth"}
+slackLists.access.delete arg list_id (required) {"subtype":"list","schema":"file_id"}
+slackLists.access.delete arg channel_ids {"type":"array","items":{"schema":"channel_id"}}
+slackLists.access.delete arg user_ids {"type":"array","items":{"schema":"user_id"}}
+slackLists.access.delete output failed_to_update_channel_ids {"type":"array","items":{"schema":"channel"}}
+slackLists.access.delete output failed_to_update_user_ids {"type":"array","items":{"schema":"user_id"}}
+slackLists.access.set arg token (required) {"type":"string","subtype":"auth"}
+slackLists.access.set arg list_id (required) {"subtype":"list","schema":"file_id"}
+slackLists.access.set arg access_level (required) {"schema":"file_access_level"}
+slackLists.access.set arg channel_ids {"type":"array","items":{"schema":"channel_id"}}
+slackLists.access.set arg user_ids {"type":"array","items":{"schema":"user_id"}}
+slackLists.access.set output failed_to_update_channel_ids {"type":"array","items":{"schema":"channel"}}
+slackLists.access.set output failed_to_update_user_ids {"type":"array","items":{"schema":"user_id"}}
+slackLists.create arg token (required) {"type":"string","subtype":"auth"}
+slackLists.create arg name (required) {"type":"string"}
+slackLists.create arg description_blocks {"type":"array","items":{"schema":"rich_text"}}
+slackLists.create arg schema {"type":"array","items":{"schema":"list_column"}}
+slackLists.create arg copy_from_list_id {"type":"string","subtype":"list","schema":"file_id"}
+slackLists.create arg include_copied_list_records {"type":"boolean"}
+slackLists.create arg todo_mode {"type":"boolean","default":false}
+slackLists.create output list_id (required) {"schema":"file_id"}
+slackLists.create output list_metadata {"schema":"list_metadata"}
+slackLists.download.get arg token (required) {"type":"string","subtype":"auth"}
+slackLists.download.get arg list_id (required) {"type":"string","subtype":"list","schema":"file_id"}
+slackLists.download.get arg job_id (required) {"type":"string"}
+slackLists.download.get arg format {"schema":"list_export_format","default":"csv"}
+slackLists.download.get arg include_threads {"type":"boolean","default":false}
+slackLists.download.get arg include_attachments {"type":"boolean","default":false}
+slackLists.download.get arg include_archived {"type":"boolean","default":false}
+slackLists.download.get output status (required) {"type":"string","schema":"list_export_status"}
+slackLists.download.get output download_url {"type":"string"}
+slackLists.download.start arg token (required) {"type":"string","subtype":"auth"}
+slackLists.download.start arg list_id (required) {"type":"string","subtype":"list","schema":"file_id"}
+slackLists.download.start arg include_archived {"type":"boolean","default":false}
+slackLists.download.start arg format {"schema":"list_export_format","default":"csv"}
+slackLists.download.start arg include_threads {"type":"boolean","default":false}
+slackLists.download.start arg include_attachments {"type":"boolean","default":false}
+slackLists.download.start output job_id (required) {"type":"string"}
+slackLists.items.create arg token (required) {"type":"string","subtype":"auth"}
+slackLists.items.create arg list_id (required) {"subtype":"list","schema":"file_id"}
+slackLists.items.create arg duplicated_item_id {"schema":"list_record_id"}
+slackLists.items.create arg parent_item_id {"schema":"list_record_id"}
+slackLists.items.create arg initial_fields {"type":"array","items":{"schema":"list_field"}}
+slackLists.items.create output item (required) {"schema":"list_item"}
+slackLists.items.delete arg token (required) {"type":"string","subtype":"auth"}
+slackLists.items.delete arg list_id (required) {"type":"string","subtype":"list"}
+slackLists.items.delete arg id (required) {"type":"string"}
+slackLists.items.delete output ok (required) {"type":"boolean","enum":[true]}
+slackLists.items.deleteMultiple arg token (required) {"type":"string","subtype":"auth"}
+slackLists.items.deleteMultiple arg list_id (required) {"type":"string","subtype":"list"}
+slackLists.items.deleteMultiple arg ids (required) {"type":"array","items":{"schema":"list_record_id"}}
+slackLists.items.deleteMultiple output ok (required) {"type":"boolean","enum":[true]}
+slackLists.items.info arg token (required) {"type":"string","subtype":"auth"}
+slackLists.items.info arg list_id (required) {"type":"string","subtype":"list","schema":"file_id"}
+slackLists.items.info arg id (required) {"type":"string","schema":"list_record_id"}
+slackLists.items.info arg include_is_subscribed {"default":"false","type":"boolean"}
+slackLists.items.info output list (required) {"schema":"file"}
+slackLists.items.info output record (required) {"schema":"list_item"}
+slackLists.items.info output parent_task {"schema":"list_item"}
+slackLists.items.info output subtasks {"type":"array","items":{"schema":"list_item"}}
+slackLists.items.list arg token (required) {"type":"string","subtype":"auth"}
+slackLists.items.list arg list_id (required) {"type":"string","subtype":"list"}
+slackLists.items.list arg limit {"type":"integer","default":5000}
+slackLists.items.list arg cursor {"type":"string"}
+slackLists.items.list arg archived {"type":"boolean","default":false}
+slackLists.items.list arg include_list {"type":"boolean","default":false}
+slackLists.items.list output items (required) {"type":"array","items":{"schema":"list_item"}}
+slackLists.items.list output response_metadata {"schema":"response_metadata_new"}
+slackLists.items.list output list {"schema":""}
+slackLists.items.update arg token (required) {"type":"string","subtype":"auth"}
+slackLists.items.update arg list_id (required) {"type":"string","subtype":"list"}
+slackLists.items.update arg cells (required) {"type":"array","items":{"schema":"list_cell_with_new_rows"}}
+slackLists.items.update output null
+slackLists.update arg token (required) {"type":"string","subtype":"auth"}
+slackLists.update arg id (required) {"subtype":"list","schema":"file_id"}
+slackLists.update arg name {"type":"string"}
+slackLists.update arg description_blocks {"type":"array","items":{"schema":"rich_text"}}
+slackLists.update arg todo_mode {"type":"boolean"}
+slackLists.update output null
+team.accessLogs arg token (required) {"type":"string","subtype":"auth"}
+team.accessLogs arg before {"default":"now","anyOf":[{"enum":["now"],"type":"string"},{"coerce":true,"type":"string"}]}
+team.accessLogs arg count {"default":"100","type":"string","subtype":"paging"}
+team.accessLogs arg page {"default":"1","type":"string","subtype":"paging"}
+team.accessLogs arg cursor {"type":"string"}
+team.accessLogs arg limit {"default":0,"type":"integer"}
+team.accessLogs arg team_id {"type":"string","subtype":"team"}
+team.accessLogs output logins (required) {"items":{"required":["username","count","user_id","ip","region","isp","user_agent","country","date_first","date_last"],"type":"object","properties":{"username":{"type":"string"},"count":{"type":"integer"},"user_id":{"schema":"user_id"},"ip":{"type":"string"},"region":{"anyOf":[{"type":"null"},{"type":"string"}]},"isp":{"anyOf":[{"type":"null"},{"type":"string"}]},"user_agent":{"type":"string"},"country":{"anyOf":[{"type":"null"},{"type":"string"}]},"date_first":{"type":"integer"},"date_last":{"type":"integer"}}},"type":"array"}
+team.accessLogs output paging {"required":["count","total","page","pages"],"type":"object","properties":{"count":{"type":"integer"},"total":{"type":"integer"},"page":{"type":"integer"},"pages":{"type":"integer"}}}
+team.accessLogs output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+team.billableInfo arg token (required) {"type":"string","subtype":"auth"}
+team.billableInfo arg cursor {"type":"string"}
+team.billableInfo arg limit {"type":"integer"}
+team.billableInfo arg user {"type":"string","subtype":"user"}
+team.billableInfo arg team_id {"type":"string","subtype":"team"}
+team.billableInfo output response_metadata {"required":["next_cursor"],"type":"object","properties":{"next_cursor":{"type":"string"}}}
+team.billableInfo output billable_info (required) {"type":"object","patternProperties":{"^[UW][A-Z0-9]{8,}$":{"required":["billing_active"],"type":"object","properties":{"billing_active":{"type":"boolean"}}}}}
+team.billing.info arg token (required) {"type":"string","subtype":"auth"}
+team.billing.info output plan (required) {"type":"string"}
+team.externalTeams.disconnect arg token (required) {"type":"string","subtype":"auth"}
+team.externalTeams.disconnect arg target_team (required) {"schema":"team_id"}
+team.externalTeams.disconnect output job_enqueued (required) {"type":"boolean"}
+team.externalTeams.list arg token (required) {"type":"string","subtype":"auth"}
+team.externalTeams.list arg limit {"type":"integer","default":20}
+team.externalTeams.list arg cursor {"type":"string"}
+team.externalTeams.list arg sort_field {"type":"string","enum":["team_name","last_active_timestamp","connection_status"],"default":"team_name"}
+team.externalTeams.list arg sort_direction {"type":"string","enum":["asc","desc"],"default":"asc"}
+team.externalTeams.list arg slack_connect_pref_filter {"type":"array","items":{"type":"string","enum":["approved_orgs_only","allow_sc_file_uploads","profile_visibility","away_team_sc_invite_permissions","accept_sc_invites","sc_mpdm_to_private","external_awareness_context_bar","interact_with_externally_owned_workflows","external_teams_interact_with_locally_owned_workflows"]}}
+team.externalTeams.list arg workspace_filter {"type":"array","items":{"schema":"workspace_id"}}
+team.externalTeams.list arg connection_status_filter {"type":"string","enum":["CONNECTED","DISCONNECTED","BLOCKED","IN_REVIEW"]}
+team.externalTeams.list output organizations (required) {"type":"array","items":{"required":["team_id","team_name","team_domain","public_channel_count","private_channel_count","im_channel_count","mpim_channel_count","connected_workspaces","slack_connect_prefs","connection_status","last_active_timestamp","is_sponsored"],"type":"object","properties":{"team_id":{"schema":"workspace_id"},"team_name":{"type":"string"},"team_domain":{"type":"string"},"public_channel_count":{"type":"integer"},"private_channel_count":{"type":"integer"},"im_channel_count":{"type":"integer"},"mpim_channel_count":{"type":"integer"},"connected_workspaces":{"type":"array","items":{"required":["workspace_name","workspace_id"],"type":"object","properties":{"workspace_id":{"schema":"workspace_id"},"workspace_name":{"type":"string"}}}},"slack_connect_prefs":{"schema":"pref-details"},"connection_status":{"type":"string","enum":["CONNECTED","DISCONNECTED","BLOCKED","IN_REVIEW","DISCONNECTING"]},"last_active_timestamp":{"type":"integer"},"is_sponsored":{"type":"boolean"},"canvas":{"type":"object","required":["total_count","ownership_details"],"properties":{"total_count":{"type":"integer"},"ownership_details":{"type":"array","items":{"required":["team_id","count"],"type":"object","properties":{"team_id":{"type":"string"},"count":{"type":"integer"}}}}}},"lists":{"type":"object","required":["total_count","ownership_details"],"properties":{"total_count":{"type":"integer"},"ownership_details":{"type":"array","items":{"required":["team_id","count"],"type":"object","properties":{"team_id":{"type":"string"},"count":{"type":"integer"}}}}}}}}}
+team.externalTeams.list output total_count (required) {"type":"integer"}
+team.externalTeams.list output response_metadata {"schema":"response_metadata_new"}
+team.info arg token (required) {"type":"string","subtype":"auth"}
+team.info arg domain {"type":"string"}
+team.info arg team {"type":"string","subtype":"team"}
+team.info arg include_slackbot_availability {"default":"false","type":"boolean"}
+team.info output {"disableShapeUnification":true,"anyOf":[{"required":["team"],"type":"object","properties":{"team":{"anyOf":[{"schema":"team-summary"},{"allOf":[{"schema":"team"},{"type":"object","properties":{"slackbot_availability":{"type":"string","enum":["available","restricted","unavailable","unknown"]}}}]}]}}},{"required":["teams"],"type":"object","properties":{"teams":{"items":{"anyOf":[{"schema":"team-summary"},{"schema":"team"}]},"type":"array"}}}]}
+team.integrationLogs arg token (required) {"type":"string","subtype":"auth"}
+team.integrationLogs arg app_id {"type":"string"}
+team.integrationLogs arg change_type {"type":"string","enum":["added","removed","enabled","disabled","updated"]}
+team.integrationLogs arg count {"default":"100","type":"string","subtype":"paging"}
+team.integrationLogs arg page {"default":"1","type":"string","subtype":"paging"}
+team.integrationLogs arg service_id {"type":"string"}
+team.integrationLogs arg team_id {"type":"string","subtype":"team"}
+team.integrationLogs arg user {"type":"string","subtype":"user"}
+team.integrationLogs output paging (required) {"schema":"paging"}
+team.integrationLogs output logs (required) {"type":"array","items":{"type":"object","patternProperties":{"^.*":{"type":"string"}}}}
+team.preferences.list arg token (required) {"type":"string","subtype":"auth"}
+team.preferences.list output display_real_names (required) {"type":"boolean"}
+team.preferences.list output disable_file_uploads (required) {"type":"string"}
+team.preferences.list output msg_edit_window_mins (required) {"type":"integer"}
+team.preferences.list output who_can_post_general (required) {"type":"string"}
+team.profile.get arg token (required) {"type":"string","subtype":"auth"}
+team.profile.get arg visibility {"type":"string","enum":["all","visible","hidden"]}
+team.profile.get output profile (required) {"type":"object","properties":{"fields":{"type":"array","items":{"schema":"team_profile_field"}},"sections":{"type":"array","items":{"schema":"section_metadata"}}}}
+tooling.tokens.rotate arg refresh_token (required) {"type":"string"}
+tooling.tokens.rotate output token (required) {"type":"string"}
+tooling.tokens.rotate output refresh_token (required) {"type":"string"}
+tooling.tokens.rotate output team_id (required) {"type":"string","subtype":"team"}
+tooling.tokens.rotate output user_id (required) {"type":"string","subtype":"user"}
+tooling.tokens.rotate output exp (required) {"type":"integer"}
+tooling.tokens.rotate output iat (required) {"type":"integer"}
+usergroups.create arg token (required) {"type":"string","subtype":"auth"}
+usergroups.create arg channels {"type":"array","items":{"anyOf":[{"schema":"channel"},{"type":"string"}]}}
+usergroups.create arg additional_channels {"type":"array","items":{"schema":"channel"}}
+usergroups.create arg description {"type":"string"}
+usergroups.create arg handle {"type":"string","subtype":"user_group_name"}
+usergroups.create arg include_count {"type":"boolean"}
+usergroups.create arg name (required) {"type":"string"}
+usergroups.create arg team_id {"type":"string","subtype":"team","schema":"workspace_id"}
+usergroups.create arg enable_section {"type":"boolean"}
+usergroups.create output usergroup (required) {"schema":"subteam"}
+usergroups.disable arg token (required) {"type":"string","subtype":"auth"}
+usergroups.disable arg include_count {"type":"boolean"}
+usergroups.disable arg team_id {"subtype":"team","schema":"workspace_id"}
+usergroups.disable arg usergroup (required) {"schema":"subteam_id"}
+usergroups.disable output usergroup (required) {"schema":"subteam"}
+usergroups.enable arg token (required) {"type":"string","subtype":"auth"}
+usergroups.enable arg include_count {"type":"boolean"}
+usergroups.enable arg team_id {"type":"string","subtype":"team"}
+usergroups.enable arg usergroup (required) {"type":"string","subtype":"user_group"}
+usergroups.enable output usergroup (required) {"schema":"subteam"}
+usergroups.list arg token (required) {"type":"string","subtype":"auth"}
+usergroups.list arg include_count {"type":"boolean"}
+usergroups.list arg include_disabled {"type":"boolean"}
+usergroups.list arg include_users {"type":"boolean"}
+usergroups.list arg team_id {"subtype":"team","type":"string","schema":"workspace_id"}
+usergroups.list output usergroups (required) {"type":"array","items":{"schema":"subteam"}}
+usergroups.update arg token (required) {"type":"string","subtype":"auth"}
+usergroups.update arg channels {"type":"array","items":{"anyOf":[{"schema":"channel"},{"type":"string"}]}}
+usergroups.update arg additional_channels {"type":"array","items":{"schema":"channel"}}
+usergroups.update arg description {"type":"string"}
+usergroups.update arg handle {"type":"string","subtype":"user_group_name"}
+usergroups.update arg include_count {"type":"boolean"}
+usergroups.update arg name {"type":"string"}
+usergroups.update arg team_id {"subtype":"team","schema":"workspace_id"}
+usergroups.update arg usergroup (required) {"schema":"subteam_id"}
+usergroups.update arg enable_section {"type":"boolean"}
+usergroups.update output usergroup (required) {"schema":"subteam"}
+usergroups.update output channel_limit_user_ids {"type":"array","items":{"type":"string"}}
+usergroups.users.list arg token (required) {"type":"string","subtype":"auth"}
+usergroups.users.list arg include_disabled {"type":"boolean"}
+usergroups.users.list arg usergroup (required) {"type":"string","subtype":"user_group"}
+usergroups.users.list arg team_id {"type":"string","subtype":"team"}
+usergroups.users.list output users (required) {"type":"array"}
+usergroups.users.update arg token (required) {"type":"string","subtype":"auth"}
+usergroups.users.update arg include_count {"type":"boolean"}
+usergroups.users.update arg team_id {"type":"string","subtype":"team","schema":"workspace_id"}
+usergroups.users.update arg usergroup (required) {"type":"string","subtype":"user_group","schema":"subteam_id"}
+usergroups.users.update arg users (required) {"type":"array","items":{"schema":"user_id"}}
+usergroups.users.update arg additional_channels {"type":"array","items":{"schema":"channel"}}
+usergroups.users.update arg is_shared {"type":"boolean"}
+usergroups.users.update output usergroup (required) {"schema":"subteam"}
+users.conversations arg token (required) {"type":"string","subtype":"auth"}
+users.conversations arg cursor {"type":"string"}
+users.conversations arg exclude_archived {"default":"false","type":"boolean"}
+users.conversations arg exclude_muted {"default":"false","type":"boolean"}
+users.conversations arg limit {"default":100,"type":"number"}
+users.conversations arg team_id {"type":"string","subtype":"team"}
+users.conversations arg types {"default":"public_channel","type":"string"}
+users.conversations arg user {"type":"string","subtype":"user"}
+users.conversations output channels (required) {"type":"array","items":{"schema":"conversation"}}
+users.conversations output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+users.deletePhoto arg token (required) {"type":"string","subtype":"auth"}
+users.deletePhoto output null
+users.discoverableContacts.lookup arg token (required) {"type":"string","subtype":"auth"}
+users.discoverableContacts.lookup arg email (required) {"type":"string"}
+users.discoverableContacts.lookup output is_discoverable (required) {"type":"boolean"}
+users.getPresence arg token (required) {"type":"string","subtype":"auth"}
+users.getPresence arg user {"type":"string","subtype":"user"}
+users.getPresence output last_activity {"type":"integer"}
+users.getPresence output manual_away {"type":"boolean"}
+users.getPresence output presence (required) {"type":"string"}
+users.getPresence output online {"type":"boolean"}
+users.getPresence output connection_count {"type":"integer"}
+users.getPresence output auto_away {"type":"boolean"}
+users.identity arg token (required) {"type":"string","subtype":"auth"}
+users.identity output {"disableShapeUnification":true,"anyOf":[{"type":"object","required":["user","team"],"properties":{"user":{"type":"object","required":["name","id"],"properties":{"name":{"type":"string"},"id":{"schema":"user_id"}}},"team":{"type":"object","required":["id"],"properties":{"id":{"schema":"workspace_id"}}}}},{"type":"object","required":["user","team"],"properties":{"user":{"type":"object","required":["name","id","email"],"properties":{"name":{"type":"string"},"id":{"schema":"user_id"},"email":{"type":"string","format":"email"}}},"team":{"type":"object","required":["id"],"properties":{"id":{"schema":"workspace_id"}}}}},{"type":"object","required":["user","team"],"properties":{"user":{"type":"object","required":["name","id","image_24","image_32","image_48","image_72","image_192","image_512"],"properties":{"name":{"type":"string"},"id":{"schema":"user_id"},"image_24":{"type":"string","format":"url"},"image_32":{"type":"string","format":"url"},"image_48":{"type":"string","format":"url"},"image_72":{"type":"string","format":"url"},"image_192":{"type":"string","format":"url"},"image_512":{"type":"string","format":"url"}}},"team":{"type":"object","required":["id"],"properties":{"id":{"schema":"workspace_id"}}}}},{"type":"object","required":["user","team"],"properties":{"user":{"anyOf":[{"type":"object","required":["name","id","image_24","image_32","image_48","image_72","image_192","image_512"],"properties":{"name":{"type":"string"},"id":{"schema":"user_id"},"email":{"type":"string"},"image_24":{"type":"string","format":"url"},"image_32":{"type":"string","format":"url"},"image_48":{"type":"string","format":"url"},"image_72":{"type":"string","format":"url"},"image_192":{"type":"string","format":"url"},"image_512":{"type":"string","format":"url"},"image_1024":{"type":"string","format":"url"}}},{"type":"object","required":["name","id"],"properties":{"name":{"type":"string"},"id":{"schema":"user_id"},"email":{"type":"string"}}}]},"team":{"anyOf":[{"type":"object","required":["id","name","domain","image_34","image_44","image_68","image_88","image_102","image_132","image_230"],"properties":{"id":{"schema":"workspace_id"},"name":{"type":"string"},"domain":{"type":"string"},"image_34":{"type":"string","format":"url"},"image_44":{"type":"string","format":"url"},"image_68":{"type":"string","format":"url"},"image_88":{"type":"string","format":"url"},"image_102":{"type":"string","format":"url"},"image_132":{"type":"string","format":"url"},"image_230":{"type":"string","format":"url"},"image_default":{"type":"boolean"},"image_original":{"type":"string","format":"url"}}},{"type":"object","required":["id"],"properties":{"id":{"schema":"workspace_id"}}}]}}}]}
+users.info arg token (required) {"type":"string","subtype":"auth"}
+users.info arg include_locale {"type":"boolean"}
+users.info arg user {"type":"string","subtype":"user"}
+users.info output user {"schema":"user"}
+users.info output users {"items":{"schema":"user"},"type":"array"}
+users.list arg token (required) {"type":"string","subtype":"auth"}
+users.list arg cursor {"type":"string"}
+users.list arg include_locale {"type":"boolean"}
+users.list arg limit {"default":0,"type":"number"}
+users.list arg team_id {"type":"string","subtype":"team"}
+users.list output members (required) {"type":"array","items":{"schema":"user"}}
+users.list output cache_ts (required) {"type":"integer"}
+users.list output response_metadata {"schema":"response_metadata"}
+users.list output offset {"type":"string"}
+users.lookupByEmail arg token (required) {"type":"string","subtype":"auth"}
+users.lookupByEmail arg email (required) {"type":"string"}
+users.lookupByEmail output user (required) {"schema":"user"}
+users.profile.get arg token (required) {"type":"string","subtype":"auth"}
+users.profile.get arg include_labels {"default":"false","type":"boolean"}
+users.profile.get arg user {"type":"string","subtype":"user"}
+users.profile.get output profile (required) {"anyOf":[{"schema":"user_profile"},{"type":"object","required":["id","team_id","name","color","is_bot","is_app_user","profile","is_stranger","updated","who_can_share_contact_card"],"properties":{"id":{"schema":"user_id"},"team_id":{"schema":"team_id"},"name":{"type":"string"},"color":{"type":"string"},"is_bot":{"type":"boolean"},"is_app_user":{"type":"boolean"},"deleted":{"type":"boolean"},"tz":{"type":"string"},"tz_label":{"type":"string"},"tz_offset":{"type":"integer"},"profile":{"type":"object","required":["avatar_hash","real_name","display_name","real_name_normalized","display_name_normalized"],"properties":{"avatar_hash":{"type":"string"},"image_original":{"type":"string","format":"uri"},"image_24":{"type":"string","format":"uri"},"image_32":{"type":"string","format":"uri"},"image_48":{"type":"string","format":"uri"},"image_72":{"type":"string","format":"uri"},"image_192":{"type":"string","format":"uri"},"image_512":{"type":"string","format":"uri"},"image_1024":{"type":"string","format":"uri"},"first_name":{"type":"string"},"last_name":{"type":"string"},"email":{"type":"string","format":"email"},"real_name":{"type":"string"},"display_name":{"type":"string"},"real_name_normalized":{"type":"string"},"display_name_normalized":{"type":"string"},"team":{"schema":"team_id"},"bot_id":{"schema":"bot_id"},"api_app_id":{"schema":"app_id"},"status_text":{"type":"string"},"status_text_canonical":{"type":["null","string"]},"status_emoji":{"type":"string"},"status_emoji_display_info":{"type":"array","items":{"type":"object","required":["emoji_name"],"properties":{"emoji_name":{"type":"string"},"display_alias":{"type":"string"},"display_url":{"type":"string"},"unicode":{"type":"string"}}}},"status_expiration":{"type":"integer"},"status_clear_on_focus_end":{"type":"boolean"},"title":{"type":"string"},"pronouns":{"type":"string"}}},"is_stranger":{"type":"boolean"},"updated":{"type":"integer"},"is_workflow_bot":{"type":"boolean"},"is_connector_bot":{"type":"boolean"},"is_agentforce_bot":{"type":"boolean"},"is_sidekick_bot":{"type":"boolean"},"agent_status":{"schema":"user_agent_status"},"app_acl_type":{"schema":"user_app_acl_type"},"is_ai_app":{"type":"boolean"},"is_migrated_dummy_quip_user":{"type":"boolean"},"who_can_share_contact_card":{"type":"string"},"is_profile_only_user":{"type":"boolean"}}}]}
+users.profile.set arg token (required) {"type":"string","subtype":"auth"}
+users.profile.set arg name {"type":"string"}
+users.profile.set arg profile {"type":"string","subtype":"user_profile"}
+users.profile.set arg user {"type":"string","subtype":"user"}
+users.profile.set arg value {"type":"string"}
+users.profile.set output username (required) {"type":"string"}
+users.profile.set output profile (required) {"schema":"user_profile"}
+users.profile.set output email_pending {"type":"string","format":"email"}
+users.setPhoto arg token (required) {"type":"string","subtype":"auth"}
+users.setPhoto arg crop_w {"type":"string"}
+users.setPhoto arg crop_x {"type":"string"}
+users.setPhoto arg crop_y {"type":"string"}
+users.setPhoto arg image {"schema":"post_file"}
+users.setPhoto output profile (required) {"type":"object","patternProperties":{"^.*":{"type":"string"}}}
+users.setPresence arg token (required) {"type":"string","subtype":"auth"}
+users.setPresence arg presence (required) {"type":"string","enum":["auto","away"]}
+users.setPresence output null
+views.open arg token (required) {"type":"string","subtype":"auth"}
+views.open arg trigger_id {"subtype":"app_trigger_id","anyOf":[{"type":"string"},{"type":"null"}]}
+views.open arg interactivity_pointer {"subtype":"app_trigger_id","anyOf":[{"type":"string"},{"type":"null"}]}
+views.open arg view (required) {"allOf":[{"type":"object","coerce":true},{"anyOf":[{"schema":"modal"},{"schema":"workflow-step"},{"schema":"app-notification-subscription-configuration"}]}]}
+views.open output view (required) {"disableShapeUnification":true,"anyOf":[{"schema":"modal"},{"schema":"workflow-step"},{"schema":"app-notification-subscription-configuration"}]}
+views.publish arg token (required) {"type":"string","subtype":"auth"}
+views.publish arg user_id (required) {"type":"string"}
+views.publish arg view (required) {"schema":"publishable-view"}
+views.publish arg hash {"type":"string"}
+views.publish arg interactivity_pointer {"type":"string"}
+views.publish output view (required) {"schema":"publishable-view"}
+views.push arg token (required) {"type":"string","subtype":"auth"}
+views.push arg trigger_id {"subtype":"app_trigger_id","anyOf":[{"type":"string"},{"type":"null"}]}
+views.push arg interactivity_pointer {"subtype":"app_trigger_id","anyOf":[{"type":"string"},{"type":"null"}]}
+views.push arg view (required) {"schema":"modal"}
+views.push output view (required) {"schema":"modal"}
+views.update arg token (required) {"type":"string","subtype":"auth"}
+views.update arg view_id {"type":"string"}
+views.update arg external_id {"type":"string"}
+views.update arg view (required) {"schema":"view"}
+views.update arg hash {"type":"string"}
+views.update output view (required) {"schema":"view"}
+workflows.featured.add arg token (required) {"type":"string","subtype":"auth"}
+workflows.featured.add arg channel_id (required) {"type":"string","subtype":"channel"}
+workflows.featured.add arg trigger_ids (required) {"type":"array","items":{"type":"string"}}
+workflows.featured.add output null
+workflows.featured.list arg token (required) {"type":"string","subtype":"auth"}
+workflows.featured.list arg channel_ids (required) {"type":"array","items":{"type":"string","subtype":"channel"}}
+workflows.featured.list output featured_workflows (required) {"type":"array","items":{"type":"object","required":["channel_id","triggers"],"properties":{"channel_id":{"type":"string","subtype":"channel"},"triggers":{"type":"array","items":{"type":"object","required":["id","title"],"properties":{"id":{"type":"string"},"title":{"type":"string"}}}}}}}
+workflows.featured.remove arg token (required) {"type":"string","subtype":"auth"}
+workflows.featured.remove arg channel_id (required) {"type":"string","subtype":"channel"}
+workflows.featured.remove arg trigger_ids (required) {"type":"array","items":{"type":"string"}}
+workflows.featured.remove output null
+workflows.featured.set arg token (required) {"type":"string","subtype":"auth"}
+workflows.featured.set arg channel_id (required) {"type":"string","subtype":"channel"}
+workflows.featured.set arg trigger_ids (required) {"type":"array","items":{"type":"string"}}
+workflows.featured.set output null
+workflows.triggers.permissions.add arg token (required) {"type":"string","subtype":"auth"}
+workflows.triggers.permissions.add arg trigger_id (required) {"type":"string"}
+workflows.triggers.permissions.add arg user_ids {"type":"array","items":{"schema":"user_id"}}
+workflows.triggers.permissions.add arg channel_ids {"type":"array","items":{"schema":"channel"}}
+workflows.triggers.permissions.add arg team_ids {"type":"array","items":{"schema":"workspace_id"}}
+workflows.triggers.permissions.add arg org_ids {"type":"array","items":{"schema":"enterprise_id"}}
+workflows.triggers.permissions.add output {"schema":"trigger-run-acl"}
+workflows.triggers.permissions.list arg token (required) {"type":"string","subtype":"auth"}
+workflows.triggers.permissions.list arg trigger_id (required) {"type":"string"}
+workflows.triggers.permissions.list output {"schema":"trigger-run-acl"}
+workflows.triggers.permissions.remove arg token (required) {"type":"string","subtype":"auth"}
+workflows.triggers.permissions.remove arg trigger_id (required) {"type":"string"}
+workflows.triggers.permissions.remove arg user_ids {"type":"array","items":{"schema":"user_id"}}
+workflows.triggers.permissions.remove arg channel_ids {"type":"array","items":{"schema":"channel"}}
+workflows.triggers.permissions.remove arg team_ids {"type":"array","items":{"schema":"workspace_id"}}
+workflows.triggers.permissions.remove arg org_ids {"type":"array","items":{"schema":"enterprise_id"}}
+workflows.triggers.permissions.remove output permission_type (required) {"type":"string","enum":["everyone","app_collaborators","named_entities"]}
+workflows.triggers.permissions.remove output user_ids {"type":"array","items":{"schema":"user_id"}}
+workflows.triggers.permissions.remove output channel_ids {"type":"array","items":{"schema":"channel"}}
+workflows.triggers.permissions.remove output team_ids {"type":"array","items":{"schema":"workspace_id"}}
+workflows.triggers.permissions.remove output org_ids {"type":"array","items":{"type":"string"}}
+workflows.triggers.permissions.set arg token (required) {"type":"string","subtype":"auth"}
+workflows.triggers.permissions.set arg trigger_id (required) {"type":"string"}
+workflows.triggers.permissions.set arg permission_type (required) {"type":"string","enum":["everyone","app_collaborators","named_entities"]}
+workflows.triggers.permissions.set arg user_ids {"type":"array","items":{"schema":"user_id"}}
+workflows.triggers.permissions.set arg channel_ids {"type":"array","items":{"schema":"channel"}}
+workflows.triggers.permissions.set arg team_ids {"type":"array","items":{"schema":"workspace_id"}}
+workflows.triggers.permissions.set arg org_ids {"type":"array","items":{"schema":"enterprise_id"}}
+workflows.triggers.permissions.set output {"schema":"trigger-run-acl"}
