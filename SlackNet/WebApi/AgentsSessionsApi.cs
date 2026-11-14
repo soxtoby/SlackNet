@@ -20,7 +20,7 @@ public interface IAgentsSessionsApi
     /// Required for thread-based sessions in regular channels and DMs; must be <c>null</c> for session channels (where the whole channel is one session).
     /// </param>
     /// <param name="status">The lifecycle status to set.</param>
-    /// <param name="title">Title for the agent session (max 200 characters). Only used when the session is created; use <c>agents.sessions.rename</c> to rename an existing session.</param>
+    /// <param name="title">Title for the agent session. Only used when the session is created; use <see cref="Rename"/> to rename an existing session.</param>
     /// <param name="initiatorUserId">The user who initiated the session. Only used when the session is created. Must be a member of the channel.</param>
     /// <param name="iconEmoji">
     /// Emoji to use as the agent's icon. Takes priority over <paramref name="iconUrl"/>. Requires the <c>chat:write.customize</c> scope.
@@ -39,6 +39,26 @@ public interface IAgentsSessionsApi
         [CanBeNull] string iconEmoji = null,
         [CanBeNull] string iconUrl = null,
         [CanBeNull] string username = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Renames an agent session.
+    /// To set a session's lifecycle status, use <see cref="SetStatus"/>.
+    /// Your app must be a member of the channel.
+    /// </summary>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/agents.sessions.rename/">Slack documentation</a> for more information.</remarks>
+    /// <param name="channelId">ID of the channel containing the agent session. Slack requires this for public channels.</param>
+    /// <param name="threadTs">
+    /// Timestamp of the thread root message the session is scoped to.
+    /// Required for thread-based sessions in regular channels and DMs; must be <c>null</c> for session channels.
+    /// </param>
+    /// <param name="title">New title for the agent session. For a session channel, this also renames the channel.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The updated title of the agent session.</returns>
+    Task<string> Rename(
+        string channelId,
+        [CanBeNull] string threadTs,
+        string title,
         CancellationToken cancellationToken = default);
 }
 
@@ -65,4 +85,17 @@ public class AgentsSessionsApi(ISlackApiClient client) : IAgentsSessionsApi
                 { "icon_url", iconUrl },
                 { "username", username }
             }, cancellationToken);
+
+    public async Task<string> Rename(
+        string channelId,
+        string threadTs,
+        string title,
+        CancellationToken cancellationToken = default) =>
+        (await client.Post<AgentSessionRenameResponse>("agents.sessions.rename", new Args
+            {
+                { "channel_id", channelId },
+                { "thread_ts", threadTs },
+                { "title", title }
+            }, cancellationToken).ConfigureAwait(false))
+        .Title;
 }

@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+- `AgentsConversationsApi`, which creates, archives and sets properties and slash commands on code channels, and manages their views and canvases, with `CodeChannelProperties`, `ContextBarItem`, `AgentResource`, `AgentCommand`, `AgentView` and `CanvasComment`. `AccessLevel` has `Comment` for comment-only canvas views.
+- `AgentsSessionsApi.Rename`, which renames an agent session.
 - `AppDeleted`, `AppInstalled`, `AppRequested` and `AppUninstalledTeam` events, with `AppRequest`, `App` and `AppScope`.
 - `AppRateLimited` event, which Slack sends when your app's event subscriptions are rate limited. Event handlers receive it in an `EventCallback`, over HTTP or Socket Mode, even though Slack doesn't send it in one.
 - `BlocksApi.Validate`, which validates blocks, a message or a view against the Block Kit schema.

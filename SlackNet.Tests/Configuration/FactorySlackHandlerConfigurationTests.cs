@@ -981,6 +981,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
 
     protected class TestApiClient : ISlackApiClient
     {
+        public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }
         public IAppsConnectionsApi AppsConnections { get; }

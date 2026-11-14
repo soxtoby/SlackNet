@@ -1,3 +1,78 @@
+agents.conversations.archive arg token (required) {"type":"string","subtype":"auth"}
+agents.conversations.archive arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
+agents.conversations.archive arg summary_message_ts {"type":"string"}
+agents.conversations.archive output null
+agents.conversations.create arg token (required) {"type":"string","subtype":"auth"}
+agents.conversations.create arg team_id {"type":"string","subtype":"team"}
+agents.conversations.create arg session_id {"type":"string"}
+agents.conversations.create arg name (required) {"type":"string"}
+agents.conversations.create arg is_private {"type":"boolean"}
+agents.conversations.create arg origin_channel_id {"type":"string","is_resource":false}
+agents.conversations.create arg origin_message_ts {"type":"string"}
+agents.conversations.create output channel_id (required) {"type":"string"}
+agents.conversations.getCanvas arg token (required) {"type":"string","subtype":"auth"}
+agents.conversations.getCanvas arg channel (required) {"type":"string","subtype":"channel"}
+agents.conversations.getCanvas arg canvas_id (required) {"schema":"file_id","subtype":"canvas"}
+agents.conversations.getCanvas arg content_format {"type":"string","enum":["markdown"],"default":"markdown"}
+agents.conversations.getCanvas arg include_resolved {"type":"boolean","default":false}
+agents.conversations.getCanvas output canvas_id (required) {"type":"string"}
+agents.conversations.getCanvas output title (required) {"type":"string"}
+agents.conversations.getCanvas output content (required) {"type":"string"}
+agents.conversations.getCanvas output comments (required) {"type":"array","items":{"type":"object","additionalProperties":false,"required":["id","ts","user_id","text","quoted_text","is_resolved","replies","has_more_replies"],"properties":{"id":{"type":"string"},"ts":{"type":"string"},"user_id":{"type":"string"},"text":{"type":"string"},"quoted_text":{"type":"string"},"is_resolved":{"type":"boolean"},"replies":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["ts","user_id","text"],"properties":{"ts":{"type":"string"},"user_id":{"type":"string"},"text":{"type":"string"}}}},"has_more_replies":{"type":"boolean"}}}}
+agents.conversations.getCanvas output has_more_comments (required) {"type":"boolean"}
+agents.conversations.listViews arg token (required) {"type":"string","subtype":"auth"}
+agents.conversations.listViews arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
+agents.conversations.listViews output views (required) {"type":"array","items":{"type":"object","additionalProperties":false,"required":["view_id","view_key","file_id","label","content_version","date_added"],"properties":{"view_id":{"type":"string"},"view_key":{"type":"string"},"file_id":{"type":"string"},"label":{"type":"string"},"content_version":{"type":"integer"},"date_added":{"type":"integer"}}}}
+agents.conversations.removeView arg token (required) {"type":"string","subtype":"auth"}
+agents.conversations.removeView arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
+agents.conversations.removeView arg view_key {"type":"string"}
+agents.conversations.removeView arg view_id {"type":"string"}
+agents.conversations.removeView output channel_id (required) {"type":"string"}
+agents.conversations.removeView output view_id (required) {"type":"string"}
+agents.conversations.setCanvasContent arg token (required) {"type":"string","subtype":"auth"}
+agents.conversations.setCanvasContent arg channel (required) {"type":"string","subtype":"channel"}
+agents.conversations.setCanvasContent arg canvas_id (required) {"schema":"file_id","subtype":"canvas"}
+agents.conversations.setCanvasContent arg content (required) {"type":"string"}
+agents.conversations.setCanvasContent output canvas_id (required) {"type":"string"}
+agents.conversations.setCanvasContent output sections_changed_count (required) {"type":"integer"}
+agents.conversations.setCommands arg token (required) {"type":"string","subtype":"auth"}
+agents.conversations.setCommands arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true,"resource":{"permissions":{"policy":"\\Channels\\ActorIsAgentChannelBot"}}}
+agents.conversations.setCommands arg commands (required) {"logged":false,"type":"array","items":{"$schema":"agent_command"}}
+agents.conversations.setCommands output channel_id (required) {"type":"string"}
+agents.conversations.setCommands output command_count (required) {"type":"integer"}
+agents.conversations.setProperties arg token (required) {"type":"string","subtype":"auth"}
+agents.conversations.setProperties arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
+agents.conversations.setProperties arg title {"type":"string"}
+agents.conversations.setProperties arg status {"type":"string","enum":["active","processing","suspended","closed"]}
+agents.conversations.setProperties arg code_channel {"type":"object","additionalProperties":false,"properties":{"host":{"type":"string"},"repo":{"type":"string"},"branch":{"type":"string"},"base_branch":{"type":"string"},"commit_sha":{"type":"string"},"pr_number":{"type":"integer"},"pr_url":{"type":"string"},"pr_title":{"type":"string"},"pr_status":{"type":"string"},"ci_url":{"type":"string"},"ci_state":{"type":"string"},"file_paths":{"type":"array","items":{"type":"string"}},"language":{"type":"string"},"upstream_url":{"type":"string"},"branch_url":{"type":"string"},"context_bar_items":{"type":"array","items":{"schema":"context_bar_item"}},"summary_message":{"type":"object","additionalProperties":false,"properties":{"message_ts":{"type":"string"},"thread_ts":{"type":"string"}},"required":["message_ts"]}}}
+agents.conversations.setProperties arg agent_resource {"type":"object","additionalProperties":false,"properties":{"url":{"type":"string"},"resource_type":{"type":"string"},"title":{"type":"string"},"provider":{"type":"string"}}}
+agents.conversations.setProperties output channel_id (required) {"type":"string"}
+agents.conversations.setView arg token (required) {"type":"string","subtype":"auth"}
+agents.conversations.setView arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
+agents.conversations.setView arg type {"schema":"view_type","default":"html"}
+agents.conversations.setView arg view_key {"type":"string"}
+agents.conversations.setView arg content {"type":"string"}
+agents.conversations.setView arg blocks {"schema":"blocks"}
+agents.conversations.setView arg canvas_id {"schema":"file_id","subtype":"canvas"}
+agents.conversations.setView arg access_level {"type":"string","enum":["read","write","comment"]}
+agents.conversations.setView arg agent_content_hash {"type":"string"}
+agents.conversations.setView arg base_branch {"type":"string"}
+agents.conversations.setView arg head_branch {"type":"string"}
+agents.conversations.setView arg name {"type":"string"}
+agents.conversations.setView arg label {"type":"string"}
+agents.conversations.setView arg csp {"type":"object","additionalProperties":false,"properties":{"resource_domains":{"type":"array","items":{"type":"string"}}}}
+agents.conversations.setView output channel_id (required) {"type":"string"}
+agents.conversations.setView output view_id (required) {"type":"string"}
+agents.conversations.setView output file_id (required) {"type":"string"}
+agents.conversations.setView output content_version (required) {"type":"integer"}
+agents.conversations.setView output type {"$ref":"../../schemas/code-channels/view_type.json#"}
+agents.conversations.setView output canvas_id {"type":"string"}
+agents.sessions.rename arg token (required) {"type":"string","subtype":"auth"}
+agents.sessions.rename arg channel_id {"type":"string","subtype":"channel","schema":"channel","required_for_public":true}
+agents.sessions.rename arg title (required) {"type":"string"}
+agents.sessions.rename arg thread_ts {"type":"string"}
+agents.sessions.rename output title (required) {"type":"string"}
+agents.sessions.rename output channel_id {"type":"string"}
 agents.sessions.setStatus arg token (required) {"type":"string","subtype":"auth"}
 agents.sessions.setStatus arg channel_id {"type":"string","subtype":"channel","schema":"channel","required_for_public":true}
 agents.sessions.setStatus arg status (required) {"type":"string","enum":["active","processing","suspended","closed"],"schema":"agent_session_status"}

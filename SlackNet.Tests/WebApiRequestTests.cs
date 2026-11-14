@@ -118,6 +118,29 @@ public class WebApiRequestTests
             .ShouldBe(true);
     }
 
+    [Test]
+    public async Task AgentsConversationsApi_SetPropertiesWithDraftPullRequest_PostsOnlyEmptyPullRequestStatus()
+    {
+        await _sut.AgentsConversations.SetProperties("C123", new CodeChannelProperties { PrStatus = PullRequestStatus.Draft });
+
+        _http.Request.RequestUri.AbsolutePath.ShouldBe("/api/agents.conversations.setProperties");
+        JToken.DeepEquals(_http.Body["code_channel"], JObject.Parse("""{ "pr_status": "" }"""))
+            .ShouldBe(true);
+    }
+
+    [Test]
+    public async Task AgentsConversationsApi_SetHtmlViewWithCspResourceDomains_PostsThemInCsp()
+    {
+        _http.ResponseJson = """{"ok":true,"view_id":"Ct123","type":"html"}""";
+
+        await _sut.AgentsConversations.SetHtmlView("C123", "reports/coverage.html", "<html></html>", cspResourceDomains: ["https://cdn.jsdelivr.net"]);
+
+        _http.Request.RequestUri.AbsolutePath.ShouldBe("/api/agents.conversations.setView");
+        _http.Body.Value<string>("type").ShouldBe("html");
+        JToken.DeepEquals(_http.Body["csp"], JObject.Parse("""{ "resource_domains": ["https://cdn.jsdelivr.net"] }"""))
+            .ShouldBe(true);
+    }
+
     class RecordingHttp(SlackJsonSettings jsonSettings) : IHttp
     {
         public HttpRequestMessage Request { get; private set; }

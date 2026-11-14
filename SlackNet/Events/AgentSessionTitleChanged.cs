@@ -3,7 +3,7 @@ namespace SlackNet.Events;
 /// <summary>
 /// Sent when a user changes the title of an agent session, even if the agent previously set that title.
 /// If your agent keeps sessions in sync between Slack and your own UI, reflect the user's title change accordingly.
-/// To set a session's title from your app, use <c>agents.sessions.rename</c>.
+/// To set a session's title from your app, use <see cref="WebApi.IAgentsSessionsApi.Rename"/>.
 /// </summary>
 /// <remarks>See the <a href="https://docs.slack.dev/reference/events/agent_session_title_changed/">Slack documentation</a> for more information.</remarks>
 public class AgentSessionTitleChanged : Event

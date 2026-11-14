@@ -4,5 +4,10 @@ public enum AccessLevel
 {
     Read,
     Write,
-    Owner
+    Owner,
+
+    /// <summary>
+    /// Read and comment, but not edit. Used by <see cref="IAgentsConversationsApi.SetCanvasView"/>.
+    /// </summary>
+    Comment
 }

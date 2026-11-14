@@ -14,6 +14,7 @@ namespace SlackNet;
 
 public interface ISlackApiClient
 {
+    IAgentsConversationsApi AgentsConversations { get; }
     IAgentsSessionsApi AgentsSessions { get; }
     IApiApi Api { get; }
     IAppsConnectionsApi AppsConnections { get; }
@@ -194,6 +195,7 @@ public class SlackApiClient : ISlackApiClient
                 WarningsAsErrors = WarningsAsErrors
             };
 
+    public IAgentsConversationsApi AgentsConversations => new AgentsConversationsApi(this);
     public IAgentsSessionsApi AgentsSessions => new AgentsSessionsApi(this);
     public IApiApi Api => new ApiApi(this);
     public IAppsConnectionsApi AppsConnections => new AppsConnectionsApi(this);

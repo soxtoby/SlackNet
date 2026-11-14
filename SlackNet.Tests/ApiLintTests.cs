@@ -198,6 +198,7 @@ public class ApiLintTests
             { typeof(ChangeType?), _ => null },
             { typeof(LinkSource), _ => LinkSource.Composer },
             { typeof(AccessLevel), _ => AccessLevel.Read },
+            { typeof(AccessLevel?), _ => null },
             { typeof(CanvasContentType?), _ => null },
             { typeof(PermissionAction), _ => PermissionAction.Upgrade },
             { typeof(IEnumerable<ConversationType>), _ => Enumerable.Empty<ConversationType>() },
@@ -238,6 +239,9 @@ public class ApiLintTests
             { typeof(TaskDisplayMode?), _ => null },
             { typeof(SkillListFilter?), _ => null },
             { typeof(IEnumerable<McpServer>), _ => Enumerable.Empty<McpServer>() },
+            { typeof(IEnumerable<AgentCommand>), _ => Enumerable.Empty<AgentCommand>() },
+            { typeof(CodeChannelProperties), _ => null },
+            { typeof(AgentResource), _ => null },
             { typeof(JObject), _ => new JObject() },
             { typeof(CancellationToken), _ => null }
         };
@@ -301,6 +305,7 @@ public class ApiLintTests
 
         public ISlackApiClient WithAccessToken(string accessToken) => this;
 
+        public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }
         public IAppsConnectionsApi AppsConnections { get; }
