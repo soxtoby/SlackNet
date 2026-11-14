@@ -999,6 +999,8 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IAdminAuthPolicyApi AdminAuthPolicy { get; }
         public IAdminBarriersApi AdminBarriers { get; }
         public IAdminConversationsApi AdminConversations { get; }
+        public IAdminConversationsEkmApi AdminConversationsEkm { get; }
+        public IAdminConversationsRestrictAccessApi AdminConversationsRestrictAccess { get; }
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }

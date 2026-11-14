@@ -239,6 +239,7 @@ public class ApiLintTests
             { typeof(IEnumerable<RestrictedSubject>), _ => Enumerable.Empty<RestrictedSubject>() },
             { typeof(IEnumerable<ConversationSearchType>), _ => Enumerable.Empty<ConversationSearchType>() },
             { typeof(ConversationSearchSort?), _ => null },
+            { typeof(ConversationPermission), _ => null },
             { typeof(UserConnectionStatus), _ => UserConnectionStatus.Connected },
             { typeof(ProfileFieldVisibility), _ => ProfileFieldVisibility.All },
             { typeof(Presence), _ => Presence.Active },
@@ -383,6 +384,8 @@ public class ApiLintTests
         public IAdminAuthPolicyApi AdminAuthPolicy { get; }
         public IAdminBarriersApi AdminBarriers { get; }
         public IAdminConversationsApi AdminConversations { get; }
+        public IAdminConversationsEkmApi AdminConversationsEkm { get; }
+        public IAdminConversationsRestrictAccessApi AdminConversationsRestrictAccess { get; }
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }

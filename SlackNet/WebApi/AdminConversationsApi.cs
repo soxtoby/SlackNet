@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Args = System.Collections.Generic.Dictionary<string, object?>;
@@ -118,6 +119,27 @@ public interface IAdminConversationsApi
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Create a Salesforce channel for the corresponding object provided.
+    /// </summary>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/admin.conversations.createForObjects/">Slack documentation</a> for more information.</remarks>
+    /// <param name="objectId">
+    /// Object / Record ID (15 or 18 digit accepted).
+    /// See <a href="https://help.salesforce.com/s/articleView?id=000385008&amp;type=1">here</a> for how to look up an ID.
+    /// </param>
+    /// <param name="salesforceOrgId">
+    /// Salesforce org ID (15 or 18 digit accepted).
+    /// See <a href="https://help.salesforce.com/s/articleView?id=000385215&amp;type=1">here</a> for how to look up Salesforce org ID.
+    /// </param>
+    /// <param name="inviteObjectTeam">Add all team members related to the object to the newly created Salesforce channel.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The ID of the created Salesforce channel.</returns>
+    Task<string> CreateForObjects(
+        string objectId,
+        string salesforceOrgId,
+        bool inviteObjectTeam = false,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Delete a public or private channel.
     /// </summary>
     /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/admin.conversations.delete/">Slack documentation</a> for more information.</remarks>
@@ -160,6 +182,25 @@ public interface IAdminConversationsApi
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Get conversation preferences for a public or private channel.
+    /// </summary>
+    /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/admin.conversations.getConversationPrefs/">Slack documentation</a> for more information.</remarks>
+    /// <param name="channelId">The channel to get preferences for.</param>
+    /// <param name="cancellationToken"></param>
+    Task<ConversationPrefs> GetConversationPrefs(string channelId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get a conversation's retention policy.
+    /// </summary>
+    /// <remarks>
+    /// Retrieves the retention policy for any conversation, including public or private channels, DMs, and MPDMs.
+    /// See the <a href="https://docs.slack.dev/reference/methods/admin.conversations.getCustomRetention/">Slack documentation</a> for more information.
+    /// </remarks>
+    /// <param name="channelId">The conversation to get the retention policy for.</param>
+    /// <param name="cancellationToken"></param>
+    Task<ConversationRetention> GetCustomRetention(string channelId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Invite users to a public or private channel.
     /// </summary>
     /// <remarks>
@@ -188,6 +229,25 @@ public interface IAdminConversationsApi
     Task<ConversationKickResponse> Kick(string channelId, IEnumerable<string> userIds, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Link a Salesforce record to a channel.
+    /// </summary>
+    /// <remarks>
+    /// Converts a regular channel to a Salesforce channel by linking the Slack channel ID to the Salesforce record ID.
+    /// See the <a href="https://docs.slack.dev/reference/methods/admin.conversations.linkObjects/">Slack documentation</a> for more information.
+    /// </remarks>
+    /// <param name="channelId">Channel ID for Slack channel that will be linked to a Salesforce record.</param>
+    /// <param name="recordId">
+    /// Salesforce record ID (15 or 18 digit accepted).
+    /// See <a href="https://help.salesforce.com/s/articleView?id=000385008&amp;type=1">here</a> for how to look up record ID.
+    /// </param>
+    /// <param name="salesforceOrgId">
+    /// Salesforce org ID (15 or 18 digit accepted).
+    /// See <a href="https://help.salesforce.com/s/articleView?id=000385215&amp;type=1">here</a> for how to look up Salesforce org ID.
+    /// </param>
+    /// <param name="cancellationToken"></param>
+    Task LinkObjects(string channelId, string recordId, string salesforceOrgId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Returns channels on the given team using the filters.
     /// </summary>
     /// <remarks>See the <a href="https://docs.slack.dev/reference/methods/admin.conversations.lookup/">Slack documentation</a> for more information.</remarks>
@@ -208,6 +268,17 @@ public interface IAdminConversationsApi
         string? cursor = null,
         int? limit = null,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Remove a conversation's retention policy.
+    /// </summary>
+    /// <remarks>
+    /// Removes the retention policy for any conversation, including public or private channels, DMs, and MPDMs.
+    /// See the <a href="https://docs.slack.dev/reference/methods/admin.conversations.removeCustomRetention/">Slack documentation</a> for more information.
+    /// </remarks>
+    /// <param name="channelId">The conversation to remove the retention policy from.</param>
+    /// <param name="cancellationToken"></param>
+    Task RemoveCustomRetention(string channelId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Rename a public or private channel.
@@ -262,6 +333,56 @@ public interface IAdminConversationsApi
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Set the posting permissions for a public or private channel.
+    /// Only the preferences you pass are changed.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// While you cannot return to the original "empty" state of <paramref name="whoCanPost"/> or <paramref name="canThread"/> when the channel is first created,
+    /// you can always reset the channel to allow everyone to post by using <see cref="ConversationPermissionType.Ra"/>.
+    /// </para>
+    /// <para>
+    /// In <a href="https://docs.slack.dev/apis/slack-connect/">Slack Connect channels</a>, the same values are used by the channel owner (home workspace)
+    /// to control who can post in a given channel, but they have slightly different meanings (see <see cref="ConversationPermissionType"/>).
+    /// When listing individual users who can post in the channel, you are free to include user IDs of both home and away users.
+    /// </para>
+    /// See the <a href="https://docs.slack.dev/reference/methods/admin.conversations.setConversationPrefs/">Slack documentation</a> for more information.
+    /// </remarks>
+    /// <param name="channelId">The channel to set the prefs for.</param>
+    /// <param name="whoCanPost">Who's allowed to post in the channel.</param>
+    /// <param name="canThread">Who's allowed to respond in threads in the channel.</param>
+    /// <param name="canHuddle">Whether a huddle can be started in the channel.</param>
+    /// <param name="enableAtChannel">
+    /// Whether channel mentions can be used in the channel.
+    /// If you set this, you must also set <paramref name="enableAtHere"/> to the same value.
+    /// </param>
+    /// <param name="enableAtHere">
+    /// Whether here mentions can be used in the channel.
+    /// If you set this, you must also set <paramref name="enableAtChannel"/> to the same value.
+    /// </param>
+    /// <param name="cancellationToken"></param>
+    Task SetConversationPrefs(
+        string channelId,
+        ConversationPermission? whoCanPost = null,
+        ConversationPermission? canThread = null,
+        bool? canHuddle = null,
+        bool? enableAtChannel = null,
+        bool? enableAtHere = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Set a conversation's retention policy.
+    /// </summary>
+    /// <remarks>
+    /// Sets the retention policy for any conversation, including public or private channels, DMs, and MPDMs.
+    /// See the <a href="https://docs.slack.dev/reference/methods/admin.conversations.setCustomRetention/">Slack documentation</a> for more information.
+    /// </remarks>
+    /// <param name="channelId">The conversation to set the retention policy for.</param>
+    /// <param name="durationDays">The message retention duration in days to set for this conversation.</param>
+    /// <param name="cancellationToken"></param>
+    Task SetCustomRetention(string channelId, int durationDays, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Set the workspaces in an Enterprise org that connect to a public or private channel.
     /// </summary>
     /// <remarks>
@@ -301,6 +422,18 @@ public interface IAdminConversationsApi
     /// <param name="channelId">The channel to unarchive.</param>
     /// <param name="cancellationToken"></param>
     Task Unarchive(string channelId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Unlink a Salesforce record from a channel.
+    /// </summary>
+    /// <remarks>
+    /// Converts a Salesforce channel back to a regular channel by unlinking the Slack channel ID from the Salesforce record ID.
+    /// See the <a href="https://docs.slack.dev/reference/methods/admin.conversations.unlinkObjects/">Slack documentation</a> for more information.
+    /// </remarks>
+    /// <param name="channelId">Channel ID for Slack channel that will be unlinked from the Salesforce record.</param>
+    /// <param name="newChannelName">Channel name you would like to give to the channel that is being unlinked from the Salesforce record.</param>
+    /// <param name="cancellationToken"></param>
+    Task UnlinkObjects(string channelId, string newChannelName, CancellationToken cancellationToken = default);
 }
 
 public class AdminConversationsApi(ISlackApiClient client) : IAdminConversationsApi
@@ -367,6 +500,19 @@ public class AdminConversationsApi(ISlackApiClient client) : IAdminConversations
                 { "team_id", teamId }
             }, cancellationToken).ConfigureAwait(false)).ChannelId;
 
+    public async Task<string> CreateForObjects(
+        string objectId,
+        string salesforceOrgId,
+        bool inviteObjectTeam = false,
+        CancellationToken cancellationToken = default
+    ) =>
+        (await client.Get<ChannelIdResponse>("admin.conversations.createForObjects", new Args
+            {
+                { "object_id", objectId },
+                { "salesforce_org_id", salesforceOrgId },
+                { "invite_object_team", inviteObjectTeam }
+            }, cancellationToken).ConfigureAwait(false)).ChannelId;
+
     public Task Delete(string channelId, CancellationToken cancellationToken = default) =>
         client.Get("admin.conversations.delete", new Args { { "channel_id", channelId } }, cancellationToken);
 
@@ -390,6 +536,13 @@ public class AdminConversationsApi(ISlackApiClient client) : IAdminConversations
                 { "limit", limit }
             }, cancellationToken);
 
+    public async Task<ConversationPrefs> GetConversationPrefs(string channelId, CancellationToken cancellationToken = default) =>
+        (await client.Get<ConversationPrefsResponse>("admin.conversations.getConversationPrefs", new Args { { "channel_id", channelId } }, cancellationToken)
+            .ConfigureAwait(false)).Prefs;
+
+    public Task<ConversationRetention> GetCustomRetention(string channelId, CancellationToken cancellationToken = default) =>
+        client.Get<ConversationRetention>("admin.conversations.getCustomRetention", new Args { { "channel_id", channelId } }, cancellationToken);
+
     public Task Invite(string channelId, IEnumerable<string> userIds, CancellationToken cancellationToken = default) =>
         client.Get("admin.conversations.invite", new Args
             {
@@ -402,6 +555,14 @@ public class AdminConversationsApi(ISlackApiClient client) : IAdminConversations
             {
                 { "channel_id", channelId },
                 { "user_ids", userIds }
+            }, cancellationToken);
+
+    public Task LinkObjects(string channelId, string recordId, string salesforceOrgId, CancellationToken cancellationToken = default) =>
+        client.Get("admin.conversations.linkObjects", new Args
+            {
+                { "channel", channelId },
+                { "record_id", recordId },
+                { "salesforce_org_id", salesforceOrgId }
             }, cancellationToken);
 
     public Task<ConversationLookupResponse> Lookup(
@@ -420,6 +581,9 @@ public class AdminConversationsApi(ISlackApiClient client) : IAdminConversations
                 { "cursor", cursor },
                 { "limit", limit }
             }, cancellationToken);
+
+    public Task RemoveCustomRetention(string channelId, CancellationToken cancellationToken = default) =>
+        client.Get("admin.conversations.removeCustomRetention", new Args { { "channel_id", channelId } }, cancellationToken);
 
     public Task Rename(string channelId, string channelName, CancellationToken cancellationToken = default) =>
         client.Get("admin.conversations.rename", new Args
@@ -453,6 +617,35 @@ public class AdminConversationsApi(ISlackApiClient client) : IAdminConversations
                 { "total_count_only", totalCountOnly }
             }, cancellationToken);
 
+    public Task SetConversationPrefs(
+        string channelId,
+        ConversationPermission? whoCanPost = null,
+        ConversationPermission? canThread = null,
+        bool? canHuddle = null,
+        bool? enableAtChannel = null,
+        bool? enableAtHere = null,
+        CancellationToken cancellationToken = default
+    ) =>
+        client.Get("admin.conversations.setConversationPrefs", new Args
+            {
+                { "channel_id", channelId },
+                {
+                    "prefs", new ConversationPrefsArg(
+                        PermissionPref(whoCanPost),
+                        PermissionPref(canThread),
+                        TogglePref(canHuddle),
+                        TogglePref(enableAtChannel),
+                        TogglePref(enableAtHere))
+                }
+            }, cancellationToken);
+
+    public Task SetCustomRetention(string channelId, int durationDays, CancellationToken cancellationToken = default) =>
+        client.Get("admin.conversations.setCustomRetention", new Args
+            {
+                { "channel_id", channelId },
+                { "duration_days", durationDays }
+            }, cancellationToken);
+
     public async Task<string?> SetTeams(
         string channelId,
         string? teamId = null,
@@ -471,4 +664,29 @@ public class AdminConversationsApi(ISlackApiClient client) : IAdminConversations
 
     public Task Unarchive(string channelId, CancellationToken cancellationToken = default) =>
         client.Get("admin.conversations.unarchive", new Args { { "channel_id", channelId } }, cancellationToken);
+
+    public Task UnlinkObjects(string channelId, string newChannelName, CancellationToken cancellationToken = default) =>
+        client.Get("admin.conversations.unlinkObjects", new Args
+            {
+                { "channel", channelId },
+                { "new_name", newChannelName }
+            }, cancellationToken);
+
+    /// <summary>
+    /// Slack expects each permission as a comma-separated list of prefixed entries, e.g. <c>type:admin,user:U1234,subteam:S1234</c>.
+    /// </summary>
+    private static string? PermissionPref(ConversationPermission? permission) =>
+        permission == null
+            ? null
+            : string.Join(",", permission.Types.Select(type => $"type:{type.ToString().SnakeCase()}")
+                .Concat(permission.UserIds.Select(userId => $"user:{userId}"))
+                .Concat(permission.UsergroupIds.Select(usergroupId => $"subteam:{usergroupId}")));
+
+    /// <summary>
+    /// Slack's examples pass toggles as strings, e.g. <c>'can_huddle':'false'</c>.
+    /// </summary>
+    private static string? TogglePref(bool? enabled) =>
+        enabled?.ToString().ToLowerInvariant();
+
+    private record ConversationPrefsArg(string? WhoCanPost, string? CanThread, string? CanHuddle, string? EnableAtChannel, string? EnableAtHere);
 }

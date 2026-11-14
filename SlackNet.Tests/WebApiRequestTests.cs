@@ -168,6 +168,26 @@ public class WebApiRequestTests
             .And.Single().CreatedDate.ShouldBe(DateTimeOffset.FromUnixTimeMilliseconds(1650463798824).AddTicks(3170).UtcDateTime);
     }
 
+    [Test]
+    public async Task AdminConversationsApi_SetConversationPrefs_SendsPrefsInSlacksFormat()
+    {
+        await _sut.AdminConversations.SetConversationPrefs("C123",
+            whoCanPost: new ConversationPermission
+                {
+                    Types = [ConversationPermissionType.Admin, ConversationPermissionType.OrgAdmin],
+                    UserIds = ["U123", "U456"],
+                    UsergroupIds = ["S123"]
+                },
+            canThread: new ConversationPermission { Types = [ConversationPermissionType.Ra] },
+            enableAtChannel: false,
+            enableAtHere: false);
+
+        var query = HttpUtility.ParseQueryString(_http.Request.RequestUri!.Query);
+        query["prefs"].ShouldBe("""
+            {"who_can_post":"type:admin,type:org_admin,user:U123,user:U456,subteam:S123","can_thread":"type:ra","enable_at_channel":"false","enable_at_here":"false"}
+            """);
+    }
+
     class RecordingHttp(SlackJsonSettings jsonSettings) : IHttp
     {
         public HttpRequestMessage Request { get; private set; }
