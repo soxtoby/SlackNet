@@ -10,13 +10,25 @@ namespace SlackNet;
 public class AppPermissions
 {
     /// <summary>
-    /// The type of permission that defines who can access the app.
+    /// The type of permission that defines who can access the app, usually one of the <see cref="AppPermissionType"/> values in snake_case.
     /// </summary>
     /// <remarks>
     /// Slack doesn't document how <see cref="WebApi.ManagedAppPermissionType.AppOwner"/> is reported here,
     /// so this is a string rather than an enum, to avoid failing on values SlackNet doesn't know about.
     /// </remarks>
     public required string PermissionType { get; set; }
+
+    /// <summary>
+    /// The users that the <see cref="PermissionType"/> applies to,
+    /// for <see cref="AppPermissionType.NamedEntities"/> or <see cref="AppPermissionType.NamedEntitiesExclude"/>.
+    /// </summary>
+    public IList<string> UserIds { get; set; } = [];
+
+    /// <summary>
+    /// The usergroups that the <see cref="PermissionType"/> applies to,
+    /// for <see cref="AppPermissionType.NamedEntities"/> or <see cref="AppPermissionType.NamedEntitiesExclude"/>.
+    /// </summary>
+    public IList<string> UsergroupIds { get; set; } = [];
 
     /// <summary>
     /// The mode that defines where the app can be used in channels.
@@ -29,6 +41,32 @@ public class AppPermissions
     /// for <see cref="SlackNet.ChannelRestrictionMode.SpecificChannels"/> or <see cref="SlackNet.ChannelRestrictionMode.AllChannelsExcept"/>.
     /// </summary>
     public IList<string> ChannelIds { get; set; } = [];
+}
+
+/// <summary>
+/// Who can access an app or MCP server.
+/// </summary>
+public enum AppPermissionType
+{
+    /// <summary>
+    /// Everyone in the organization.
+    /// </summary>
+    Everyone,
+
+    /// <summary>
+    /// Only the listed users and usergroups.
+    /// </summary>
+    NamedEntities,
+
+    /// <summary>
+    /// Everyone except the listed users and usergroups.
+    /// </summary>
+    NamedEntitiesExclude,
+
+    /// <summary>
+    /// No one.
+    /// </summary>
+    NoOne
 }
 
 /// <summary>

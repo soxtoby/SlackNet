@@ -1,5 +1,7 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using SlackNet.WebApi;
 
 namespace SlackNet;
@@ -51,6 +53,15 @@ public class AppRequest
     /// App ID of the manager app if the requested app being installed was provisioned by one.
     /// </summary>
     public string? ManagerAppId { get; set; }
+
+    /// <summary>
+    /// Whether the installer is also a collaborator on the app.
+    /// </summary>
+    public bool IsUserAppCollaborator { get; set; }
+
+    public int DateCreated { get; set; }
+    [JsonIgnore]
+    public DateTime Created => DateCreated.ToDateTime().GetValueOrDefault();
 }
 
 /// <summary>

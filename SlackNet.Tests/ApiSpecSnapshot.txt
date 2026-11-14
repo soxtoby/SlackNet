@@ -34,6 +34,124 @@ admin.analytics.slackbot.tools output date {"schema":"date"}
 admin.analytics.slackbot.tools output available_date_range {"type":"object","required":["start_date","end_date"],"properties":{"start_date":{"schema":"date"},"end_date":{"schema":"date"}}}
 admin.analytics.slackbot.tools output tool_usage (required) {"type":"array","items":{"type":"object","required":["date","enterprise_id","user_id","tools"],"properties":{"date":{"schema":"date"},"enterprise_id":{"schema":"enterprise_id"},"user_id":{"schema":"user_id"},"email_address":{"type":"string"},"tools":{"type":"array","items":{"type":"object","required":["name","use_count"],"properties":{"name":{"type":"string"},"use_count":{"type":"integer"}}}}}}}
 admin.analytics.slackbot.tools output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.apps.activities.list arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.activities.list arg app_id {"schema":"app_id"}
+admin.apps.activities.list arg team_id {"type":"string"}
+admin.apps.activities.list arg cursor {"type":"string"}
+admin.apps.activities.list arg limit {"type":"integer"}
+admin.apps.activities.list arg min_log_level {"type":"string"}
+admin.apps.activities.list arg log_event_type {"type":"string"}
+admin.apps.activities.list arg source {"type":"string"}
+admin.apps.activities.list arg component_type {"type":"string"}
+admin.apps.activities.list arg component_id {"type":"string"}
+admin.apps.activities.list arg trace_id {"type":"string"}
+admin.apps.activities.list arg min_date_created {"type":"integer"}
+admin.apps.activities.list arg max_date_created {"type":"integer"}
+admin.apps.activities.list arg sort_direction {"type":"string","enum":["asc","desc"]}
+admin.apps.activities.list output activities (required) {"items":{"schema":"activity"},"type":"array"}
+admin.apps.activities.list output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.apps.approve arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.approve arg allow_child_auto_install {"type":"boolean","default":"false"}
+admin.apps.approve arg app_id {"type":"string"}
+admin.apps.approve arg request_id {"type":"string"}
+admin.apps.approve arg team_id {"schema":"team_id"}
+admin.apps.approve arg enterprise_id {"schema":"enterprise_id"}
+admin.apps.approve arg user_scopes {"type":"string"}
+admin.apps.approve arg bot_scopes {"type":"string"}
+admin.apps.approve output null
+admin.apps.approved.list arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.approved.list arg limit {"type":"integer","default":100}
+admin.apps.approved.list arg cursor {"type":"string"}
+admin.apps.approved.list arg team_id {"schema":"team_id"}
+admin.apps.approved.list arg enterprise_id {"schema":"enterprise_id"}
+admin.apps.approved.list arg certified {"type":"boolean","default":"false"}
+admin.apps.approved.list output approved_apps (required) {"type":"array","items":{"schema":"resolution"}}
+admin.apps.approved.list output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.apps.clearResolution arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.clearResolution arg app_id (required) {"type":"string"}
+admin.apps.clearResolution arg team_id {"schema":"team_id"}
+admin.apps.clearResolution arg enterprise_id {"schema":"enterprise_id"}
+admin.apps.clearResolution output null
+admin.apps.config.lookup arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.config.lookup arg app_ids {"type":"array","items":{"schema":"app_id"}}
+admin.apps.config.lookup arg rich_link_preview_types {"type":"array","items":{"type":"string","enum":["all_details","limited_details","no_preview","default_to_global_setting"]}}
+admin.apps.config.lookup output configs (required) {"type":"array","items":{"type":"object","required":["app_id","workflow_auth_strategy","domain_restrictions"],"properties":{"app_id":{"schema":"app_id"},"workflow_auth_strategy":{"type":"string","enum":["builder_choice","end_user_only"]},"domain_restrictions":{"schema":"admin_app_domain_list"},"rich_link_preview_type":{"type":"string","enum":["all_details","limited_details","no_preview","default_to_global_setting"],"optional":true}}}}
+admin.apps.config.set arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.config.set arg app_id (required) {"schema":"app_id"}
+admin.apps.config.set arg workflow_auth_strategy {"type":"string","enum":["builder_choice","end_user_only"]}
+admin.apps.config.set arg rich_link_preview_type {"type":"string","enum":["all_details","limited_details","no_preview","default_to_global_setting"]}
+admin.apps.config.set arg domain_restrictions {"type":"object","properties":{"urls":{"type":"array","items":{"type":"string"}},"emails":{"type":"array","items":{"type":"string"}}}}
+admin.apps.config.set output null
+admin.apps.mcp.servers.list arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.mcp.servers.list arg limit {"type":"integer","default":100}
+admin.apps.mcp.servers.list arg cursor {"type":"string"}
+admin.apps.mcp.servers.list output servers (required) {"type":"array","items":{"type":"object","required":["server_id","server_name","url","auth_type","app_id","app_name"],"properties":{"server_id":{"type":"string"},"server_name":{"type":"string"},"url":{"type":"string"},"auth_type":{"schema":""},"app_id":{"type":"string"},"app_name":{"type":"string"}}}}
+admin.apps.mcp.servers.list output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.apps.mcp.servers.permissions.list arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.mcp.servers.permissions.list arg app_id (required) {"type":"string"}
+admin.apps.mcp.servers.permissions.list output servers (required) {"type":"array","items":{"schema":""}}
+admin.apps.mcp.servers.permissions.set arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.mcp.servers.permissions.set arg app_id (required) {"type":"string"}
+admin.apps.mcp.servers.permissions.set arg server_id (required) {"type":"string"}
+admin.apps.mcp.servers.permissions.set arg permission_type (required) {"type":"string","enum":["everyone","no_one","named_entities","named_entities_exclude"]}
+admin.apps.mcp.servers.permissions.set arg user_ids {"type":"array","items":{"schema":"user_id"},"uniqueItems":true}
+admin.apps.mcp.servers.permissions.set arg usergroup_ids {"type":"array","items":{"schema":"subteam_id"},"uniqueItems":true}
+admin.apps.mcp.servers.permissions.set output {"schema":"mcp_server_acl"}
+admin.apps.permissions.add arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.permissions.add arg app_id (required) {"type":"string"}
+admin.apps.permissions.add arg user_ids {"type":"array","items":{"schema":"user_id"},"uniqueItems":true}
+admin.apps.permissions.add arg usergroup_ids {"type":"array","items":{"schema":"subteam_id"}}
+admin.apps.permissions.add arg channel_ids {"type":"array","items":{"title":"Channel ID","type":"string","pattern":"^[CG][A-Z0-9]{2,}$"}}
+admin.apps.permissions.add output {"schema":"app_acl"}
+admin.apps.permissions.list arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.permissions.list arg app_id (required) {"type":"string"}
+admin.apps.permissions.list output {"schema":"app_acl"}
+admin.apps.permissions.remove arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.permissions.remove arg app_id (required) {"type":"string"}
+admin.apps.permissions.remove arg user_ids {"type":"array","items":{"schema":"user_id"},"uniqueItems":true}
+admin.apps.permissions.remove arg usergroup_ids {"type":"array","items":{"schema":"subteam_id"}}
+admin.apps.permissions.remove arg channel_ids {"type":"array","items":{"title":"Channel ID","type":"string","pattern":"^[CG][A-Z0-9]{2,}$"}}
+admin.apps.permissions.remove output {"schema":"app_acl"}
+admin.apps.permissions.set arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.permissions.set arg app_id (required) {"type":"string"}
+admin.apps.permissions.set arg permission_type (required) {"type":"string","enum":["everyone","named_entities","named_entities_exclude","no_one"]}
+admin.apps.permissions.set arg user_ids {"type":"array","items":{"schema":"user_id"},"uniqueItems":true}
+admin.apps.permissions.set arg usergroup_ids {"type":"array","items":{"schema":"subteam_id"}}
+admin.apps.permissions.set arg channel_restriction_mode {"type":"string","enum":["all_channels","specific_channels","all_channels_except"],"is_resource":false}
+admin.apps.permissions.set arg channel_ids {"type":"array","items":{"title":"Channel ID","type":"string","pattern":"^[CG][A-Z0-9]{2,}$"}}
+admin.apps.permissions.set output {"schema":"app_acl"}
+admin.apps.requests.cancel arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.requests.cancel arg request_id (required) {"type":"string","schema":"app_request_id"}
+admin.apps.requests.cancel arg team_id {"subtype":"team","schema":"team_id"}
+admin.apps.requests.cancel arg enterprise_id {"subtype":"enterprise","schema":"enterprise_id"}
+admin.apps.requests.cancel output null
+admin.apps.requests.list arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.requests.list arg limit {"type":"integer","default":100}
+admin.apps.requests.list arg cursor {"type":"string"}
+admin.apps.requests.list arg team_id {"subtype":"team","schema":"team_id"}
+admin.apps.requests.list arg enterprise_id {"subtype":"enterprise","schema":"enterprise_id"}
+admin.apps.requests.list arg certified {"type":"boolean","default":"false"}
+admin.apps.requests.list output app_requests (required) {"type":"array","items":{"schema":"request"}}
+admin.apps.requests.list output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.apps.restrict arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.restrict arg app_id {"type":"string"}
+admin.apps.restrict arg request_id {"type":"string"}
+admin.apps.restrict arg team_id {"schema":"team_id"}
+admin.apps.restrict arg enterprise_id {"schema":"enterprise_id"}
+admin.apps.restrict output null
+admin.apps.restricted.list arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.restricted.list arg limit {"type":"integer","default":100}
+admin.apps.restricted.list arg cursor {"type":"string"}
+admin.apps.restricted.list arg team_id {"schema":"team_id"}
+admin.apps.restricted.list arg enterprise_id {"schema":"enterprise_id"}
+admin.apps.restricted.list arg certified {"type":"boolean","default":false}
+admin.apps.restricted.list output restricted_apps (required) {"type":"array","items":{"schema":"resolution"}}
+admin.apps.restricted.list output response_metadata {"type":"object","required":["next_cursor"],"properties":{"next_cursor":{"type":"string"}}}
+admin.apps.uninstall arg token (required) {"type":"string","subtype":"auth"}
+admin.apps.uninstall arg app_id (required) {"type":"string"}
+admin.apps.uninstall arg team_ids {"type":"string","is_resource":false}
+admin.apps.uninstall arg enterprise_id {"type":"string","is_resource":false}
+admin.apps.uninstall output null
 agents.conversations.archive arg token (required) {"type":"string","subtype":"auth"}
 agents.conversations.archive arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
 agents.conversations.archive arg summary_message_ts {"type":"string"}

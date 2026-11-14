@@ -986,6 +986,15 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IAdminAnalyticsApi AdminAnalytics { get; }
         public IAdminAnalyticsMessagesApi AdminAnalyticsMessages { get; }
         public IAdminAnalyticsSlackbotApi AdminAnalyticsSlackbot { get; }
+        public IAdminAppsApi AdminApps { get; }
+        public IAdminAppsActivitiesApi AdminAppsActivities { get; }
+        public IAdminAppsApprovedApi AdminAppsApproved { get; }
+        public IAdminAppsConfigApi AdminAppsConfig { get; }
+        public IAdminAppsMcpServersApi AdminAppsMcpServers { get; }
+        public IAdminAppsMcpServersPermissionsApi AdminAppsMcpServersPermissions { get; }
+        public IAdminAppsPermissionsApi AdminAppsPermissions { get; }
+        public IAdminAppsRequestsApi AdminAppsRequests { get; }
+        public IAdminAppsRestrictedApi AdminAppsRestricted { get; }
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }

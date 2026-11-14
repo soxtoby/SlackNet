@@ -6,6 +6,13 @@
 - `AdminAnalyticsApi`, which reads an Enterprise organization's member analytics, public channel analytics and public channel metadata as `MemberAnalytics`, `PublicChannelAnalytics` and `PublicChannelMetadata` records, streamed from Slack's compressed analytics files as you enumerate them.
 - `AdminAnalyticsMessagesApi`, which gets activity metrics and metadata for a channel's messages, with `MessageActivity` and `AnalyticsMessage`. `File` has `Subtype` and `DurationMs`.
 - `AdminAnalyticsSlackbotApi`, which gets per-user Slackbot skill and tool usage, with `SlackbotSkillUsage` and `SlackbotToolUsage`.
+- `AdminAppsApi`, which approves, restricts, clears the resolution of, and uninstalls apps in an Enterprise organization.
+- `AdminAppsActivitiesApi`, which lists workflow app logs across an Enterprise organization, with `AppActivity`.
+- `AdminAppsApprovedApi` and `AdminAppsRestrictedApi`, which list approved and restricted apps, with `AppResolution`.
+- `AdminAppsRequestsApi`, which lists and cancels app install requests, with `AppRequest`.
+- `AdminAppsConfigApi`, which looks up and sets connector configs, with `AppConfig`, `AppDomainRestrictions`, `WorkflowAuthStrategy` and `RichLinkPreviewType`.
+- `AdminAppsPermissionsApi`, which sets, lists, adds and removes who can access an app and where it can be used, with `AppPermissionType` and `AppPermissions`.
+- `AdminAppsMcpServersApi`, which lists the third-party app MCP servers approved for an Enterprise organization, with `AppMcpServer`, and `AdminAppsMcpServersPermissionsApi`, which lists and sets who can use an app's MCP servers, with `McpServerPermissions`.
 - `ISlackApiClient.GetStream`, which calls a Slack API method that responds with a file, and returns its content as it arrives, using the new `IHttp.ExecuteStreaming`, which returns a response as soon as its headers have been read.
 - `AgentsConversationsApi`, which creates, archives and sets properties and slash commands on code channels, and manages their views and canvases, with `CodeChannelProperties`, `ContextBarItem`, `AgentResource`, `AgentCommand`, `AgentView` and `CanvasComment`. `AccessLevel` has `Comment` for comment-only canvas views.
 - `AgentsSessionsApi.Rename`, which renames an agent session.

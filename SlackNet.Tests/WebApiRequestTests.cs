@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using System.Web;
 using System.Threading.Tasks;
 using EasyAssertions;
 using Newtonsoft.Json;
@@ -140,6 +142,30 @@ public class WebApiRequestTests
         _http.Body.Value<string>("type").ShouldBe("html");
         JToken.DeepEquals(_http.Body["csp"], JObject.Parse("""{ "resource_domains": ["https://cdn.jsdelivr.net"] }"""))
             .ShouldBe(true);
+    }
+
+    [Test]
+    public async Task AdminAppsActivitiesApi_ListWithDateRange_SendsEpochMicroseconds()
+    {
+        var minDateCreated = DateTimeOffset.FromUnixTimeMilliseconds(1646665572336).AddTicks(2510).UtcDateTime;
+        var maxDateCreated = DateTimeOffset.FromUnixTimeMilliseconds(1646665572336).AddTicks(2990).UtcDateTime;
+
+        await _sut.AdminAppsActivities.List(minDateCreated: minDateCreated, maxDateCreated: maxDateCreated);
+
+        var query = HttpUtility.ParseQueryString(_http.Request.RequestUri.Query);
+        query["min_date_created"].ShouldBe("1646665572336251");
+        query["max_date_created"].ShouldBe("1646665572336299");
+    }
+
+    [Test]
+    public async Task AdminAppsActivitiesApi_ListActivity_ReadsCreatedDateFromEpochMicroseconds()
+    {
+        _http.ResponseJson = """{"ok":true,"activities":[{"level":"info","event_type":"function_execution_started","source":"slack","component_type":"functions","payload":{},"created":1650463798824317}]}""";
+
+        var result = await _sut.AdminAppsActivities.List();
+
+        result.Activities.ShouldBeSingular()
+            .And.Single().CreatedDate.ShouldBe(DateTimeOffset.FromUnixTimeMilliseconds(1650463798824).AddTicks(3170).UtcDateTime);
     }
 
     class RecordingHttp(SlackJsonSettings jsonSettings) : IHttp

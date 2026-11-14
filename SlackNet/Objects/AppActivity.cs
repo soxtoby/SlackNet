@@ -12,6 +12,12 @@ namespace SlackNet;
 public class AppActivity
 {
     /// <summary>
+    /// The ID of the app the log event belongs to.
+    /// Included by <see cref="WebApi.IAdminAppsActivitiesApi.List"/>, which can list log events for multiple apps.
+    /// </summary>
+    public string? AppId { get; set; }
+
+    /// <summary>
     /// The log level of the log event.
     /// </summary>
     public AppActivityLogLevel Level { get; set; }

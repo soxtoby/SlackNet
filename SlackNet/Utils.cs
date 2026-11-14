@@ -55,6 +55,9 @@ public static class Utils
     public static long ToTimestampNumber(this DateTime dateTime) => 
         new DateTimeOffset(dateTime).ToUnixTimeSeconds();
 
+    internal static long ToEpochMicroseconds(this DateTime dateTime) =>
+        (new DateTimeOffset(dateTime) - DateTimeOffset.FromUnixTimeSeconds(0)).Ticks / 10; // 10 ticks per microsecond
+
     /// <summary>
     /// Converts a <see cref="TimeSpan"/> to a Slack time offset, up to a specified limit.
     /// </summary>

@@ -227,6 +227,12 @@ public class ApiLintTests
             { typeof(AppActivitySource?), _ => null },
             { typeof(AppActivityComponentType?), _ => null },
             { typeof(ManagedAppPermissionType), _ => ManagedAppPermissionType.Everyone },
+            { typeof(AppPermissionType), _ => AppPermissionType.Everyone },
+            { typeof(ChannelRestrictionMode?), _ => null },
+            { typeof(WorkflowAuthStrategy?), _ => null },
+            { typeof(RichLinkPreviewType?), _ => null },
+            { typeof(IEnumerable<RichLinkPreviewType>), _ => Enumerable.Empty<RichLinkPreviewType>() },
+            { typeof(AppDomainRestrictions), _ => null },
             { typeof(UserConnectionStatus), _ => UserConnectionStatus.Connected },
             { typeof(ProfileFieldVisibility), _ => ProfileFieldVisibility.All },
             { typeof(Presence), _ => Presence.Active },
@@ -358,6 +364,15 @@ public class ApiLintTests
         public IAdminAnalyticsApi AdminAnalytics { get; }
         public IAdminAnalyticsMessagesApi AdminAnalyticsMessages { get; }
         public IAdminAnalyticsSlackbotApi AdminAnalyticsSlackbot { get; }
+        public IAdminAppsApi AdminApps { get; }
+        public IAdminAppsActivitiesApi AdminAppsActivities { get; }
+        public IAdminAppsApprovedApi AdminAppsApproved { get; }
+        public IAdminAppsConfigApi AdminAppsConfig { get; }
+        public IAdminAppsMcpServersApi AdminAppsMcpServers { get; }
+        public IAdminAppsMcpServersPermissionsApi AdminAppsMcpServersPermissions { get; }
+        public IAdminAppsPermissionsApi AdminAppsPermissions { get; }
+        public IAdminAppsRequestsApi AdminAppsRequests { get; }
+        public IAdminAppsRestrictedApi AdminAppsRestricted { get; }
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }

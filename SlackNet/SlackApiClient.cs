@@ -18,6 +18,15 @@ public interface ISlackApiClient
     IAdminAnalyticsApi AdminAnalytics { get; }
     IAdminAnalyticsMessagesApi AdminAnalyticsMessages { get; }
     IAdminAnalyticsSlackbotApi AdminAnalyticsSlackbot { get; }
+    IAdminAppsApi AdminApps { get; }
+    IAdminAppsActivitiesApi AdminAppsActivities { get; }
+    IAdminAppsApprovedApi AdminAppsApproved { get; }
+    IAdminAppsConfigApi AdminAppsConfig { get; }
+    IAdminAppsMcpServersApi AdminAppsMcpServers { get; }
+    IAdminAppsMcpServersPermissionsApi AdminAppsMcpServersPermissions { get; }
+    IAdminAppsPermissionsApi AdminAppsPermissions { get; }
+    IAdminAppsRequestsApi AdminAppsRequests { get; }
+    IAdminAppsRestrictedApi AdminAppsRestricted { get; }
     IAgentsConversationsApi AgentsConversations { get; }
     IAgentsSessionsApi AgentsSessions { get; }
     IApiApi Api { get; }
@@ -216,6 +225,15 @@ public class SlackApiClient : ISlackApiClient
     public IAdminAnalyticsApi AdminAnalytics => new AdminAnalyticsApi(this, _jsonSettings);
     public IAdminAnalyticsMessagesApi AdminAnalyticsMessages => new AdminAnalyticsMessagesApi(this);
     public IAdminAnalyticsSlackbotApi AdminAnalyticsSlackbot => new AdminAnalyticsSlackbotApi(this);
+    public IAdminAppsApi AdminApps => new AdminAppsApi(this);
+    public IAdminAppsActivitiesApi AdminAppsActivities => new AdminAppsActivitiesApi(this);
+    public IAdminAppsApprovedApi AdminAppsApproved => new AdminAppsApprovedApi(this);
+    public IAdminAppsConfigApi AdminAppsConfig => new AdminAppsConfigApi(this);
+    public IAdminAppsMcpServersApi AdminAppsMcpServers => new AdminAppsMcpServersApi(this);
+    public IAdminAppsMcpServersPermissionsApi AdminAppsMcpServersPermissions => new AdminAppsMcpServersPermissionsApi(this);
+    public IAdminAppsPermissionsApi AdminAppsPermissions => new AdminAppsPermissionsApi(this);
+    public IAdminAppsRequestsApi AdminAppsRequests => new AdminAppsRequestsApi(this);
+    public IAdminAppsRestrictedApi AdminAppsRestricted => new AdminAppsRestrictedApi(this);
     public IAgentsConversationsApi AgentsConversations => new AgentsConversationsApi(this);
     public IAgentsSessionsApi AgentsSessions => new AgentsSessionsApi(this);
     public IApiApi Api => new ApiApi(this);
