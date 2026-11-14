@@ -175,6 +175,10 @@ canvases.edit arg token (required) {"type":"string","subtype":"auth"}
 canvases.edit arg canvas_id (required) {"subtype":"canvas","schema":"file_id"}
 canvases.edit arg changes (required) {"type":"array","items":{"schema":"selection"}}
 canvases.edit output null
+canvases.getContent arg token (required) {"type":"string","subtype":"auth"}
+canvases.getContent arg canvas_id (required) {"subtype":"canvas","schema":"file_id"}
+canvases.getContent arg content_type {"type":"string","enum":["html","markdown"],"default":"markdown"}
+canvases.getContent output content (required) {"type":"string"}
 canvases.sections.lookup arg token (required) {"type":"string","subtype":"auth"}
 canvases.sections.lookup arg canvas_id (required) {"subtype":"canvas","schema":"file_id"}
 canvases.sections.lookup arg criteria (required) {"schema":"criteria"}

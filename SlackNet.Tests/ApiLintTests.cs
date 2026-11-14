@@ -197,6 +197,7 @@ public class ApiLintTests
             { typeof(ChangeType?), _ => null },
             { typeof(LinkSource), _ => LinkSource.Composer },
             { typeof(AccessLevel), _ => AccessLevel.Read },
+            { typeof(CanvasContentType?), _ => null },
             { typeof(PermissionAction), _ => PermissionAction.Upgrade },
             { typeof(IEnumerable<ConversationType>), _ => Enumerable.Empty<ConversationType>() },
             { typeof(IEnumerable<FileType>), _ => Enumerable.Empty<FileType>() },

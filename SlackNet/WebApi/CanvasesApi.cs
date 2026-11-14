@@ -44,7 +44,20 @@ public interface ICanvasesApi
     /// <param name="changes">List of changes to apply on the specified canvas.</param>
     /// <param name="cancellationToken"></param>
     Task Edit(string canvasId, IEnumerable<CanvasChange> changes, CancellationToken cancellationToken = default);
-    
+
+    /// <summary>
+    /// Get the content of a canvas as markdown (default) or HTML.
+    /// </summary>
+    /// <remarks>
+    /// To edit the content you've read, use <see cref="LookupSections"/> to find the IDs of the sections you want to target, then pass those IDs to <see cref="Edit"/>.
+    /// See the <a href="https://docs.slack.dev/reference/methods/canvases.getContent/">Slack documentation</a> for more information.
+    /// </remarks>
+    /// <param name="canvasId">ID of the canvas.</param>
+    /// <param name="contentType">Format in which to return the canvas content. Defaults to <see cref="CanvasContentType.Markdown"/>.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The entire content of the canvas.</returns>
+    Task<string> GetContent(string canvasId, CanvasContentType? contentType = null, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Find sections matching the provided criteria.
     /// </summary>
@@ -95,7 +108,16 @@ public class CanvasesApi(ISlackApiClient client) : ICanvasesApi
                 { "canvas_id", canvasId },
                 { "changes", changes }
             }, cancellationToken);
-    
+
+    public async Task<string> GetContent(string canvasId, CanvasContentType? contentType = null, CancellationToken cancellationToken = default) =>
+        (await client.Post<CanvasContentResponse>("canvases.getContent", new Args
+            {
+                { "canvas_id", canvasId },
+                { "content_type", contentType }
+            },
+            cancellationToken).ConfigureAwait(false))
+        .Content;
+
     public async Task<IList<CanvasSection>> LookupSections(string canvasId, LookupCriteria criteria, CancellationToken cancellationToken = default) =>
         (await client.Post<LookupResponse>("canvases.sections.lookup",
             new Args

@@ -4,6 +4,7 @@
 
 ### Added
 - `BlocksApi.Validate`, which validates blocks, a message or a view against the Block Kit schema.
+- `CanvasesApi.GetContent`, which gets the content of a canvas as markdown or HTML.
 
 ## v0.20.0
 
