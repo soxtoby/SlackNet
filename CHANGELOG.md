@@ -13,6 +13,7 @@
 - `EntityApi.PresentComments` and `EntityApi.AcknowledgeCommentAction`, with `EntityComment`, the `EntityCommentsRequested` event, and `WorkObjectEntity.EntityComments` to enable the comments tab, for Work Object comments.
 - `EntityCommentViewInfo` and `ViewSubmission.TriggerId`, so view submissions for Work Object comment posts and edits can be handled and acknowledged with `EntityApi.AcknowledgeCommentAction`.
 - `ExternalOrgMigrationStarted` and `ExternalOrgMigrationFinished` events, which Slack sends when an external workspace starts and finishes migrating to an Enterprise organization, with `Team.IsMigrating`.
+- `InviteRequested` event, with `InviteRequest` and `InviteRequestType`, which Slack sends when a user requests an invite.
 - `OAuthV2Api.BeginShortTokenRotation` and `OAuthV2Api.CompleteShortTokenRotation`, which rotate an old user token with a short secret to one with a longer secret.
 - `OAuthV2Api.UserAccess`, which exchanges an OAuth code for a user access token, for OAuth flows with only user scopes.
 - `OauthV2AccessResponse.UserId`, with the ID of the user the token belongs to.
