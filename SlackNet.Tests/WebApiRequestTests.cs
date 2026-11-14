@@ -101,18 +101,36 @@ public class WebApiRequestTests
         _http.Body.Value<string>("trigger_id").ShouldBe("Ft123");
     }
 
+    [Test]
+    public async Task SlackbotSkillsApi_UpdateWithSkillMcpServers_PostsOnlyServerReferences()
+    {
+        SkillMcpServer[] mcpServers =
+            [
+                new SkillMcpServer { ServiceType = "app", AppId = "A123", ServerId = "Amcp456", DisplayName = "Google Calendar", IsAvailable = true },
+                new SkillMcpServer { ServiceType = "github" }
+            ];
+        _http.ResponseJson = """{"ok":true,"skill":{}}""";
+
+        await _sut.SlackbotSkills.Update("F123", mcpServers: mcpServers);
+
+        _http.Request.RequestUri.AbsolutePath.ShouldBe("/api/slackbot.skills.update");
+        JToken.DeepEquals(_http.Body["mcp_servers"], JArray.Parse("""[{ "service_type": "app", "app_id": "A123", "server_id": "Amcp456" }, { "service_type": "github" }]"""))
+            .ShouldBe(true);
+    }
+
     class RecordingHttp(SlackJsonSettings jsonSettings) : IHttp
     {
         public HttpRequestMessage Request { get; private set; }
         public JObject Body { get; private set; }
         public CancellationToken CancellationToken { get; private set; }
+        public string ResponseJson { get; set; } = """{"ok":true}""";
 
         public async Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default)
         {
             Request = requestMessage;
             CancellationToken = cancellationToken;
             Body = requestMessage.Content is null ? null : JObject.Parse(await requestMessage.Content.ReadAsStringAsync(cancellationToken));
-            return JsonConvert.DeserializeObject<T>("""{"ok":true}""", jsonSettings.SerializerSettings);
+            return JsonConvert.DeserializeObject<T>(ResponseJson, jsonSettings.SerializerSettings);
         }
     }
 }

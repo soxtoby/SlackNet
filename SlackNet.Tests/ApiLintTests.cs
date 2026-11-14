@@ -236,6 +236,8 @@ public class ApiLintTests
             { typeof(AgentSessionStatus), _ => AgentSessionStatus.Active },
             { typeof(AgentSessionStatus?), _ => null },
             { typeof(TaskDisplayMode?), _ => null },
+            { typeof(SkillListFilter?), _ => null },
+            { typeof(IEnumerable<McpServer>), _ => Enumerable.Empty<McpServer>() },
             { typeof(JObject), _ => new JObject() },
             { typeof(CancellationToken), _ => null }
         };
@@ -339,6 +341,8 @@ public class ApiLintTests
         public IRtmApi Rtm { get; }
         public IScheduledMessagesApi ScheduledMessages { get; }
         public ISearchApi Search { get; }
+        public ISlackbotSkillsApi SlackbotSkills { get; }
+        public ISlackbotSkillsLibraryApi SlackbotSkillsLibrary { get; }
         public ITeamApi Team { get; }
         public ITeamBillingApi TeamBilling { get; }
         public ITeamPreferencesApi TeamPreferences { get; }

@@ -11,6 +11,7 @@
 - `OAuthV2Api.BeginShortTokenRotation` and `OAuthV2Api.CompleteShortTokenRotation`, which rotate an old user token with a short secret to one with a longer secret.
 - `OAuthV2Api.UserAccess`, which exchanges an OAuth code for a user access token, for OAuth flows with only user scopes.
 - `OauthV2AccessResponse.UserId`, with the ID of the user the token belongs to.
+- `SlackbotSkillsApi` and `SlackbotSkillsLibraryApi`, which create, update, delete, list and get Slackbot skills, and turn them on or off for the caller.
 - `ErrorResponse.Fields` and `Field<T>`, and `SlackException.ErrorFields` and `ErrorField<T>`, with the fields specific to an error, such as the `invalid_mcp_servers` returned by `SlackbotSkillsApi.Create`.
 
 ### Changed

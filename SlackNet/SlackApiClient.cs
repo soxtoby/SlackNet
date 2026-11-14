@@ -54,6 +54,8 @@ public interface ISlackApiClient
     IRtmApi Rtm { get; }
     IScheduledMessagesApi ScheduledMessages { get; }
     ISearchApi Search { get; }
+    ISlackbotSkillsApi SlackbotSkills { get; }
+    ISlackbotSkillsLibraryApi SlackbotSkillsLibrary { get; }
     ITeamApi Team { get; }
     ITeamBillingApi TeamBilling { get; }
     ITeamPreferencesApi TeamPreferences { get; }
@@ -232,6 +234,8 @@ public class SlackApiClient : ISlackApiClient
     public IRtmApi Rtm => new RtmApi(this);
     public IScheduledMessagesApi ScheduledMessages => new ScheduledMessagesApi(this);
     public ISearchApi Search => new SearchApi(this);
+    public ISlackbotSkillsApi SlackbotSkills => new SlackbotSkillsApi(this);
+    public ISlackbotSkillsLibraryApi SlackbotSkillsLibrary => new SlackbotSkillsLibraryApi(this);
     public ITeamApi Team => new TeamApi(this);
     public ITeamBillingApi TeamBilling => new TeamBillingApi(this);
     public ITeamPreferencesApi TeamPreferences => new TeamPreferencesApi(this);

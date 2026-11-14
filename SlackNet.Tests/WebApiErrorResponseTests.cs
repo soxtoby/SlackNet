@@ -48,6 +48,22 @@ public class WebApiErrorResponseTests
     }
 
     [Test]
+    public void Request_ErrorResponseWithErrorField_ThrowsWithField()
+    {
+        _http.Response = JObject.Parse("""{ "ok": false, "error": "mcp_server_not_found", "invalid_mcp_servers": [{ "service_type": "github" }] }""");
+
+        _sut.Post("slackbot.skills.create", new(), CancellationToken.None)
+            .ShouldFailWith<SlackException>()
+            .And(exception =>
+                {
+                    exception.Message.ShouldBe(string.Join(Environment.NewLine,
+                        "Slack returned an error response: mcp_server_not_found.",
+                        """invalid_mcp_servers: [{"service_type":"github"}]"""));
+                    exception.ErrorField<IList<McpServer>>("invalid_mcp_servers").ShouldBeSingular().And.Single().ServiceType.ShouldBe("github");
+                });
+    }
+
+    [Test]
     public void Request_ErrorResponseWithErrorsInOtherShape_ThrowsWithErrorsField()
     {
         _http.Response = JObject.Parse("""{ "ok": false, "error": "user_not_found", "errors": [{ "user": "U111111", "ok": false, "error": "user_not_found" }] }""");

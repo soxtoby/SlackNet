@@ -1021,6 +1021,8 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IRtmApi Rtm { get; }
         public IScheduledMessagesApi ScheduledMessages { get; }
         public ISearchApi Search { get; }
+        public ISlackbotSkillsApi SlackbotSkills { get; }
+        public ISlackbotSkillsLibraryApi SlackbotSkillsLibrary { get; }
         public ITeamApi Team { get; }
         public ITeamBillingApi TeamBilling { get; }
         public ITeamPreferencesApi TeamPreferences { get; }
