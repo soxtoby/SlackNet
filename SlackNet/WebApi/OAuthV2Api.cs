@@ -33,6 +33,41 @@ public interface IOAuthV2Api
     );
 
     /// <summary>
+    /// Exchanges a temporary OAuth verifier code for a user access token.
+    /// </summary>
+    /// <remarks>
+    /// This method is used to initiate the OAuth flow using just user scopes (no bot scopes). It should be used in scenarios where:
+    /// <list type="bullet">
+    /// <item>You only need user tokens, not bot tokens</item>
+    /// <item>You're building <a href="https://docs.slack.dev/ai/slack-mcp-server/">MCP integrations</a> with desktop IDE clients like Cursor or Claude Code</item>
+    /// </list>
+    /// See the <a href="https://docs.slack.dev/reference/methods/oauth.v2.user.access/">Slack documentation</a> for more information.
+    /// </remarks>
+    /// <param name="clientId">Issued when you created your application.</param>
+    /// <param name="clientSecret">Issued when you created your application.</param>
+    /// <param name="code">The code param returned via the OAuth callback.</param>
+    /// <param name="grantType">The grant_type param as described in the OAuth spec.</param>
+    /// <param name="redirectUrl">This must match the originally submitted URI (if one was sent).</param>
+    /// <param name="refreshToken">The refresh_token param as described in the OAuth spec.</param>
+    /// <param name="codeVerifier">The code_verifier param used to generate the code_challenge originally. Used for PKCE.</param>
+    /// <param name="assertion">Identity assertion JWT authorization grant.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>User access token and app installation information.</returns>
+    Task<OauthV2AccessResponse> UserAccess(
+        string clientId,
+        string clientSecret,
+#nullable enable
+        string? code,
+        string? grantType,
+        string? redirectUrl,
+        string? refreshToken,
+        string? codeVerifier = null,
+        string? assertion = null,
+#nullable disable
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
     /// Exchanges a legacy access token for a new expiring access token and refresh token.
     /// </summary>
     /// <param name="clientId">Issued when you created your application.</param>
@@ -116,6 +151,33 @@ public class OAuthV2Api(ISlackApiClient client) : IOAuthV2Api
                         { "redirect_uri", redirectUrl },
                         { "refresh_token", refreshToken },
                         { "code_verifier", codeVerifier }
+                    },
+                cancellationToken);
+
+    public Task<OauthV2AccessResponse> UserAccess(
+        string clientId,
+        string clientSecret,
+#nullable enable
+        string? code,
+        string? grantType,
+        string? redirectUrl,
+        string? refreshToken,
+        string? codeVerifier = null,
+        string? assertion = null,
+#nullable disable
+        CancellationToken cancellationToken = default
+    ) =>
+        client.WithAccessToken(string.Empty) // Since this endpoint is for getting an access token, it doesn't make sense to include an existing token in the request
+            .Post<OauthV2AccessResponse>("oauth.v2.user.access", new Args(), new SlackFormContent
+                    {
+                        { "client_id", clientId },
+                        { "client_secret", clientSecret },
+                        { "code", code },
+                        { "grant_type", grantType },
+                        { "redirect_uri", redirectUrl },
+                        { "refresh_token", refreshToken },
+                        { "code_verifier", codeVerifier },
+                        { "assertion", assertion }
                     },
                 cancellationToken);
 

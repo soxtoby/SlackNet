@@ -8,6 +8,11 @@ public class OauthV2AccessResponse : OauthAccessResponse
 
     public string BotUserId { get; set; }
 
+    /// <summary>
+    /// The user ID of the user corresponding to the token.
+    /// </summary>
+    public string UserId { get; set; }
+
     public bool IsEnterpriseInstall { get; set; }
 
 #nullable enable

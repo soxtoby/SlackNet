@@ -156,6 +156,7 @@ public class ApiLintTests
                     "conversations.requestSharedInvite.list"
                 ],
             [typeof(FunctionWorkflowStepsApi)] = ["functions.workflows.steps.responses.export"],
+            [typeof(OAuthV2Api)] = ["oauth.v2.user.access"],
             [typeof(UsersApi)] =
                 [
                     "users.discoverableContacts.lookup"

@@ -811,6 +811,24 @@ oauth.v2.exchange output expires_in (required) {"type":"integer"}
 oauth.v2.exchange output refresh_token (required) {"schema":"xoxe_refresh_token"}
 oauth.v2.exchange output team {"anyOf":[{"type":"null"},{"schema":"team_lean"}]}
 oauth.v2.exchange output enterprise {"anyOf":[{"type":"null"},{"schema":"enterprise_lean"}]}
+oauth.v2.user.access arg client_id {"type":"string"}
+oauth.v2.user.access arg client_secret {"type":"string"}
+oauth.v2.user.access arg code {"type":"string"}
+oauth.v2.user.access arg code_verifier {"type":"string"}
+oauth.v2.user.access arg redirect_uri {"type":"string"}
+oauth.v2.user.access arg grant_type {"type":"string"}
+oauth.v2.user.access arg refresh_token {"type":"string"}
+oauth.v2.user.access arg assertion {"type":"string"}
+oauth.v2.user.access output access_token (required) {"type":"string"}
+oauth.v2.user.access output token_type (required) {"type":"string","enum":["user"]}
+oauth.v2.user.access output scope {"type":"string"}
+oauth.v2.user.access output user_id (required) {"type":"string","subtype":"user"}
+oauth.v2.user.access output app_id (required) {"type":"string","subtype":"app"}
+oauth.v2.user.access output is_enterprise_install (required) {"type":"boolean"}
+oauth.v2.user.access output expires_in {"type":"integer"}
+oauth.v2.user.access output refresh_token {"type":"string"}
+oauth.v2.user.access output team (required) {"anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"required":["id"],"properties":{"id":{"type":"string","subtype":"team"},"name":{"type":"string"}}}]}
+oauth.v2.user.access output enterprise (required) {"anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"required":["id"],"properties":{"id":{"type":"string","subtype":"team"},"name":{"type":"string"}}}]}
 openid.connect.token arg client_id {"type":"string"}
 openid.connect.token arg client_secret {"type":"string"}
 openid.connect.token arg code {"type":"string"}
