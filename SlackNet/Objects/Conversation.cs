@@ -60,6 +60,12 @@ public class Conversation
     public string ContextTeamId { get; set; }
 
     /// <summary>
+    /// The ID of the workspace the channel belongs to.
+    /// Only returned by <see cref="WebApi.IAdminUserGroupsApi.ListChannels"/>.
+    /// </summary>
+    public string TeamId { get; set; }
+
+    /// <summary>
     /// Indicates a conversation is archived. Frozen in time.
     /// </summary>
     public bool IsArchived { get; set; }
@@ -180,6 +186,12 @@ public class Conversation
     public bool IsReadOnly { get; set; }
 
     public int NumMembers { get; set; }
+
+    /// <summary>
+    /// Whether the channel is redacted.
+    /// Only returned by <see cref="WebApi.IAdminUserGroupsApi.ListChannels"/>.
+    /// </summary>
+    public bool IsRedacted { get; set; }
 
     public string Locale { get; set; }
 

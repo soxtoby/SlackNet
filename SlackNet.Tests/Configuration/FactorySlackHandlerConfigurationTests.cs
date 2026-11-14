@@ -1013,6 +1013,7 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
         public IAdminTeamsAdminsApi AdminTeamsAdmins { get; }
         public IAdminTeamsOwnersApi AdminTeamsOwners { get; }
         public IAdminTeamsSettingsApi AdminTeamsSettings { get; }
+        public IAdminUserGroupsApi AdminUserGroups { get; }
         public IAdminWorkflowsApi AdminWorkflows { get; }
         public IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators { get; }
         public IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions { get; }

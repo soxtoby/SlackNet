@@ -497,6 +497,64 @@ admin.teams.settings.setName arg token (required) {"type":"string","subtype":"au
 admin.teams.settings.setName arg team_id (required) {"schema":"workspace_id"}
 admin.teams.settings.setName arg name (required) {"type":"string"}
 admin.teams.settings.setName output ok (required) {"type":"boolean"}
+admin.usergroups.addChannels arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.addChannels arg usergroup_id (required) {"type":"string"}
+admin.usergroups.addChannels arg team_id {"type":"string"}
+admin.usergroups.addChannels arg channel_ids (required) {"type":"array","items":{"type":"string"}}
+admin.usergroups.addChannels output error {"type":"string"}
+admin.usergroups.addChannels output invalid_channels {"type":"array","items":{"type":"string"}}
+admin.usergroups.addTeams arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.addTeams arg usergroup_id (required) {"type":"string"}
+admin.usergroups.addTeams arg team_ids (required) {"type":"array","items":{"type":"string"}}
+admin.usergroups.addTeams arg auto_provision {"type":"boolean","default":"false"}
+admin.usergroups.addTeams output {}
+admin.usergroups.addUsers arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.addUsers arg id (required) {"type":"string","subtype":"user_group","schema":"subteam_id"}
+admin.usergroups.addUsers arg users (required) {"type":"array","items":{"schema":"user_id"}}
+admin.usergroups.addUsers output error {"type":"string"}
+admin.usergroups.addUsers output invalid_users {"type":"array","items":{"type":"object","required":["user_id","reason"],"properties":{"user_id":{"schema":"user_id"},"reason":{"type":"string","enum":["guest_user","deleted_user","user_not_found","insert_failed","channel_limit_exceeded","multi_workspace_idp_group","usergroup_limit_exceeded"]}}}}
+admin.usergroups.create arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.create arg name (required) {"type":"string"}
+admin.usergroups.create arg handle {"type":"string"}
+admin.usergroups.create arg purpose {"type":"string"}
+admin.usergroups.create arg is_visible {"type":"boolean"}
+admin.usergroups.create output error {"type":"string"}
+admin.usergroups.create output subteam {"schema":"subteam"}
+admin.usergroups.fetch arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.fetch arg id (required) {"type":"string"}
+admin.usergroups.fetch output subteam (required) {"schema":"subteam"}
+admin.usergroups.listChannels arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.listChannels arg usergroup_id (required) {"schema":"subteam_id"}
+admin.usergroups.listChannels arg team_id {"type":"string","schema":"workspace_id"}
+admin.usergroups.listChannels arg include_num_members {"type":"boolean"}
+admin.usergroups.listChannels output channels (required) {"type":"array","items":{"schema":"channel"}}
+admin.usergroups.listChannels output error {"type":"string"}
+admin.usergroups.removeChannels arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.removeChannels arg usergroup_id (required) {"type":"string"}
+admin.usergroups.removeChannels arg channel_ids (required) {"type":"array","items":{"type":"string"}}
+admin.usergroups.removeChannels output error {"type":"string"}
+admin.usergroups.removeChannels output invalid_channels {"type":"array","items":{"type":"string"}}
+admin.usergroups.removeTeams arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.removeTeams arg usergroup_id (required) {"type":"string"}
+admin.usergroups.removeTeams arg team_ids (required) {"type":"array","is_resource":false,"items":{"type":"string"}}
+admin.usergroups.removeTeams output {}
+admin.usergroups.removeUsers arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.removeUsers arg id (required) {"type":"string","subtype":"user_group","schema":"subteam_id"}
+admin.usergroups.removeUsers arg users (required) {"type":"array","items":{"schema":"user_id"}}
+admin.usergroups.removeUsers output {}
+admin.usergroups.update arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.update arg id (required) {"type":"string"}
+admin.usergroups.update arg name {"type":"string"}
+admin.usergroups.update arg handle {"type":"string"}
+admin.usergroups.update arg description {"type":"string"}
+admin.usergroups.update arg is_visible {"type":"boolean"}
+admin.usergroups.update output subteam {"schema":"subteam"}
+admin.usergroups.update output channel_limit_user_ids {"type":"array","items":{"type":"string"}}
+admin.usergroups.uploadUsers arg token (required) {"type":"string","subtype":"auth"}
+admin.usergroups.uploadUsers arg id (required) {"type":"string","subtype":"user_group","schema":"subteam_id"}
+admin.usergroups.uploadUsers arg file {"subtype":"post_file","schema":"post_file","is_resource":false}
+admin.usergroups.uploadUsers output successful_user_count (required) {"type":"integer"}
+admin.usergroups.uploadUsers output invalid_users {"type":"array","items":{"type":"object","required":["user_id","reason"],"properties":{"user_id":{"schema":"user_id"},"reason":{"type":"string","enum":["guest_user","deleted_user","user_not_found","insert_failed","channel_limit_exceeded","multi_workspace_idp_group","usergroup_limit_exceeded","non_frontline_user"]}}}}
 admin.workflows.collaborators.add arg token (required) {"type":"string","subtype":"auth"}
 admin.workflows.collaborators.add arg workflow_ids (required) {"type":"array","items":{"schema":"workflow_id"}}
 admin.workflows.collaborators.add arg collaborator_ids (required) {"type":"array","items":{"subtype":"user","schema":"user_id"}}
