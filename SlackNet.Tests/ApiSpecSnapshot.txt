@@ -370,6 +370,25 @@ admin.emoji.rename arg token (required) {"type":"string","subtype":"auth"}
 admin.emoji.rename arg name (required) {"type":"string"}
 admin.emoji.rename arg new_name (required) {"type":"string"}
 admin.emoji.rename output null
+admin.functions.list arg token (required) {"type":"string","subtype":"auth"}
+admin.functions.list arg team_id {"schema":"workspace_id"}
+admin.functions.list arg app_ids (required) {"type":"array","items":{"schema":"app_id"},"uniqueItems":true}
+admin.functions.list arg include_non_distributed_functions {"type":"boolean","default":false}
+admin.functions.list arg cursor {"type":"string"}
+admin.functions.list arg limit {"type":"integer","default":100}
+admin.functions.list output functions (required) {"type":"array","items":{"schema":"function"}}
+admin.functions.list output response_metadata {"schema":"response_metadata_new"}
+admin.functions.permissions.lookup arg token (required) {"type":"string","subtype":"auth"}
+admin.functions.permissions.lookup arg function_ids (required) {"type":"array","items":{"schema":"function_id"}}
+admin.functions.permissions.lookup output permissions (required) {"type":"object","patternProperties":{"^Fn[A-Z0-9]{8,}$":{"type":"object","required":["distribution","allowed_by_admin","allowed_entities"],"properties":{"distribution":{"type":"object","required":["type"],"properties":{"type":{"type":"string","enum":["everyone","app_collaborators","named_entities"]},"user_ids":{"type":"array","items":{"schema":"user_id"}}}},"allowed_by_admin":{"schema":"functions_permissions_admin_list_item"},"allowed_entities":{"schema":"functions_permissions_list_item"},"private_channel_access":{"type":"object","required":["permission"],"properties":{"permission":{"type":"string","enum":["everyone","named_entities","no_one","unset"]},"user_ids":{"type":"array","items":{"schema":"user_id"}},"team_ids":{"type":"array","items":{"schema":"workspace_id"}},"org_ids":{"type":"array","items":{"schema":"enterprise_id"}}}}}}}}
+admin.functions.permissions.lookup output metadata (required) {"type":"object","patternProperties":{"^Fn[A-Z0-9]{8,}$":{"type":"object","properties":{"workflows_using":{"type":"integer"}}}}}
+admin.functions.permissions.lookup output errors (required) {"type":"object","patternProperties":{"function_id":{"type":"string"}}}
+admin.functions.permissions.set arg token (required) {"type":"string","subtype":"auth"}
+admin.functions.permissions.set arg function_id (required) {"type":"string"}
+admin.functions.permissions.set arg visibility {"type":"string","enum":["everyone","app_collaborators","named_entities","no_one"]}
+admin.functions.permissions.set arg user_ids {"type":"array","items":{"schema":"user_id"},"uniqueItems":true}
+admin.functions.permissions.set arg permissions {"type":"array","items":{"type":"object","required":["visibility","permission_type"],"properties":{"visibility":{"type":"string","enum":["everyone","named_entities","no_one"]},"permission_type":{"type":"string","enum":["slack_function","private_channel_access","connector_resource"]},"user_ids":{"type":"array","items":{"schema":"user_id"},"uniqueItems":true}}}}
+admin.functions.permissions.set output null
 admin.inviteRequests.approve arg token (required) {"type":"string","subtype":"auth"}
 admin.inviteRequests.approve arg team_id {"type":"string"}
 admin.inviteRequests.approve arg invite_request_id (required) {"type":"string"}
@@ -414,6 +433,49 @@ admin.roles.removeAssignments arg role_id (required) {"type":"string","schema":"
 admin.roles.removeAssignments arg entity_ids (required) {"type":"array","items":{"type":"string"}}
 admin.roles.removeAssignments arg user_ids (required) {"type":"array","items":{"schema":"user_id"}}
 admin.roles.removeAssignments output error {"type":"string"}
+admin.workflows.collaborators.add arg token (required) {"type":"string","subtype":"auth"}
+admin.workflows.collaborators.add arg workflow_ids (required) {"type":"array","items":{"schema":"workflow_id"}}
+admin.workflows.collaborators.add arg collaborator_ids (required) {"type":"array","items":{"subtype":"user","schema":"user_id"}}
+admin.workflows.collaborators.add output {}
+admin.workflows.collaborators.remove arg token (required) {"type":"string","subtype":"auth"}
+admin.workflows.collaborators.remove arg workflow_ids (required) {"type":"array","items":{"schema":"workflow_id"}}
+admin.workflows.collaborators.remove arg collaborator_ids (required) {"type":"array","items":{"subtype":"user","schema":"user_id"}}
+admin.workflows.collaborators.remove output {}
+admin.workflows.permissions.lookup arg token (required) {"type":"string","subtype":"auth"}
+admin.workflows.permissions.lookup arg workflow_ids (required) {"type":"array","items":{"schema":"workflow_id"}}
+admin.workflows.permissions.lookup arg max_workflow_triggers {"type":"integer","default":100}
+admin.workflows.permissions.lookup output permissions (required) {"type":"object","patternProperties":{"^Wf[A-Z0-9]{1,}$":{"type":"object","required":["who_can_run","complete"],"properties":{"who_can_run":{"schema":"trigger-run-acl"},"complete":{"type":"boolean"}}}}}
+admin.workflows.search arg token (required) {"type":"string","subtype":"auth"}
+admin.workflows.search arg query {"type":"string"}
+admin.workflows.search arg app_id {"schema":"app_id"}
+admin.workflows.search arg cursor {"type":"string"}
+admin.workflows.search arg limit {"type":"integer","default":20}
+admin.workflows.search arg no_collaborators {"type":"boolean","default":false}
+admin.workflows.search arg collaborator_ids {"type":"array","items":{"type":"string"}}
+admin.workflows.search arg num_trigger_ids {"type":"integer","default":10}
+admin.workflows.search arg is_sales_elevate {"type":"boolean"}
+admin.workflows.search arg source {"type":"string","enum":["code","workflow_builder","sales_home","agent"]}
+admin.workflows.search arg sort {"type":"string","default":"name","enum":["name"]}
+admin.workflows.search arg sort_dir {"type":"string","default":"desc","enum":["asc","desc"]}
+admin.workflows.search arg trigger_type_id {"type":"string","schema":"function_trigger_type_id"}
+admin.workflows.search arg publish_status {"type":"string","enum":["all","published","unpublished"],"default":"published"}
+admin.workflows.search arg step_function_ids {"type":"array","items":{"schema":"function_id"}}
+admin.workflows.search output workflows (required) {"type":"array","items":{"schema":"workflow-with-trigger-ids"}}
+admin.workflows.search output response_metadata {"schema":"response_metadata_new"}
+admin.workflows.search output total_found (required) {"type":"integer"}
+admin.workflows.triggers.types.permissions.lookup arg token (required) {"type":"string","subtype":"auth"}
+admin.workflows.triggers.types.permissions.lookup arg trigger_type_ids (required) {"type":"array","items":{"schema":"function_trigger_type_id"}}
+admin.workflows.triggers.types.permissions.lookup output permissions (required) {"type":"object","patternProperties":{"^Ftt[A-Z0-9]{4,}$":{"type":"object","additionalProperties":false,"properties":{"permission":{"type":"string","enum":["everyone","named_entities","no_one"]},"user_ids":{"type":"array","items":{"schema":"user_id"}},"team_ids":{"type":"array","items":{"schema":"workspace_id"}},"org_ids":{"type":"array","items":{"schema":"enterprise_id"}},"permissions":{"type":"object","patternProperties":{"trigger_type|private_channel_access|private_channel_message_access":{"type":"object","required":["permission"],"additionalProperties":false,"properties":{"permission":{"type":"string","enum":["everyone","named_entities","no_one"]},"user_ids":{"type":"array","items":{"schema":"user_id"}},"team_ids":{"type":"array","items":{"schema":"workspace_id"}},"org_ids":{"type":"array","items":{"schema":"enterprise_id"}}}}}}}}}}
+admin.workflows.triggers.types.permissions.lookup output metadata (required) {"type":"object","patternProperties":{"^Ftt[A-Z0-9]{4,}$":{"type":"object","required":["date_released","workflows_using","available_in_workflow_builder"],"additionalProperties":false,"properties":{"date_released":{"type":"integer"},"workflows_using":{"type":"integer"},"available_in_workflow_builder":{"type":"boolean"}}}}}
+admin.workflows.triggers.types.permissions.set arg token (required) {"type":"string","subtype":"auth"}
+admin.workflows.triggers.types.permissions.set arg id (required) {"schema":"function_trigger_type_id"}
+admin.workflows.triggers.types.permissions.set arg visibility {"type":"string","enum":["everyone","named_entities","no_one"]}
+admin.workflows.triggers.types.permissions.set arg user_ids {"type":"array","items":{"schema":"user_id"}}
+admin.workflows.triggers.types.permissions.set arg permissions {"type":"object","additionalProperties":false,"properties":{"permissions":{"type":"object","patternProperties":{"trigger_type|private_channel_access|private_channel_message|agent_task":{"type":"object","required":["visibility"],"additionalProperties":false,"properties":{"visibility":{"type":"string","enum":["everyone","named_entities","no_one","unset"]},"user_ids":{"type":"array","items":{"schema":"user_id"},"resource":{"user_fetch_options":{"top_level":true}},"uniqueItems":true}}}}}}}
+admin.workflows.triggers.types.permissions.set output null
+admin.workflows.unpublish arg token (required) {"type":"string","subtype":"auth"}
+admin.workflows.unpublish arg workflow_ids (required) {"type":"array","items":{"schema":"workflow_id"}}
+admin.workflows.unpublish output {}
 agents.conversations.archive arg token (required) {"type":"string","subtype":"auth"}
 agents.conversations.archive arg channel_id (required) {"type":"string","subtype":"channel","required_for_public":true}
 agents.conversations.archive arg summary_message_ts {"type":"string"}

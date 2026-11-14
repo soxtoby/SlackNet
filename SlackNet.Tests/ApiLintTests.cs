@@ -248,6 +248,12 @@ public class ApiLintTests
             { typeof(TriggerPermissionType), _ => TriggerPermissionType.Everyone },
             { typeof(TriggerPermissionType?), _ => TriggerPermissionType.Everyone },
             { typeof(FunctionPermissionType?), _ => FunctionPermissionType.Everyone },
+            { typeof(IEnumerable<FunctionPermissionSetting>), _ => Enumerable.Empty<FunctionPermissionSetting>() },
+            { typeof(PermissionVisibility?), _ => null },
+            { typeof(IEnumerable<TriggerTypePermissionSetting>), _ => Enumerable.Empty<TriggerTypePermissionSetting>() },
+            { typeof(WorkflowSource?), _ => null },
+            { typeof(WorkflowSearchSort?), _ => null },
+            { typeof(WorkflowPublishStatus?), _ => null },
             { typeof(ChangeType?), _ => null },
             { typeof(LinkSource), _ => LinkSource.Composer },
             { typeof(AccessLevel), _ => AccessLevel.Read },
@@ -387,10 +393,16 @@ public class ApiLintTests
         public IAdminConversationsEkmApi AdminConversationsEkm { get; }
         public IAdminConversationsRestrictAccessApi AdminConversationsRestrictAccess { get; }
         public IAdminEmojiApi AdminEmoji { get; }
+        public IAdminFunctionsApi AdminFunctions { get; }
+        public IAdminFunctionsPermissionsApi AdminFunctionsPermissions { get; }
         public IAdminInviteRequestsApi AdminInviteRequests { get; }
         public IAdminInviteRequestsApprovedApi AdminInviteRequestsApproved { get; }
         public IAdminInviteRequestsDeniedApi AdminInviteRequestsDenied { get; }
         public IAdminRolesApi AdminRoles { get; }
+        public IAdminWorkflowsApi AdminWorkflows { get; }
+        public IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators { get; }
+        public IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions { get; }
+        public IAdminWorkflowsTriggersTypesPermissionsApi AdminWorkflowsTriggersTypesPermissions { get; }
         public IAgentsConversationsApi AgentsConversations { get; }
         public IAgentsSessionsApi AgentsSessions { get; }
         public IApiApi Api { get; }

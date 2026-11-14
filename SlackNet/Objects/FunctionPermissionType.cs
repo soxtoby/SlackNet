@@ -5,5 +5,6 @@ public enum FunctionPermissionType
     Everyone,
     AppCollaborators,
     NamedEntities,
-    System
+    System,
+    NoOne
 }

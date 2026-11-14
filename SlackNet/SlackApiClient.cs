@@ -34,10 +34,16 @@ public interface ISlackApiClient
     IAdminConversationsEkmApi AdminConversationsEkm { get; }
     IAdminConversationsRestrictAccessApi AdminConversationsRestrictAccess { get; }
     IAdminEmojiApi AdminEmoji { get; }
+    IAdminFunctionsApi AdminFunctions { get; }
+    IAdminFunctionsPermissionsApi AdminFunctionsPermissions { get; }
     IAdminInviteRequestsApi AdminInviteRequests { get; }
     IAdminInviteRequestsApprovedApi AdminInviteRequestsApproved { get; }
     IAdminInviteRequestsDeniedApi AdminInviteRequestsDenied { get; }
     IAdminRolesApi AdminRoles { get; }
+    IAdminWorkflowsApi AdminWorkflows { get; }
+    IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators { get; }
+    IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions { get; }
+    IAdminWorkflowsTriggersTypesPermissionsApi AdminWorkflowsTriggersTypesPermissions { get; }
     IAgentsConversationsApi AgentsConversations { get; }
     IAgentsSessionsApi AgentsSessions { get; }
     IApiApi Api { get; }
@@ -252,10 +258,16 @@ public class SlackApiClient : ISlackApiClient
     public IAdminConversationsEkmApi AdminConversationsEkm => new AdminConversationsEkmApi(this);
     public IAdminConversationsRestrictAccessApi AdminConversationsRestrictAccess => new AdminConversationsRestrictAccessApi(this);
     public IAdminEmojiApi AdminEmoji => new AdminEmojiApi(this);
+    public IAdminFunctionsApi AdminFunctions => new AdminFunctionsApi(this);
+    public IAdminFunctionsPermissionsApi AdminFunctionsPermissions => new AdminFunctionsPermissionsApi(this);
     public IAdminInviteRequestsApi AdminInviteRequests => new AdminInviteRequestsApi(this);
     public IAdminInviteRequestsApprovedApi AdminInviteRequestsApproved => new AdminInviteRequestsApprovedApi(this);
     public IAdminInviteRequestsDeniedApi AdminInviteRequestsDenied => new AdminInviteRequestsDeniedApi(this);
     public IAdminRolesApi AdminRoles => new AdminRolesApi(this);
+    public IAdminWorkflowsApi AdminWorkflows => new AdminWorkflowsApi(this);
+    public IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators => new AdminWorkflowsCollaboratorsApi(this);
+    public IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions => new AdminWorkflowsPermissionsApi(this);
+    public IAdminWorkflowsTriggersTypesPermissionsApi AdminWorkflowsTriggersTypesPermissions => new AdminWorkflowsTriggersTypesPermissionsApi(this);
     public IAgentsConversationsApi AgentsConversations => new AgentsConversationsApi(this);
     public IAgentsSessionsApi AgentsSessions => new AgentsSessionsApi(this);
     public IApiApi Api => new ApiApi(this);
