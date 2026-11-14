@@ -13,5 +13,5 @@ public class UserGroupUploadUsersResponse
     /// <summary>
     /// Users that could not be added.
     /// </summary>
-    public IList<UserGroupUserFailure> InvalidUsers { get; set; } = [];
+    public IList<UserFailure> InvalidUsers { get; set; } = [];
 }

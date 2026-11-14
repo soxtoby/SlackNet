@@ -68,7 +68,7 @@ public interface IAdminUserGroupsApi
     /// <param name="userIds">The encoded user IDs to add to the usergroup.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Any users that could not be added.</returns>
-    Task<IList<UserGroupUserFailure>> AddUsers(string userGroupId, IEnumerable<string> userIds, CancellationToken cancellationToken = default);
+    Task<IList<UserFailure>> AddUsers(string userGroupId, IEnumerable<string> userIds, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Create a new organizational usergroup.
@@ -212,7 +212,7 @@ public class AdminUserGroupsApi(ISlackApiClient client) : IAdminUserGroupsApi
                 { "auto_provision", autoProvision }
             }, cancellationToken);
 
-    public async Task<IList<UserGroupUserFailure>> AddUsers(string userGroupId, IEnumerable<string> userIds, CancellationToken cancellationToken = default) =>
+    public async Task<IList<UserFailure>> AddUsers(string userGroupId, IEnumerable<string> userIds, CancellationToken cancellationToken = default) =>
         (await client.Post<UserGroupAddUsersResponse>("admin.usergroups.addUsers", new Args
             {
                 { "id", userGroupId },

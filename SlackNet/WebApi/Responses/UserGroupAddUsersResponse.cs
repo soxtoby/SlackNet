@@ -4,5 +4,5 @@ namespace SlackNet.WebApi;
 
 record UserGroupAddUsersResponse
 {
-    public IList<UserGroupUserFailure> InvalidUsers { get; init; } = [];
+    public IList<UserFailure> InvalidUsers { get; init; } = [];
 }

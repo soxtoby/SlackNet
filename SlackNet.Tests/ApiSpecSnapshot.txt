@@ -555,6 +555,108 @@ admin.usergroups.uploadUsers arg id (required) {"type":"string","subtype":"user_
 admin.usergroups.uploadUsers arg file {"subtype":"post_file","schema":"post_file","is_resource":false}
 admin.usergroups.uploadUsers output successful_user_count (required) {"type":"integer"}
 admin.usergroups.uploadUsers output invalid_users {"type":"array","items":{"type":"object","required":["user_id","reason"],"properties":{"user_id":{"schema":"user_id"},"reason":{"type":"string","enum":["guest_user","deleted_user","user_not_found","insert_failed","channel_limit_exceeded","multi_workspace_idp_group","usergroup_limit_exceeded","non_frontline_user"]}}}}
+admin.users.access.pause arg token (required) {"type":"string","subtype":"auth"}
+admin.users.access.pause arg user_ids (required) {"type":"array","items":{"schema":"user_id"}}
+admin.users.access.pause arg reason {"type":"string"}
+admin.users.access.pause output invalid_users (required) {"type":"array","items":{"type":"object","required":["user_id","reason"],"properties":{"user_id":{"schema":"user_id"},"reason":{"type":"string","enum":["user_not_found","user_not_frontline_member"]}}}}
+admin.users.access.resume arg token (required) {"type":"string","subtype":"auth"}
+admin.users.access.resume arg user_ids (required) {"type":"array","items":{"schema":"user_id"}}
+admin.users.access.resume arg reason {"type":"string"}
+admin.users.access.resume output invalid_users (required) {"type":"array","items":{"type":"object","required":["user_id","reason"],"properties":{"user_id":{"schema":"user_id"},"reason":{"type":"string","enum":["user_not_found","user_not_frontline_member"]}}}}
+admin.users.assign arg token (required) {"type":"string","subtype":"auth"}
+admin.users.assign arg team_id (required) {"schema":"workspace_id"}
+admin.users.assign arg user_id (required) {"schema":"user_id"}
+admin.users.assign arg is_restricted {"type":"boolean","default":false}
+admin.users.assign arg is_ultra_restricted {"type":"boolean","default":false}
+admin.users.assign arg channel_ids {"type":"string","default":""}
+admin.users.assign output null
+admin.users.deactivate arg token (required) {"type":"string","subtype":"auth"}
+admin.users.deactivate arg user_id (required) {"type":"string","schema":"user_id"}
+admin.users.deactivate output null
+admin.users.getExpiration arg token (required) {"type":"string","subtype":"auth"}
+admin.users.getExpiration arg user_id (required) {"schema":"user_id"}
+admin.users.getExpiration arg target_team {"schema":"workspace_id"}
+admin.users.getExpiration output user {"type":"object","required":["id","email","is_restricted","is_ultra_restricted"],"properties":{"id":{"type":"string"},"username":{"type":"string"},"email":{"type":"string"},"is_restricted":{"type":"boolean"},"is_ultra_restricted":{"type":"boolean"},"expiration_ts":{"type":"number"}}}
+admin.users.invite arg token (required) {"type":"string","subtype":"auth"}
+admin.users.invite arg team_id (required) {"schema":"workspace_id"}
+admin.users.invite arg email (required) {"type":"string"}
+admin.users.invite arg channel_ids (required) {"type":"string"}
+admin.users.invite arg custom_message {"type":"string"}
+admin.users.invite arg real_name {"type":"string"}
+admin.users.invite arg resend {"type":"boolean"}
+admin.users.invite arg is_restricted {"type":"boolean"}
+admin.users.invite arg is_ultra_restricted {"type":"boolean"}
+admin.users.invite arg guest_expiration_ts {"type":"string","schema":"ts"}
+admin.users.invite arg email_password_policy_enabled {"type":"boolean"}
+admin.users.invite output ok (required) {"type":"boolean"}
+admin.users.list arg token (required) {"type":"string","subtype":"auth"}
+admin.users.list arg team_id {"schema":"workspace_id"}
+admin.users.list arg cursor {"type":"string"}
+admin.users.list arg is_active {"type":"boolean"}
+admin.users.list arg include_deactivated_user_workspaces {"type":"boolean"}
+admin.users.list arg only_guests {"type":"boolean"}
+admin.users.list arg include_admins {"type":"boolean","default":false}
+admin.users.list arg include_owners {"type":"boolean","default":false}
+admin.users.list arg limit {"type":"integer","default":100}
+admin.users.list output users (required) {"type":"array","items":{"type":"object","required":["id","email","is_admin","is_owner","is_primary_owner","is_restricted","is_ultra_restricted","is_bot"],"properties":{"id":{"type":"string"},"username":{"type":"string"},"full_name":{"type":"string"},"has_2fa":{"type":"boolean"},"has_sso":{"type":"boolean"},"email":{"type":"string"},"is_admin":{"type":"boolean"},"is_owner":{"type":"boolean"},"is_primary_owner":{"type":"boolean"},"is_restricted":{"type":"boolean"},"is_ultra_restricted":{"type":"boolean"},"is_bot":{"type":"boolean"},"expiration_ts":{"type":"number"},"roles":{"type":"array","items":{"type":"string"}},"last_active_ts":{"type":"number"},"workspaces":{"type":"array","items":{"schema":"workspace_id"}},"is_active":{"type":"boolean"},"date_created":{"type":"number"},"deactivated_ts":{"type":"number"}}}}
+admin.users.remove arg token (required) {"type":"string","subtype":"auth"}
+admin.users.remove arg team_id (required) {"schema":"workspace_id"}
+admin.users.remove arg user_id (required) {"type":"string","schema":"user_id"}
+admin.users.remove output null
+admin.users.session.clearSettings arg token (required) {"type":"string","subtype":"auth"}
+admin.users.session.clearSettings arg user_ids (required) {"items":{"type":"string","schema":"user_id"},"type":"array"}
+admin.users.session.clearSettings output ok (required) {"type":"boolean"}
+admin.users.session.getSettings arg token (required) {"type":"string","subtype":"auth"}
+admin.users.session.getSettings arg user_ids (required) {"items":{"type":"string","schema":"user_id"},"type":"array"}
+admin.users.session.getSettings output session_settings {"type":"array","items":{"type":"object","required":["user_id","desktop_app_browser_quit","duration"],"properties":{"user_id":{"type":"string"},"desktop_app_browser_quit":{"oneOf":[{"type":"boolean"},{"type":"null"}]},"duration":{"oneOf":[{"type":"integer"},{"type":"null"}]}}}}
+admin.users.session.getSettings output no_settings_applied {"type":"array","items":{"type":"string"}}
+admin.users.session.invalidate arg token (required) {"type":"string","subtype":"auth"}
+admin.users.session.invalidate arg user_id (required) {"schema":"user_id"}
+admin.users.session.invalidate arg session_id (required) {"type":"integer"}
+admin.users.session.invalidate output null
+admin.users.session.list arg token (required) {"type":"string","subtype":"auth"}
+admin.users.session.list arg team_id {"type":"string"}
+admin.users.session.list arg user_id {"type":"string"}
+admin.users.session.list arg limit {"default":1000,"type":"integer"}
+admin.users.session.list arg cursor {"type":"string"}
+admin.users.session.list output response_metadata {"required":["next_cursor"],"type":"object","properties":{"next_cursor":{"type":"string"}}}
+admin.users.session.list output active_sessions (required) {"type":"array","items":{"type":"object","required":["user_id","team_id","session_id","created"],"properties":{"user_id":{"type":"string"},"team_id":{"type":"string"},"session_id":{"type":"integer"},"recent":{"type":"object","properties":{"device_hardware":{"type":"string"},"os":{"type":"string"},"os_version":{"type":"string"},"slack_client_version":{"type":"string"},"ip":{"type":"string"}}},"created":{"type":"object","properties":{"device_hardware":{"type":"string"},"os":{"type":"string"},"os_version":{"type":"string"},"slack_client_version":{"type":"string"},"ip":{"type":"string"}}}}}}
+admin.users.session.reset arg token (required) {"type":"string","subtype":"auth"}
+admin.users.session.reset arg user_id (required) {"type":"string"}
+admin.users.session.reset arg mobile_only {"type":"boolean"}
+admin.users.session.reset arg web_only {"type":"boolean"}
+admin.users.session.reset output null
+admin.users.session.resetBulk arg token (required) {"type":"string","subtype":"auth"}
+admin.users.session.resetBulk arg user_ids (required) {"type":"array","items":{"type":"string","schema":"user_id"}}
+admin.users.session.resetBulk arg mobile_only {"type":"boolean"}
+admin.users.session.resetBulk arg web_only {"type":"boolean"}
+admin.users.session.resetBulk output null
+admin.users.session.setSettings arg token (required) {"type":"string","subtype":"auth"}
+admin.users.session.setSettings arg user_ids (required) {"type":"array","items":{"type":"string","schema":"user_id"}}
+admin.users.session.setSettings arg duration {"type":"integer","default":null}
+admin.users.session.setSettings arg desktop_app_browser_quit {"type":"boolean","default":null}
+admin.users.session.setSettings output ok (required) {"type":"boolean"}
+admin.users.setAdmin arg token (required) {"type":"string","subtype":"auth"}
+admin.users.setAdmin arg team_id (required) {"schema":"team_id"}
+admin.users.setAdmin arg user_id (required) {"type":"string","schema":"user_id"}
+admin.users.setAdmin output null
+admin.users.setExpiration arg token (required) {"type":"string","subtype":"auth"}
+admin.users.setExpiration arg team_id {"schema":"workspace_id"}
+admin.users.setExpiration arg user_id (required) {"type":"string","schema":"user_id"}
+admin.users.setExpiration arg expiration_ts (required) {"type":"integer"}
+admin.users.setExpiration output ok (required) {"type":"boolean"}
+admin.users.setOwner arg token (required) {"type":"string","subtype":"auth"}
+admin.users.setOwner arg team_id (required) {"schema":"team_id"}
+admin.users.setOwner arg user_id (required) {"schema":"user_id"}
+admin.users.setOwner output null
+admin.users.setRegular arg token (required) {"type":"string","subtype":"auth"}
+admin.users.setRegular arg team_id (required) {"schema":"team_id"}
+admin.users.setRegular arg user_id (required) {"type":"string"}
+admin.users.setRegular output null
+admin.users.unsupportedVersions.export arg token (required) {"type":"string","subtype":"auth"}
+admin.users.unsupportedVersions.export arg date_sessions_started {"type":"integer","default":0}
+admin.users.unsupportedVersions.export arg date_end_of_support {"type":"integer","default":0}
+admin.users.unsupportedVersions.export output null
 admin.workflows.collaborators.add arg token (required) {"type":"string","subtype":"auth"}
 admin.workflows.collaborators.add arg workflow_ids (required) {"type":"array","items":{"schema":"workflow_id"}}
 admin.workflows.collaborators.add arg collaborator_ids (required) {"type":"array","items":{"subtype":"user","schema":"user_id"}}

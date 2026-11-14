@@ -46,6 +46,10 @@ public interface ISlackApiClient
     IAdminTeamsOwnersApi AdminTeamsOwners { get; }
     IAdminTeamsSettingsApi AdminTeamsSettings { get; }
     IAdminUserGroupsApi AdminUserGroups { get; }
+    IAdminUsersApi AdminUsers { get; }
+    IAdminUsersAccessApi AdminUsersAccess { get; }
+    IAdminUsersSessionApi AdminUsersSession { get; }
+    IAdminUsersUnsupportedVersionsApi AdminUsersUnsupportedVersions { get; }
     IAdminWorkflowsApi AdminWorkflows { get; }
     IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators { get; }
     IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions { get; }
@@ -276,6 +280,10 @@ public class SlackApiClient : ISlackApiClient
     public IAdminTeamsOwnersApi AdminTeamsOwners => new AdminTeamsOwnersApi(this);
     public IAdminTeamsSettingsApi AdminTeamsSettings => new AdminTeamsSettingsApi(this);
     public IAdminUserGroupsApi AdminUserGroups => new AdminUserGroupsApi(this);
+    public IAdminUsersApi AdminUsers => new AdminUsersApi(this);
+    public IAdminUsersAccessApi AdminUsersAccess => new AdminUsersAccessApi(this);
+    public IAdminUsersSessionApi AdminUsersSession => new AdminUsersSessionApi(this);
+    public IAdminUsersUnsupportedVersionsApi AdminUsersUnsupportedVersions => new AdminUsersUnsupportedVersionsApi(this);
     public IAdminWorkflowsApi AdminWorkflows => new AdminWorkflowsApi(this);
     public IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators => new AdminWorkflowsCollaboratorsApi(this);
     public IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions => new AdminWorkflowsPermissionsApi(this);

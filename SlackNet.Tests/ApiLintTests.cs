@@ -209,6 +209,7 @@ public class ApiLintTests
             { typeof(string), p => p.Name == "contentType" ? "text/png" : "foo" },
             { typeof(int), _ => 0 },
             { typeof(int?), _ => null },
+            { typeof(long), _ => 0L },
             { typeof(bool), _ => false },
             { typeof(bool?), _ => null },
             { typeof(object), _ => null },
@@ -410,6 +411,10 @@ public class ApiLintTests
         public IAdminTeamsOwnersApi AdminTeamsOwners { get; }
         public IAdminTeamsSettingsApi AdminTeamsSettings { get; }
         public IAdminUserGroupsApi AdminUserGroups { get; }
+        public IAdminUsersApi AdminUsers { get; }
+        public IAdminUsersAccessApi AdminUsersAccess { get; }
+        public IAdminUsersSessionApi AdminUsersSession { get; }
+        public IAdminUsersUnsupportedVersionsApi AdminUsersUnsupportedVersions { get; }
         public IAdminWorkflowsApi AdminWorkflows { get; }
         public IAdminWorkflowsCollaboratorsApi AdminWorkflowsCollaborators { get; }
         public IAdminWorkflowsPermissionsApi AdminWorkflowsPermissions { get; }
