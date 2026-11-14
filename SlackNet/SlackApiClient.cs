@@ -21,6 +21,7 @@ public interface ISlackApiClient
     IAssistantSearchApi AssistantSearch { get; }
     IAssistantThreadsApi AssistantThreads { get; }
     IAuthApi Auth { get; }
+    IBlocksApi Blocks { get; }
     IBookmarksApi Bookmarks { get; }
     IBotsApi Bots { get; }
     ICallParticipantsApi CallParticipants { get; }
@@ -198,6 +199,7 @@ public class SlackApiClient : ISlackApiClient
     public IAssistantSearchApi AssistantSearch => new AssistantSearchApi(this);
     public IAssistantThreadsApi AssistantThreads => new AssistantThreadsApi(this);
     public IAuthApi Auth => new AuthApi(this);
+    public IBlocksApi Blocks => new BlocksApi(this, _jsonSettings);
     public IBookmarksApi Bookmarks => new BookmarksApi(this);
     public IBotsApi Bots => new BotsApi(this);
     public ICallParticipantsApi CallParticipants => new CallParticipantsApi(this);
@@ -323,7 +325,7 @@ public class SlackApiClient : ISlackApiClient
     private ErrorResponse ReadErrorResponse(WebApiResponse response) =>
         response.Data?.ToObject<ErrorResponse>(JsonSerializer.Create(_jsonSettings.SerializerSettings));
 
-    private static Args StripNullArgs(Args args) =>
+    internal static Args StripNullArgs(Args args) =>
         args.Where(kv => kv.Value != null)
             .ToDictionary(kv => kv.Key, kv => kv.Value);
 

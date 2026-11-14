@@ -302,6 +302,7 @@ public class ApiLintTests
         public IAssistantSearchApi AssistantSearch { get; }
         public IAssistantThreadsApi AssistantThreads { get; }
         public IAuthApi Auth { get; }
+        public IBlocksApi Blocks { get; }
         public IBookmarksApi Bookmarks { get; }
         public IBotsApi Bots { get; }
         public ICallParticipantsApi CallParticipants { get; }

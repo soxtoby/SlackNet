@@ -86,6 +86,9 @@ auth.test output enterprise_id {"schema":"enterprise_id"}
 auth.test output bot_id {"schema":"bot_id"}
 auth.test output is_enterprise_install {"type":"boolean"}
 auth.test output expires_in {"anyOf":[{"type":"null"},{"type":"integer"}]}
+blocks.validate arg blocks {"type":"string"}
+blocks.validate arg message {"type":"string"}
+blocks.validate arg view {"type":"string"}
 bookmarks.add arg token (required) {"type":"string","subtype":"auth"}
 bookmarks.add arg channel_id {"type":"string","subtype":"channel","required_for_public":true}
 bookmarks.add arg title (required) {"type":"string"}

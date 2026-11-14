@@ -263,16 +263,16 @@ public class ChatApi(ISlackApiClient client, SlackJsonSettings jsonSettings) : I
             }, cancellationToken);
 
     public Task<PostMessageResponse> PostMessage(Message message, CancellationToken cancellationToken = default) =>
-        client.Post<PostMessageResponse>("chat.postMessage", PopulateMessageArgs(message, new Args()), cancellationToken);
+        client.Post<PostMessageResponse>("chat.postMessage", PopulateMessageArgs(message, new Args(), jsonSettings), cancellationToken);
 
     public Task<ScheduleMessageResponse> ScheduleMessage(Message message, DateTime postAt, CancellationToken cancellationToken = default) =>
         client.Post<ScheduleMessageResponse>("chat.scheduleMessage", PopulateMessageArgs(message, new Args
                 {
                     { "post_at", postAt.ToTimestamp() }
-                }),
+                }, jsonSettings),
             cancellationToken);
 
-    private Args PopulateMessageArgs(Message message, Args args)
+    internal static Args PopulateMessageArgs(Message message, Args args, SlackJsonSettings jsonSettings)
     {
         args["channel"] = message.Channel;
         args["text"] = message.Text;
