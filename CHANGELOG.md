@@ -8,6 +8,7 @@
 - `BlocksApi.Validate`, which validates blocks, a message or a view against the Block Kit schema.
 - `CallRejected` event, which Slack sends when a user rejects a call shared with them in a DM.
 - `CanvasesApi.GetContent`, which gets the content of a canvas as markdown or HTML.
+- `ChannelPostingPermissions` message event, which Slack sends when a user changes a channel's posting permissions.
 - `ErrorResponse.Errors` and `SlackException.ErrorDetails`, with the issues Slack found in a request, such as invalid elements reported by `BlocksApi.Validate`. `SlackException` messages include them too.
 - `EntityApi.PresentComments` and `EntityApi.AcknowledgeCommentAction`, with `EntityComment`, the `EntityCommentsRequested` event, and `WorkObjectEntity.EntityComments` to enable the comments tab, for Work Object comments.
 - `EntityCommentViewInfo` and `ViewSubmission.TriggerId`, so view submissions for Work Object comment posts and edits can be handled and acknowledged with `EntityApi.AcknowledgeCommentAction`.
