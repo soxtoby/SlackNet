@@ -42,7 +42,7 @@ public interface IExternalTeamsApi
 public class ExternalTeamsApi(ISlackApiClient client) : IExternalTeamsApi
 {
     public Task Disconnect(string targetTeamId, CancellationToken cancellationToken = default) =>
-        client.Post("team.externalTeams.disconnect", new Args { { "target_team_id", targetTeamId } }, cancellationToken);
+        client.Post("team.externalTeams.disconnect", new Args { { "target_team", targetTeamId } }, cancellationToken);
     
     public Task<ExternalTeamsListResponse> List(
         int limit = 20,

@@ -63,6 +63,7 @@
 
 ### Fixed
 - Socket Mode acknowledges Events API payloads without an event, instead of logging a `NullReferenceException`.
+- `ExternalTeamsApi.Disconnect` sends the team as `target_team`, which Slack requires, instead of `target_team_id`.
 
 ## v0.20.0
 
