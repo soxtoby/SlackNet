@@ -67,6 +67,7 @@
 - `FilesApi.GetUploadUrlExternal` sends alt text as `alt_txt`, which Slack reads, instead of `alt_text`.
 - `File`'s thumbnail properties, such as `Thumb64` and `Thumb360W`, and `UserIdentity`'s image properties are deserialized.
 - `ListDownloadResponse.Url` is read from Slack's `download_url`.
+- `TeamPreferences.MsgEditWindowMin` is read from Slack's `msg_edit_window_mins`.
 
 ## v0.20.0
 
