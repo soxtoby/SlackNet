@@ -36,15 +36,25 @@ public class File
     public int Size { get; set; }
     public string UrlPrivate { get; set; }
     public string UrlPrivateDownload { get; set; }
+    [JsonProperty("thumb_64")]
     public string Thumb64 { get; set; }
+    [JsonProperty("thumb_80")]
     public string Thumb80 { get; set; }
+    [JsonProperty("thumb_360")]
     public string Thumb360 { get; set; }
+    [JsonProperty("thumb_360_gif")]
     public string Thumb360Gif { get; set; }
+    [JsonProperty("thumb_360_w")]
     public int Thumb360W { get; set; }
+    [JsonProperty("thumb_360_h")]
     public int Thumb360H { get; set; }
+    [JsonProperty("thumb_480")]
     public string Thumb480 { get; set; }
+    [JsonProperty("thumb_480_w")]
     public int Thumb480W { get; set; }
+    [JsonProperty("thumb_480_h")]
     public int Thumb480H { get; set; }
+    [JsonProperty("thumb_160")]
     public string Thumb160 { get; set; }
     public string Permalink { get; set; }
     public string PermalinkPublic { get; set; }
