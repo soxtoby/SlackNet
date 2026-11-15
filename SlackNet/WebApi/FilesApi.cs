@@ -420,7 +420,7 @@ public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
             {
                 { "filename", fileName },
                 { "length", length },
-                { "alt_text", altText },
+                { "alt_txt", altText },
                 { "snippet_type", snippetType }
             }, cancellationToken);
 
