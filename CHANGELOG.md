@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- `ContentType.Channels` and `ContentType.Users`, for searching channels and users with `AssistantSearchApi.Context`.
 - `AdminAnalyticsApi`, which reads an Enterprise organization's member analytics, public channel analytics and public channel metadata as `MemberAnalytics`, `PublicChannelAnalytics` and `PublicChannelMetadata` records, streamed from Slack's compressed analytics files as you enumerate them.
 - `AdminAnalyticsMessagesApi`, which gets activity metrics and metadata for a channel's messages, with `MessageActivity` and `AnalyticsMessage`. `File` has `Subtype` and `DurationMs`.
 - `AdminAnalyticsSlackbotApi`, which gets per-user Slackbot skill and tool usage, with `SlackbotSkillUsage` and `SlackbotToolUsage`.
@@ -69,6 +70,7 @@
 - `ListDownloadResponse.Url` is read from Slack's `download_url`.
 - `TeamPreferences.MsgEditWindowMin` is read from Slack's `msg_edit_window_mins`.
 - `ConversationsApi.SetPurpose` and `SetTopic` return the new purpose and topic, from the channel Slack now responds with, instead of null.
+- `AssistantSearchApi.Context` results are deserialized. `AssistantSearchContextResponse.Results` replaces `Result`, and its `Messages` are `AssistantSearchMessage`s rather than `MessageEvent`s. Results now also include `Files`, `Channels` and `Users`, and the response has `FailedContentTypes`.
 
 ## v0.20.0
 

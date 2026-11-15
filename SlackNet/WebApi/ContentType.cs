@@ -3,5 +3,7 @@
 public enum ContentType
 {
     Messages,
-    Files
+    Files,
+    Channels,
+    Users
 }
