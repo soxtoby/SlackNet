@@ -1,7 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace SlackNet.AppManifests;
 
@@ -47,17 +46,17 @@ public class AppManifest
     /// Custom workflow steps available for use in workflows either defined in the manifest or built directly in Workflow Builder,
     /// keyed by the <c>callback_id</c> of the step.
     /// </summary>
-    public IDictionary<string, JObject>? Functions { get; set; }
+    public IDictionary<string, JsonData>? Functions { get; set; }
 
     /// <summary>
     /// The workflows the app provides, keyed by callback ID.
     /// </summary>
-    public IDictionary<string, JObject>? Workflows { get; set; }
+    public IDictionary<string, JsonData>? Workflows { get; set; }
 
     /// <summary>
     /// The datastores used by the app, keyed by name.
     /// </summary>
-    public IDictionary<string, JObject>? Datastores { get; set; }
+    public IDictionary<string, JsonData>? Datastores { get; set; }
 
     /// <summary>
     /// Accepted egress domains for an app with a <see cref="Settings.FunctionRuntime"/> of <see cref="FunctionRuntime.Slack"/>.
@@ -67,18 +66,18 @@ public class AppManifest
     /// <summary>
     /// The types the app provides, keyed by type name.
     /// </summary>
-    public IDictionary<string, JObject>? Types { get; set; }
+    public IDictionary<string, JsonData>? Types { get; set; }
 
     /// <summary>
     /// The message metadata events the app can send, keyed by <c>event_type</c>.
     /// When the app sends message metadata with a declared <c>event_type</c>, Slack validates the <c>event_payload</c> against it.
     /// </summary>
-    public IDictionary<string, JObject>? Events { get; set; }
+    public IDictionary<string, JsonData>? Events { get; set; }
 
     /// <summary>
     /// The OAuth configuration used by the app.
     /// </summary>
-    public JObject? ExternalAuthProviders { get; set; }
+    public JsonData? ExternalAuthProviders { get; set; }
 
     /// <summary>
     /// Compliance certifications for GovSlack.

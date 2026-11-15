@@ -39,7 +39,7 @@ public class ChatUpdateMetadataTests
                 ChannelId = "C123",
                 Ts = "1503435956.000247",
                 Text = "edited",
-                MetadataJson = new MessageMetadata { EventType = "task_created", EventPayload = JObject.Parse(@"{ ""id"": ""TK-42"" }") }
+                MetadataJson = new MessageMetadata { EventType = "task_created", Payload = JsonData.Parse(@"{ ""id"": ""TK-42"" }") }
             });
 
         _http.Body["channel"]!.Value<string>().ShouldBe("C123");
@@ -62,7 +62,7 @@ public class ChatUpdateMetadataTests
             {
                 ChannelId = "C123",
                 Ts = "1503435956.000247",
-                MetadataJson = new MessageMetadata { EventType = "from_json", EventPayload = new JObject() },
+                MetadataJson = new MessageMetadata { EventType = "from_json", Payload = JsonData.Parse("{}") },
                 MetadataObject = new TaskCreated { TaskId = "TK-42" }
             });
 

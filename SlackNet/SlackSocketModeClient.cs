@@ -41,6 +41,7 @@ public class SlackSocketModeClient : ISlackSocketModeClient
     private readonly ILogger _log;
     private readonly IDisposable _requestSubscription;
 
+    [Obsolete("Use the socket mode client from SlackServiceBuilder or AddSlackNet instead. This constructor will become internal in a future version.")]
     public SlackSocketModeClient(
         ICoreSocketModeClient socket,
         SlackJsonSettings jsonSettings,

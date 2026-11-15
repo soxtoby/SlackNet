@@ -2,6 +2,7 @@
 
 namespace SlackNet.SocketMode;
 
+[Obsolete("Socket mode messages are handled by the socket mode client from SlackServiceBuilder or AddSlackNet. This will become internal in a future version.")]
 public class Hello : SocketMessage
 {
     public HelloConnectionInfo ConnectionInfo { get; set; }
@@ -9,11 +10,13 @@ public class Hello : SocketMessage
     public HelloDebugInfo DebugInfo { get; set; }
 }
 
+[Obsolete("Socket mode messages are handled by the socket mode client from SlackServiceBuilder or AddSlackNet. This will become internal in a future version.")]
 public class HelloConnectionInfo
 {
     public string AppId { get; set; }
 }
 
+[Obsolete("Socket mode messages are handled by the socket mode client from SlackServiceBuilder or AddSlackNet. This will become internal in a future version.")]
 public class HelloDebugInfo
 {
     public string Host { get; set; }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System;
+using Newtonsoft.Json.Linq;
 using SlackNet.Interaction;
 
 namespace SlackNet.SocketMode;
@@ -8,4 +9,5 @@ namespace SlackNet.SocketMode;
 /// and because <see cref="InteractiveMessage"/> and <see cref="OptionsRequest"/> have the same type name, there's no way to automatically deserialize the correct payload type.
 /// </remarks>
 [SlackType("interactive")]
+[Obsolete("Socket mode messages are handled by the socket mode client from SlackServiceBuilder or AddSlackNet. This will become internal in a future version.")]
 public class InteractionEnvelope : SocketEnvelope<JObject>;

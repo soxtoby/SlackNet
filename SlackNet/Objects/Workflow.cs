@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace SlackNet;
 
@@ -108,7 +107,7 @@ public class WorkflowStepInput
     /// <summary>
     /// The value of the input, which may reference workflow inputs or the outputs of earlier steps, such as <c>{{inputs.interactivity}}</c>.
     /// </summary>
-    public JToken? Value { get; set; }
+    public JsonData? Value { get; set; }
 
     public bool Locked { get; set; }
 }

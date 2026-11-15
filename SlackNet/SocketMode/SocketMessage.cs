@@ -1,5 +1,8 @@
-﻿namespace SlackNet.SocketMode;
+﻿using System;
 
+namespace SlackNet.SocketMode;
+
+[Obsolete("Socket mode messages are handled by the socket mode client from SlackServiceBuilder or AddSlackNet. This will become internal in a future version.")]
 public abstract class SocketMessage
 {
     /// <summary>

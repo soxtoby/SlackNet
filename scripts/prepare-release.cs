@@ -30,11 +30,11 @@ var headings = changelog
     .ToHashSet();
 
 // A misspelled heading would quietly release the wrong version.
-var unknown = headings.Except(["Breaking", "Added", "Changed", "Fixed"]).ToArray();
+var unknown = headings.Except(["Breaking", "Added", "Changed", "Deprecated", "Fixed"]).ToArray();
 if (unknown.Any())
     throw new InvalidOperationException($"Unknown Unreleased change heading: {unknown.JoinWith(", ")}.");
 
-var next = (current.Major, headings.Contains("Breaking"), headings.Overlaps(["Added", "Changed"])) switch
+var next = (current.Major, headings.Contains("Breaking"), headings.Overlaps(["Added", "Changed", "Deprecated"])) switch
     {
         // Before 1.0, breaking changes bump the minor version, and everything else bumps the patch version.
         (0, true, _) => new Version(0, current.Minor + 1, 0),

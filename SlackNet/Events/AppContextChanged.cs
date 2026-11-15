@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace SlackNet.Events;
@@ -30,12 +32,23 @@ public class AppContext
 /// </summary>
 public class AppContextEntity
 {
-    /// <summary>The kind of entity represented by <see cref="Value"/>.</summary>
+    /// <summary>The kind of entity represented by <see cref="Data"/>.</summary>
     public string Type { get; set; }
+
+    [JsonIgnore]
+    [Obsolete("Use Data instead.")]
+    public JToken Value
+    {
+        get => Data.ToJToken();
+        set => Data = value.ToJsonData();
+    }
+
     /// <summary>
     /// The entity value. Its JSON shape depends on <see cref="Type"/>; for example, channel IDs are strings while message contexts are objects.
     /// </summary>
-    public JToken Value { get; set; }
+    [JsonProperty("value")]
+    public JsonData Data { get; set; }
+
     /// <summary>The workspace containing the entity.</summary>
     public string TeamId { get; set; }
 }

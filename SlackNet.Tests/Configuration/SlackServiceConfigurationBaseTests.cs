@@ -433,27 +433,28 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
                     result.Event.FunctionExecutionId.ShouldBe(original.FunctionExecutionId);
                     result.Event.WorkflowExecutionId.ShouldBe(original.WorkflowExecutionId);
                     result.Event.BotAccessToken.ShouldBe(original.BotAccessToken);
-                    result.Event.ExtraProperties["extra_field"].ShouldBe("retained");
+                    result.Event.ExtraProperty<string>("extra_field").ShouldBe("retained");
                 });
         original.Inputs.Value<string>("user_id").ShouldBe("U123");
         observer.Contexts.Last().Event.ShouldReferTo(original);
     }
 
-    private static EventCallback CreateFunctionCallback() => new()
-        {
-            Type = "event_callback",
-            Event = new FunctionExecuted
-                {
-                    Type = "function_executed",
-                    EventTs = "123.456",
-                    Function = new Function { Id = "Fn123", CallbackId = "key" },
-                    FunctionExecutionId = "Fx123",
-                    WorkflowExecutionId = "Wx123",
-                    BotAccessToken = "test-token",
-                    Inputs = JObject.Parse("""{"user_id":"U123"}"""),
-                    ExtraProperties = { ["extra_field"] = "retained" }
-                }
-        };
+    private static EventCallback CreateFunctionCallback()
+    {
+        var functionExecuted = new FunctionExecuted
+            {
+                Type = "function_executed",
+                EventTs = "123.456",
+                Function = new Function { Id = "Fn123", CallbackId = "key" },
+                FunctionExecutionId = "Fx123",
+                WorkflowExecutionId = "Wx123",
+                BotAccessToken = "test-token",
+                Inputs = JObject.Parse("""{"user_id":"U123"}""")
+            };
+        functionExecuted.SetExtraProperty("extra_field", "retained");
+
+        return new EventCallback { Type = "event_callback", Event = functionExecuted };
+    }
 
     [Test]
     public void RegisterFunctionHandler_WithTypedInputs_UsesConfiguredJsonSettings()

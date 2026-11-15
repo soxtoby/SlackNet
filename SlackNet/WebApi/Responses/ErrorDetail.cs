@@ -1,5 +1,4 @@
 #nullable enable
-using Newtonsoft.Json.Linq;
 
 namespace SlackNet.WebApi;
 
@@ -26,5 +25,5 @@ public class ErrorDetail
     /// <summary>
     /// Details about what was expected.
     /// </summary>
-    public JObject? Constraint { get; set; }
+    public JsonData? Constraint { get; set; }
 }

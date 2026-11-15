@@ -43,7 +43,7 @@ public class WebApiErrorResponseTests
                 {
                     exception.Message.ShouldContain("/0/text/type: unsupported type: invalid");
                     exception.Message.ShouldNotContain("errors: ");
-                    exception.ErrorDetails.ShouldBeSingular().And.Single().Constraint!.Value<string>("type").ShouldBe("enum");
+                    exception.ErrorDetails.ShouldBeSingular().And.Single().Constraint!.ToString().ShouldBe("""{"type":"enum","expected":["plain_text","mrkdwn"]}""");
                 });
     }
 
@@ -70,7 +70,7 @@ public class WebApiErrorResponseTests
 
         _sut.Post("conversations.invite", new(), CancellationToken.None)
             .ShouldFailWith<SlackException>()
-            .And.ErrorFields["errors"].Single().Value<string>("user").ShouldBe("U111111");
+            .And.ErrorField<JsonData>("errors")!.ToString().ShouldBe("""[{"user":"U111111","ok":false,"error":"user_not_found"}]""");
     }
 
     [TestCase("\"explanation\"", "errors: explanation")]

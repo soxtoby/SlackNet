@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using EasyAssertions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SlackNet.Events;
 using SlackNet.Interaction;
@@ -257,6 +258,55 @@ public class SerializationTests
             .And.Text.ShouldBe(date);
     }
 
+    [Test]
+    public void JsonData_ToObject_UsesSettingsItWasReadWith()
+    {
+        var result = JsonConvert.DeserializeObject<HasJsonDataProperty>(@"{ ""Data"": { ""SomeProperty"": ""foo"" } }", new JsonSerializerSettings());
+
+        result.Data.ToObject<SimpleType>().SomeProperty.ShouldBe("foo");
+    }
+
+    [Test]
+    public void JsonData_Null_DeserializedAsNull()
+    {
+        Deserialize<HasJsonDataProperty>(@"{ ""data"": null }").Data.ShouldBeNull();
+    }
+
+    [Test]
+    public void ExtraProperty_ReadWithSlackConventions()
+    {
+        var result = Deserialize<Event>(@"{ ""type"": ""unknown_event"", ""extra_text"": ""foo"", ""extra_object"": { ""some_property"": ""bar"" } }");
+
+        result.ExtraProperty<string>("extra_text").ShouldBe("foo");
+        result.ExtraProperty<SimpleType>("extra_object").SomeProperty.ShouldBe("bar");
+    }
+
+    [Test]
+    public void ExtraProperty_ReadWithSettingsItWasReadWith()
+    {
+        var jsonSettings = new SlackJsonSettings(new JsonSerializerSettings());
+        var result = JsonConvert.DeserializeObject<Event>(@"{ ""extra_object"": { ""SomeProperty"": ""foo"" } }", jsonSettings.SerializerSettings);
+
+        result.ExtraProperty<SimpleType>("extra_object").SomeProperty.ShouldBe("foo");
+    }
+
+    [Test]
+    public void SetExtraProperty_SerializedWithSlackConventions()
+    {
+        var slackEvent = new Event();
+        slackEvent.SetExtraProperty("extra_object", new SimpleType { SomeProperty = "foo" });
+
+        Serialize(slackEvent).ShouldBe(@"{""extra_object"":{""some_property"":""foo""}}");
+    }
+
+    [Test]
+    public void ObsoleteJTokenProperty_ReadsJsonDataProperty()
+    {
+#pragma warning disable CS0618 // Exercises the obsolete JObject property.
+        Deserialize<FunctionData>(@"{ ""inputs"": { ""user_id"": ""U123"" } }").Inputs.Value<string>("user_id").ShouldBe("U123");
+#pragma warning restore CS0618
+    }
+
     private string Serialize(object obj) => JsonConvert.SerializeObject(obj, _sut);
 
     private T Deserialize<T>(string json) => JsonConvert.DeserializeObject<T>(json, _sut);
@@ -305,6 +355,11 @@ public class SerializationTests
     {
         public DateTime Required { get; set; }
         public DateTime? Optional { get; set; }
+    }
+
+    class HasJsonDataProperty
+    {
+        public JsonData Data { get; set; }
     }
 
     class HasTimeSpanProperty

@@ -44,10 +44,13 @@
 - `CanvasesApi.GetContent`, which gets the content of a canvas as markdown or HTML.
 - `ChannelPostingPermissions` message event, which Slack sends when a user changes a channel's posting permissions.
 - `ErrorResponse.Errors` and `SlackException.ErrorDetails`, with the issues Slack found in a request, such as invalid elements reported by `BlocksApi.Validate`. `SlackException` messages include them too.
+- `ErrorResponse.Field<T>` and `SlackException.ErrorField<T>`, which read the fields specific to an error, such as the `invalid_mcp_servers` returned by `SlackbotSkillsApi.Create`.
 - `EntityApi.PresentComments` and `EntityApi.AcknowledgeCommentAction`, with `EntityComment`, the `EntityCommentsRequested` event, and `WorkObjectEntity.EntityComments` to enable the comments tab, for Work Object comments.
 - `EntityCommentViewInfo` and `ViewSubmission.TriggerId`, so view submissions for Work Object comment posts and edits can be handled and acknowledged with `EntityApi.AcknowledgeCommentAction`.
+- `ExtraProperty<T>` and `SetExtraProperty` on `Event` and `MessageSearchResult`, for properties SlackNet doesn't model. They use the JSON settings the event or search result was read with.
 - `ExternalOrgMigrationStarted` and `ExternalOrgMigrationFinished` events, which Slack sends when an external workspace starts and finishes migrating to an Enterprise organization, with `Team.IsMigrating`.
 - `InviteRequested` event, with `InviteRequest` and `InviteRequestType`, which Slack sends when a user requests an invite.
+- `JsonData`, for JSON whose shape SlackNet doesn't define, which converts to and from your own types with `ToObject<T>` and `FromObject`, using SlackNet's JSON conventions, and to and from `JToken` with `ToJsonData` and `ToJToken`. `MessageMetadata.Payload`, `FunctionData.InputValues` and `AppContextEntity.Data` hold it, and `FunctionsApi.CompleteSuccess` has a generic overload that takes outputs of any type, including `JsonData`.
 - `OAuthV2Api.BeginShortTokenRotation` and `OAuthV2Api.CompleteShortTokenRotation`, which rotate an old user token with a short secret to one with a longer secret.
 - `OAuthV2Api.UserAccess`, which exchanges an OAuth code for a user access token, for OAuth flows with only user scopes.
 - `OauthV2AccessResponse.UserId`, with the ID of the user the token belongs to.
@@ -57,10 +60,16 @@
 - `UserConnection` event, with its `UserConnect` and `UserDisconnect` subtypes, which Slack sends when a user requests to connect with or disconnect from your app.
 - `UserGuestStatusChanged` event, which Slack sends when a user's guest status changes.
 - `DateTime` properties alongside Unix timestamp properties: `CreatedChannel.CreatedDate`, `RenamedChannel.CreatedDate`, `PinnedInfo.PinnedTimestamp`, `SubteamMembersChanged.PreviousUpdate` and `Updated`, `Bookmark.Created` and `Updated`, `Call.Started`, `ConnectedTeam.Created`, `Conversation.UpdatedDate`, `ExternalTeam.LastActive`, `File.CreatedDate`, `FileComment.CreatedDate`, `Function.Created`, `Updated` and `Deleted`, `Invite.Created` and `Expires`, `InviteChannel.Created`, `ListView.Created`, `OwnDndStatus.SnoozeEnd`, `Topic.LastSetDate`, `Purpose.LastSetDate`, `UserProfile.StatusExpirationDate` and `HuddleStateExpiration`, `Login.First` and `Last`, `ScheduledMessage.PostAtDate` and `Created`, `PendingInvite.LastUpdated`, `InviteAcceptance.Accepted`, `Expires` and `LastUpdated`, `InviteReview.Reviewed`, and `TokenRotationResponse.Expires` and `IssuedAt`.
-- `ErrorResponse.Fields` and `Field<T>`, and `SlackException.ErrorFields` and `ErrorField<T>`, with the fields specific to an error, such as the `invalid_mcp_servers` returned by `SlackbotSkillsApi.Create`.
 
 ### Changed
 - `SlackException` messages include error fields that aren't strings, as JSON.
+
+### Deprecated
+To reduce how much of SlackNet's public API depends on Newtonsoft.Json:
+- `MessageMetadata.EventPayload`, `FunctionData.Inputs` and `AppContextEntity.Value`. Use `Payload`, `InputValues` and `Data` instead.
+- The `JObject` overload of `FunctionsApi.CompleteSuccess`. Use the generic overload instead.
+- `Event.ExtraProperties` and `MessageSearchResult.ExtraProperties`. Use `ExtraProperty<T>` and `SetExtraProperty` instead.
+- `CoreSocketModeClient`, `ICoreSocketModeClient`, the `SlackSocketModeClient` constructor and the socket mode messages in `SlackNet.SocketMode`, such as `SocketEnvelope` and `Acknowledgement`, which will become internal. Use the socket mode client from `SlackServiceBuilder` or `AddSlackNet` instead.
 
 ### Fixed
 - Socket Mode acknowledges Events API payloads without an event, instead of logging a `NullReferenceException`.

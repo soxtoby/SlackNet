@@ -1,6 +1,5 @@
 #nullable enable
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 
 namespace SlackNet.AppManifests;
 
@@ -31,6 +30,6 @@ public class Search
 public class SlackbotMetadata
 {
     public string? Description { get; set; }
-    public IList<JToken>? Examples { get; set; }
+    public IList<JsonData>? Examples { get; set; }
     public string? ExampleQuery { get; set; }
 }

@@ -9,12 +9,12 @@ namespace SlackNet.Handlers;
 class TypedFunctionHandler<TInputs>(Experimental.IEventHandler<FunctionExecuted<TInputs>> handler, SlackJsonSettings jsonSettings)
     : Experimental.IEventHandler<FunctionExecuted>, IComposedHandler<EventCallback>
 {
-    public Task Handle(IEventContext<FunctionExecuted> eventContext) =>
-        handler.Handle(new EventContext<FunctionExecuted<TInputs>>(eventContext, new FunctionExecuted<TInputs>
+    public Task Handle(IEventContext<FunctionExecuted> eventContext)
+    {
+        var typedEvent = new FunctionExecuted<TInputs>
             {
                 Type = eventContext.Event.Type,
                 EventTs = eventContext.Event.EventTs,
-                ExtraProperties = eventContext.Event.ExtraProperties,
                 Function = eventContext.Event.Function,
                 FunctionExecutionId = eventContext.Event.FunctionExecutionId,
                 WorkflowExecutionId = eventContext.Event.WorkflowExecutionId,
@@ -22,7 +22,11 @@ class TypedFunctionHandler<TInputs>(Experimental.IEventHandler<FunctionExecuted<
                 Inputs = eventContext.Event.Inputs is not null
                     ? eventContext.Event.Inputs.ToObject<TInputs>(JsonSerializer.Create(jsonSettings.SerializerSettings))
                     : default
-            }));
+            };
+        typedEvent.CopyExtraPropertiesFrom(eventContext.Event);
+
+        return handler.Handle(new EventContext<FunctionExecuted<TInputs>>(eventContext, typedEvent));
+    }
 
     IEnumerable<object> IComposedHandler<EventCallback>.InnerHandlers(EventCallback eventCallback) =>
         handler.InnerHandlers(eventCallback);

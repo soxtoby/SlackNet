@@ -1,6 +1,5 @@
 ﻿#nullable enable
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,7 +12,7 @@ public class ErrorResponse
     public string Error { get; set; } = string.Empty;
     public ErrorResponseMetadata ResponseMetadata { get; set; } = new();
 
-    [JsonProperty] // Mapped so it isn't one of the Fields
+    [JsonProperty] // Mapped so it isn't one of the fields
     private bool Ok { get; set; }
 
     [JsonExtensionData]
@@ -24,12 +23,6 @@ public class ErrorResponse
     /// </summary>
     [JsonIgnore]
     internal JsonSerializer? Serializer { get; set; }
-
-    /// <summary>
-    /// Fields specific to the error, as returned by Slack, such as the items in a request that Slack couldn't process.
-    /// </summary>
-    [JsonIgnore]
-    public IReadOnlyDictionary<string, JToken> Fields => new ReadOnlyDictionary<string, JToken>(_fields);
 
     [JsonIgnore]
     public IReadOnlyDictionary<string, string> Info => _fields
@@ -49,7 +42,7 @@ public class ErrorResponse
             : [];
 
     /// <summary>
-    /// Reads one of the <see cref="Fields"/> using SlackNet's JSON conventions.
+    /// Reads a field specific to the error, as returned by Slack, such as the items in a request that Slack couldn't process.
     /// </summary>
     /// <param name="fieldName">Name of the field, as returned by Slack.</param>
     /// <returns>The field's value, or the default value if Slack didn't return the field.</returns>
@@ -58,9 +51,27 @@ public class ErrorResponse
             ? value.ToObject<T>(FieldSerializer)
             : default;
 
+    /// <summary>
+    /// A line for each field specific to the error, for exception messages.
+    /// Error details are left out, since they're described separately.
+    /// </summary>
+    internal IEnumerable<string> FieldDescriptions =>
+        _fields
+            .Where(f => !IsShownAsErrorDetails(f))
+            .Select(f => $"{f.Key}: {FieldText(f.Value)}");
+
     // Some methods return errors in other shapes, such as conversations.invite's per-user errors, which aren't error details
-    internal static bool IsErrorDetail(JToken error) =>
+    private static bool IsErrorDetail(JToken error) =>
         error is JObject errorObject && errorObject.ContainsKey("message");
+
+    private static bool IsShownAsErrorDetails(KeyValuePair<string, JToken> field) =>
+        field is { Key: "errors", Value: JArray { Count: > 0 } errors }
+        && errors.All(IsErrorDetail);
+
+    private static string FieldText(JToken value) =>
+        value.Type == JTokenType.String
+            ? value.ToObject<string>()!
+            : value.ToString(Formatting.None);
 
     private JsonSerializer FieldSerializer => Serializer ?? JsonSerializer.Create(Default.JsonSettings().SerializerSettings);
 }

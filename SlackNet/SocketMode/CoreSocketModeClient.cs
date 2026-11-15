@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet.SocketMode;
 
+[Obsolete("Use the socket mode client from SlackServiceBuilder or AddSlackNet instead. This will become internal in a future version.")]
 public interface ICoreSocketModeClient : IDisposable, IAsyncDisposable
 {
     Task Connect(SocketModeConnectionOptions? connectionOptions = null, CancellationToken cancellationToken = default);
@@ -47,6 +48,7 @@ public interface ICoreSocketModeClient : IDisposable, IAsyncDisposable
     Task Send(int socketId, Acknowledgement acknowledgement);
 }
 
+[Obsolete("Use the socket mode client from SlackServiceBuilder or AddSlackNet instead. This will become internal in a future version.")]
 public class CoreSocketModeClient : ICoreSocketModeClient
 {
     private readonly ISlackApiClient _client;

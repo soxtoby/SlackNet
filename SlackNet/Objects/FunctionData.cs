@@ -1,3 +1,5 @@
+using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace SlackNet;
@@ -9,5 +11,15 @@ public class FunctionData
 {
     public string ExecutionId { get; set; }
     public Function Function { get; set; }
-    public JObject Inputs { get; set; } = new();
+
+    [JsonIgnore]
+    [Obsolete("Use InputValues instead.")]
+    public JObject Inputs
+    {
+        get => (JObject)InputValues.ToJToken();
+        set => InputValues = value.ToJsonData();
+    }
+
+    [JsonProperty("inputs")]
+    public JsonData InputValues { get; set; } = new JObject().ToJsonData();
 }

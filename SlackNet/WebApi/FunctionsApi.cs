@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -24,7 +25,17 @@ public interface IFunctionsApi
     /// <param name="functionExecutionId">Context identifier that maps to the executed function.</param>
     /// <param name="outputs">A JSON-based object that conforms to the output parameters schema for the custom function defined in the manifest.</param>
     /// <param name="cancellationToken"></param>
+    [Obsolete("Pass a JsonData or your own outputs type instead.")]
     Task CompleteSuccess(string functionExecutionId, JObject outputs, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Signal the successful completion of a function.
+    /// </summary>
+    /// <remarks>See the <a href="https://api.slack.com/methods/functions.completeSuccess">Slack documentation</a> for more information.</remarks>
+    /// <param name="functionExecutionId">Context identifier that maps to the executed function.</param>
+    /// <param name="outputs">A JSON-based object that conforms to the output parameters schema for the custom function defined in the manifest.</param>
+    /// <param name="cancellationToken"></param>
+    Task CompleteSuccess<TOutputs>(string functionExecutionId, TOutputs outputs, CancellationToken cancellationToken = default);
 }
 
 public class FunctionsApi(ISlackApiClient client) : IFunctionsApi
@@ -36,7 +47,11 @@ public class FunctionsApi(ISlackApiClient client) : IFunctionsApi
                 { "error", error }
             }, cancellationToken);
 
+    [Obsolete("Pass a JsonData or your own outputs type instead.")]
     public Task CompleteSuccess(string functionExecutionId, JObject outputs, CancellationToken cancellationToken = default) =>
+        CompleteSuccess<JObject>(functionExecutionId, outputs, cancellationToken);
+
+    public Task CompleteSuccess<TOutputs>(string functionExecutionId, TOutputs outputs, CancellationToken cancellationToken = default) =>
         client.Post("functions.completeSuccess", new Args
             {
                 { "function_execution_id", functionExecutionId },

@@ -45,7 +45,7 @@ public class AppActivity
     /// <summary>
     /// The content of the log event, which depends on the <see cref="EventType"/>.
     /// </summary>
-    public JObject Payload { get; set; } = new();
+    public JsonData Payload { get; set; } = new JObject().ToJsonData();
 
     /// <summary>
     /// When the log event was created, in epoch microseconds.
