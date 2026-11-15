@@ -66,6 +66,7 @@
 - `ExternalTeamsApi.Disconnect` sends the team as `target_team`, which Slack requires, instead of `target_team_id`.
 - `FilesApi.GetUploadUrlExternal` sends alt text as `alt_txt`, which Slack reads, instead of `alt_text`.
 - `File`'s thumbnail properties, such as `Thumb64` and `Thumb360W`, and `UserIdentity`'s image properties are deserialized.
+- `ListDownloadResponse.Url` is read from Slack's `download_url`.
 
 ## v0.20.0
 
