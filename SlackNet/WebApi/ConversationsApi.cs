@@ -614,7 +614,7 @@ public class ConversationsApi(ISlackApiClient client) : IConversationsApi
                 { "channel", channelId },
                 { "purpose", purpose }
             }, cancellationToken).ConfigureAwait(false))
-        .Purpose;
+        .Channel.Purpose.Value;
 
     public async Task<string> SetTopic(string channelId, string topic, CancellationToken cancellationToken = default) =>
         (await client.Post<TopicResponse>("conversations.setTopic", new Args
@@ -622,7 +622,7 @@ public class ConversationsApi(ISlackApiClient client) : IConversationsApi
                 { "channel", channelId },
                 { "topic", topic }
             }, cancellationToken).ConfigureAwait(false))
-        .Topic;
+        .Channel.Topic.Value;
 
     public Task Unarchive(string channelId, CancellationToken cancellationToken = default) =>
         client.Post("conversations.unarchive", new Args { { "channel", channelId } }, cancellationToken);

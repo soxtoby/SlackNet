@@ -2,5 +2,5 @@
 
 class PurposeResponse
 {
-    public string Purpose { get; set; }
+    public Conversation Channel { get; set; }
 }

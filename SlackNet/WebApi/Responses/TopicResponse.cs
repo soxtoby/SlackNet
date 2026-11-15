@@ -2,5 +2,5 @@
 
 class TopicResponse
 {
-    public string Topic { get; set; }
+    public Conversation Channel { get; set; }
 }
