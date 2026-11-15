@@ -47,20 +47,22 @@ public class ApiLintTests
         }
     }
 
-    internal static HashSet<string> ImplementedSlackMethods()
+    internal static HashSet<string> ImplementedSlackMethods() =>
+        ImplementedSlackMethodCalls().Select(m => m.SlackMethod).ToHashSet();
+
+    internal static IEnumerable<SlackMethodCall> ImplementedSlackMethodCalls()
     {
-        var implementedApiMethods = new HashSet<string>();
         var client = new FakeClient();
         foreach (var api in ApiClasses)
         {
             var instance = CreateApiInstance(api, client);
             foreach (var method in api.GetMethods(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance))
             {
+                client.Reset();
                 Invoke(method, instance);
-                implementedApiMethods.Add(client.SlackMethod);
+                yield return new SlackMethodCall(client.SlackMethod, client.Args?.Keys.ToArray() ?? [], client.ResponseType);
             }
         }
-        return implementedApiMethods;
     }
 
     private static void Invoke(MethodInfo method, object instance)
@@ -322,11 +324,13 @@ public class ApiLintTests
     {
         public string SlackMethod { get; private set; }
         public Args Args { get; private set; }
+        public Type ResponseType { get; private set; }
 
         public void Reset()
         {
             SlackMethod = null;
             Args = null;
+            ResponseType = null;
         }
 
         public Task Get(string apiMethod, Args args, CancellationToken cancellationToken)
@@ -340,6 +344,7 @@ public class ApiLintTests
         {
             SlackMethod = apiMethod;
             Args = args;
+            ResponseType = typeof(T);
             return Task.FromResult(Activator.CreateInstance<T>());
         }
 
@@ -364,6 +369,7 @@ public class ApiLintTests
         {
             SlackMethod = apiMethod;
             Args = args;
+            ResponseType = typeof(T);
             return Task.FromResult(Activator.CreateInstance<T>());
         }
 
@@ -371,6 +377,7 @@ public class ApiLintTests
         {
             SlackMethod = apiMethod;
             Args = args;
+            ResponseType = typeof(T);
             return Task.FromResult(Activator.CreateInstance<T>());
         }
 
@@ -487,3 +494,9 @@ public class ApiLintTests
         public Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => Task.FromResult(new HttpResponseMessage());
     }
 }
+
+/// <summary>
+/// A call an API method makes: the Slack method, the names of the args it can send,
+/// and the type its response is deserialized into, or null if the response is ignored.
+/// </summary>
+internal record SlackMethodCall(string SlackMethod, IReadOnlyCollection<string> ArgNames, Type ResponseType);

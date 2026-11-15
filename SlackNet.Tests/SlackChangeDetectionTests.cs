@@ -143,7 +143,7 @@ public class SlackChangeDetectionTests
 
     private static readonly HashSet<string> IgnoredSpecKeys = ["desc", "description", "example", "minLength", "maxLength", "minimum", "maximum", "minItems", "maxItems"];
 
-    private static string ApiSpecSnapshotFile => Path.Combine(Path.GetDirectoryName(SourceFilePath())!, "ApiSpecSnapshot.txt");
+    internal static string ApiSpecSnapshotFile => Path.Combine(Path.GetDirectoryName(SourceFilePath())!, "ApiSpecSnapshot.txt");
 
     private static string SourceFilePath([CallerFilePath] string path = null) => path;
 
