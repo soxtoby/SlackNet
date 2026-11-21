@@ -9,6 +9,7 @@ namespace SlackNet;
 
 public abstract class FactorySlackServiceConfiguration<TConfig> : SlackServiceConfigurationBase<TConfig> where TConfig : FactorySlackServiceConfiguration<TConfig>
 {
+    [Obsolete("Use UseHttpClient instead.")]
     public TConfig UseHttp<TService>() where TService : class, IHttp => UseHttp(GetServiceFactory<IHttp, TService>());
     public TConfig UseJsonSettings<TService>() where TService : SlackJsonSettings => UseJsonSettings(GetServiceFactory<SlackJsonSettings, TService>());
     public TConfig UseUrlBuilder<TService>() where TService : class, ISlackUrlBuilder => UseUrlBuilder(GetServiceFactory<ISlackUrlBuilder, TService>());

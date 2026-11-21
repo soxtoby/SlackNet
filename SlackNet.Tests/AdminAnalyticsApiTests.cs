@@ -24,7 +24,7 @@ public class AdminAnalyticsApiTests
     {
         var jsonSettings = Default.JsonSettings();
         _handler = new StubHandler();
-        _sut = new SlackApiClient(Default.Http(jsonSettings, () => new HttpClient(_handler)), Default.UrlBuilder(jsonSettings), jsonSettings, "token");
+        _sut = new SlackApiClient(() => new HttpClient(_handler), Default.UrlBuilder(jsonSettings), jsonSettings, "token");
     }
 
     [TearDown]

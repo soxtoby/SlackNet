@@ -7,6 +7,7 @@ namespace SlackNet;
 
 public interface ISlackServiceProvider
 {
+    [Obsolete("Configure the HttpClient SlackNet uses with UseHttpClient instead.")]
     IHttp GetHttp();
     SlackJsonSettings GetJsonSettings();
     ISlackUrlBuilder GetUrlBuilder();

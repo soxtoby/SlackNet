@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace SlackNet;
 
+[Obsolete("Configure the HttpClient SlackNet uses instead, with UseHttpClient, or a SlackApiClient constructor that takes a Func<HttpClient>.")]
 public interface IHttp
 {
     /// <summary>
@@ -14,13 +15,6 @@ public interface IHttp
     /// </summary>
     /// <returns>The deserialized response, or the default value of <typeparamref name="T"/> if the response isn't JSON.</returns>
     Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Sends a request, and returns a successful response as soon as its headers have been read,
-    /// so that its content, such as a file, can be streamed.
-    /// The caller is responsible for disposing the response.
-    /// </summary>
-    Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default);
 }
 
 class Http(Func<HttpClient> getHttpClient, SlackJsonSettings jsonSettings, ILogger logger) : IHttp
@@ -36,6 +30,11 @@ class Http(Func<HttpClient> getHttpClient, SlackJsonSettings jsonSettings, ILogg
             : default;
     }
 
+    /// <summary>
+    /// Sends a request, and returns a successful response as soon as its headers have been read,
+    /// so that its content, such as a file, can be streamed.
+    /// The caller is responsible for disposing the response.
+    /// </summary>
     public Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) =>
         Send(requestMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 

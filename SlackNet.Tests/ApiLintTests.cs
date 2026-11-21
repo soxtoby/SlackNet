@@ -491,7 +491,6 @@ public class ApiLintTests
     class FakeHttp : IHttp
     {
         public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => Task.FromResult(Activator.CreateInstance<T>());
-        public Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => Task.FromResult(new HttpResponseMessage());
     }
 }
 

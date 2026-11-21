@@ -86,7 +86,5 @@ public class ChatUpdateMetadataTests
             Body = JObject.Parse(await requestMessage.Content!.ReadAsStringAsync().ConfigureAwait(false));
             return (T)(object)new WebApiResponse { Ok = true, Data = new JObject { ["ok"] = true } };
         }
-
-        public Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => throw new System.NotImplementedException();
     }
 }

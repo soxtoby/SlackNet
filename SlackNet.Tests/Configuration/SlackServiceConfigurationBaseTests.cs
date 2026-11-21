@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,6 +42,39 @@ public abstract class SlackServiceConfigurationBaseTests<TConfig> where TConfig 
             Substitute.For<IHttp>(),
             (c, sp) => c.UseHttp(sp),
             s => s.GetHttp());
+    }
+
+    [Test]
+    public async Task UseHttpClient_GetsHttpClientForEachRequest()
+    {
+        var handler = new RecordingHandler();
+        using var httpClient = new HttpClient(handler);
+        var providedHttpClientCount = 0;
+        var sut = Configure(c => c.UseHttpClient(_ =>
+            {
+                providedHttpClientCount++;
+                return httpClient;
+            }));
+
+        await sut.GetApiClient().Auth.Test();
+        await sut.GetApiClient().Auth.Test();
+
+        providedHttpClientCount.ShouldBe(2);
+        handler.RequestPaths.ShouldMatch(["/api/auth.test", "/api/auth.test"]);
+    }
+
+    [Test]
+    public async Task UseHttpClient_AfterUseHttp_SendsRequestsWithHttpClient()
+    {
+        var handler = new RecordingHandler();
+        using var httpClient = new HttpClient(handler);
+        var sut = Configure(c => c
+            .UseHttp(_ => Substitute.For<IHttp>())
+            .UseHttpClient(_ => httpClient));
+
+        await sut.GetApiClient().Auth.Test();
+
+        handler.RequestPaths.ShouldMatch(["/api/auth.test"]);
     }
 
     [Test]

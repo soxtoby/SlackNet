@@ -170,6 +170,14 @@ public class WebApiRequestTests
     }
 
     [Test]
+    public void GetStream_CustomHttp_ThrowsNotSupportedException()
+    {
+        _sut.GetStream("admin.analytics.getFile", new(), CancellationToken.None)
+            .ShouldFail()
+            .And.ShouldBeA<NotSupportedException>();
+    }
+
+    [Test]
     public async Task AdminConversationsApi_SetConversationPrefs_SendsPrefsInSlacksFormat()
     {
         await _sut.AdminConversations.SetConversationPrefs("C123",
@@ -204,7 +212,5 @@ public class WebApiRequestTests
             Body = requestMessage.Content is null ? null : JObject.Parse(await requestMessage.Content.ReadAsStringAsync(cancellationToken));
             return JsonConvert.DeserializeObject<T>(ResponseJson, jsonSettings.SerializerSettings);
         }
-
-        public Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => throw new NotImplementedException();
     }
 }

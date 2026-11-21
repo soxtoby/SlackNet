@@ -1,4 +1,8 @@
 ﻿using NSubstitute;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using EasyAssertions;
 using NUnit.Framework;
 using SlackNet.Blocks;
 using SlackNet.Events;
@@ -16,6 +20,24 @@ public abstract class FactorySlackHandlerConfigurationWithDependencyResolverTest
         UseService<IHttp, TestHttp>(
             c => c.UseHttp(r => new TestHttp()),
             s => s.GetHttp());
+    }
+
+    [Test]
+    public async Task UseHttpClientFactory_ResolvesDependenciesForEachRequest()
+    {
+        var handler = new RecordingHandler();
+        var resolvedTrackers = new List<InstanceTracker>();
+        var sut = Configure(c => c.UseHttpClient(r =>
+            {
+                resolvedTrackers.Add(ResolveDependency<InstanceTracker>(r));
+                return new HttpClient(handler, false);
+            }));
+
+        await sut.GetApiClient().Auth.Test();
+        await sut.GetApiClient().Auth.Test();
+
+        resolvedTrackers.ShouldMatch([InstanceTracker, InstanceTracker]);
+        handler.RequestPaths.ShouldMatch(["/api/auth.test", "/api/auth.test"]);
     }
 
     [Test]

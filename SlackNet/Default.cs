@@ -9,6 +9,7 @@ namespace SlackNet;
 
 public static class Default
 {
+    [Obsolete("Use UseHttpClient when configuring SlackNet, or a SlackApiClient constructor that takes a Func<HttpClient>.")]
     public static IHttp Http(SlackJsonSettings jsonSettings = null, Func<HttpClient> getHttpClient = null, ILogger logger = null) =>
         new Http(getHttpClient ?? HttpClientFactory(), jsonSettings ?? JsonSettings(), logger ?? Logger);
 

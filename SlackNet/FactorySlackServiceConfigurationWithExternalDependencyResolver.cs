@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Handlers;
@@ -9,7 +10,14 @@ namespace SlackNet;
 
 public abstract class FactorySlackServiceConfigurationWithExternalDependencyResolver<TConfig> : FactorySlackServiceConfiguration<TConfig> where TConfig : FactorySlackServiceConfigurationWithExternalDependencyResolver<TConfig>
 {
+    [Obsolete("Use UseHttpClient instead.")]
     public TConfig UseHttp(Func<IHttp> httpProvider) => UseHttp(GetServiceFactory(httpProvider));
+
+    /// <summary>
+    /// Uses a provider to get the <see cref="HttpClient"/> that sends each request to Slack, such as one configured with a proxy.
+    /// The provider is called for each request, and SlackNet doesn't dispose the client, so return a shared client, or one from an IHttpClientFactory.
+    /// </summary>
+    public TConfig UseHttpClient(Func<HttpClient> httpClientProvider) => UseHttpClient(_ => httpClientProvider());
     public TConfig UseJsonSettings(Func<SlackJsonSettings> jsonSettingsProvider) => UseJsonSettings(GetServiceFactory(jsonSettingsProvider));
     public TConfig UseUrlBuilder(Func<ISlackUrlBuilder> urlBuilderProvider) => UseUrlBuilder(GetServiceFactory(urlBuilderProvider));
     public TConfig UseLogger(Func<ILogger> urlBuilderProvider) => UseLogger(GetServiceFactory(urlBuilderProvider));

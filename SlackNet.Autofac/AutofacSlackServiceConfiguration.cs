@@ -56,7 +56,7 @@ public class AutofacSlackServiceConfiguration : FactorySlackServiceConfiguration
 
     protected override Func<ISlackServiceProvider, TService> GetServiceFactory<TService>(Func<IComponentContext, TService> getService)
     {
-        _containerBuilder.Register(getService).SingleInstance();
+        _containerBuilder.Register(c => getService(c.Resolve<IComponentContext>())).SingleInstance(); // Unlike c, the resolved context can be used after registration
         return serviceFactory => ((AutofacSlackServiceProvider)serviceFactory).Resolve<TService>();
     }
 

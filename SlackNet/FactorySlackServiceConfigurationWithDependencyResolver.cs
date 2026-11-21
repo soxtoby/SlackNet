@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Handlers;
@@ -10,7 +11,18 @@ namespace SlackNet;
 public abstract class FactorySlackServiceConfigurationWithDependencyResolver<TConfig, TDependencyResolver> : FactorySlackServiceConfiguration<TConfig> 
     where TConfig : FactorySlackServiceConfigurationWithDependencyResolver<TConfig, TDependencyResolver>
 {
+    [Obsolete("Use UseHttpClient instead.")]
     public TConfig UseHttp(Func<TDependencyResolver, IHttp> httpProvider) => UseHttp(GetServiceFactory(httpProvider));
+
+    /// <summary>
+    /// Uses a provider to get the <see cref="HttpClient"/> that sends each request to Slack, such as one configured with a proxy.
+    /// The provider is called for each request, and SlackNet doesn't dispose the client, so return a shared client, or one from an IHttpClientFactory.
+    /// </summary>
+    public TConfig UseHttpClient(Func<TDependencyResolver, HttpClient> httpClientProvider)
+    {
+        var getHttpClientSource = GetServiceFactory(r => new HttpClientSource(() => httpClientProvider(r)));
+        return UseHttpClient(sp => getHttpClientSource(sp).GetHttpClient());
+    }
     public TConfig UseJsonSettings(Func<TDependencyResolver, SlackJsonSettings> jsonSettingsProvider) => UseJsonSettings(GetServiceFactory(jsonSettingsProvider));
     public TConfig UseUrlBuilder(Func<TDependencyResolver, ISlackUrlBuilder> urlBuilderProvider) => UseUrlBuilder(GetServiceFactory(urlBuilderProvider));
     public TConfig UseLogger(Func<TDependencyResolver, ILogger> urlBuilderProvider) => UseLogger(GetServiceFactory(urlBuilderProvider));
@@ -134,4 +146,12 @@ public abstract class FactorySlackServiceConfigurationWithDependencyResolver<TCo
     /// Get a factory for creating a handler for a request. The handler will be created once per request.
     /// </summary>
     protected abstract Func<SlackRequestContext, THandler> GetRequestHandlerFactory<THandler>(Func<TDependencyResolver, THandler> getHandler) where THandler : class;
+
+    /// <summary>
+    /// Registered instead of a <see cref="HttpClient"/>, so that the app's own <see cref="HttpClient"/> registration is left alone.
+    /// </summary>
+    private class HttpClientSource(Func<HttpClient> getHttpClient)
+    {
+        public HttpClient GetHttpClient() => getHttpClient();
+    }
 }

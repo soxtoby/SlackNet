@@ -14,6 +14,7 @@ public class SlackServiceBuilder : SlackServiceConfigurationBase<SlackServiceBui
 
     public SlackServiceBuilder() => _factory = new Lazy<ISlackServiceProvider>(() => CreateServiceFactory(this));
 
+    [Obsolete("Configure the HttpClient SlackNet uses with UseHttpClient instead.")]
     public IHttp GetHttp() => _factory.Value.GetHttp();
     public SlackJsonSettings GetJsonSettings() => _factory.Value.GetJsonSettings();
     public ISlackUrlBuilder GetUrlBuilder() => _factory.Value.GetUrlBuilder();

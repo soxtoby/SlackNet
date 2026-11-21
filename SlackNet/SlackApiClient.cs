@@ -221,13 +221,43 @@ public class SlackApiClient : ISlackApiClient
         _appLevelTokenProvider = new ConstantAppLevelTokenProvider(token);
     }
 
-    [Obsolete("Use constructor with IHttp, ISlackUrlBuilder, SlackJsonSettings, ISlackApiTokenProvider, ISlackAppLevelTokenProvider")]
+    /// <summary>
+    /// Creates a Slack Web API client that uses the same token for every request.
+    /// </summary>
+    /// <param name="getHttpClient">Gets the <see cref="HttpClient"/> that sends each request.</param>
+    /// <param name="urlBuilder"></param>
+    /// <param name="jsonSettings"></param>
+    /// <param name="token"></param>
+    /// <param name="logger">Logs each request and its response.</param>
+    public SlackApiClient(Func<HttpClient> getHttpClient, ISlackUrlBuilder urlBuilder, SlackJsonSettings jsonSettings, string token, ILogger logger = null)
+        : this(getHttpClient, urlBuilder, jsonSettings, new ConstantApiTokenProvider(token), new ConstantAppLevelTokenProvider(token), logger) { }
+
+    [Obsolete("Use the constructor that takes a Func<HttpClient> instead.")]
     public SlackApiClient(IHttp http, ISlackUrlBuilder urlBuilder, SlackJsonSettings jsonSettings, string token)
         : this(http, urlBuilder, jsonSettings, new ConstantApiTokenProvider(token), new ConstantAppLevelTokenProvider(token)) { }
 
     /// <summary>
     /// Creates a Slack Web API client whose API and app-level credentials can be selected for each request.
     /// </summary>
+    /// <param name="getHttpClient">Gets the <see cref="HttpClient"/> that sends each request.</param>
+    /// <param name="urlBuilder"></param>
+    /// <param name="jsonSettings"></param>
+    /// <param name="apiTokenProvider"></param>
+    /// <param name="appLevelTokenProvider"></param>
+    /// <param name="logger">Logs each request and its response.</param>
+    public SlackApiClient(
+        Func<HttpClient> getHttpClient,
+        ISlackUrlBuilder urlBuilder,
+        SlackJsonSettings jsonSettings,
+        ISlackApiTokenProvider apiTokenProvider,
+        ISlackAppLevelTokenProvider appLevelTokenProvider,
+        ILogger logger = null)
+        : this(Default.Http(jsonSettings, getHttpClient, logger), urlBuilder, jsonSettings, apiTokenProvider, appLevelTokenProvider) { }
+
+    /// <summary>
+    /// Creates a Slack Web API client whose API and app-level credentials can be selected for each request.
+    /// </summary>
+    [Obsolete("Use the constructor that takes a Func<HttpClient> instead.")]
     public SlackApiClient(
         IHttp http,
         ISlackUrlBuilder urlBuilder,
@@ -363,11 +393,13 @@ public class SlackApiClient : ISlackApiClient
 
     public async Task<Stream> GetStream(string apiMethod, Args args, CancellationToken cancellationToken)
     {
+        var http = _http as Http ?? throw new NotSupportedException("Responses can't be streamed through a custom IHttp. Configure the HttpClient SlackNet uses instead.");
+
         var requestUrl = Url(apiMethod, args);
         var response = await Send(
             () => new HttpRequestMessage(HttpMethod.Get, requestUrl),
             ApiCallContext(requestUrl, apiMethod, args),
-            _http.ExecuteStreaming,
+            http.ExecuteStreaming,
             cancellationToken).ConfigureAwait(false);
 
         try

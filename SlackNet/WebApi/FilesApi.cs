@@ -247,11 +247,18 @@ public interface IFilesApi
         CancellationToken cancellationToken = default);
 }
 
+[method: Obsolete("Use the constructor that takes a Func<HttpClient>, instead.")]
 public class FilesApi(ISlackApiClient client, IHttp http) : IFilesApi
 {
-    [Obsolete("Include IHttp parameter.")]
+    [Obsolete("Use the constructor that takes a Func<HttpClient>, instead.")]
     public FilesApi(ISlackApiClient client) : this(client, Default.Http()) { }
-    
+
+    /// <param name="client">Calls the Slack API methods.</param>
+    /// <param name="getHttpClient">Gets the HttpClient that uploads file content. SlackNet doesn't dispose it.</param>
+    /// <param name="logger"></param>
+    public FilesApi(ISlackApiClient client, Func<HttpClient> getHttpClient, ILogger logger = null)
+        : this(client, Default.Http(getHttpClient: getHttpClient, logger: logger)) { }
+
     public Task Delete(string fileId, CancellationToken cancellationToken = default) =>
         client.Post("files.delete", new Args { { "file", fileId } }, cancellationToken);
 

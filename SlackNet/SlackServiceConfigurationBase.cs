@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Handlers;
@@ -11,7 +12,8 @@ namespace SlackNet;
 
 public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : SlackServiceConfigurationBase<TConfig>
 {
-    private Func<ISlackServiceProvider, IHttp> _httpProvider = sp => Default.Http(sp.GetJsonSettings(), logger: sp.GetLogger());
+    private Func<ISlackServiceProvider, IHttp> _httpProvider;
+    private Func<ISlackServiceProvider, HttpClient> _httpClientProvider;
     private Func<ISlackServiceProvider, SlackJsonSettings> _jsonSettingsProvider;
     private readonly Dictionary<Type, Type> _replacedSlackTypes = new();
     private readonly List<(Type Type, string TypeIdentifier)> _registeredSlackTypes = [];
@@ -52,6 +54,7 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
     protected SlackServiceConfigurationBase()
     {
         _requestListenerProviders.Add(CreateRequestContextPopulator);
+        _httpProvider = CreateHttp;
         _jsonSettingsProvider = CreateJsonSettings;
         _handlerFactoryProvider = CreateHandlerFactory;
         _apiClientProvider = CreateApiClient;
@@ -76,7 +79,18 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
         return UseAppLevelTokenProvider(_ => appLevelTokenProvider);
     }
 
+    [Obsolete("Use UseHttpClient instead.")]
     public TConfig UseHttp(Func<ISlackServiceProvider, IHttp> httpProvider) => Chain(() => _httpProvider = httpProvider);
+
+    /// <summary>
+    /// Uses a provider to get the <see cref="HttpClient"/> that sends each request to Slack, such as one configured with a proxy.
+    /// The provider is called for each request, and SlackNet doesn't dispose the client, so return a shared client, or one from an IHttpClientFactory.
+    /// </summary>
+    public TConfig UseHttpClient(Func<ISlackServiceProvider, HttpClient> httpClientProvider) => Chain(() =>
+        {
+            _httpClientProvider = httpClientProvider;
+            _httpProvider = CreateHttp;
+        });
     /// <summary>
     /// Replaces the default JSON settings, along with any Slack types registered with <see cref="ReplaceSlackType{TSlackType,TReplacement}"/> or <see cref="RegisterSlackType{TSlackType}(string)"/>.
     /// </summary>
@@ -126,6 +140,12 @@ public abstract class SlackServiceConfigurationBase<TConfig> where TConfig : Sla
             _apiTokenProvider,
             _appLevelTokenProvider,
             dependencyProvider);
+
+    IHttp CreateHttp(ISlackServiceProvider serviceProvider) =>
+        Default.Http(
+            serviceProvider.GetJsonSettings(),
+            _httpClientProvider is null ? null : () => _httpClientProvider(serviceProvider),
+            serviceProvider.GetLogger());
 
     SlackJsonSettings CreateJsonSettings(ISlackServiceProvider serviceProvider) =>
         Default.JsonSettings(new SlackTypeResolver(_replacedSlackTypes, _registeredSlackTypes), serviceProvider.GetLogger());

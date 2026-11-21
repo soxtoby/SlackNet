@@ -947,7 +947,6 @@ public abstract class FactorySlackHandlerConfigurationTests<TConfig> : SlackServ
     protected class TestHttp : IHttp
     {
         public Task<T> Execute<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<HttpResponseMessage> ExecuteStreaming(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) => throw new NotImplementedException();
     }
 
     protected class TestJsonSettings() : SlackJsonSettings(new JsonSerializerSettings());
