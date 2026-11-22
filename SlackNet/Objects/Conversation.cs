@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using SlackNet.Events;
@@ -8,13 +7,13 @@ namespace SlackNet;
 
 public class Conversation
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = null!;
 
     /// <summary>
     /// The name of the channel-like thing, without a leading hash sign. Don't get too attached to that name. It might change.
     /// Don't bother storing it even. When thinking about channel-like things, think about their IDs and their type and the team/workspace they belong to.
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// Indicates whether a conversation is a public channel. Everything said in a public channel can be read by anyone else belonging to a workspace.
@@ -54,23 +53,23 @@ public class Conversation
     /// <summary>
     /// The user ID of the member that created this channel.
     /// </summary>
-    public string Creator { get; set; }
+    public string? Creator { get; set; }
 
     /// <summary>
     /// Indicates the "host" of a shared channel. The value may contain a workspace's ID (beginning with T) or an enterprise grid organization's ID (beginning with E).
     /// </summary>
-    public string ConversationHostId { get; set; }
+    public string? ConversationHostId { get; set; }
 
     /// <summary>
     /// The ID of the workspace the conversation is within.
     /// </summary>
-    public string ContextTeamId { get; set; }
+    public string? ContextTeamId { get; set; }
 
     /// <summary>
     /// The ID of the workspace the channel belongs to.
     /// Only returned by <see cref="WebApi.IAdminUserGroupsApi.ListChannels"/>.
     /// </summary>
-    public string TeamId { get; set; }
+    public string? TeamId { get; set; }
 
     /// <summary>
     /// Indicates a conversation is archived. Frozen in time.
@@ -90,7 +89,7 @@ public class Conversation
 
     public int Unlinked { get; set; }
 
-    public string NameNormalized { get; set; }
+    public string? NameNormalized { get; set; }
 
     /// <summary>
     /// Means the conversation is in some way shared between multiple workspaces. Look for <see cref="IsExtShared"/> and <see cref="IsOrgShared"/>
@@ -111,7 +110,7 @@ public class Conversation
     /// </summary>
     public bool IsOrgShared { get; set; }
 
-    public object[] PendingShared { get; set; }
+    public object[]? PendingShared { get; set; }
 
     /// <summary>
     /// IDs of workspaces the channel is shared with.
@@ -162,12 +161,12 @@ public class Conversation
     /// <summary>
     /// The timestamp for the last message the calling user has read in this channel.
     /// </summary>
-    public string LastRead { get; set; }
+    public string? LastRead { get; set; }
 
     /// <summary>
     /// The latest message in the channel.
     /// </summary>
-    public MessageEvent Latest { get; set; }
+    public MessageEvent? Latest { get; set; }
 
     /// <summary>
     /// Full count of visible messages that the calling user has yet to read.
@@ -179,11 +178,11 @@ public class Conversation
     /// </summary>
     public int UnreadCountDisplay { get; set; }
 
-    public Topic Topic { get; set; }
+    public Topic? Topic { get; set; }
 
-    public Purpose Purpose { get; set; }
+    public Purpose? Purpose { get; set; }
 
-    public string[] PreviousNames { get; set; }
+    public string[]? PreviousNames { get; set; }
 
     public int Priority { get; set; }
 
@@ -200,7 +199,7 @@ public class Conversation
     /// </summary>
     public bool IsRedacted { get; set; }
 
-    public string Locale { get; set; }
+    public string? Locale { get; set; }
 
     /// <summary>
     /// A list of user IDs for all users in this channel. This includes any disabled accounts that were in this channel when they were disabled.
@@ -210,7 +209,7 @@ public class Conversation
     /// <summary>
     /// The other user in an IM.
     /// </summary>
-    public string User { get; set; }
+    public string? User { get; set; }
 
     /// <summary>
     /// Has the other user in an IM been deleted.

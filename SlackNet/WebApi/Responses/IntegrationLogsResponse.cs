@@ -1,10 +1,9 @@
-﻿#nullable disable
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SlackNet.WebApi;
 
 public class IntegrationLogsResponse
 {
-    public IList<IntegrationLogRecord> Logs { get; set; }
-    public Paging Paging { get; set; }
+    public IList<IntegrationLogRecord> Logs { get; set; } = null!;
+    public Paging Paging { get; set; } = null!;
 }

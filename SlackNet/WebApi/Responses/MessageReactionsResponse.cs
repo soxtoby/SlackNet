@@ -1,9 +1,8 @@
-﻿#nullable disable
-using SlackNet.Events;
+﻿using SlackNet.Events;
 
 namespace SlackNet.WebApi;
 
 class MessageReactionsResponse
 {
-    public MessageEvent Message { get; set; }
+    public MessageEvent? Message { get; set; }
 }

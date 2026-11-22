@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using SlackNet.Events;
 
 namespace SlackNet;
@@ -18,13 +17,13 @@ public class WorkObjectEntity
     /// The URL link posted by the user in a conversation.
     /// This is the same URL obtained from the <see cref="LinkShared"/> event.
     /// </summary>
-    public string AppUnfurlUrl { get; set; }
+    public string? AppUnfurlUrl { get; set; }
 
     /// <summary>
     /// The URL that directs the user to the desired resource on a third party system.
     /// When a user clicks the Work Object link trigger, they'll be directed to this URL.
     /// </summary>
-    public string Url { get; set; }
+    public string? Url { get; set; }
 
     /// <summary>
     /// Contains a string ID that uniquely identifies the resource being unfurled.
@@ -44,7 +43,7 @@ public class WorkObjectEntity
     /// Conversely, if your entity has 0 comments, setting <see cref="EntityCommentSummary.Count"/> to 0 renders an unfurl card that links to the comment flexpane.
     /// Comments are requested with the <see cref="EntityCommentsRequested"/> event.
     /// </summary>
-    public EntityCommentSummary EntityComments { get; set; }
+    public EntityCommentSummary? EntityComments { get; set; }
 }
 
 public enum EntityType

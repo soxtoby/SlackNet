@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class AgentSessionStatusResponse
 {
@@ -18,5 +17,5 @@ public class AgentSessionStatusResponse
     /// <summary>
     /// The title of the session, if it has one.
     /// </summary>
-    public string Title { get; set; }
+    public string? Title { get; set; }
 }

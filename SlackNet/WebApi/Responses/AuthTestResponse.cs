@@ -1,15 +1,13 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class AuthTestResponse
 {
-    public string Url { get; set; }
-    public string Team { get; set; }
-    public string User { get; set; }
-    public string TeamId { get; set; }
-    public string UserId { get; set; }
+    public string? Url { get; set; }
+    public string? Team { get; set; }
+    public string? User { get; set; }
+    public string? TeamId { get; set; }
+    public string? UserId { get; set; }
 
-#nullable enable
     /// <summary>
     /// Only available when authenticating with a bot token. Identifies the app installation, which is distinct from <see cref="UserId"/>. See the <a href="https://docs.slack.dev/reference/methods/auth.test">Slack documentation</a> for more information.
     /// </summary>

@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace SlackNet;
+﻿namespace SlackNet;
 
 public enum RequestPresence
 {

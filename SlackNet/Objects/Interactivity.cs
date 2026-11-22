@@ -1,4 +1,3 @@
-#nullable disable
 namespace SlackNet;
 
 /// <summary>
@@ -6,6 +5,6 @@ namespace SlackNet;
 /// </summary>
 public class Interactivity
 {
-    public string InteractivityPointer { get; set; }
-    public UserContext Interactor { get; set; }
+    public string? InteractivityPointer { get; set; }
+    public UserContext? Interactor { get; set; }
 }

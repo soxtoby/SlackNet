@@ -1,4 +1,3 @@
-#nullable disable
 namespace SlackNet;
 
 /// <summary>
@@ -8,6 +7,6 @@ namespace SlackNet;
 [SlackType("entity_comment")]
 public class EntityCommentViewInfo : ViewInfo
 {
-    public ExternalReference ExternalRef { get; set; }
-    public string EntityUrl { get; set; }
+    public ExternalReference? ExternalRef { get; set; }
+    public string? EntityUrl { get; set; }
 }

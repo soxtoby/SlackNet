@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using Newtonsoft.Json;
 
 namespace SlackNet;

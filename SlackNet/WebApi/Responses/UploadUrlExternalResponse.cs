@@ -1,8 +1,7 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class UploadUrlExternalResponse
 {
-    public string UploadUrl { get; set; }
-    public string FileId { get; set; }
+    public string UploadUrl { get; set; } = null!;
+    public string FileId { get; set; } = null!;
 }

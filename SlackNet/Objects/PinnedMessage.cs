@@ -1,5 +1,4 @@
-﻿#nullable disable
-using SlackNet.Events;
+﻿using SlackNet.Events;
 
 namespace SlackNet;
 
@@ -9,6 +8,6 @@ public class PinnedMessage : PinnedItem
     /// <summary>
     /// The channel ID for the message.
     /// </summary>
-    public string Channel { get; set; }
-    public MessageEvent Message { get; set; }
+    public string? Channel { get; set; }
+    public MessageEvent? Message { get; set; }
 }

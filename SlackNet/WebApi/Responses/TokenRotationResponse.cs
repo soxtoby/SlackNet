@@ -1,4 +1,3 @@
-#nullable disable
 using System;
 using Newtonsoft.Json;
 
@@ -6,10 +5,10 @@ namespace SlackNet.WebApi;
 
 public class TokenRotationResponse
 {
-    public string Token { get; set; }
-    public string RefreshToken { get; set; }
-    public string TeamId { get; set; }
-    public string UserId { get; set; }
+    public string Token { get; set; } = null!;
+    public string RefreshToken { get; set; } = null!;
+    public string TeamId { get; set; } = null!;
+    public string UserId { get; set; } = null!;
     public int Exp { get; set; }
     [JsonIgnore]
     public DateTime Expires => Exp.ToDateTime().GetValueOrDefault();

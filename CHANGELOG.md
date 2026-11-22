@@ -64,6 +64,7 @@
 
 ### Changed
 - `SlackException` messages include error fields that aren't strings, as JSON.
+- Web API response types, and the Slack objects they contain, such as `User`, `Conversation` and `File`, have nullable annotations. Properties Slack doesn't always return are nullable, so projects with nullable reference types enabled may see new warnings. `ViewState.GetValue` returns a nullable value, and `IReadOnlyAttachment`'s strings are nullable. Events, blocks, interaction payloads and API arguments will be annotated in later releases.
 
 ### Deprecated
 To reduce how much of SlackNet's public API depends on Newtonsoft.Json:

@@ -1,22 +1,20 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class OauthV2AccessResponse : OauthAccessResponse
 {
-    public string AppId { get; set; }
+    public string AppId { get; set; } = null!;
 
-    public string TokenType { get; set; }
+    public string? TokenType { get; set; }
 
-    public string BotUserId { get; set; }
+    public string? BotUserId { get; set; }
 
     /// <summary>
     /// The user ID of the user corresponding to the token.
     /// </summary>
-    public string UserId { get; set; }
+    public string? UserId { get; set; }
 
     public bool IsEnterpriseInstall { get; set; }
 
-#nullable enable
     /// <summary>
     /// Only available for OAuth flows with Token Rotation enabled. See the <a href="https://docs.slack.dev/authentication/using-token-rotation/">Slack documentation</a> for more information.
     /// </summary>
@@ -34,11 +32,10 @@ public class OauthV2AccessResponse : OauthAccessResponse
     /// Only available for enterprise price tier.
     /// </summary>
     public WorkSpace? Enterprise { get; set; }
-#nullable disable
 
-    public AuthedUser AuthedUser { get; set; }
+    public AuthedUser? AuthedUser { get; set; }
     
-    public IncomingWebhook IncomingWebhook { get; set; }
+    public IncomingWebhook? IncomingWebhook { get; set; }
 }
 
 public class IncomingWebhook
@@ -46,20 +43,20 @@ public class IncomingWebhook
     /// <summary>
     /// The name of the channel that the user selected as a destination for webhook messages.
     /// </summary>
-    public string Channel { get; set; }
+    public string Channel { get; set; } = null!;
     
     /// <summary>
     /// The ID of the same channel.
     /// </summary>
-    public string ChannelId { get; set; }
+    public string ChannelId { get; set; } = null!;
     
     /// <summary>
     /// A link to the page that configures your app within the workspace it was installed to.
     /// </summary>
-    public string ConfigurationUrl { get; set; }
+    public string ConfigurationUrl { get; set; } = null!;
     
     /// <summary>
     /// The Incoming Webhook URL.
     /// </summary>
-    public string Url { get; set; }
+    public string Url { get; set; } = null!;
 }

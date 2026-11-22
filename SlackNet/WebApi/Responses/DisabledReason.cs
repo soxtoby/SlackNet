@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace SlackNet.WebApi;
 

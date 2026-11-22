@@ -1,9 +1,8 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class MessageUpdateResponse
 {
-    public string Channel { get; set; }
-    public string Ts { get; set; }
-    public string Text { get; set; }
+    public string Channel { get; set; } = null!;
+    public string Ts { get; set; } = null!;
+    public string Text { get; set; } = null!;
 }

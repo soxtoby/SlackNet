@@ -1,11 +1,10 @@
-﻿#nullable disable
-using SlackNet.Blocks;
+﻿using SlackNet.Blocks;
 
 namespace SlackNet;
 
 public class EntityIcon
 {
-    public string AltText { get; set; }
-    public string Url { get; set; }
-    public ImageFileReference SlackFile { get; set; }
+    public string? AltText { get; set; }
+    public string? Url { get; set; }
+    public ImageFileReference? SlackFile { get; set; }
 }

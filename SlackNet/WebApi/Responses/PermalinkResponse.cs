@@ -1,8 +1,7 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class PermalinkResponse
 {
-    public string Channel { get; set; }
-    public string Permalink { get; set; }
+    public string Channel { get; set; } = null!;
+    public string Permalink { get; set; } = null!;
 }

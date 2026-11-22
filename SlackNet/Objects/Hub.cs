@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using Newtonsoft.Json;
 using SlackNet.Events;
 
@@ -8,7 +7,7 @@ namespace SlackNet;
 [Obsolete("Use Conversation instead")]
 public class Hub
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = null!;
     public bool IsIm { get; set; }
     public bool IsChannel { get; set; }
     public bool IsGroup { get; set; }
@@ -17,16 +16,16 @@ public class Hub
     public int Created { get; set; }
     [JsonIgnore]
     public DateTime CreatedDateTime => Created.ToDateTime().GetValueOrDefault();
-    public string[] Members { get; set; }
+    public string[]? Members { get; set; }
 
     /// <summary>
     /// Timestamp for the last message the calling user has read in this channel.
     /// </summary>
-    public string LastRead { get; set; }
+    public string? LastRead { get; set; }
     /// <summary>
     /// The latest message in the channel.
     /// </summary>
-    public MessageEvent Latest { get; set; }
+    public MessageEvent? Latest { get; set; }
     /// <summary>
     /// Full count of visible messages that the calling user has yet to read.
     /// </summary>

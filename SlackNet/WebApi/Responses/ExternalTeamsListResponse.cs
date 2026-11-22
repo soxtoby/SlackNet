@@ -1,11 +1,10 @@
-﻿#nullable disable
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SlackNet.WebApi;
 
 public class ExternalTeamsListResponse
 {
-    public IList<ExternalTeam> Organizations { get; set; }
+    public IList<ExternalTeam> Organizations { get; set; } = null!;
     public int TotalCount { get; set; }
-    public ResponseMetadata ResponseMetadata { get; set; }
+    public ResponseMetadata? ResponseMetadata { get; set; }
 }

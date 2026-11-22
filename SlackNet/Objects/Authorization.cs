@@ -1,4 +1,3 @@
-#nullable disable
 namespace SlackNet;
 
 /// <summary>
@@ -8,11 +7,11 @@ namespace SlackNet;
 /// </summary>
 public class Authorization
 {
-    public string EnterpriseId { get; set; }
+    public string? EnterpriseId { get; set; }
 
-    public string TeamId { get; set; }
+    public string? TeamId { get; set; }
 
-    public string UserId { get; set; }
+    public string UserId { get; set; } = null!;
         
     public bool IsBot { get; set; }
 

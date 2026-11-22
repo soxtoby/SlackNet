@@ -1,7 +1,6 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class PostEphemeralResponse
 {
-    public string MessageTs { get; set; }
+    public string MessageTs { get; set; } = null!;
 }

@@ -1,4 +1,3 @@
-#nullable disable
 namespace SlackNet;
 
 /// <summary>
@@ -6,10 +5,9 @@ namespace SlackNet;
 /// </summary>
 public class AuthedUser
 {
-    public string Id { get; set; }
-    public string Scope { get; set; }
-    public string AccessToken { get; set; }
-#nullable enable
+    public string Id { get; set; } = null!;
+    public string? Scope { get; set; }
+    public string? AccessToken { get; set; }
 
     /// <summary>
     /// Only available for OAuth flows with Token Rotation enabled. See the <a href="https://docs.slack.dev/authentication/using-token-rotation/">Slack documentation</a> for more information.
@@ -19,6 +17,5 @@ public class AuthedUser
     /// Only available for OAuth flows with Token Rotation enabled. See the <a href="https://docs.slack.dev/authentication/using-token-rotation/">Slack documentation</a> for more information.
     /// </summary>
     public string? RefreshToken { get; set; }
-#nullable disable
-    public string TokenType { get; set; }
+    public string? TokenType { get; set; }
 }

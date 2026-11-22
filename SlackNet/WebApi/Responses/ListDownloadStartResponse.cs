@@ -1,7 +1,6 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 class ListDownloadStartResponse
 {
-    public string JobId { get; set; }
+    public string JobId { get; set; } = null!;
 }

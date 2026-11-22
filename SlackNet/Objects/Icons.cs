@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -19,5 +18,5 @@ public class Icons
     /// <summary>
     /// A map of icon sizes to image URLs. See the <a href="https://docs.slack.dev/reference/methods/team.info#examples/">team.info documentation</a> for an example.
     /// </summary>
-    public IReadOnlyDictionary<string, string> Images => _images.ToDictionary(i => i.Key, i => i.Value.ToObject<string>());
+    public IReadOnlyDictionary<string, string> Images => _images.ToDictionary(i => i.Key, i => i.Value.ToObject<string>()!);
 }

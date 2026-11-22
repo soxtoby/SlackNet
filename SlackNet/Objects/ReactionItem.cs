@@ -1,7 +1,6 @@
-﻿#nullable disable
-namespace SlackNet;
+﻿namespace SlackNet;
 
 public class ReactionItem
 {
-    public string Type { get; set; }
+    public string? Type { get; set; }
 }

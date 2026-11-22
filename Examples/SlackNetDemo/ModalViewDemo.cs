@@ -183,21 +183,21 @@ class ModalViewDemo(ISlackApiClient slack) : IEventHandler<MessageEvent>, IBlock
 
     public async Task<ViewSubmissionResponse> Handle(ViewSubmission viewSubmission)
     {
-        var metadata = JsonSerializer.Deserialize<ModalMetadata>(viewSubmission.View.PrivateMetadata)!;
+        var metadata = JsonSerializer.Deserialize<ModalMetadata>(viewSubmission.View.PrivateMetadata!)!;
         Console.WriteLine($"{viewSubmission.User.Name} submitted the demo modal view in the {metadata.ChannelName} channel");
 
-        var state = viewSubmission.View.State;
+        var state = viewSubmission.View.State!;
         var values = new Dictionary<string, string>
             {
-                { "Input", state.GetValue<PlainTextInputValue>(InputActionId).Value ?? "none" },
-                { "Single-select", state.GetValue<StaticSelectValue>(SingleSelectActionId).SelectedOption?.Text.Text ?? "none" },
-                { "Multi-select", string.Join(", ", state.GetValue<StaticMultiSelectValue>(MultiSelectActionId).SelectedOptions.Select(o => o.Text).DefaultIfEmpty("none")) },
-                { "Date", state.GetValue<DatePickerValue>(DatePickerActionId).SelectedDate?.ToString("yyyy-MM-dd") ?? "none" },
-                { "Time", state.GetValue<TimePickerValue>(TimePickerActionId).SelectedTime?.ToString("hh\\:mm") ?? "none" },
-                { "Radio options", state.GetValue<RadioButtonGroupValue>(RadioActionId).SelectedOption?.Text.Text ?? "none" },
-                { "Checkbox options", string.Join(", ", state.GetValue<CheckboxGroupValue>(CheckboxActionId).SelectedOptions.Select(o => o.Text).DefaultIfEmpty("none")) },
-                { "Single user select", state.GetValue<UserSelectValue>(SingleUserActionId).SelectedUser is string userId ? Link.User(userId).ToString()! : "none" },
-                { "Files", string.Join(", ", state.GetValue<FileInputValue>(FileInputActionId).Files.Select(f => f.Name).DefaultIfEmpty("none")) }
+                { "Input", state.GetValue<PlainTextInputValue>(InputActionId)?.Value ?? "none" },
+                { "Single-select", state.GetValue<StaticSelectValue>(SingleSelectActionId)?.SelectedOption?.Text.Text ?? "none" },
+                { "Multi-select", string.Join(", ", (state.GetValue<StaticMultiSelectValue>(MultiSelectActionId)?.SelectedOptions ?? []).Select(o => o.Text).DefaultIfEmpty("none")) },
+                { "Date", state.GetValue<DatePickerValue>(DatePickerActionId)?.SelectedDate?.ToString("yyyy-MM-dd") ?? "none" },
+                { "Time", state.GetValue<TimePickerValue>(TimePickerActionId)?.SelectedTime?.ToString("hh\\:mm") ?? "none" },
+                { "Radio options", state.GetValue<RadioButtonGroupValue>(RadioActionId)?.SelectedOption?.Text.Text ?? "none" },
+                { "Checkbox options", string.Join(", ", (state.GetValue<CheckboxGroupValue>(CheckboxActionId)?.SelectedOptions ?? []).Select(o => o.Text).DefaultIfEmpty("none")) },
+                { "Single user select", state.GetValue<UserSelectValue>(SingleUserActionId)?.SelectedUser is string userId ? Link.User(userId).ToString()! : "none" },
+                { "Files", string.Join(", ", (state.GetValue<FileInputValue>(FileInputActionId)?.Files ?? []).Select(f => f.Name).DefaultIfEmpty("none")) }
             };
         var richText = state.GetValue<RichTextInputValue>(RichTextActionId)?.RichTextValue
             ?? new RichTextBlock { Elements = { new RichTextSection { Elements = { new RichTextText { Text = "none" } } } } };
@@ -205,7 +205,7 @@ class ModalViewDemo(ISlackApiClient slack) : IEventHandler<MessageEvent>, IBlock
         await slack.Chat.PostMessage(new Message
             {
                 Channel = metadata.ChannelId,
-                Text = $"You entered: {state.GetValue<PlainTextInputValue>(InputActionId).Value}",
+                Text = $"You entered: {state.GetValue<PlainTextInputValue>(InputActionId)?.Value}",
                 Blocks =
                     {
                         new SectionBlock
@@ -235,7 +235,7 @@ class ModalViewDemo(ISlackApiClient slack) : IEventHandler<MessageEvent>, IBlock
 
     public async Task HandleClose(ViewClosed viewClosed)
     {
-        var metadata = JsonSerializer.Deserialize<ModalMetadata>(viewClosed.View.PrivateMetadata)!;
+        var metadata = JsonSerializer.Deserialize<ModalMetadata>(viewClosed.View.PrivateMetadata!)!;
         Console.WriteLine($"{viewClosed.User.Name} cancelled the demo modal view in the {metadata.ChannelName} channel");
 
         await slack.Chat.PostMessage(new Message
@@ -245,5 +245,5 @@ class ModalViewDemo(ISlackApiClient slack) : IEventHandler<MessageEvent>, IBlock
             });
     }
 
-    record ModalMetadata(string ChannelId, string ChannelName);
+    record ModalMetadata(string? ChannelId, string? ChannelName);
 }

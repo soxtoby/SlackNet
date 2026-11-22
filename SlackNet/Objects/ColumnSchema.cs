@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SlackNet;
 
@@ -8,15 +7,15 @@ public class ColumnSchema
     /// <summary>
     /// The ID of the column, provided by Slack.
     /// </summary>
-    public string Id { get; set; }
+    public string? Id { get; set; }
     /// <summary>
     /// The key of the column.
     /// </summary>
-    public string Key { get; set; }
+    public string? Key { get; set; }
     /// <summary>
     /// The name of the column to be displayed in the List.
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
     /// <summary>
     /// The type of column.
     /// </summary>
@@ -51,15 +50,15 @@ public class ColumnOptions
     /// Used by date columns to specify the format of the date.
     /// See the <a href="https://docs.slack.dev/reference/methods/slackLists.create/#schema-options-date-format">Slack documentation</a> for supported formats.
     /// </summary>
-    public string DateFormat { get; set; }
+    public string? DateFormat { get; set; }
     /// <summary>
     /// Used by rating and vote columns. This is the emoji to be displayed e.g., ":smile:".
     /// </summary>
-    public string Emoji { get; set; }
+    public string? Emoji { get; set; }
     /// <summary>
     /// Used by rating columns, this is the team ID the emoji belongs to.
     /// </summary>
-    public string EmojiTeamId { get; set; }
+    public string? EmojiTeamId { get; set; }
     /// <summary>
     /// Used by rating columns to specify the maximum rate value
     /// </summary>
@@ -67,7 +66,7 @@ public class ColumnOptions
     /// <summary>
     /// Default value for some columns.
     /// </summary>
-    public ColumnDefaultValue DefaultValueTyped { get; set; }
+    public ColumnDefaultValue? DefaultValueTyped { get; set; }
     /// <summary>
     /// Used by people, channel, and canvas columns to specify whether the entity name should be shown. Default is True.
     /// </summary>
@@ -83,11 +82,11 @@ public class ColumnOptionItem
     /// <summary>
     /// The value for the option.
     /// </summary>
-    public string Value { get; set; }
+    public string? Value { get; set; }
     /// <summary>
     /// The label of the option to be displayed in the List.
     /// </summary>
-    public string Label { get; set; }
+    public string? Label { get; set; }
     /// <summary>
     /// The color type.
     /// </summary>
@@ -99,15 +98,15 @@ public class ColumnDefaultValue
     /// <summary>
     /// Default user values (encoded user ids) for the people column.
     /// </summary>
-    public string User { get; set; }
+    public string? User { get; set; }
     /// <summary>
     /// Default channel values (encoded channel ids) for the channel column.
     /// </summary>
-    public string Channel { get; set; }
+    public string? Channel { get; set; }
     /// <summary>
     /// Default select values for the select column. These values should be the same ones used in the <see cref="ColumnOptions.Choices"/> value.
     /// </summary>
-    public string Select { get; set; }
+    public string? Select { get; set; }
 }
 
 public enum ColumnType

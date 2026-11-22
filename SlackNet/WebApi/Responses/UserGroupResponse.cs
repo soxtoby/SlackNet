@@ -1,7 +1,6 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 class UserGroupResponse
 {
-    public UserGroup Usergroup { get; set; }
+    public UserGroup Usergroup { get; set; } = null!;
 }

@@ -1,4 +1,3 @@
-#nullable disable
 namespace SlackNet;
 
 public class ProfileFieldOptions

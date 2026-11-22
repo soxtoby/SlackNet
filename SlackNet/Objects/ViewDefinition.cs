@@ -1,4 +1,3 @@
-#nullable disable
 using System.Collections.Generic;
 using SlackNet.Blocks;
 using SlackNet.Interaction;
@@ -17,16 +16,16 @@ public abstract class ViewDefinition(string type)
     /// <summary>
     /// An optional string that will be sent to your app in <see cref="ViewSubmission"/> and <see cref="BlockActionRequest"/> events. 
     /// </summary>
-    public string PrivateMetadata { get; set; }
+    public string? PrivateMetadata { get; set; }
 
     /// <summary>
     /// An identifier to recognize interactions and submissions of this particular view.
     /// Don't use this to store sensitive information (use <see cref="PrivateMetadata"/> instead).
     /// </summary>
-    public string CallbackId { get; set; }
+    public string? CallbackId { get; set; }
 
     /// <summary>
     /// A custom identifier that must be unique for all views on a per-team basis.
     /// </summary>
-    public string ExternalId { get; set; }
+    public string? ExternalId { get; set; }
 }

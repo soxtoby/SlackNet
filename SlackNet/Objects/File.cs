@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -7,113 +6,113 @@ namespace SlackNet;
 
 public class File
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = null!;
     public int Created { get; set; }
     [JsonIgnore]
     public DateTime CreatedDate => Created.ToDateTime().GetValueOrDefault();
     public int Timestamp { get; set; }
-    public string Name { get; set; }
-    public string Title { get; set; }
-    public string Mimetype { get; set; }
-    public string Filetype { get; set; }
-    public string PrettyType { get; set; }
+    public string? Name { get; set; }
+    public string? Title { get; set; }
+    public string? Mimetype { get; set; }
+    public string? Filetype { get; set; }
+    public string? PrettyType { get; set; }
     /// <summary>File subtype.</summary>
-    public string Subtype { get; set; }
+    public string? Subtype { get; set; }
     /// <summary>How the media should be displayed.</summary>
-    public string MediaDisplayType { get; set; }
+    public string? MediaDisplayType { get; set; }
     /// <summary>Duration in milliseconds for media files.</summary>
     public int DurationMs { get; set; }
-    public string User { get; set; }
+    public string? User { get; set; }
     /// <summary>Team of the user who created the file.</summary>
-    public string UserTeam { get; set; }
+    public string? UserTeam { get; set; }
     /// <summary>Team where the file originated.</summary>
-    public string SourceTeam { get; set; }
-    public string Mode { get; set; }
+    public string? SourceTeam { get; set; }
+    public string? Mode { get; set; }
     public bool Editable { get; set; }
     public bool IsExternal { get; set; }
-    public string ExternalType { get; set; }
-    public string Username { get; set; }
+    public string? ExternalType { get; set; }
+    public string? Username { get; set; }
     public bool DisplayAsBot { get; set; }
     public int Size { get; set; }
-    public string UrlPrivate { get; set; }
-    public string UrlPrivateDownload { get; set; }
+    public string? UrlPrivate { get; set; }
+    public string? UrlPrivateDownload { get; set; }
     [JsonProperty("thumb_64")]
-    public string Thumb64 { get; set; }
+    public string? Thumb64 { get; set; }
     [JsonProperty("thumb_80")]
-    public string Thumb80 { get; set; }
+    public string? Thumb80 { get; set; }
     [JsonProperty("thumb_360")]
-    public string Thumb360 { get; set; }
+    public string? Thumb360 { get; set; }
     [JsonProperty("thumb_360_gif")]
-    public string Thumb360Gif { get; set; }
+    public string? Thumb360Gif { get; set; }
     [JsonProperty("thumb_360_w")]
     public int Thumb360W { get; set; }
     [JsonProperty("thumb_360_h")]
     public int Thumb360H { get; set; }
     [JsonProperty("thumb_480")]
-    public string Thumb480 { get; set; }
+    public string? Thumb480 { get; set; }
     [JsonProperty("thumb_480_w")]
     public int Thumb480W { get; set; }
     [JsonProperty("thumb_480_h")]
     public int Thumb480H { get; set; }
     [JsonProperty("thumb_160")]
-    public string Thumb160 { get; set; }
-    public string Permalink { get; set; }
-    public string PermalinkPublic { get; set; }
-    public string EditLink { get; set; }
-    public string Preview { get; set; }
-    public string PreviewHighlight { get; set; }
+    public string? Thumb160 { get; set; }
+    public string? Permalink { get; set; }
+    public string? PermalinkPublic { get; set; }
+    public string? EditLink { get; set; }
+    public string? Preview { get; set; }
+    public string? PreviewHighlight { get; set; }
     public int Lines { get; set; }
     public int LinesMore { get; set; }
     public bool IsPublic { get; set; }
     public bool PublicUrlShared { get; set; }
-    public string[] Channels { get; set; }
-    public string[] Groups { get; set; }
-    public string[] Ims { get; set; }
-    public FileComment InitialComment { get; set; }
+    public string[]? Channels { get; set; }
+    public string[]? Groups { get; set; }
+    public string[]? Ims { get; set; }
+    public FileComment? InitialComment { get; set; }
     public int NumStars { get; set; }
     public bool IsStarred { get; set; }
-    public string[] PinnedTo { get; set; }
+    public string[]? PinnedTo { get; set; }
     public bool SkippedShares { get; set; }
     /// <summary>Whether there are additional shares not returned.</summary>
     public bool HasMoreShares { get; set; }
-    public FileShares Shares { get; set; }
-    public IList<string> TeamsSharedWith { get; set; }
+    public FileShares? Shares { get; set; }
+    public IList<string>? TeamsSharedWith { get; set; }
     public bool IsRestrictedSharingEnabled { get; set; }
     public IList<Reaction> Reactions { get; set; } = [];
     public int CommentsCount { get; set; }
-    public string ExternalId { get; set; }
-    public string ExternalUrl { get; set; }
+    public string? ExternalId { get; set; }
+    public string? ExternalUrl { get; set; }
     public bool HasRichPreview { get; set; }
-    public ListMetadata ListMetadata { get; set; }
-    public ListLimits ListLimits { get; set; }
-    public string LastEditor { get; set; }
-    public string ListCsvDownloadUrl { get; set; }
+    public ListMetadata? ListMetadata { get; set; }
+    public ListLimits? ListLimits { get; set; }
+    public string? LastEditor { get; set; }
+    public string? ListCsvDownloadUrl { get; set; }
     public int Updated { get; set; }
     [JsonIgnore]
     public DateTime? UpdatedTime => Updated.ToDateTime();
-    public string FileAccess { get; set; }
-    public string Access { get; set; }
-    public string OrgOrWorkspaceAccess { get; set; }
+    public string? FileAccess { get; set; }
+    public string? Access { get; set; }
+    public string? OrgOrWorkspaceAccess { get; set; }
     public bool IsAiSuggested { get; set; }
 }
 
 public class FileShares
 {
-    public IDictionary<string, IEnumerable<FileShare>> Public { get; set; }
-    public IDictionary<string, IEnumerable<FileShare>> Private { get; set; }
+    public IDictionary<string, IEnumerable<FileShare>>? Public { get; set; }
+    public IDictionary<string, IEnumerable<FileShare>>? Private { get; set; }
 }
 
 public class FileShare
 {
-    public string[] ReplyUsers { get; set; }
+    public string[]? ReplyUsers { get; set; }
     public int ReplyUsersCount { get; set; }
     public int ReplyCount { get; set; }
-    public string Ts { get; set; }
-    public string ThreadTs { get; set; }
+    public string? Ts { get; set; }
+    public string? ThreadTs { get; set; }
     /// <summary>
     /// Id of latest message reply.
     /// </summary>
-    public string LatestReply { get; set; }
-    public string ChannelName { get; set; }
-    public string TeamId { get; set; }
+    public string? LatestReply { get; set; }
+    public string? ChannelName { get; set; }
+    public string? TeamId { get; set; }
 }

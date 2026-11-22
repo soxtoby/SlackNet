@@ -1,4 +1,3 @@
-#nullable disable
 namespace SlackNet.WebApi;
 
 record CanvasContentUpdateResponse

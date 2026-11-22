@@ -1,9 +1,8 @@
-﻿#nullable disable
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SlackNet.WebApi;
 
 class PinnedItemListResponse
 {
-    public List<PinnedItem> Items { get; set; }
+    public List<PinnedItem>? Items { get; set; }
 }

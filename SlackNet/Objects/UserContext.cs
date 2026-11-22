@@ -1,8 +1,7 @@
-#nullable disable
 namespace SlackNet;
 
 public class UserContext
 {
-    public string Id { get; set; }
-    public string Secret { get; set; }
+    public string Id { get; set; } = null!;
+    public string? Secret { get; set; }
 }

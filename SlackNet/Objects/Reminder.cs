@@ -1,15 +1,14 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using Newtonsoft.Json;
 
 namespace SlackNet;
 
 public class Reminder
 {
-    public string Id { get; set; }
-    public string Creator { get; set; }
-    public string User { get; set; }
-    public string Text { get; set; }
+    public string Id { get; set; } = null!;
+    public string? Creator { get; set; }
+    public string? User { get; set; }
+    public string? Text { get; set; }
     public bool Recurring { get; set; }
     public int Time { get; set; }
     [JsonIgnore]

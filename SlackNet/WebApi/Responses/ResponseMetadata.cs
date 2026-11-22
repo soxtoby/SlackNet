@@ -1,7 +1,6 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class ResponseMetadata
 {
-    public string NextCursor { get; set; }
+    public string? NextCursor { get; set; }
 }

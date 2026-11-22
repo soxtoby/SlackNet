@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 
 namespace SlackNet;
 
@@ -11,5 +10,5 @@ public class DateField() : EntityField("slack#/types/date")
     /// <summary>
     /// The field's content will be hyperlinked with the URL specified here.
     /// </summary>
-    public string Link { get; set; }
+    public string? Link { get; set; }
 }

@@ -1,4 +1,3 @@
-#nullable disable
 using System.Collections.Generic;
 
 namespace SlackNet.WebApi;
@@ -10,12 +9,12 @@ public class FeaturedWorkflowsListResponse
 
 public class ChannelFeaturedWorkflows
 {
-    public string ChannelId { get; set; }
+    public string ChannelId { get; set; } = null!;
     public IList<FeaturedTrigger> Triggers { get; set; } = new List<FeaturedTrigger>();
 }
 
 public class FeaturedTrigger
 {
-    public string Id { get; set; }
-    public string Title { get; set; }
+    public string Id { get; set; } = null!;
+    public string Title { get; set; } = null!;
 }

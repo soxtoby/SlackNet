@@ -1,7 +1,6 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 class PurposeResponse
 {
-    public Conversation Channel { get; set; }
+    public Conversation Channel { get; set; } = null!;
 }

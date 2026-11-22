@@ -1,7 +1,6 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class FileResponse
 {
-    public File File { get; set; }
+    public File? File { get; set; }
 }

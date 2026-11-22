@@ -45,13 +45,17 @@ public partial class ApiDocumentationTests
             "AgentView.ViewKey", // Absent for diff views
             "AppMcpServer.AuthType", // Null when Slack returns an auth type SlackNet doesn't know
             "AuthPolicyEntity.EntityType", // Null when Slack returns an entity type SlackNet doesn't know
+            "AuthTeam.Id", // Slack's auth.teams.list schema doesn't mark id as required, but every team has one
+            "ChannelIdResponse.ChannelId", // Slack's admin.conversations.create schema doesn't mark channel_id as required
             "ChannelResponse.Channel", // Slack's example admin.conversations.setTeams response has no channel
             "EnterpriseTeam.Id", // Slack's schema requires team_id, which isn't one of its properties, instead of id
             "ErrorDetail.Code", // Also used for SlackException.ErrorDetails, which aren't documented to have a code
-            "OauthV2AccessResponse.ExpiresIn", // Also used for oauth.v2.access, which only returns it with token rotation
-            "OauthV2AccessResponse.RefreshToken", // Also used for oauth.v2.access, which only returns it with token rotation
+            "File.Id", // Some of Slack's file schemas don't mark id as required, but every file has one
+            "OwnershipDetails.Count", // Already released as nullable
             "Skill.AutoEnabled", // Only returned by admin.slackbot.skills.list
             "Skill.Permalink", // Not returned by admin.slackbot.skills.list
+            "SubteamResponse.Subteam", // Slack's admin.usergroups.create and admin.usergroups.update schemas don't mark subteam as required
+            "Team.Id", // Slack's admin.teams.settings.info schema doesn't mark id as required, but every team has one
         ];
 
     /// <summary>
@@ -88,11 +92,10 @@ public partial class ApiDocumentationTests
             .Where(argName => !UndocumentedArgExceptions.Contains($"{slackMethod} {argName}"))
             .ShouldBeEmpty();
 
-    [TestCaseSource(nameof(DocumentedResponses))]
-    public void RequirednessMatches(string slackMethod, Type responseType) =>
-        SchemaObjects(responseType, OutputSchemas[slackMethod], slackMethod)
-            .Where(o => HasNullableAnnotations(o.Type))
-            .SelectMany(RequirednessMismatches)
+    [TestCaseSource(nameof(AnnotatedDocumentedTypes))]
+    public void RequirednessMatches(Type type, ICollection<(PropertyInfo Property, bool Optional, string Path)> documentedProperties) =>
+        documentedProperties
+            .SelectMany(p => RequirednessMismatch(type, p.Property, p.Optional, p.Path))
             .ShouldBeEmpty();
 
     [TestCaseSource(nameof(DocumentedTypes))]
@@ -112,20 +115,33 @@ public partial class ApiDocumentationTests
             .Select(m => new TestCaseData(m.Key, m.SelectMany(argNames => argNames).Distinct().ToList())
                 .SetArgDisplayNames(m.Key));
 
-    private static IEnumerable<TestCaseData> DocumentedResponses() =>
-        DocumentedResponseTypes()
-            .Select(m => new TestCaseData(m.SlackMethod, m.ResponseType)
-                .SetArgDisplayNames(m.SlackMethod, m.ResponseType.Name));
+    /// <summary>
+    /// Each type with nullable annotations that declares documented properties, and whether each of those properties is optional.
+    /// Properties shared between methods or inheriting types have to suit all of their schemas, so a property is optional if any of them say it is.
+    /// </summary>
+    private static IEnumerable<TestCaseData> AnnotatedDocumentedTypes() =>
+        SchemaObjectsByType()
+            .SelectMany(type => type.SelectMany(o => o.DocumentedProperties().Select(p => (p.Property, Optional: IsOptional(o, p.SchemaProperty), Path: $"{o.Path}.{p.SchemaProperty.Name}"))))
+            .GroupBy(p => p.Property.DeclaringType!)
+            .Where(type => HasNullableAnnotations(type.Key))
+            .Select(type => new TestCaseData(type.Key, type
+                    .GroupBy(p => p.Property.Name)
+                    .Select(property => property.OrderByDescending(p => p.Optional).First())
+                    .ToList())
+                .SetArgDisplayNames(type.Key.Name));
 
     /// <summary>
     /// Each type with a documented schema, and the properties documented by any of its schemas, since types shared between methods can have different documented properties for each.
     /// </summary>
     private static IEnumerable<TestCaseData> DocumentedTypes() =>
-        DocumentedResponseTypes()
-            .SelectMany(m => SchemaObjects(m.ResponseType, OutputSchemas[m.SlackMethod], m.SlackMethod))
-            .GroupBy(o => o.Type)
+        SchemaObjectsByType()
             .Select(type => new TestCaseData(type.Key, type.SelectMany(o => o.SchemaProperties.Properties().Select(p => p.Name)).ToHashSet())
                 .SetArgDisplayNames(type.Key.Name));
+
+    private static IEnumerable<IGrouping<Type, SchemaObject>> SchemaObjectsByType() =>
+        DocumentedResponseTypes()
+            .SelectMany(m => SchemaObjects(m.ResponseType, OutputSchemas[m.SlackMethod], m.SlackMethod))
+            .GroupBy(o => o.Type);
 
     private static IEnumerable<SlackMethodCall> DocumentedResponseTypes() =>
         ApiLintTests.ImplementedSlackMethodCalls()
@@ -194,28 +210,29 @@ public partial class ApiDocumentationTests
         type.GetCustomAttributes().Any(a => a.GetType().Name == "NullableContextAttribute")
         || type.GetProperties().Any(p => p.CustomAttributes.Any(a => a.AttributeType.Name == "NullableAttribute"));
 
-    /// <summary>
-    /// Properties Slack always returns shouldn't be nullable, and properties it might not return shouldn't be <c>required</c>.
-    /// </summary>
-    private static IEnumerable<string> RequirednessMismatches(SchemaObject schemaObject)
-    {
-        var requiredPropertyNames = schemaObject.Schema["required"]?.Values<string>().ToHashSet() ?? [];
-        return schemaObject.DocumentedProperties()
-            .SelectMany(p => RequirednessMismatch(
-                schemaObject.Type,
-                p.Property,
-                !requiredPropertyNames.Contains(p.SchemaProperty.Name) || AllowsNull(p.SchemaProperty.Value),
-                $"{schemaObject.Path}.{p.SchemaProperty.Name}"));
-    }
+    private static bool IsOptional(SchemaObject schemaObject, JProperty schemaProperty) =>
+        schemaObject.Schema["required"]?.Values<string>().Contains(schemaProperty.Name) != true
+        || AllowsNull(schemaProperty.Value);
 
+    /// <summary>
+    /// Properties Slack always returns shouldn't be nullable, and properties it might not return should be nullable or have a default value, but not be <c>required</c>.
+    /// </summary>
     private static IEnumerable<string> RequirednessMismatch(Type type, PropertyInfo property, bool optional, string propertyPath)
     {
         var memberName = $"{type.Name}.{property.Name}";
         return RequirednessExceptions.Contains(memberName) ? []
             : optional && property.IsDefined(typeof(RequiredMemberAttribute)) ? [$"{propertyPath} is optional, but {memberName} is required"]
+            : optional && IsNonNullableReference(property) && !HasDefaultValue(property) ? [$"{propertyPath} is optional, but {memberName} is neither nullable nor initialized"]
             : !optional && IsNullable(property) ? [$"{propertyPath} is required, but {memberName} is nullable"]
             : [];
     }
+
+    /// <summary>
+    /// Whether a new instance of the type the property was found on has a value for it.
+    /// </summary>
+    private static bool HasDefaultValue(PropertyInfo property) =>
+        property.ReflectedType is { IsAbstract: false } type
+        && property.GetValue(Activator.CreateInstance(type, nonPublic: true)) is not null;
 
     private static bool AllowsNull(JToken schema) =>
         Alternatives(schema).Any(s => s["type"] is JValue { Value: "null" } || s["type"] is JArray types && types.Values<string>().Contains("null"));
@@ -224,6 +241,13 @@ public partial class ApiDocumentationTests
         property.PropertyType.IsValueType
             ? Nullable.GetUnderlyingType(property.PropertyType) is not null
             : new NullabilityInfoContext().Create(property).ReadState == NullabilityState.Nullable;
+
+    /// <summary>
+    /// Properties compiled with nullable reference types disabled are neither nullable nor non-nullable.
+    /// </summary>
+    private static bool IsNonNullableReference(PropertyInfo property) =>
+        !property.PropertyType.IsValueType
+        && new NullabilityInfoContext().Create(property).ReadState == NullabilityState.NotNull;
 
     private record SchemaObject(Type Type, JsonObjectContract Contract, JObject Schema, string Path)
     {

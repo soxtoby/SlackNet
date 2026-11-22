@@ -1,4 +1,3 @@
-#nullable disable
 using SlackNet.Blocks;
 using SlackNet.Interaction;
 
@@ -11,18 +10,18 @@ public class ModalViewDefinition : ViewDefinition
     /// <summary>
     /// The title that appears in the top-left of the modal.
     /// </summary>
-    public PlainText Title { get; set; }
+    public PlainText? Title { get; set; }
 
     /// <summary>
     /// Defines the text displayed in the close button at the bottom-right of the view.
     /// </summary>
-    public PlainText Close { get; set; }
+    public PlainText? Close { get; set; }
 
     /// <summary>
     /// Defines the text displayed in the submit button at the bottom-right of the view.
     /// Required when an input block is within the blocks array.
     /// </summary>
-    public PlainText Submit { get; set; }
+    public PlainText? Submit { get; set; }
 
     /// <summary>
     /// When set to True, clicking on the close button will clear all views in a modal and close it.

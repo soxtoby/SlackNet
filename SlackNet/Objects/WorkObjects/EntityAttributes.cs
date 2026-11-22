@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using SlackNet.Blocks;
@@ -17,7 +16,7 @@ public class EntityAttributes
     /// <summary>
     /// User-friendly string ID to display on the entity.
     /// </summary>
-    public string DisplayId { get; set; }
+    public string? DisplayId { get; set; }
     
     /// <summary>
     /// String that represents the resource being unfurled. Default is <see cref="EntityDisplayType.File"/> for a file entity or <see cref="EntityDisplayType.Task"/> for a task entity.
@@ -27,7 +26,7 @@ public class EntityAttributes
     /// <summary>
     /// Name of the product that will be displayed in the Work Objects header. Default is the app name.
     /// </summary>
-    public string ProductName { get; set; }
+    public string? ProductName { get; set; }
     
     /// <summary>
     /// A product icon to display in the Work Object header. Default is the app icon.
@@ -35,13 +34,13 @@ public class EntityAttributes
     /// displaying duplicate icons in the UI.
     /// Must be a publicly-accessible URL or a <see cref="ImageFileReference"/> object.
     /// </summary>
-    public EntityIcon ProductIcon { get; set; }
+    public EntityIcon? ProductIcon { get; set; }
     
     /// <summary>
     /// If your entity supports a visual preview within Slack, you can provide a thumbnail imagein the unfurl card
     /// and a full size image or PDF preview to be displayed in the full size preview modal.
     /// </summary>
-    public FullSizePreview FullSizePreview { get; set; }
+    public FullSizePreview? FullSizePreview { get; set; }
     
     /// <summary>
     /// This field indicates when the metadata about this item was last modified.
@@ -67,8 +66,8 @@ public class EntityAttributes
 
 public class EntityTitle
 {
-    public string Text { get; set; }
-    public EntityEditSupport Edit { get; set; }
+    public string? Text { get; set; }
+    public EntityEditSupport? Edit { get; set; }
 }
 
 public enum EntityDisplayType
@@ -90,21 +89,21 @@ public class FullSizePreview
     /// <summary>
     /// Publicly-accessible URL to an image.
     /// </summary>
-    public string PreviewUrl { get; set; }
+    public string? PreviewUrl { get; set; }
     /// <summary>
     /// Mime type for the preview.
     /// </summary>
-    public string MimeType { get; set; }
+    public string? MimeType { get; set; }
     /// <summary>
     /// Error message to display if the full-size preview is not available.
     /// </summary>
-    public FullSizePreviewError Error { get; set; }
+    public FullSizePreviewError? Error { get; set; }
 }
 
 public class FullSizePreviewError
 {
     public FullSizePreviewErrorCode Code { get; set; }
-    public string Message { get; set; }
+    public string? Message { get; set; }
 }
 
 public enum FullSizePreviewErrorCode

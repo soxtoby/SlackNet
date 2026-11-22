@@ -1,4 +1,3 @@
-#nullable disable
 namespace SlackNet;
 
 [SlackType("workflow_step")]

@@ -1,4 +1,3 @@
-#nullable disable
 namespace SlackNet;
 
 /// <summary>
@@ -15,10 +14,10 @@ public class UrlSource
     /// <summary>
     /// The URL being referenced.
     /// </summary>
-    public string Url { get; set; }
+    public string? Url { get; set; }
 
     /// <summary>
     /// Display text for the URL.
     /// </summary>
-    public string Text { get; set; }
+    public string? Text { get; set; }
 }

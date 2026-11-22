@@ -1,4 +1,3 @@
-#nullable disable
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,8 +9,8 @@ namespace SlackNet;
 /// </summary>
 public class FunctionData
 {
-    public string ExecutionId { get; set; }
-    public Function Function { get; set; }
+    public string? ExecutionId { get; set; }
+    public Function? Function { get; set; }
 
     [JsonIgnore]
     [Obsolete("Use InputValues instead.")]

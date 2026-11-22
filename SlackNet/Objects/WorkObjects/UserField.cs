@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace SlackNet;
+﻿namespace SlackNet;
 
 [SlackType("slack#/types/user")]
 public class UserField() : EntityField("slack#/types/user")

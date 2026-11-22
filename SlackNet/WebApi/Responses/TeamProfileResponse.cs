@@ -1,7 +1,6 @@
-#nullable disable
 namespace SlackNet.WebApi;
 
 class TeamProfileResponse
 {
-    public TeamProfile Profile { get; set; }
+    public TeamProfile Profile { get; set; } = null!;
 }

@@ -1,7 +1,6 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class ConversationId
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = null!;
 }

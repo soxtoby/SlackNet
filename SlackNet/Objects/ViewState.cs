@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using SlackNet.Blocks;
@@ -21,7 +20,7 @@ public class ViewState
     /// Get an element value by the <see cref="Block.BlockId"/> of the block it is in, and its <see cref="IActionElement.ActionId"/>.
     /// </summary>
     /// <returns>Element value if it can be found and is the specified type, otherwise null.</returns>
-    public TValue GetValue<TValue>(string blockId, string actionId) where TValue : ElementValue
+    public TValue? GetValue<TValue>(string blockId, string actionId) where TValue : ElementValue
     {
         return Values.TryGetValue(blockId, out var blockValues)
             && blockValues.TryGetValue(actionId, out var elementValue)
@@ -33,7 +32,7 @@ public class ViewState
     /// Get an element value by its <see cref="IActionElement.ActionId"/>. Assumes action ID is unique in the message or view.
     /// </summary>
     /// <returns>Element value if it can be found and is the specified type, otherwise null.</returns>
-    public TValue GetValue<TValue>(string actionId) where TValue : ElementValue
+    public TValue? GetValue<TValue>(string actionId) where TValue : ElementValue
     {
         return Values.Values
             .SelectMany(b => b)

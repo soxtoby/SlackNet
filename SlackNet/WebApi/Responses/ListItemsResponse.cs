@@ -1,10 +1,9 @@
-﻿#nullable disable
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SlackNet.WebApi;
 
 public class ListItemsResponse
 {
-    public IList<ListItem> Items { get; set; }
-    public ResponseMetadata ResponseMetadata { get; set; }
+    public IList<ListItem> Items { get; set; } = null!;
+    public ResponseMetadata? ResponseMetadata { get; set; }
 }

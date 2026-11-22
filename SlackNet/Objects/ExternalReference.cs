@@ -1,8 +1,7 @@
-#nullable disable
 namespace SlackNet;
 
 public class ExternalReference
 {
-    public string Id { get; set; }
-    public string Type { get; set; }
+    public string Id { get; set; } = null!;
+    public string? Type { get; set; }
 }

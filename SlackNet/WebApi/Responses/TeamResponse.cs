@@ -1,7 +1,6 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 class TeamResponse
 {
-    public Team Team { get; set; }
+    public Team Team { get; set; } = null!;
 }

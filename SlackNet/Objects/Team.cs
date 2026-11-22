@@ -1,17 +1,16 @@
-﻿#nullable disable
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SlackNet;
 
 public class Team
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Domain { get; set; }
-    public string EmailDomain { get; set; }
-    public Icons Icon { get; set; }
-    public string EnterpriseId { get; set; }
-    public string EnterpriseName { get; set; }
+    public string Id { get; set; } = null!;
+    public string? Name { get; set; }
+    public string? Domain { get; set; }
+    public string? EmailDomain { get; set; }
+    public Icons? Icon { get; set; }
+    public string? EnterpriseId { get; set; }
+    public string? EnterpriseName { get; set; }
 
     /// <summary>
     /// Whether the team is migrating to an Enterprise organization.

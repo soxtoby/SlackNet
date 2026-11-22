@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using Newtonsoft.Json;
 
 namespace SlackNet;
@@ -19,5 +18,5 @@ public class TimestampField() : EntityField("slack#/types/timestamp")
     /// <summary>
     /// The field's content will be hyperlinked with the URL specified here.
     /// </summary>
-    public string Link { get; set; }
+    public string? Link { get; set; }
 }

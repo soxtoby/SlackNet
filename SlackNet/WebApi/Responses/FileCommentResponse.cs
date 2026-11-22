@@ -1,7 +1,6 @@
-﻿#nullable disable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 class FileCommentResponse
 {
-    public FileComment Comment { get; set; }
+    public FileComment? Comment { get; set; }
 }

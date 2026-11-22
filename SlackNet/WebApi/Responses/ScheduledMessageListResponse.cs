@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -13,13 +12,13 @@ public class ScheduledMessageListResponse
 
 public class ScheduledMessage
 {
-    public string Id { get; set; }
-    public string ChannelId { get; set; }
+    public string Id { get; set; } = null!;
+    public string ChannelId { get; set; } = null!;
     public int PostAt { get; set; }
     [JsonIgnore]
     public DateTime PostAtDate => PostAt.ToDateTime().GetValueOrDefault();
     public int DateCreated { get; set; }
     [JsonIgnore]
     public DateTime Created => DateCreated.ToDateTime().GetValueOrDefault();
-    public string Text { get; set; }
+    public string? Text { get; set; }
 }
