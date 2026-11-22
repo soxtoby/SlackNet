@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Events;
+﻿#nullable disable
+namespace SlackNet.Events;
 
 /// <summary>
 /// Your Slack app was uninstalled.

@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Events;
+﻿#nullable disable
+namespace SlackNet.Events;
 
 public class AssistantThreadContextChanged : Event
 {

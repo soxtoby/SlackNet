@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Blocks;
+﻿#nullable disable
+namespace SlackNet.Blocks;
 
 [SlackType("feedback_buttons")]
 public class FeedbackButtons() : ContextActionsElement("feedback_buttons")

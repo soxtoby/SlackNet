@@ -1,4 +1,5 @@
-﻿using SlackNet.Blocks;
+﻿#nullable disable
+using SlackNet.Blocks;
 using SlackNet.Events;
 using SlackNet.Interaction;
 using SlackNet.Interaction.Experimental;

@@ -1,4 +1,5 @@
-﻿using SlackNet.Rtm;
+﻿#nullable disable
+using SlackNet.Rtm;
 
 namespace SlackNet.WebApi;
 

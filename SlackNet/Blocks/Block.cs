@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Blocks;
+﻿#nullable disable
+namespace SlackNet.Blocks;
 
 public abstract class Block(string type)
 {

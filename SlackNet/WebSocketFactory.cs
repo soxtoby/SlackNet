@@ -1,4 +1,5 @@
-﻿using System.Net.WebSockets;
+﻿#nullable disable
+using System.Net.WebSockets;
 using System.Security.Authentication;
 
 namespace SlackNet;

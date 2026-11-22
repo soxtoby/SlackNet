@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Events;
+﻿#nullable disable
+namespace SlackNet.Events;
 
 /// <summary>
 /// Verifies ownership of an Events API Request URL.

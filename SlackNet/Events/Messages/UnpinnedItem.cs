@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Events;
+﻿#nullable disable
+namespace SlackNet.Events;
 
 /// <summary>
 /// When an item is un-pinned from a channel, an <see cref="UnpinnedItem"/> message is sent via slackbot to the user that initially pinned the item.

@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Blocks;
+﻿#nullable disable
+namespace SlackNet.Blocks;
 
 [SlackType("mrkdwn")]
 public class Markdown : TextObject, IContextElement

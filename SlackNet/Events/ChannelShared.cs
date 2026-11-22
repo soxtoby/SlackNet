@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Events;
+﻿#nullable disable
+namespace SlackNet.Events;
 
 /// <summary>
 /// Sent to all event subscriptions when a new shared channel is created or a channel is converted into a shared channel.

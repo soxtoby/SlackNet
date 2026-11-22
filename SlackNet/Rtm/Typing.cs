@@ -1,3 +1,4 @@
+#nullable disable
 namespace SlackNet.Rtm;
 
 public class Typing : OutgoingRtmEvent

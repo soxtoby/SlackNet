@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Blocks;
+﻿#nullable disable
+namespace SlackNet.Blocks;
 
 /// <summary>
 /// Shows information about a call.

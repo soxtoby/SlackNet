@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Events;
+﻿#nullable disable
+namespace SlackNet.Events;
 
 /// <summary>
 /// Sent when the purpose for a channel is changed.

@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Rtm;
+﻿#nullable disable
+namespace SlackNet.Rtm;
 
 public class MessageReply
 {

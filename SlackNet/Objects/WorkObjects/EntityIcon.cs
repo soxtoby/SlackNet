@@ -1,4 +1,5 @@
-﻿using SlackNet.Blocks;
+﻿#nullable disable
+using SlackNet.Blocks;
 
 namespace SlackNet;
 

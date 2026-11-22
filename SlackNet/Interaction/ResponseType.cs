@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Interaction;
+﻿#nullable disable
+namespace SlackNet.Interaction;
 
 public enum ResponseType
 {

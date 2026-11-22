@@ -1,3 +1,4 @@
+#nullable disable
 namespace SlackNet.Interaction;
 
 public class SlashCommand

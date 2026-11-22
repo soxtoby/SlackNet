@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable disable
+using System;
 using SlackNet.Blocks;
 using System.Collections.Generic;
 using System.Linq;

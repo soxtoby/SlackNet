@@ -1,3 +1,4 @@
+#nullable disable
 #if NETSTANDARD2_0
 using System.IO;
 using System.Net.Http;

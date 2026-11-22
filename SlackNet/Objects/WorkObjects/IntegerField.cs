@@ -1,4 +1,5 @@
-﻿namespace SlackNet;
+﻿#nullable disable
+namespace SlackNet;
 
 [SlackType("integer")]
 public class IntegerField() : EntityField("integer")

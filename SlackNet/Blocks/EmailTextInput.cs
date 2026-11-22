@@ -1,3 +1,4 @@
+#nullable disable
 namespace SlackNet.Blocks;
 
 public class EmailTextInput() : TextInput("email_text_input")

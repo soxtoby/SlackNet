@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Blocks;
+﻿#nullable disable
+namespace SlackNet.Blocks;
 
 /// <summary>
 /// An interactive element that inserts a button. The button can be a trigger for anything from opening a simple link to starting a complex workflow.

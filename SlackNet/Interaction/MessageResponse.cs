@@ -1,4 +1,5 @@
-﻿using SlackNet.WebApi;
+﻿#nullable disable
+using SlackNet.WebApi;
 
 namespace SlackNet.Interaction;
 

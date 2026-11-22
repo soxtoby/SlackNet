@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Blocks;
+﻿#nullable disable
+namespace SlackNet.Blocks;
 
 /// <summary>
 /// An object containing some text, formatted either as plain text or using Slack's "mrkdwn".

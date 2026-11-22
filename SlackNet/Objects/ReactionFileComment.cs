@@ -1,4 +1,5 @@
-﻿namespace SlackNet;
+﻿#nullable disable
+namespace SlackNet;
 
 [SlackType("file_comment")]
 public class ReactionFileComment : ReactionItem

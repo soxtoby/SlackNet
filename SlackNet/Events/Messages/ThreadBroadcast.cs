@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Events;
+﻿#nullable disable
+namespace SlackNet.Events;
 
 /// <summary>
 /// The <see cref="ThreadBroadcast"/> message subtype is sent when a user or bot user has indicated their reply should be broadcast to the whole channel.

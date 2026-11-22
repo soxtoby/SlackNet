@@ -1,4 +1,5 @@
-﻿namespace SlackNet;
+﻿#nullable disable
+namespace SlackNet;
 
 [SlackType("string")]
 public class StringField() : EntityField("string")

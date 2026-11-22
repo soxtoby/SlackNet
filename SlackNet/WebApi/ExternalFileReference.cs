@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace SlackNet.WebApi;
+﻿namespace SlackNet.WebApi;
 
 public class ExternalFileReference
 {

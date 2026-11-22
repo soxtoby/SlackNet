@@ -1,4 +1,5 @@
-﻿namespace SlackNet;
+﻿#nullable disable
+namespace SlackNet;
 
 public enum UserGroupAutoType
 {

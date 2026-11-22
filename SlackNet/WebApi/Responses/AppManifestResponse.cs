@@ -1,4 +1,3 @@
-#nullable enable
 using SlackNet.AppManifests;
 
 namespace SlackNet.WebApi;

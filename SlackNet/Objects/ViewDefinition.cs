@@ -1,3 +1,4 @@
+#nullable disable
 using System.Collections.Generic;
 using SlackNet.Blocks;
 using SlackNet.Interaction;

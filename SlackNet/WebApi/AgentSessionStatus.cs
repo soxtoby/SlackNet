@@ -1,4 +1,5 @@
-﻿namespace SlackNet.WebApi;
+﻿#nullable disable
+namespace SlackNet.WebApi;
 
 /// <summary>
 /// The lifecycle status of an agent in an agent session.

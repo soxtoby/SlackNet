@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Blocks;
+﻿#nullable disable
+namespace SlackNet.Blocks;
 
 /// <summary>
 /// An element to insert an image - this element can be used in <see cref="SectionBlock"/> and <see cref="ContextBlock"/> blocks only.

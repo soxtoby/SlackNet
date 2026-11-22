@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace SlackNet;
+﻿namespace SlackNet;
 
 public interface ILogger
 {

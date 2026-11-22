@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Events;
+﻿#nullable disable
+namespace SlackNet.Events;
 
 /// <summary>
 /// Notifies your app when a user has entered into the App Home space - that's the place where a user exchanges DMs with your app.

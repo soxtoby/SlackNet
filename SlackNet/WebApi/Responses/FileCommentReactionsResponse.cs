@@ -1,4 +1,5 @@
-﻿namespace SlackNet.WebApi;
+﻿#nullable disable
+namespace SlackNet.WebApi;
 
 class FileCommentReactionsResponse
 {

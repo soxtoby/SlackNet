@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
 namespace SlackNet;

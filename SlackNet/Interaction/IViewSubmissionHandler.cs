@@ -1,3 +1,4 @@
+#nullable disable
 using System.Threading.Tasks;
 
 namespace SlackNet.Interaction;

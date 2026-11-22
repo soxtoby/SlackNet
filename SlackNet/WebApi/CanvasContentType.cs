@@ -1,4 +1,5 @@
-﻿namespace SlackNet.WebApi;
+﻿#nullable disable
+namespace SlackNet.WebApi;
 
 /// <summary>
 /// Format in which to return canvas content.

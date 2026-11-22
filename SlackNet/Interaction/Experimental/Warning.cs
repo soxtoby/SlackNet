@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Interaction.Experimental;
+﻿#nullable disable
+namespace SlackNet.Interaction.Experimental;
 
 static class Warning
 {

@@ -1,3 +1,4 @@
+#nullable disable
 namespace SlackNet.Interaction;
 
 [SlackType("interactive_message")]

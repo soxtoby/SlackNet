@@ -1,3 +1,4 @@
+#nullable disable
 namespace SlackNet;
 
 public abstract class ElementValue

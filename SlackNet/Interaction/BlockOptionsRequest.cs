@@ -1,3 +1,4 @@
+#nullable disable
 using SlackNet.Events;
 
 namespace SlackNet.Interaction;

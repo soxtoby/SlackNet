@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿#nullable disable
+using System.Threading.Tasks;
 
 namespace SlackNet.Interaction.Experimental;
 

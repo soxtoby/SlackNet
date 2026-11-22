@@ -1,4 +1,5 @@
-﻿namespace SlackNet.Blocks;
+﻿#nullable disable
+namespace SlackNet.Blocks;
 
 [SlackType("plain_text")]
 public class PlainText : TextObject, IContextElement

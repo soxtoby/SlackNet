@@ -1,3 +1,4 @@
+#nullable disable
 namespace SlackNet.WebApi;
 
 record SubteamResponse

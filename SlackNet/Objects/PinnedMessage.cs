@@ -1,4 +1,5 @@
-﻿using SlackNet.Events;
+﻿#nullable disable
+using SlackNet.Events;
 
 namespace SlackNet;
 

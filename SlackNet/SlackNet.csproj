@@ -10,6 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>Slack API RTM Events</PackageTags>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <Nullable>enable</Nullable>
     <NoWarn>0618;1591;1701;1702;1812</NoWarn>
   </PropertyGroup>
 

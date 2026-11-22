@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable disable
+using System;
 using SlackNet.Interaction;
 
 namespace SlackNet.SocketMode;
