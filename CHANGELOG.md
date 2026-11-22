@@ -2,18 +2,21 @@
 
 ## Unreleased
 
+## v0.20.1
+
+This release adds all the remaining Slack Web API methods, including the admin APIs for Enterprise organizations. It also starts reducing how much of SlackNet's public API depends on Newtonsoft.Json, and adds nullable annotations to Web API responses.
+
 ### Added
-- `ContentType.Channels` and `ContentType.Users`, for searching channels and users with `AssistantSearchApi.Context`.
 - `AdminAnalyticsApi`, which reads an Enterprise organization's member analytics, public channel analytics and public channel metadata as `MemberAnalytics`, `PublicChannelAnalytics` and `PublicChannelMetadata` records, streamed from Slack's compressed analytics files as you enumerate them.
 - `AdminAnalyticsMessagesApi`, which gets activity metrics and metadata for a channel's messages, with `MessageActivity` and `AnalyticsMessage`. `File` has `Subtype` and `DurationMs`.
 - `AdminAnalyticsSlackbotApi`, which gets per-user Slackbot skill and tool usage, with `SlackbotSkillUsage` and `SlackbotToolUsage`.
 - `AdminAppsApi`, which approves, restricts, clears the resolution of, and uninstalls apps in an Enterprise organization.
 - `AdminAppsActivitiesApi`, which lists workflow app logs across an Enterprise organization, with `AppActivity`.
 - `AdminAppsApprovedApi` and `AdminAppsRestrictedApi`, which list approved and restricted apps, with `AppResolution`.
-- `AdminAppsRequestsApi`, which lists and cancels app install requests, with `AppRequest`.
 - `AdminAppsConfigApi`, which looks up and sets connector configs, with `AppConfig`, `AppDomainRestrictions`, `WorkflowAuthStrategy` and `RichLinkPreviewType`.
-- `AdminAppsPermissionsApi`, which sets, lists, adds and removes who can access an app and where it can be used, with `AppPermissionType` and `AppPermissions`.
 - `AdminAppsMcpServersApi`, which lists the third-party app MCP servers approved for an Enterprise organization, with `AppMcpServer`, and `AdminAppsMcpServersPermissionsApi`, which lists and sets who can use an app's MCP servers, with `McpServerPermissions`.
+- `AdminAppsPermissionsApi`, which sets, lists, adds and removes who can access an app and where it can be used, with `AppPermissionType` and `AppPermissions`.
+- `AdminAppsRequestsApi`, which lists and cancels app install requests, with `AppRequest`.
 - `AdminAuditAnomalyAllowApi`, which reads and overwrites an Enterprise organization's allow list of IP blocks and ASNs, with `AnomalyAllowList`.
 - `AdminAuthPolicyApi`, which assigns, lists and removes the users assigned to an authentication policy, with `AuthPolicyEntity` and `AuthPolicyEntityType`.
 - `AdminBarriersApi`, which creates, lists, updates and deletes information barriers, with `InformationBarrier` and `RestrictedSubject`.
@@ -29,48 +32,48 @@
 - `AdminUserGroupsApi`, which creates, fetches and updates organization-wide user groups, adds, removes and uploads their members, and adds, lists and removes the default channels and workspaces of IDP groups. Users that couldn't be added are returned as `UserFailure`s. `UserGroup` has `EnterpriseId`, `EnterpriseSubteamId`, `IsSubteam`, `AutoProvision`, `IsSection`, `IsEditingRestricted`, `IsMembershipLocked`, `IsIdpGroup`, `IsVisible`, `IsOrgLevel`, `Teams` and `ChannelCount`, and `Conversation` has `TeamId` and `IsRedacted`.
 - `AdminUsersApi`, which assigns, invites, lists, removes and deactivates users in an Enterprise organization, sets them as admins, owners or regular users, and gets and sets guests' expirations, with `AdminUser`, `AdminUsersAccessApi`, which pauses and resumes frontline members' access, `AdminUsersSessionApi`, which lists, invalidates and resets users' sessions and gets, sets and clears their session settings, with `ActiveSession`, `SessionDetails` and `UserSessionSettings`, and `AdminUsersUnsupportedVersionsApi`, which exports the members using unsupported software. Users whose access couldn't be paused or resumed can be read from the `SlackException` as `UserFailure`s.
 - `AdminWorkflowsApi`, which searches and unpublishes workflows, with `Workflow`, `WorkflowSource`, `WorkflowSearchSort` and `PublishStatus`, `AdminWorkflowsCollaboratorsApi`, which adds and removes workflow collaborators, `AdminWorkflowsPermissionsApi`, which looks up who can run workflows, with `WorkflowPermissions`, and `AdminWorkflowsTriggersTypesPermissionsApi`, which looks up and sets who can use trigger types, with `TriggerTypePermissions`, `TriggerTypeMetadata` and `TriggerTypePermissionSetting`.
-- `ISlackApiClient.GetStream`, which calls a Slack API method that responds with a file, and returns its content as it arrives.
 - `AgentsConversationsApi`, which creates, archives and sets properties and slash commands on code channels, and manages their views and canvases, with `CodeChannelProperties`, `ContextBarItem`, `AgentResource`, `AgentCommand`, `AgentView` and `CanvasComment`. `AccessLevel` has `Comment` for comment-only canvas views.
 - `AgentsSessionsApi.Rename`, which renames an agent session.
 - `AppDeleted`, `AppInstalled`, `AppRequested` and `AppUninstalledTeam` events, with `AppRequest`, `App` and `AppScope`.
+- `AppRateLimited` event, which Slack sends when your app's event subscriptions are rate limited. Event handlers receive it in an `EventCallback`, over HTTP or Socket Mode, even though Slack doesn't send it in one.
 - `AppsApi.Uninstall`, which uninstalls your app from a workspace, revoking all of the installation's tokens.
 - `AppsIconApi`, which sets an app's icon from an uploaded image or a URL.
 - `AppsManagedPermissionsApi`, which sets who can interact with a managed app, with `ManagedAppPermissionType`, and returns its `AppPermissions`.
-- `AppsUserConnectionApi`, which updates the connection status between a user and your app, in response to a `UserConnection` event.
 - `AppsManifestApi`, which creates, updates, exports, validates and deletes apps from app manifests, with `AppCreationResponse`, `AppCredentials`, and `AppManifest` and its parts in the `SlackNet.AppManifests` namespace.
-- `AppRateLimited` event, which Slack sends when your app's event subscriptions are rate limited. Event handlers receive it in an `EventCallback`, over HTTP or Socket Mode, even though Slack doesn't send it in one.
+- `AppsUserConnectionApi`, which updates the connection status between a user and your app, in response to a `UserConnection` event.
 - `BlocksApi.Validate`, which validates blocks, a message or a view against the Block Kit schema.
 - `CallRejected` event, which Slack sends when a user rejects a call shared with them in a DM.
 - `CanvasesApi.GetContent`, which gets the content of a canvas as markdown or HTML.
 - `ChannelPostingPermissions` message event, which Slack sends when a user changes a channel's posting permissions.
-- `ErrorResponse.Errors` and `SlackException.ErrorDetails`, with the issues Slack found in a request, such as invalid elements reported by `BlocksApi.Validate`. `SlackException` messages include them too.
-- `ErrorResponse.Field<T>` and `SlackException.ErrorField<T>`, which read the fields specific to an error, such as the `invalid_mcp_servers` returned by `SlackbotSkillsApi.Create`.
+- `ContentType.Channels` and `ContentType.Users`, for searching channels and users with `AssistantSearchApi.Context`.
+- `DateTime` properties alongside Unix timestamp properties: `CreatedChannel.CreatedDate`, `RenamedChannel.CreatedDate`, `PinnedInfo.PinnedTimestamp`, `SubteamMembersChanged.PreviousUpdate` and `Updated`, `Bookmark.Created` and `Updated`, `Call.Started`, `ConnectedTeam.Created`, `Conversation.UpdatedDate`, `ExternalTeam.LastActive`, `File.CreatedDate`, `FileComment.CreatedDate`, `Function.Created`, `Updated` and `Deleted`, `Invite.Created` and `Expires`, `InviteChannel.Created`, `ListView.Created`, `OwnDndStatus.SnoozeEnd`, `Topic.LastSetDate`, `Purpose.LastSetDate`, `UserProfile.StatusExpirationDate` and `HuddleStateExpiration`, `Login.First` and `Last`, `ScheduledMessage.PostAtDate` and `Created`, `PendingInvite.LastUpdated`, `InviteAcceptance.Accepted`, `Expires` and `LastUpdated`, `InviteReview.Reviewed`, and `TokenRotationResponse.Expires` and `IssuedAt`.
 - `EntityApi.PresentComments` and `EntityApi.AcknowledgeCommentAction`, with `EntityComment`, the `EntityCommentsRequested` event, and `WorkObjectEntity.EntityComments` to enable the comments tab, for Work Object comments.
 - `EntityCommentViewInfo` and `ViewSubmission.TriggerId`, so view submissions for Work Object comment posts and edits can be handled and acknowledged with `EntityApi.AcknowledgeCommentAction`.
-- `ExtraProperty<T>` and `SetExtraProperty` on `Event` and `MessageSearchResult`, for properties SlackNet doesn't model. They use the JSON settings the event or search result was read with.
+- `ErrorResponse.Errors` and `SlackException.ErrorDetails`, with the issues Slack found in a request, such as invalid elements reported by `BlocksApi.Validate`. `SlackException` messages include them too.
+- `ErrorResponse.Field<T>` and `SlackException.ErrorField<T>`, which read the fields specific to an error, such as the `invalid_mcp_servers` returned by `SlackbotSkillsApi.Create`.
 - `ExternalOrgMigrationStarted` and `ExternalOrgMigrationFinished` events, which Slack sends when an external workspace starts and finishes migrating to an Enterprise organization, with `Team.IsMigrating`.
+- `ExtraProperty<T>` and `SetExtraProperty` on `Event` and `MessageSearchResult`, for properties SlackNet doesn't model. They use the JSON settings the event or search result was read with.
 - `InviteRequested` event, with `InviteRequest` and `InviteRequestType`, which Slack sends when a user requests an invite.
-- `UseHttpClient`, which configures the `HttpClient` that sends each request to Slack, such as one with a proxy, and `SlackApiClient` and `FilesApi` constructors that take a `Func<HttpClient>`. The client is requested for each request and isn't disposed by SlackNet.
+- `ISlackApiClient.GetStream`, which calls a Slack API method that responds with a file, and returns its content as it arrives.
 - `JsonData`, for JSON whose shape SlackNet doesn't define, which converts to and from your own types with `ToObject<T>` and `FromObject`, using SlackNet's JSON conventions, and to and from `JToken` with `ToJsonData` and `ToJToken`. `MessageMetadata.Payload`, `FunctionData.InputValues` and `AppContextEntity.Data` hold it, and `FunctionsApi.CompleteSuccess` has a generic overload that takes outputs of any type, including `JsonData`.
 - `OAuthV2Api.BeginShortTokenRotation` and `OAuthV2Api.CompleteShortTokenRotation`, which rotate an old user token with a short secret to one with a longer secret.
 - `OAuthV2Api.UserAccess`, which exchanges an OAuth code for a user access token, for OAuth flows with only user scopes.
 - `OauthV2AccessResponse.UserId`, with the ID of the user the token belongs to.
 - `SharedChannelInviteRequested` event, with `InviteTargetUser`, which Slack sends when a shared channel invite needs approval. `ConnectedTeam` has `AvatarBaseUrl` and `RequiresSponsorship`, and `InviteChannel` has `DateCreated` and `MessageLatestCountedTimestamp`.
 - `SlackbotSkillsApi` and `SlackbotSkillsLibraryApi`, which create, update, delete, list and get Slackbot skills, and turn them on or off for the caller.
+- `UseHttpClient`, which configures the `HttpClient` that sends each request to Slack, such as one with a proxy, and `SlackApiClient` and `FilesApi` constructors that take a `Func<HttpClient>`. The client is requested for each request and isn't disposed by SlackNet.
 - `UserChange.CacheTs` and `UserChange.CacheTime`, also on `UserProfileChanged` and `UserStatusChanged`.
 - `UserConnection` event, with its `UserConnect` and `UserDisconnect` subtypes, which Slack sends when a user requests to connect with or disconnect from your app.
 - `UserGuestStatusChanged` event, which Slack sends when a user's guest status changes.
-- `DateTime` properties alongside Unix timestamp properties: `CreatedChannel.CreatedDate`, `RenamedChannel.CreatedDate`, `PinnedInfo.PinnedTimestamp`, `SubteamMembersChanged.PreviousUpdate` and `Updated`, `Bookmark.Created` and `Updated`, `Call.Started`, `ConnectedTeam.Created`, `Conversation.UpdatedDate`, `ExternalTeam.LastActive`, `File.CreatedDate`, `FileComment.CreatedDate`, `Function.Created`, `Updated` and `Deleted`, `Invite.Created` and `Expires`, `InviteChannel.Created`, `ListView.Created`, `OwnDndStatus.SnoozeEnd`, `Topic.LastSetDate`, `Purpose.LastSetDate`, `UserProfile.StatusExpirationDate` and `HuddleStateExpiration`, `Login.First` and `Last`, `ScheduledMessage.PostAtDate` and `Created`, `PendingInvite.LastUpdated`, `InviteAcceptance.Accepted`, `Expires` and `LastUpdated`, `InviteReview.Reviewed`, and `TokenRotationResponse.Expires` and `IssuedAt`.
 
 ### Changed
 - `SlackException` messages include error fields that aren't strings, as JSON.
 - Web API response types, and the Slack objects they contain, such as `User`, `Conversation` and `File`, have nullable annotations. Properties Slack doesn't always return are nullable, so projects with nullable reference types enabled may see new warnings. `ViewState.GetValue` returns a nullable value, and `IReadOnlyAttachment`'s strings are nullable. Events, blocks, interaction payloads and API arguments will be annotated in later releases.
 
 ### Deprecated
-To reduce how much of SlackNet's public API depends on Newtonsoft.Json:
-- `MessageMetadata.EventPayload`, `FunctionData.Inputs` and `AppContextEntity.Value`. Use `Payload`, `InputValues` and `Data` instead.
-- The `JObject` overload of `FunctionsApi.CompleteSuccess`. Use the generic overload instead.
-- `Event.ExtraProperties` and `MessageSearchResult.ExtraProperties`. Use `ExtraProperty<T>` and `SetExtraProperty` instead.
+- `MessageMetadata.EventPayload`, `FunctionData.Inputs` and `AppContextEntity.Value`, which expose Newtonsoft.Json types. Use `Payload`, `InputValues` and `Data` instead.
+- The `JObject` overload of `FunctionsApi.CompleteSuccess`, which exposes a Newtonsoft.Json type. Use the generic overload instead.
+- `Event.ExtraProperties` and `MessageSearchResult.ExtraProperties`, which expose Newtonsoft.Json types. Use `ExtraProperty<T>` and `SetExtraProperty` instead.
 - `CoreSocketModeClient`, `ICoreSocketModeClient`, the `SlackSocketModeClient` constructor and the socket mode messages in `SlackNet.SocketMode`, such as `SocketEnvelope` and `Acknowledgement`, which will become internal. Use the socket mode client from `SlackServiceBuilder` or `AddSlackNet` instead.
 - `IHttp`, `UseHttp`, `ISlackServiceProvider.GetHttp`, `Default.Http`, and the `SlackApiClient` and `FilesApi` constructors that take an `IHttp`. Configure the `HttpClient` SlackNet uses instead, with `UseHttpClient`, or the `SlackApiClient` and `FilesApi` constructors that take a `Func<HttpClient>`.
 
